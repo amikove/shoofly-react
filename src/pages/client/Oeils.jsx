@@ -1,0 +1,82 @@
+import { useState, useEffect } from 'react'
+import AppLayout from '../../components/layout/AppLayout'
+import Topbar from '../../components/layout/Topbar'
+import { usersAPI } from '../../api'
+import { Spinner, EmptyState, Avatar, Stars, toast } from '../../components/ui'
+import NewMissionModal from '../../components/missions/NewMissionModal'
+
+export default function ClientOeils() {
+  const [oeils, setOeils]   = useState([])
+  const [loading, setLoading] = useState(true)
+  const [search, setSearch] = useState('')
+  const [city, setCity]     = useState('')
+  const [showNew, setShowNew]     = useState(false)
+  const [selectedOeil, setSelectedOeil] = useState(null)
+
+  useEffect(() => {
+    usersAPI.oeils({ search, city, verified: true })
+      .then(({ data }) => setOeils(data.oeils || []))
+      .catch(() => toast('Erreur de chargement', 'error'))
+      .finally(() => setLoading(false))
+  }, [search, city])
+
+  return (
+    <AppLayout>
+      <Topbar title="Les Œils" />
+      <div className="p-6">
+        <div className="flex flex-wrap gap-3 mb-5">
+          <input className="input max-w-[220px]" placeholder="🔍 Nom, ville..." value={search} onChange={(e) => setSearch(e.target.value)} />
+          <select className="input max-w-[160px]" value={city} onChange={(e) => setCity(e.target.value)}>
+            <option value="">Toutes les villes</option>
+            {['Rabat','Casablanca','Salé','Témara'].map((c) => <option key={c}>{c}</option>)}
+          </select>
+        </div>
+
+        {loading ? (
+          <div className="flex justify-center py-20"><Spinner size="lg" /></div>
+        ) : oeils.length === 0 ? (
+          <EmptyState icon="👁️" title="Aucun Œil trouvé" description="Modifiez vos filtres." />
+        ) : (
+          <div className="grid grid-cols-[repeat(auto-fill,minmax(270px,1fr))] gap-4">
+            {oeils.map((o) => (
+              <div key={o.id} className="card">
+                <div className="flex items-center gap-3 mb-4">
+                  <Avatar name={`${o.first_name} ${o.last_name}`} size={46} />
+                  <div className="flex-1">
+                    <div className="font-semibold">{o.first_name} {o.last_name}</div>
+                    <div className="flex items-center gap-1.5 mt-0.5">
+                      <Stars value={o.rating_avg || 0} />
+                      <span className="text-xs text-[#AAA]">{o.rating_avg || '—'} · {o.total_missions || 0} missions</span>
+                    </div>
+                    <div className="text-xs text-[#AAA] mt-0.5">📍 {o.city}</div>
+                  </div>
+                  {o.is_available
+                    ? <span className="badge badge-green">Dispo</span>
+                    : <span className="badge badge-gray">Occupé</span>
+                  }
+                </div>
+                {o.bio && <p className="text-xs text-[#AAA] mb-4 line-clamp-2">{o.bio}</p>}
+                <div className="flex gap-2">
+                  <button
+                      disabled={!o.is_available}
+                      onClick={() => { setSelectedOeil(o); setShowNew(true); }}
+                      className="btn btn-primary btn-sm flex-1 justify-center disabled:opacity-40">
+                      Commander
+                    </button>
+                  <button onClick={() => toast('Ajouté aux favoris ❤️', 'success')} className="btn btn-ghost btn-sm">❤️</button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      <NewMissionModal
+          open={showNew}
+          onClose={() => { setShowNew(false); setSelectedOeil(null); }}
+          preselectedOeil={selectedOeil}
+          onCreated={() => toast('Mission créée ! 🎉', 'success')}
+        />
+    </AppLayout>
+  )
+}
