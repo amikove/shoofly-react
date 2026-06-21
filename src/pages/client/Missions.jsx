@@ -1,3 +1,4 @@
+import RateModal from '../../components/missions/RateModal'
 import { useState, useEffect } from 'react'
 import AppLayout from '../../components/layout/AppLayout'
 import Topbar from '../../components/layout/Topbar'
@@ -11,6 +12,7 @@ export default function ClientMissions() {
   const [missions, setMissions] = useState([])
   const [loading, setLoading]   = useState(true)
   const [showNew, setShowNew]   = useState(false)
+  const [ratingMission, setRatingMission] = useState(null)
   const [search, setSearch]     = useState('')
   const [statusFilter, setStatus] = useState('')
   const [typeFilter, setType]   = useState('')
@@ -92,9 +94,16 @@ export default function ClientMissions() {
                           {['pending','assigned'].includes(m.status) && (
                             <button onClick={() => cancel(m.id)} className="btn btn-ghost btn-sm text-red-400">Annuler</button>
                           )}
+                          
                           {m.status === 'completed' && (
-                            <button className="btn btn-ghost btn-sm">⭐ Noter</button>
-                          )}
+  <button
+    onClick={() => setRatingMission(m)}
+    className="btn btn-ghost btn-sm"
+  >
+    ⭐ Noter
+  </button>
+)}
+
                         </div>
                       </td>
                     </tr>
@@ -110,6 +119,15 @@ export default function ClientMissions() {
         setMissions((ms) => [m, ...ms])
         toast('Mission créée ! 🎉', 'success')
       }} />
+
+      {ratingMission && (
+  <RateModal
+    mission={ratingMission}
+    onClose={() => setRatingMission(null)}
+    onRated={() => { setRatingMission(null); load() }}
+  />
+)}
+
     </AppLayout>
   )
 }
