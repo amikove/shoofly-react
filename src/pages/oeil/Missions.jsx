@@ -251,19 +251,29 @@ export default function OeilMissions() {
                       <button onClick={() => refuse(m.id)} className="btn btn-ghost btn-sm">✕ Refuser</button>
                     </>
                   )}
-                  {tab === 'active' && (
-                    <>
-                      {/* Bug 2 fix : bouton chat ouvre le modal */}
-                      <button onClick={() => setChatMission(m)} className="btn btn-ghost btn-sm">💬 Chat</button>
-                      <button className="btn btn-ghost btn-sm">📸 Photos</button>
-                      {/* Bug 3 fix : bouton qui respecte les transitions */}
-                      {advanceLabel[m.status] && (
-                        <button onClick={() => advance(m)} className="btn btn-primary btn-sm flex-1 justify-center">
-                          {advanceLabel[m.status]}
-                        </button>
-                      )}
-                    </>
-                  )}
+                {tab === 'active' && (
+  <>
+    <button onClick={() => setChatMission(m)} className="btn btn-ghost btn-sm">💬 Chat</button>
+    <button className="btn btn-ghost btn-sm">📸 Photos</button>
+    {advanceLabel[m.status] && (
+      <button onClick={() => advance(m)} className="btn btn-primary btn-sm flex-1 justify-center">
+        {advanceLabel[m.status]}
+      </button>
+    )}
+    {m.status === 'assigned' && (
+      <button
+        onClick={() => refuse(m.id)}
+        className="btn btn-ghost btn-sm text-red-400"
+      >
+        ✕ Refuser
+      </button>
+    )}
+  </>
+)}
+
+
+
+
                   {tab === 'done' && (
                     <button className="btn btn-ghost btn-sm">📄 Voir rapport</button>
                   )}
