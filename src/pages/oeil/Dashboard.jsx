@@ -2,24 +2,42 @@ import { useState, useEffect } from 'react'
 import AppLayout from '../../components/layout/AppLayout'
 import Topbar from '../../components/layout/Topbar'
 import { missionsAPI, usersAPI } from '../../api'
-import { StatusBadge, Spinner, EmptyState, Stars, toast } from '../../components/ui'
+import { StatusBadge, Spinner, EmptyState, toast } from '../../components/ui'
 import { useAuth } from '../../context/AuthContext'
 
 export default function OeilDashboard() {
   const { user } = useAuth()
-  const [pending, setPending] = useState([])
-  const [active, setActive]   = useState([])
-  const [stats, setStats]     = useState({ completed: 0, rating: 0, earnings: 0, balance: 0 })
-  const [loading, setLoading] = useState(true)
+  const [pending, setPending]   = useState([])
+  const [active, setActive]     = useState([])
+  const [stats, setStats]       = useState(null)
+  const [loading, setLoading]   = useState(true)
 
   const load = () => {
+    setLoading(true)
     Promise.all([
-      missionsAPI.list({ status: 'available', limit: 5 }),
-      missionsAPI.list({ mode: 'mine', status: 'active', limit: 3 }),
+      missionsAPI.list({ mode: 'available', limit: 5 }),
+      missionsAPI.list({ mode: 'mine', limit: 50 }),
+      usersAPI.oeil(user?.id),
     ])
-      .then(([pRes, aRes]) => {
+      .then(([pRes, mRes, oRes]) => {
         setPending(pRes.data.missions || [])
-        setActive(aRes.data.missions || [])
+
+        const all = mRes.data.missions || []
+        setActive(all.filter(m => ['assigned','en_route','active'].includes(m.status)))
+
+        // Calculer les stats depuis les missions
+        const done      = all.filter(m => m.status === 'completed')
+        const earnings  = done.reduce((sum, m) => sum + (parseFloat(m.oeil_earning) || 0), 0)
+
+        // Stats depuis le profil Œil
+        const profile = oRes?.data?.oeil || oRes?.data?.user || {}
+        setStats({
+          completed:    profile.total_missions  || done.length,
+          rating:       parseFloat(profile.rating_avg) || 0,
+          rating_count: profile.rating_count    || 0,
+          balance:      parseFloat(profile.balance)    || 0,
+          earnings:     earnings,
+        })
       })
       .catch(() => toast('Erreur de chargement', 'error'))
       .finally(() => setLoading(false))
@@ -30,81 +48,143 @@ export default function OeilDashboard() {
   const accept = async (id) => {
     try {
       await missionsAPI.accept(id)
-      load()
       toast('Mission acceptée ! 🎉', 'success')
-    } catch (err) { toast(err.response?.data?.error || 'Erreur', 'error') }
+      load()
+    } catch (err) {
+      toast(err.response?.data?.error || 'Erreur', 'error')
+    }
   }
 
-  const complete = async (id) => {
+  const advance = async (mission) => {
+    const next = { assigned: 'en_route', en_route: 'active', active: 'completed' }[mission.status]
+    if (!next) return
     try {
-      await missionsAPI.status(id, { status: 'completed' })
+      await missionsAPI.status(mission.id, { status: next })
+      toast(next === 'completed' ? 'Mission terminée ! 🎉' : 'Statut mis à jour ✓', 'success')
       load()
-      toast('Mission terminée ! Bien joué 🎉', 'success')
     } catch { toast('Erreur', 'error') }
   }
 
-  if (loading) return <AppLayout><Topbar title="Tableau de bord" /><div className="flex-1 flex items-center justify-center"><Spinner size="lg" /></div></AppLayout>
+  const advanceLabel = {
+    assigned: '🚗 En route',
+    en_route: '▶️ Démarrer',
+    active:   '✓ Terminer',
+  }
+
+  if (loading) return (
+    <AppLayout>
+      <Topbar title="Tableau de bord" />
+      <div className="flex-1 flex items-center justify-center"><Spinner size="lg" /></div>
+    </AppLayout>
+  )
 
   return (
     <AppLayout>
       <Topbar title="Tableau de bord" />
       <div className="p-6 space-y-6">
+
         {/* Stats */}
         <div className="grid grid-cols-4 gap-4">
-          <div className="stat-card"><div className="text-xs text-[#AAA] mb-1">Missions complétées</div><div className="text-2xl font-bold">{stats.completed}</div></div>
-          <div className="stat-card"><div className="text-xs text-[#AAA] mb-1">Note moyenne</div><div className="text-2xl font-bold text-yellow-400">{stats.rating || '—'}★</div></div>
-          <div className="stat-card"><div className="text-xs text-[#AAA] mb-1">Revenus du mois</div><div className="text-2xl font-bold">{stats.earnings} <span className="text-sm text-[#AAA]">MAD</span></div></div>
-          <div className="stat-card"><div className="text-xs text-[#AAA] mb-1">Solde disponible</div><div className="text-2xl font-bold text-green-400">{stats.balance} <span className="text-sm">MAD</span></div></div>
+          <div className="stat-card">
+            <div className="text-xs text-[#AAA] mb-1">Missions complétées</div>
+            <div className="text-2xl font-bold">{stats?.completed || 0}</div>
+          </div>
+          <div className="stat-card">
+            <div className="text-xs text-[#AAA] mb-1">Note moyenne</div>
+            <div className="text-2xl font-bold text-yellow-400">
+              {stats?.rating ? `${stats.rating}★` : '—'}
+            </div>
+            {stats?.rating_count > 0 && (
+              <div className="text-xs text-[#AAA] mt-1">{stats.rating_count} avis</div>
+            )}
+          </div>
+          <div className="stat-card">
+            <div className="text-xs text-[#AAA] mb-1">Revenus (missions)</div>
+            <div className="text-2xl font-bold">
+              {stats?.earnings?.toFixed(0) || 0}
+              <span className="text-sm text-[#AAA] ml-1">MAD</span>
+            </div>
+          </div>
+          <div className="stat-card">
+            <div className="text-xs text-[#AAA] mb-1">Solde disponible</div>
+            <div className="text-2xl font-bold text-green-400">
+              {stats?.balance?.toFixed(0) || 0}
+              <span className="text-sm ml-1">MAD</span>
+            </div>
+          </div>
         </div>
 
         <div className="grid grid-cols-2 gap-6">
+
           {/* Missions disponibles */}
           <div className="card">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="font-semibold text-sm">Missions disponibles</h2>
-              <a href="/oeil/missions" className="text-xs text-[#FF4D00]">Voir tout</a>
+              <h2 className="font-semibold text-sm">
+                Missions disponibles
+                <span className="ml-2 text-xs bg-[#FF4D00]/15 text-[#FF4D00] px-2 py-0.5 rounded-full">
+                  {pending.length}
+                </span>
+              </h2>
+              <a href="/oeil/missions" className="text-xs text-[#FF4D00]">Voir tout →</a>
             </div>
+
             {pending.length === 0 ? (
               <EmptyState icon="🎯" title="Aucune mission disponible" description="Revenez bientôt !" />
             ) : pending.map((m) => (
-              <div key={m.id} className="bg-[#222] rounded-xl p-3 mb-3">
-                <div className="flex items-start justify-between gap-2 mb-2">
-                  <div>
-                    <div className="font-semibold text-sm">{m.title}</div>
-                    <div className="text-xs text-[#AAA]">📍 {m.city}</div>
+              <div key={m.id} className="bg-[#222] rounded-xl p-3 mb-3 last:mb-0">
+                <div className="flex items-start justify-between gap-2 mb-3">
+                  <div className="min-w-0">
+                    <div className="font-semibold text-sm truncate">{m.title}</div>
+                    <div className="text-xs text-[#AAA] mt-0.5">📍 {m.city}</div>
                   </div>
-                  <div className="text-green-400 font-bold whitespace-nowrap">{parseFloat(m.price).toFixed(0)} MAD</div>
+                  <div className="text-green-400 font-bold whitespace-nowrap text-sm">
+                    {parseFloat(m.price).toFixed(0)} MAD
+                  </div>
                 </div>
                 <div className="flex gap-2">
-                  <button onClick={() => accept(m.id)} className="btn btn-primary btn-sm flex-1 justify-center">Accepter</button>
-                  <button className="btn btn-ghost btn-sm">Détail</button>
+                  <button onClick={() => accept(m.id)} className="btn btn-primary btn-sm flex-1 justify-center">
+                    Accepter
+                  </button>
+                  <a href="/oeil/missions" className="btn btn-ghost btn-sm">Détail</a>
                 </div>
               </div>
             ))}
           </div>
 
-          {/* Mission en cours */}
+          {/* Missions en cours */}
           <div className="card">
-            <h2 className="font-semibold text-sm mb-4">Mission en cours</h2>
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="font-semibold text-sm">
+                Mes missions en cours
+                <span className="ml-2 text-xs bg-blue-500/15 text-blue-400 px-2 py-0.5 rounded-full">
+                  {active.length}
+                </span>
+              </h2>
+            </div>
+
             {active.length === 0 ? (
-              <EmptyState icon="📋" title="Aucune mission active" description="Acceptez une mission pour commencer." />
+              <EmptyState icon="📋" title="Aucune mission en cours" description="Acceptez une mission pour commencer." />
             ) : active.map((m) => (
-              <div key={m.id} className="bg-[#222] rounded-xl p-4 mb-3">
-                <div className="flex items-start justify-between mb-3">
+              <div key={m.id} className="bg-[#222] rounded-xl p-3 mb-3 last:mb-0">
+                <div className="flex items-start justify-between mb-2">
                   <div>
                     <div className="font-semibold text-sm">{m.title}</div>
-                    <div className="text-xs text-[#AAA]">Client: {m.client_name}</div>
+                    <div className="text-xs text-[#AAA]">Client : {m.client_name}</div>
                   </div>
                   <StatusBadge status={m.status} />
                 </div>
-                <div className="flex gap-2">
-                  <button className="btn btn-primary btn-sm flex-1 justify-center">📸 Photos</button>
-                  <button className="btn btn-ghost btn-sm">💬 Chat</button>
-                  <button onClick={() => complete(m.id)} className="btn btn-green btn-sm">✓ Terminer</button>
+                <div className="flex gap-2 mt-3">
+                  <a href="/oeil/missions" className="btn btn-ghost btn-sm flex-1 justify-center">💬 Chat</a>
+                  {advanceLabel[m.status] && (
+                    <button onClick={() => advance(m)} className="btn btn-primary btn-sm">
+                      {advanceLabel[m.status]}
+                    </button>
+                  )}
                 </div>
               </div>
             ))}
           </div>
+
         </div>
       </div>
     </AppLayout>
