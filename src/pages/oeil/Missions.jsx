@@ -1,4 +1,5 @@
-import { useState, useEffect, useCallback } from 'react'
+import ChatModal from '../../components/missions/ChatModal'
+import { useState, useCallback } from 'react'
 import AppLayout from '../../components/layout/AppLayout'
 import Topbar from '../../components/layout/Topbar'
 import { missionsAPI } from '../../api'
@@ -12,71 +13,7 @@ const TABS = [
 const TYPE_ICONS = { immobilier:'🏠', file_attente:'⏳', audit:'🔎', personnalisee:'🎯' }
 
 // Modal chat simple
-function ChatModal({ mission, onClose }) {
-  const [msg, setMsg]       = useState('')
-  const [messages, setMessages] = useState([])
-  const [sending, setSending]   = useState(false)
 
-  useEffect(() => {
-    missionsAPI.get(mission.id)
-      .then(({ data }) => setMessages(data.messages || []))
-      .catch(() => {})
-  }, [mission.id])
-
-  const send = async () => {
-    if (!msg.trim()) return
-    setSending(true)
-    try {
-      await missionsAPI.message(mission.id, { content: msg.trim() })
-      setMessages((prev) => [...prev, {
-        id: Date.now(), content: msg.trim(), sender_role: 'oeil',
-        created_at: new Date().toISOString()
-      }])
-      setMsg('')
-      toast('Message envoyé', 'success')
-    } catch {
-      toast('Erreur envoi message', 'error')
-    } finally { setSending(false) }
-  }
-
-  return (
-    <div className="fixed inset-0 bg-black/75 z-50 flex items-center justify-center p-4 backdrop-blur-sm"
-         onClick={(e) => e.target === e.currentTarget && onClose()}>
-      <div className="bg-[#181818] border border-white/20 rounded-2xl w-full max-w-md flex flex-col" style={{height:'480px'}}>
-        <div className="flex items-center justify-between px-5 py-4 border-b border-white/10">
-          <div>
-            <div className="font-semibold text-sm">Chat — {mission.title}</div>
-            <div className="text-xs text-[#AAA]">Client : {mission.client_name}</div>
-          </div>
-          <button onClick={onClose} className="text-[#AAA] hover:text-white">✕</button>
-        </div>
-        <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-2">
-          {messages.length === 0 ? (
-            <div className="text-center text-xs text-[#AAA] mt-8">Aucun message. Commencez la conversation.</div>
-          ) : messages.map((m) => (
-            <div key={m.id} className={`max-w-[75%] px-3 py-2 rounded-xl text-xs leading-relaxed ${
-              m.sender_role === 'oeil' || m.type === 'oeil'
-                ? 'bg-[#FF4D00] text-white self-end rounded-br-sm'
-                : m.type === 'system'
-                ? 'bg-transparent text-[#777] self-center text-center'
-                : 'bg-[#2A2A2A] text-white self-start rounded-bl-sm'
-            }`}>{m.content}</div>
-          ))}
-        </div>
-        <div className="flex gap-2 p-3 border-t border-white/10">
-          <input
-            className="flex-1 bg-[#222] border border-white/20 rounded-lg px-3 py-2 text-sm text-white outline-none placeholder:text-white/20 focus:border-[#FF4D00]/50"
-            placeholder="Votre message..."
-            value={msg}
-            onChange={(e) => setMsg(e.target.value)}
-            onKeyDown={(e) => e.key === 'Enter' && send()}
-          />
-          <button onClick={send} disabled={sending || !msg.trim()} className="btn btn-primary btn-sm disabled:opacity-50">→</button>
-        </div>
-      </div>
-    </div>
-  )
-}
 
 export default function OeilMissions() {
   const [tab, setTab]           = useState('available')
