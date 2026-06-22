@@ -1,17 +1,17 @@
+import ChatModal from '../../components/missions/ChatModal'
 import { useState, useEffect } from 'react'
 import AppLayout from '../../components/layout/AppLayout'
 import Topbar from '../../components/layout/Topbar'
 import { missionsAPI, usersAPI } from '../../api'
 import { StatusBadge, Spinner, EmptyState, toast } from '../../components/ui'
 import { useAuth } from '../../context/AuthContext'
-import ChatModal from '../../components/missions/ChatModal'
 
 export default function OeilDashboard() {
   const { user } = useAuth()
-  const [pending, setPending]         = useState([])
-  const [active, setActive]           = useState([])
-  const [stats, setStats]             = useState(null)
-  const [loading, setLoading]         = useState(true)
+  const [pending, setPending]   = useState([])
+  const [active, setActive]     = useState([])
+  const [stats, setStats]       = useState(null)
+  const [loading, setLoading]   = useState(true)
   const [chatMission, setChatMission] = useState(null)
 
   const load = () => {
@@ -19,21 +19,26 @@ export default function OeilDashboard() {
     Promise.all([
       missionsAPI.list({ mode: 'available', limit: 5 }),
       missionsAPI.list({ mode: 'mine', limit: 50 }),
-      user?.id ? usersAPI.oeil(user.id).catch(() => null) : Promise.resolve(null),
+      usersAPI.oeil(user?.id),
     ])
       .then(([pRes, mRes, oRes]) => {
         setPending(pRes.data.missions || [])
+
         const all = mRes.data.missions || []
         setActive(all.filter(m => ['assigned','en_route','active'].includes(m.status)))
-        const done     = all.filter(m => m.status === 'completed')
-        const earnings = done.reduce((sum, m) => sum + (parseFloat(m.oeil_earning) || 0), 0)
-        const profile  = oRes?.data?.oeil || oRes?.data?.user || {}
+
+        // Calculer les stats depuis les missions
+        const done      = all.filter(m => m.status === 'completed')
+        const earnings  = done.reduce((sum, m) => sum + (parseFloat(m.oeil_earning) || 0), 0)
+
+        // Stats depuis le profil Œil
+        const profile = oRes?.data?.oeil || oRes?.data?.user || {}
         setStats({
           completed:    profile.total_missions  || done.length,
           rating:       parseFloat(profile.rating_avg) || 0,
           rating_count: profile.rating_count    || 0,
           balance:      parseFloat(profile.balance)    || 0,
-          earnings,
+          earnings:     earnings,
         })
       })
       .catch(() => toast('Erreur de chargement', 'error'))
@@ -53,7 +58,7 @@ export default function OeilDashboard() {
   }
 
   const advance = async (mission) => {
-    const next = { assigned:'en_route', en_route:'active', active:'completed' }[mission.status]
+    const next = { assigned: 'en_route', en_route: 'active', active: 'completed' }[mission.status]
     if (!next) return
     try {
       await missionsAPI.status(mission.id, { status: next })
@@ -122,6 +127,7 @@ export default function OeilDashboard() {
                   {pending.length}
                 </span>
               </h2>
+              <a href="/oeil/missions" className="text-xs text-[#FF4D00]">Voir tout →</a>
             </div>
 
             {pending.length === 0 ? (
@@ -141,9 +147,7 @@ export default function OeilDashboard() {
                   <button onClick={() => accept(m.id)} className="btn btn-primary btn-sm flex-1 justify-center">
                     Accepter
                   </button>
-                  <button onClick={() => setChatMission(m)} className="btn btn-ghost btn-sm">
-                    Détail
-                  </button>
+                  <button onClick={() => setChatMission(m)} className="btn btn-ghost btn-sm">Détail</button>
                 </div>
               </div>
             ))}
@@ -172,12 +176,7 @@ export default function OeilDashboard() {
                   <StatusBadge status={m.status} />
                 </div>
                 <div className="flex gap-2 mt-3">
-                  <button
-                    onClick={() => setChatMission(m)}
-                    className="btn btn-ghost btn-sm flex-1 justify-center"
-                  >
-                    💬 Chat
-                  </button>
+                 <button onClick={() => setChatMission(m)} className="btn btn-ghost btn-sm flex-1 justify-center">💬 Chat</button>
                   {advanceLabel[m.status] && (
                     <button onClick={() => advance(m)} className="btn btn-primary btn-sm">
                       {advanceLabel[m.status]}
@@ -190,13 +189,12 @@ export default function OeilDashboard() {
 
         </div>
       </div>
-
       {chatMission && (
-        <ChatModal
-          mission={chatMission}
-          onClose={() => setChatMission(null)}
-        />
-      )}
+  <ChatModal
+    mission={chatMission}
+    onClose={() => setChatMission(null)}
+  />
+)}
     </AppLayout>
   )
 }
