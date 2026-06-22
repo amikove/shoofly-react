@@ -1,5 +1,5 @@
 import ChatModal from '../../components/missions/ChatModal'
-import { useState, useCallback } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import AppLayout from '../../components/layout/AppLayout'
 import Topbar from '../../components/layout/Topbar'
 import { missionsAPI } from '../../api'
