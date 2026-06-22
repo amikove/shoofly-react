@@ -1,3 +1,4 @@
+import ChatModal from '../../components/missions/ChatModal'
 import { useState, useEffect } from 'react'
 import AppLayout from '../../components/layout/AppLayout'
 import Topbar from '../../components/layout/Topbar'
@@ -11,6 +12,7 @@ export default function OeilDashboard() {
   const [active, setActive]     = useState([])
   const [stats, setStats]       = useState(null)
   const [loading, setLoading]   = useState(true)
+  const [chatMission, setChatMission] = useState(null)
 
   const load = () => {
     setLoading(true)
@@ -145,7 +147,7 @@ export default function OeilDashboard() {
                   <button onClick={() => accept(m.id)} className="btn btn-primary btn-sm flex-1 justify-center">
                     Accepter
                   </button>
-                  <a href="/oeil/missions" className="btn btn-ghost btn-sm">Détail</a>
+                  <button onClick={() => setChatMission(m)} className="btn btn-ghost btn-sm">Détail</button>
                 </div>
               </div>
             ))}
@@ -174,7 +176,7 @@ export default function OeilDashboard() {
                   <StatusBadge status={m.status} />
                 </div>
                 <div className="flex gap-2 mt-3">
-                  <a href="/oeil/missions" className="btn btn-ghost btn-sm flex-1 justify-center">💬 Chat</a>
+                 <button onClick={() => setChatMission(m)} className="btn btn-ghost btn-sm flex-1 justify-center">💬 Chat</button>
                   {advanceLabel[m.status] && (
                     <button onClick={() => advance(m)} className="btn btn-primary btn-sm">
                       {advanceLabel[m.status]}
@@ -187,6 +189,12 @@ export default function OeilDashboard() {
 
         </div>
       </div>
+      {chatMission && (
+  <ChatModal
+    mission={chatMission}
+    onClose={() => setChatMission(null)}
+  />
+)}
     </AppLayout>
   )
 }
