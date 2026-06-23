@@ -1,5 +1,5 @@
 import { NavLink, useNavigate } from 'react-router-dom'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useAuth } from '../../context/AuthContext'
 import { Avatar } from '../ui'
 import { useNotifications } from '../../hooks/useNotifications'
@@ -39,7 +39,10 @@ export default function AppLayout({ children }) {
   const [isAvail, setIsAvail] = useState(true)
 
   // ── Activer les notifications in-app + push ──────────────
-  useNotifications()
+  useNotifications({ onChatOpen: (missionId) => {
+  window.__notifChatMissionId = missionId
+  navigate('/client/missions')
+}})
 
   const role  = user?.role || 'client'
   const items = MENUS[role] || []

@@ -40,7 +40,7 @@ export function sendPushNotification(title, body, options = {}) {
 }
 
 // ── Hook principal ─────────────────────────────────────────
-export function useNotifications() {
+export function useNotifications({ onChatOpen } = {}) {
   const { user } = useAuth()
   const { onEvent } = useSocket() || {}
 
@@ -56,23 +56,27 @@ export function useNotifications() {
     if (!onEvent || !user) return
 
     // Nouveau message reçu
+
     const unsubMessage = onEvent('new_message', (msg) => {
-      // Ne pas notifier si c'est notre propre message
-      if (msg.sender_id === user.id) return
+  if (msg.sender_id === user.id) return
 
-      const senderName = msg.sender_name || (user.role === 'client' ? 'Votre Œil' : 'Votre client')
-      const missionTitle = msg.mission_title || 'Mission en cours'
+  const senderName = msg.sender_name || (user.role === 'client' ? 'Votre Œil' : 'Votre client')
+  const body = msg.body || msg.content?.slice(0, 60) || ''
 
-      // Toast in-app
-      toast(`💬 ${senderName} : ${msg.content?.slice(0, 50)}...`, 'info')
+  toast(`💬 ${senderName} — ${body}`, 'info')
 
-      // Push navigateur
-      sendPushNotification(
-        `Nouveau message — ${missionTitle}`,
-        `${senderName} : ${msg.content?.slice(0, 80)}`,
-        { tag: `message-${msg.mission_id}`, url: '/client/missions' }
-      )
-    })
+  if (onChatOpen) {
+    window.__notifChatMissionId = msg.mission_id
+  }
+
+  sendPushNotification(
+    `💬 ${senderName}`,
+    body,
+    { tag: `message-${msg.mission_id}`, url: '/client/missions' }
+  )
+})
+
+
 
     // Nouvelle mission disponible (pour les Œils)
     const unsubMission = onEvent('new_mission', (mission) => {

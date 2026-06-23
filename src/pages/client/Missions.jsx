@@ -84,15 +84,27 @@ export default function ClientMissions() {
   const [statusFilter, setStatus]         = useState('')
   const [typeFilter, setType]             = useState('')
 
-  const load = useCallback(() => {
-    setLoading(true)
-    missionsAPI.list({ search, status: statusFilter, type: typeFilter })
-      .then(({ data }) => setMissions(data.missions || []))
-      .catch(() => toast('Erreur de chargement', 'error'))
-      .finally(() => setLoading(false))
-  }, [search, statusFilter, typeFilter])
 
-  useEffect(() => { load() }, [load])
+const load = useCallback(() => {
+  setLoading(true)
+  return missionsAPI.list({ search, status: statusFilter, type: typeFilter })
+    .then(({ data }) => setMissions(data.missions || []))
+    .catch(() => toast('Erreur de chargement', 'error'))
+    .finally(() => setLoading(false))
+}, [search, statusFilter, typeFilter])
+
+
+useEffect(() => {
+  load().then(() => {
+    if (window.__notifChatMissionId) {
+      const id = window.__notifChatMissionId
+      window.__notifChatMissionId = null
+      missionsAPI.get(id)
+        .then(({ data }) => setChatMission(data.mission || data))
+        .catch(() => {})
+    }
+  })
+}, [load])
 
   const cancel = async (id) => {
     if (!window.confirm('Confirmer l\'annulation ?')) return
