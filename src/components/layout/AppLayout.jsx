@@ -2,26 +2,28 @@ import { NavLink, useNavigate } from 'react-router-dom'
 import { useState } from 'react'
 import { useAuth } from '../../context/AuthContext'
 import { Avatar } from '../ui'
+import { useNotifications } from '../../hooks/useNotifications'
+import NotificationBanner from '../ui/NotificationBanner'
 
 const MENUS = {
   client: [
-    { to: '/client',         icon: '⊞', label: 'Tableau de bord' },
-    { to: '/client/missions',icon: '📋', label: 'Mes missions'    },
-    { to: '/client/oeils',   icon: '👁️', label: 'Les Œils'        },
-    { to: '/client/compte',  icon: '👤', label: 'Mon compte'      },
+    { to: '/client',          icon: '⊞', label: 'Tableau de bord' },
+    { to: '/client/missions', icon: '📋', label: 'Mes missions'    },
+    { to: '/client/oeils',    icon: '👁️', label: 'Les Œils'        },
+    { to: '/client/compte',   icon: '👤', label: 'Mon compte'      },
   ],
   oeil: [
-    { to: '/oeil',           icon: '⊞', label: 'Tableau de bord'     },
-    { to: '/oeil/missions',  icon: '🎯', label: 'Missions disponibles' },
-    { to: '/oeil/compte',    icon: '👤', label: 'Mon profil'           },
+    { to: '/oeil',            icon: '⊞', label: 'Tableau de bord'      },
+    { to: '/oeil/missions',   icon: '🎯', label: 'Missions disponibles' },
+    { to: '/oeil/compte',     icon: '👤', label: 'Mon profil'           },
   ],
   admin: [
-    { to: '/admin',            icon: '⊞', label: 'Tableau de bord',    section: 'Vue globale' },
-    { to: '/admin/missions',   icon: '📋', label: 'Toutes les missions', section: 'Vue globale' },
-    { to: '/admin/oeils',      icon: '👁️', label: 'Gestion des Œils',   section: 'Gestion'     },
-    { to: '/admin/clients',    icon: '👥', label: 'Gestion des clients', section: 'Gestion'     },
-    { to: '/admin/fraude',     icon: '🛡️', label: 'Anti-Fraude',         section: 'Gestion'     },
-    { to: '/admin/parametres', icon: '⚙️', label: 'Paramètres',          section: 'Système'     },
+    { to: '/admin',             icon: '⊞', label: 'Tableau de bord',    section: 'Vue globale' },
+    { to: '/admin/missions',    icon: '📋', label: 'Toutes les missions', section: 'Vue globale' },
+    { to: '/admin/oeils',       icon: '👁️', label: 'Gestion des Œils',   section: 'Gestion'     },
+    { to: '/admin/clients',     icon: '👥', label: 'Gestion des clients', section: 'Gestion'     },
+    { to: '/admin/fraude',      icon: '🛡️', label: 'Anti-Fraude',         section: 'Gestion'     },
+    { to: '/admin/parametres',  icon: '⚙️', label: 'Paramètres',          section: 'Système'     },
   ],
 }
 
@@ -32,14 +34,16 @@ const LABELS = {
 }
 
 export default function AppLayout({ children }) {
-  const { user, logout } = useAuth()
-  const navigate = useNavigate()
+  const { user, logout }  = useAuth()
+  const navigate           = useNavigate()
   const [isAvail, setIsAvail] = useState(true)
+
+  // ── Activer les notifications in-app + push ──────────────
+  useNotifications()
 
   const role  = user?.role || 'client'
   const items = MENUS[role] || []
 
-  // Grouper les items admin par section
   const grouped = role === 'admin'
     ? items.reduce((acc, item) => {
         const s = item.section || 'Principal'
@@ -107,10 +111,7 @@ export default function AppLayout({ children }) {
             </button>
           )}
           <div className="flex items-center gap-2">
-            <Avatar
-              name={`${user?.first_name || ''} ${user?.last_name || ''}`}
-              size={30}
-            />
+            <Avatar name={`${user?.first_name || ''} ${user?.last_name || ''}`} size={30} />
             <div className="flex-1 min-w-0">
               <div className="text-xs font-semibold truncate">
                 {user?.first_name} {user?.last_name}
@@ -130,6 +131,9 @@ export default function AppLayout({ children }) {
       <main className="ml-[220px] flex-1 flex flex-col min-h-screen">
         {children}
       </main>
+
+      {/* Bannière permission notifications */}
+      <NotificationBanner />
     </div>
   )
 }
