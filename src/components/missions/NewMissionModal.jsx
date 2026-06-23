@@ -50,37 +50,22 @@ const CATEGORIES = {
     ],
     placeholder: 'Ex: File CNSS — Dépôt dossier retraite',
   },
-  audit: {
-    icon: '🔎',
-    label: 'Audit & Mystery Shop',
-    groups: [
-      {
-        label: 'Restaurant',
-        items: ['Temps d\'attente', 'Propreté', 'Qualité du service', 'Audit complet'],
-      },
-      {
-        label: 'Café',
-        items: ['Accueil', 'Rapidité', 'Propreté', 'Audit complet'],
-      },
-      {
-        label: 'Hôtel',
-        items: ['Check-in', 'Service client', 'Propreté', 'Audit complet'],
-      },
-      {
-        label: 'Salle de sport',
-        items: ['Accueil commercial', 'État des équipements', 'Suivi et réactivité coachs', 'Audit complet'],
-      },
-      {
-        label: 'Concession automobile',
-        items: ['Qualité du vendeur', 'Temps de prise en charge', 'Suivi commercial', 'Audit complet'],
-      },
-      {
-        label: 'Agence immobilière',
-        items: ['Qualité de l\'accueil', 'Réactivité', 'Compétence commerciale', 'Audit complet'],
-      },
-    ],
-    placeholder: 'Ex: Audit mystery shop — Restaurant Hassan',
-  },
+audit: {
+  icon: '🔎',
+  label: 'Audit & Mystery Shop',
+  subcategories: [
+    'Restaurant (Temps d\'attente, Propreté, Qualité du service)',
+    'Café (Accueil, Rapidité, Propreté)',
+    'Hôtel (Check-in, Service client, Propreté)',
+    'Salle de sport (Accueil commercial, État des équipements, Suivi coachs)',
+    'Concession automobile (Qualité vendeur, Temps de prise en charge, Suivi commercial)',
+    'Agence immobilière (Qualité accueil, Réactivité, Compétence commerciale)',
+  ],
+  groups: null,
+  placeholder: 'Ex: Audit mystery shop — Restaurant Hassan',
+},
+
+
   personnalisee: {
     icon: '🎯',
     label: 'Personnalisée',
@@ -94,7 +79,20 @@ function SubcategorySelector({ type, value, onChange }) {
   const cat = CATEGORIES[type]
   if (!cat) return null
 
-  // Catégorie avec groupes (file_attente, audit)
+  if (cat.subcategories) {
+    return (
+      <div>
+        <label className="label">Sous-catégorie {type === 'file_attente' || type === 'audit' ? '*' : ''}</label>
+        <select className="input" value={value} onChange={(e) => onChange(e.target.value)}>
+          <option value="">Sélectionnez...</option>
+          {cat.subcategories.map((s) => (
+            <option key={s} value={s}>{s}</option>
+          ))}
+        </select>
+      </div>
+    )
+  }
+
   if (cat.groups) {
     return (
       <div>
@@ -109,21 +107,6 @@ function SubcategorySelector({ type, value, onChange }) {
                 </option>
               ))}
             </optgroup>
-          ))}
-        </select>
-      </div>
-    )
-  }
-
-  // Catégorie avec liste simple
-  if (cat.subcategories) {
-    return (
-      <div>
-        <label className="label">Sous-catégorie</label>
-        <select className="input" value={value} onChange={(e) => onChange(e.target.value)}>
-          <option value="">Sélectionnez...</option>
-          {cat.subcategories.map((s) => (
-            <option key={s} value={s}>{s}</option>
           ))}
         </select>
       </div>
