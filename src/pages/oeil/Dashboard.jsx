@@ -42,15 +42,17 @@ export default function OeilDashboard() {
 
   useEffect(() => { load() }, [])
 
-  const accept = async (id) => {
-    try {
-      await missionsAPI.accept(id)
-      toast('Mission acceptée ! 🎉', 'success')
-      load()
-    } catch (err) {
-      toast(err.response?.data?.error || 'Erreur', 'error')
-    }
+  const interest = async (id) => {
+  try {
+    await missionsAPI.interest(id)
+    setPending(prev => prev.map(m => m.id === id ? { ...m, interested: true } : m))
+    toast('Intérêt exprimé 👁️ Le client va vous contacter.', 'success')
+  } catch (err) {
+    toast(err.response?.data?.error || 'Erreur', 'error')
   }
+}
+
+
 
   const advance = async (mission) => {
     const next = { assigned:'en_route', en_route:'active', active:'completed' }[mission.status]
@@ -137,14 +139,18 @@ export default function OeilDashboard() {
                     {parseFloat(m.price).toFixed(0)} MAD
                   </div>
                 </div>
+                
                 <div className="flex gap-2">
-                  <button onClick={() => accept(m.id)} className="btn btn-primary btn-sm flex-1 justify-center">
-                    Accepter
+                  <button
+                    onClick={() => interest(m.id)}
+                    disabled={m.interested}
+                    className="btn btn-primary btn-sm flex-1 justify-center disabled:opacity-50"
+                  >
+                    {m.interested ? '👁️ Intérêt exprimé' : '👁️ Je suis intéressé'}
                   </button>
-                  <button onClick={() => setChatMission(m)} className="btn btn-ghost btn-sm">
-                    Détail
-                  </button>
-                </div>
+                </div> 
+
+
               </div>
             ))}
           </div>
