@@ -143,10 +143,10 @@ export default function OeilDashboard() {
                 <div className="flex gap-2">
                   <button
                     onClick={() => interest(m.id)}
-                    disabled={m.interested}
+                    disabled={m.interested || m.has_interested}
                     className="btn btn-primary btn-sm flex-1 justify-center disabled:opacity-50"
                   >
-                    {m.interested ? '👁️ Intérêt exprimé' : '👁️ Je suis intéressé'}
+                    {(m.interested || m.has_interested) ? '✅ Demande envoyée' : '👁️ Je suis intéressé'}
                   </button>
                 </div> 
 
