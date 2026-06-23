@@ -15,6 +15,7 @@ export const missionsAPI = {
   get:      (id)     => api.get(`/api/missions/${id}`),
   create:   (data)   => api.post('/api/missions', data),
   accept:   (id)     => api.post(`/api/missions/${id}/accept`),
+  interest: (id)         => api.post(`/missions/${id}/interest`),
   refuse:   (id)     => api.post(`/api/missions/${id}/refuse`),
   status:   (id, data) => api.post(`/api/missions/${id}/status`, data),
   location: (id, data) => api.post(`/api/missions/${id}/location`, data),

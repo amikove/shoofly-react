@@ -64,17 +64,18 @@ export default function OeilMissions() {
     }
   }
 
-  const accept = async (id) => {
-    try {
-      await missionsAPI.accept(id)
-      setMissions((prev) => prev.filter((m) => m.id !== id))
-      toast('Mission acceptée ! 🎉 Elle est dans "En cours".', 'success')
-      // Refresh l'onglet active en arrière-plan
-      missionsAPI.list({ mode: 'mine' })
-    } catch (err) {
-      toast(err.response?.data?.error || 'Erreur', 'error')
-    }
+  
+  const interest = async (id) => {
+  try {
+    await missionsAPI.interest(id)
+    setMissions((prev) => prev.map((m) => m.id === id ? { ...m, interested: true } : m))
+    toast('Intérêt exprimé 👁️ Le client va vous contacter.', 'success')
+  } catch (err) {
+    toast(err.response?.data?.error || 'Erreur', 'error')
   }
+}
+
+
 
   // Bug 3 fix : respecter les transitions assigned → en_route → active → completed
   const advance = async (mission) => {
@@ -183,11 +184,15 @@ export default function OeilMissions() {
 
                 <div className="flex gap-2 mt-4 pt-3 border-t border-white/10">
                   {tab === 'available' && (
-                    <>
-                      <button onClick={() => accept(m.id)} className="btn btn-primary btn-sm flex-1 justify-center">✓ Accepter</button>
-                      <button onClick={() => refuse(m.id)} className="btn btn-ghost btn-sm">✕ Refuser</button>
-                    </>
+                    <button
+                      onClick={() => interest(m.id)}
+                      disabled={m.interested}
+                      className="btn btn-primary btn-sm flex-1 justify-center disabled:opacity-50"
+                    >
+                      {m.interested ? '👁️ Intérêt exprimé' : '👁️ Je suis intéressé'}
+                    </button>
                   )}
+                  
                 {tab === 'active' && (
   <>
     <button onClick={() => setChatMission(m)} className="btn btn-ghost btn-sm">💬 Chat</button>
