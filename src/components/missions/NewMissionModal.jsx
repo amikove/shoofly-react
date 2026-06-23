@@ -1,22 +1,152 @@
 import { useState } from 'react'
 import { missionsAPI } from '../../api'
 import { toast } from '../ui'
+import { useAuth } from '../../context/AuthContext'
 
-const TYPES = [
-  { id: 'immobilier',    icon: '🏠', label: 'Immobilier'     },
-  { id: 'file_attente',  icon: '⏳', label: "File d'attente"  },
-  { id: 'audit',         icon: '🔎', label: 'Audit'           },
-  { id: 'personnalisee', icon: '🎯', label: 'Personnalisée'   },
-]
+// ── Catégories et sous-catégories ─────────────────────────
+const CATEGORIES = {
+  immobilier: {
+    icon: '🏠',
+    label: 'Immobilier',
+    subcategories: [
+      'Airbnb', 'Booking', 'Avito', 'Mubawab',
+      'Agence immobilière', 'Particulier', 'Autre',
+    ],
+    placeholder: 'Ex: Visite appartement Agdal — Airbnb',
+  },
+  file_attente: {
+    icon: '⏳',
+    label: "File d'attente",
+    subcategories: null, // groupes avec sous-groupes
+    groups: [
+      {
+        label: 'Centres de santé',
+        items: ['Hôpital & clinique', 'Cabinet de spécialiste', 'Laboratoire', 'Autre'],
+      },
+      {
+        label: 'Administrations',
+        items: ['CNSS', 'ANCFCC', 'Services d\'état civil', 'Autre'],
+      },
+      {
+        label: 'Services publics',
+        items: ['ONEE', 'REDAL', 'RADEEMA', 'Autre'],
+      },
+      {
+        label: 'Consulats et visas',
+        items: ['Consulat étranger', 'Centre de visas', 'Autre'],
+      },
+      {
+        label: 'Banques',
+        items: ['Attijariwafa', 'CIH Bank', 'Banque Populaire', 'BMCE', 'BMCI', 'Al Barid Bank', 'Autre'],
+      },
+      {
+        label: 'Éducation',
+        items: ['Inscription universitaire', 'École privée', 'Bourse & dossier étudiant', 'Autre'],
+      },
+      {
+        label: 'Autre',
+        items: ['À préciser'],
+      },
+    ],
+    placeholder: 'Ex: File CNSS — Dépôt dossier retraite',
+  },
+  audit: {
+    icon: '🔎',
+    label: 'Audit & Mystery Shop',
+    groups: [
+      {
+        label: 'Restaurant',
+        items: ['Temps d\'attente', 'Propreté', 'Qualité du service', 'Audit complet'],
+      },
+      {
+        label: 'Café',
+        items: ['Accueil', 'Rapidité', 'Propreté', 'Audit complet'],
+      },
+      {
+        label: 'Hôtel',
+        items: ['Check-in', 'Service client', 'Propreté', 'Audit complet'],
+      },
+      {
+        label: 'Salle de sport',
+        items: ['Accueil commercial', 'État des équipements', 'Suivi et réactivité coachs', 'Audit complet'],
+      },
+      {
+        label: 'Concession automobile',
+        items: ['Qualité du vendeur', 'Temps de prise en charge', 'Suivi commercial', 'Audit complet'],
+      },
+      {
+        label: 'Agence immobilière',
+        items: ['Qualité de l\'accueil', 'Réactivité', 'Compétence commerciale', 'Audit complet'],
+      },
+    ],
+    placeholder: 'Ex: Audit mystery shop — Restaurant Hassan',
+  },
+  personnalisee: {
+    icon: '🎯',
+    label: 'Personnalisée',
+    subcategories: ['Présence physique', 'Accompagnement', 'Vérification', 'Livraison', 'Autre'],
+    placeholder: 'Décrivez en une phrase votre besoin',
+  },
+}
 
+// ── Composant sélecteur de sous-catégorie ──────────────────
+function SubcategorySelector({ type, value, onChange }) {
+  const cat = CATEGORIES[type]
+  if (!cat) return null
+
+  // Catégorie avec groupes (file_attente, audit)
+  if (cat.groups) {
+    return (
+      <div>
+        <label className="label">Sous-catégorie *</label>
+        <select className="input" value={value} onChange={(e) => onChange(e.target.value)} required>
+          <option value="">Sélectionnez...</option>
+          {cat.groups.map((g) => (
+            <optgroup key={g.label} label={g.label}>
+              {g.items.map((item) => (
+                <option key={item} value={`${g.label} — ${item}`}>
+                  {item}
+                </option>
+              ))}
+            </optgroup>
+          ))}
+        </select>
+      </div>
+    )
+  }
+
+  // Catégorie avec liste simple
+  if (cat.subcategories) {
+    return (
+      <div>
+        <label className="label">Sous-catégorie</label>
+        <select className="input" value={value} onChange={(e) => onChange(e.target.value)}>
+          <option value="">Sélectionnez...</option>
+          {cat.subcategories.map((s) => (
+            <option key={s} value={s}>{s}</option>
+          ))}
+        </select>
+      </div>
+    )
+  }
+
+  return null
+}
+
+// ── Modal principale ───────────────────────────────────────
 export default function NewMissionModal({ open, onClose, onCreated, preselectedOeil }) {
-  const [type, setType]     = useState('immobilier')
-  const [loading, setLoading] = useState(false)
-  const [form, setForm]     = useState({
+  const { user } = useAuth()
+  const [type, setType]           = useState('immobilier')
+  const [subcategory, setSub]     = useState('')
+  const [loading, setLoading]     = useState(false)
+  const [form, setForm]           = useState({
     title: '', address: '', city: '', price: '', description: ''
   })
 
   const set = (k) => (e) => setForm((f) => ({ ...f, [k]: e.target.value }))
+
+  // Reset sous-catégorie quand le type change
+  const changeType = (t) => { setType(t); setSub('') }
 
   const submit = async (e) => {
     e.preventDefault()
@@ -24,11 +154,17 @@ export default function NewMissionModal({ open, onClose, onCreated, preselectedO
       toast('Titre, adresse et budget sont requis', 'error')
       return
     }
+    // File d'attente et audit nécessitent une sous-catégorie
+    if ((type === 'file_attente' || type === 'audit') && !subcategory) {
+      toast('Veuillez sélectionner une sous-catégorie', 'error')
+      return
+    }
 
     setLoading(true)
     try {
       const payload = {
         type,
+        subcategory:  subcategory || null,
         title:        form.title,
         address:      form.address,
         city:         form.city || form.address.split(',').pop().trim(),
@@ -36,17 +172,14 @@ export default function NewMissionModal({ open, onClose, onCreated, preselectedO
         description:  form.description,
         scheduled_at: new Date(Date.now() + 3600000).toISOString(),
       }
-
-      // Modèle B — Attribution directe si Œil pré-sélectionné
-      if (preselectedOeil?.id) {
-        payload.oeil_id = preselectedOeil.id
-      }
+      if (preselectedOeil?.id) payload.oeil_id = preselectedOeil.id
 
       const { data } = await missionsAPI.create(payload)
       onCreated?.(data.mission)
       onClose()
       setForm({ title: '', address: '', city: '', price: '', description: '' })
       setType('immobilier')
+      setSub('')
     } catch (err) {
       toast(err.response?.data?.error || 'Erreur lors de la création', 'error')
     } finally {
@@ -55,6 +188,8 @@ export default function NewMissionModal({ open, onClose, onCreated, preselectedO
   }
 
   if (!open) return null
+
+  const cat = CATEGORIES[type]
 
   return (
     <div
@@ -88,50 +223,51 @@ export default function NewMissionModal({ open, onClose, onCreated, preselectedO
                 👁️ {preselectedOeil.first_name} {preselectedOeil.last_name}
               </div>
               <div className="text-xs text-[#AAA]">
-                Mission assignée directement • {preselectedOeil.city}
+                Attribution directe • {preselectedOeil.city}
               </div>
             </div>
-            <span className="ml-auto badge badge-orange text-[10px]">Attribution directe</span>
+            <span className="ml-auto badge badge-orange text-[10px]">Direct</span>
           </div>
         )}
 
-        {/* Type selector */}
+        {/* Sélecteur de type */}
         <div className="grid grid-cols-4 gap-2 mb-5">
-          {TYPES.map((t) => (
+          {Object.entries(CATEGORIES).map(([id, c]) => (
             <button
-              key={t.id}
+              key={id}
               type="button"
-              onClick={() => setType(t.id)}
+              onClick={() => changeType(id)}
               className={`flex flex-col items-center gap-1 py-3 rounded-xl border text-xs font-medium transition-all ${
-                type === t.id
+                type === id
                   ? 'border-[#FF4D00] bg-[#FF4D00]/10 text-white'
                   : 'border-white/12 bg-[#222] text-[#AAA] hover:border-white/22'
               }`}
             >
-              <span className="text-xl">{t.icon}</span>
-              <span>{t.label}</span>
+              <span className="text-xl">{c.icon}</span>
+              <span className="text-center leading-tight">{c.label}</span>
             </button>
           ))}
         </div>
 
-        {/* Form */}
+        {/* Formulaire */}
         <form onSubmit={submit} className="space-y-3">
+
+          {/* Sous-catégorie */}
+          <SubcategorySelector type={type} value={subcategory} onChange={setSub} />
+
+          {/* Titre */}
           <div>
             <label className="label">Titre de la mission *</label>
             <input
               className="input"
               value={form.title}
               onChange={set('title')}
-              placeholder={
-                type === 'immobilier'   ? 'Ex: Visite appartement Agdal' :
-                type === 'file_attente' ? 'Ex: File CNSS Hay Riad' :
-                type === 'audit'        ? 'Ex: Audit café Hassan' :
-                'Décrivez en une phrase votre besoin'
-              }
+              placeholder={cat?.placeholder || 'Décrivez votre mission'}
               required
             />
           </div>
 
+          {/* Adresse */}
           <div>
             <label className="label">Adresse complète *</label>
             <input
@@ -143,21 +279,23 @@ export default function NewMissionModal({ open, onClose, onCreated, preselectedO
             />
           </div>
 
+          {/* Description */}
           <div>
-            <label className="label">Description</label>
+            <label className="label">Instructions particulières</label>
             <textarea
               className="input resize-none h-20"
               value={form.description}
               onChange={set('description')}
               placeholder={
                 type === 'immobilier'   ? 'Ex: Vérifier cuisine, salle de bain, pression eau...' :
-                type === 'file_attente' ? 'Ex: Dépôt dossier retraite, guichet 3...' :
-                type === 'audit'        ? 'Ex: Accueil, propreté, temps de service...' :
-                'Instructions particulières...'
+                type === 'file_attente' ? 'Ex: Guichet 3, dépôt dossier retraite, numéro de rendez-vous...' :
+                type === 'audit'        ? 'Ex: Grille d\'évaluation spécifique, critères prioritaires...' :
+                'Décrivez précisément ce que vous attendez...'
               }
             />
           </div>
 
+          {/* Budget */}
           <div>
             <label className="label">Budget (MAD) *</label>
             <input
@@ -173,8 +311,12 @@ export default function NewMissionModal({ open, onClose, onCreated, preselectedO
               min="50"
               required
             />
+            <p className="text-[11px] text-[#AAA] mt-1">
+              L'Œil recevra {form.price ? Math.round(parseFloat(form.price) * 0.8) : '—'} MAD (80%)
+            </p>
           </div>
 
+          {/* Actions */}
           <div className="flex gap-3 pt-2">
             <button
               type="submit"
