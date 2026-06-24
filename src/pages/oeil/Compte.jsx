@@ -56,7 +56,6 @@ export default function OeilCompte() {
             </div>
             <div className="mt-3"><label className="label">Email</label><input className="input" value={user?.email || ''} disabled /></div>
             <div className="mt-3"><label className="label">Téléphone</label><input className="input" value={form.phone} onChange={set('phone')} /></div>
-            <div className="mt-3"><label className="label">Zone de couverture</label><input className="input" value={form.zone} onChange={set('zone')} placeholder="Ex: Rabat, Agdal" /></div>
             <div className="mt-3"><label className="label">Bio</label><textarea className="input resize-none h-20" value={form.bio} onChange={set('bio')} placeholder="Décrivez votre expérience..." /></div>
             <button onClick={save} disabled={saving} className="btn btn-primary mt-5 disabled:opacity-60">
               {saving ? 'Sauvegarde...' : 'Enregistrer'}
