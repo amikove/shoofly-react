@@ -238,7 +238,7 @@ useEffect(() => {
           <EmptyState icon="📋" title="Aucune mission trouvée" description="Créez votre première mission."
             action={<button onClick={() => setShowNew(true)} className="btn btn-primary">+ Nouvelle mission</button>} />
         ) : (
-          
+          <>
           {/* Desktop: tableau */}
 <div className="hidden md:block card p-0">
   <div className="table-wrap">
