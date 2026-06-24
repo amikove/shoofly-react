@@ -78,8 +78,10 @@ export default function Register() {
   const [loading, setLoading] = useState(false)
   const [error, setError]   = useState('')
 
-  const [form, setForm] = useState({
-  first_name:'', last_name:'', email:'', phone:'', city:'', quartier:'', password:'', confirm:'', zone:'', bio:''
+const [form, setForm] = useState({
+  first_name:'', last_name:'', email:'', phone:'', city:'', quartier:'', password:'', confirm:'', zone:'', bio:'',
+  birth_date:'', profil:'', usage_reason:'', usage_frequency:'', villes_cibles:'',
+  situation:'', disponibilite:'', motivation:''
 })
 
   const set = (k) => (e) => setForm((f) => ({ ...f, [k]: e.target.value }))
@@ -196,13 +198,66 @@ export default function Register() {
           {/* Step 3: Confirm */}
           {step === 3 && (
             <div>
-              {role === 'oeil' && (
-                <div className="mb-4">
-                  <div className="mb-3"><label className="label">Zone de couverture</label><input className="input" value={form.zone} onChange={set('zone')} placeholder="Ex: Rabat, Agdal, Hay Riad" /></div>
-                  <div><label className="label">Bio</label><textarea className="input resize-none h-20" value={form.bio} onChange={set('bio')} placeholder="Décrivez votre expérience..." /></div>
-                  <div className="mt-3 p-3 bg-yellow-500/10 border border-yellow-500/20 rounded-lg text-xs text-yellow-400">⚠️ Votre profil Œil sera vérifié sous 24h.</div>
-                </div>
-              )}
+              {role === 'oeil' ? (
+                  <div className="mb-4 space-y-3">
+                    <div>
+                      <label className="label">Votre situation actuelle *</label>
+                      <select className="input" value={form.situation} onChange={set('situation')} required>
+                        <option value="">Sélectionnez...</option>
+                        {['Étudiant','Salarié','Freelance','Auto-entrepreneur','En recherche d\'emploi','Retraité','Autre'].map(o => <option key={o}>{o}</option>)}
+                      </select>
+                    </div>
+                    <div>
+                      <label className="label">Disponibilité</label>
+                      <select className="input" value={form.disponibilite} onChange={set('disponibilite')}>
+                        <option value="">Sélectionnez...</option>
+                        {['En semaine','Soirs','Week-ends','Temps plein'].map(o => <option key={o}>{o}</option>)}
+                      </select>
+                    </div>
+                    <div>
+                      <label className="label">Motivation principale</label>
+                      <select className="input" value={form.motivation} onChange={set('motivation')}>
+                        <option value="">Sélectionnez...</option>
+                        {['Revenu complémentaire','Revenu principal','Expérience professionnelle','Flexibilité','Autre'].map(o => <option key={o}>{o}</option>)}
+                      </select>
+                    </div>
+                    <div>
+                      <label className="label">Date de naissance *</label>
+                      <input type="date" className="input" value={form.birth_date} onChange={set('birth_date')} required />
+                    </div>
+                    <div><label className="label">Bio</label><textarea className="input resize-none h-20" value={form.bio} onChange={set('bio')} placeholder="Décrivez votre expérience..." /></div>
+                    <div className="mt-3 p-3 bg-yellow-500/10 border border-yellow-500/20 rounded-lg text-xs text-yellow-400">⚠️ Votre profil Œil sera vérifié sous 24h.</div>
+                  </div>
+                ) : (
+                  <div className="mb-4 space-y-3">
+                    <div>
+                      <label className="label">Quel profil vous correspond le mieux ?</label>
+                      <select className="input" value={form.profil} onChange={set('profil')}>
+                        <option value="">Sélectionnez...</option>
+                        {['Particulier','Entrepreneur / Chef d\'entreprise','Professionnel / Salarié','Expatrié / Non-résident (MRE)','Étudiant','Investisseur immobilier','Profession libérale (avocat, médecin, architecte...)','Autre'].map(o => <option key={o}>{o}</option>)}
+                      </select>
+                    </div>
+                    <div>
+                      <label className="label">Pourquoi utilisez-vous Shoofly ?</label>
+                      <select className="input" value={form.usage_reason} onChange={set('usage_reason')}>
+                        <option value="">Sélectionnez...</option>
+                        {['Gagner du temps','Éviter un déplacement','Vérifier avant un achat','Gérer une démarche administrative','Superviser une activité à distance','Autre'].map(o => <option key={o}>{o}</option>)}
+                      </select>
+                    </div>
+                    <div>
+                      <label className="label">Fréquence estimée</label>
+                      <select className="input" value={form.usage_frequency} onChange={set('usage_frequency')}>
+                        <option value="">Sélectionnez...</option>
+                        {['Une seule fois','Quelques fois par an','Une fois par mois','Plusieurs fois par mois','Chaque semaine'].map(o => <option key={o}>{o}</option>)}
+                      </select>
+                    </div>
+                    <div>
+                      <label className="label">Date de naissance</label>
+                      <input type="date" className="input" value={form.birth_date} onChange={set('birth_date')} />
+                    </div>
+                  </div>
+                )}
+              
               <div className="bg-[#222] rounded-xl p-4 mb-4 text-sm space-y-1 text-[#AAA]">
                 <div className="text-white font-semibold mb-2">Récapitulatif</div>
                 <div>Rôle : <span className="text-white">{role === 'client' ? '👤 Client' : '👁️ Œil'}</span></div>
