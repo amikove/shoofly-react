@@ -170,15 +170,23 @@ export default function ClientMissions() {
   const [typeFilter, setType]             = useState('')
 
   // Ouvrir le chat depuis une notification
+
+  
   useEffect(() => {
-    if (window.__notifChatMissionId) {
-      const id = window.__notifChatMissionId
-      window.__notifChatMissionId = null
-      missionsAPI.get(id)
-        .then(({ data }) => setChatMission(data.mission || data))
-        .catch(() => {})
-    }
-  })
+      const handler = (e) => {
+        const id = e.detail?.missionId || window.__notifChatMissionId
+        if (id) {
+          window.__notifChatMissionId = null
+          missionsAPI.get(id)
+            .then(({ data }) => setChatMission(data.mission || data))
+            .catch(() => {})
+        }
+      }
+      window.addEventListener('open-chat-from-notif', handler)
+      // Vérifier aussi au montage
+      if (window.__notifChatMissionId) handler({ detail: null })
+      return () => window.removeEventListener('open-chat-from-notif', handler)
+    }, [])
 
   const load = useCallback(() => {
     setLoading(true)

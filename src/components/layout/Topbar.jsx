@@ -40,14 +40,21 @@ export default function Topbar({ title, actions }) {
     setNotifs((n) => n.map((x) => ({ ...x, is_read: true })))
   }
 
-  const handleClick = (n) => {
-    if (n.mission_id) {
-      window.__notifChatMissionId = n.mission_id
-      const route = user?.role === 'oeil' ? '/oeil/missions' : '/client/missions'
+const handleClick = (n) => {
+  if (n.mission_id) {
+    window.__notifChatMissionId = n.mission_id
+    setShowNotifs(false)
+    const route = user?.role === 'oeil' ? '/oeil/missions' : '/client/missions'
+    if (window.location.pathname === route) {
+      // Déjà sur la page — forcer l'ouverture du chat directement
+      window.dispatchEvent(new CustomEvent('open-chat-from-notif', { detail: { missionId: n.mission_id } }))
+    } else {
       navigate(route)
-      setShowNotifs(false)
     }
   }
+}
+  
+
 
   return (
     <header className="h-[54px] bg-[#181818] border-b border-white/20 flex items-center justify-between px-6 sticky top-0 z-40 shadow-[0_2px_8px_rgba(0,0,0,0.3)]">
