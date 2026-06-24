@@ -1,16 +1,18 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { usersAPI } from '../../api'
 import { useAuth } from '../../context/AuthContext'
+import { useSocket } from '../../context/SocketContext'
 
 export default function Topbar({ title, actions }) {
-  const { user } = useAuth()
-  const navigate = useNavigate()
-  const [notifs, setNotifs]   = useState([])
-  const [unread, setUnread]   = useState(0)
+  const { user }    = useAuth()
+  const navigate    = useNavigate()
+  const { onEvent } = useSocket() || {}
+  const [notifs, setNotifs]       = useState([])
+  const [unread, setUnread]       = useState(0)
   const [showNotifs, setShowNotifs] = useState(false)
 
-  useEffect(() => {
+  const loadNotifs = useCallback(() => {
     usersAPI.notifications()
       .then(({ data }) => {
         setNotifs(data.notifications || [])
@@ -19,10 +21,32 @@ export default function Topbar({ title, actions }) {
       .catch(() => {})
   }, [])
 
+  // Chargement initial
+  useEffect(() => { loadNotifs() }, [loadNotifs])
+
+  // Mise à jour temps réel via Socket.io
+  useEffect(() => {
+    if (!onEvent) return
+    const unsub = onEvent('notification', (notif) => {
+      setNotifs((prev) => [{ ...notif, is_read: false, created_at: new Date().toISOString() }, ...prev])
+      setUnread((prev) => prev + 1)
+    })
+    return () => unsub?.()
+  }, [onEvent])
+
   const markAll = async () => {
     await usersAPI.markRead({})
     setUnread(0)
     setNotifs((n) => n.map((x) => ({ ...x, is_read: true })))
+  }
+
+  const handleClick = (n) => {
+    if (n.mission_id) {
+      window.__notifChatMissionId = n.mission_id
+      const route = user?.role === 'oeil' ? '/oeil/missions' : '/client/missions'
+      navigate(route)
+      setShowNotifs(false)
+    }
   }
 
   return (
@@ -60,12 +84,23 @@ export default function Topbar({ title, actions }) {
               <div className="max-h-[300px] overflow-y-auto">
                 {!notifs.length ? (
                   <div className="py-8 text-center text-xs text-[#AAA]">Aucune notification</div>
-                ) : notifs.slice(0, 10).map((n) => (
-                  <div key={n.id} className={`flex gap-2.5 px-4 py-3 border-b border-white/10 ${!n.is_read ? 'bg-[#FF4D00]/3' : ''}`}>
-                    <span className="text-base flex-shrink-0">{n.type === 'mission' ? '📋' : n.type === 'media' ? '📸' : 'ℹ️'}</span>
+                ) : notifs.slice(0, 10).map((n, i) => (
+                  <div
+                    key={n.id || i}
+                    onClick={() => handleClick(n)}
+                    className={`flex gap-2.5 px-4 py-3 border-b border-white/10 transition-colors ${
+                      n.mission_id ? 'cursor-pointer hover:bg-[#FF4D00]/5' : ''
+                    } ${!n.is_read ? 'bg-[#FF4D00]/3' : ''}`}
+                  >
+                    <span className="text-base flex-shrink-0">
+                      {n.type === 'mission' ? '📋' : n.type === 'media' ? '📸' : n.type === 'message' ? '💬' : 'ℹ️'}
+                    </span>
                     <div className="flex-1 min-w-0">
                       <div className="text-xs font-medium">{n.title}</div>
                       <div className="text-[11px] text-[#AAA] leading-relaxed">{n.body}</div>
+                      {n.mission_id && (
+                        <div className="text-[10px] text-[#FF4D00] mt-0.5">Cliquer pour ouvrir →</div>
+                      )}
                     </div>
                     {!n.is_read && <div className="w-1.5 h-1.5 rounded-full bg-[#FF4D00] flex-shrink-0 mt-1" />}
                   </div>
@@ -75,7 +110,6 @@ export default function Topbar({ title, actions }) {
           )}
         </div>
 
-        {/* Actions custom */}
         {actions}
       </div>
     </header>
