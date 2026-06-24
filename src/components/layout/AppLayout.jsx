@@ -38,10 +38,12 @@ export default function AppLayout({ children }) {
   const navigate               = useNavigate()
   const [isAvail, setIsAvail] = useState(true)
 
+
   useNotifications({ onChatOpen: (missionId) => {
-    window.__notifChatMissionId = missionId
-    navigate('/client/missions')
-  }})
+  window.__notifChatMissionId = missionId
+  const route = user?.role === 'oeil' ? '/oeil/missions' : '/client/missions'
+  navigate(route)
+}})
 
   const role  = user?.role || 'client'
   const items = MENUS[role] || []

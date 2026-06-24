@@ -29,11 +29,15 @@ export function sendPushNotification(title, body, options = {}) {
   })
 
   // Clic sur la notification → focus sur l'onglet
-  notification.onclick = () => {
-    window.focus()
-    if (options.url) window.location.href = options.url
-    notification.close()
+ notification.onclick = () => {
+  window.focus()
+  if (window.__notifChatMissionId) {
+    window.location.href = options.url || '/client/missions'
+  } else if (options.url) {
+    window.location.href = options.url
   }
+  notification.close()
+}
 
   // Fermer automatiquement après 5 secondes
   setTimeout(() => notification.close(), 5000)
@@ -74,6 +78,24 @@ export function useNotifications({ onChatOpen } = {}) {
     body,
     { tag: `message-${msg.mission_id}`, url: '/client/missions' }
   )
+})
+
+// Écouter les notifications directes (message reçu hors chat ouvert)
+const unsubNotif = onEvent('notification', (notif) => {
+  
+  if (notif.type === 'message' || notif.title === 'Nouveau message' || notif.title === '📸 Médias reçus') {
+    toast(`💬 ${notif.body}`, 'info')
+
+    sendPushNotification(
+      notif.title || 'Nouveau message',
+      notif.body || '',
+      { tag: `notif-${notif.missionId}`, url: '/client/missions' }
+    )
+
+    if (notif.missionId) {
+      window.__notifChatMissionId = notif.missionId
+    }
+  }
 })
 
 
@@ -122,6 +144,7 @@ export function useNotifications({ onChatOpen } = {}) {
       unsubMission?.()
       unsubAccepted?.()
       unsubCompleted?.()
+      unsubNotif?.()
     }
   }, [onEvent, user])
 }

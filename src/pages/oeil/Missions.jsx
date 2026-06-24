@@ -34,7 +34,7 @@ export default function OeilMissions() {
     } else {
       params = { mode: 'mine', status: 'completed' }
     }
-    missionsAPI.list(params)
+    return missionsAPI.list(params)
       .then(({ data }) => {
         let ms = data.missions || []
         // Filtrer côté front selon l'onglet
@@ -51,7 +51,18 @@ export default function OeilMissions() {
       .finally(() => setLoading(false))
   }, [])
 
-  useEffect(() => { load(tab) }, [tab, load])
+  useEffect(() => {
+  load(tab).then(() => {
+    if (tab === 'active' && window.__notifChatMissionId) {
+      const id = window.__notifChatMissionId
+      window.__notifChatMissionId = null
+      missionsAPI.get(id)
+        .then(({ data }) => setChatMission(data.mission || data))
+        .catch(() => {})
+    }
+  })
+}, [tab, load])
+
 
   // Bug 1 fix : après refus, retirer la mission du fil localement
   const refuse = async (id) => {
