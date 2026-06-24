@@ -14,7 +14,7 @@ export function SocketProvider({ children }) {
 
     socketRef.current = io(import.meta.env.VITE_API_URL || 'http://localhost:3001', {
       auth: { token },
-      transports: ['websocket'],
+    transports: ['websocket', 'polling'],
     })
 
     socketRef.current.on('connect', () => {
