@@ -56,17 +56,20 @@ export function useNotifications({ onChatOpen } = {}) {
   }, [user])
 
   // Écouter les nouveaux messages via Socket.io
+
   useEffect(() => {
-    if (!onEvent || !user) return
-    console.log('🔔 useNotifications actif pour:', user.id)
+        if (!onEvent || !user) return
 
-const unsubAll = onEvent('*', (data) => {
-  console.log('📡 Socket event reçu:', data)
-})
+        console.log('🔔 useNotifications monté pour:', user.email)
 
-    // Nouveau message reçu
+        const unsubDebug = onEvent('notification', (data) => {
+          console.log('📡 notification reçue:', data)
+        })
 
-    const unsubMessage = onEvent('new_message', (msg) => {
+        // Nouveau message reçu
+        const unsubMessage = onEvent('new_message', (msg) => {
+
+
   if (msg.sender_id === user.id) return
 
   const senderName = msg.sender_name || (user.role === 'client' ? 'Votre Œil' : 'Votre client')
@@ -144,13 +147,14 @@ const unsubNotif = onEvent('notification', (notif) => {
       )
     })
 
-    return () => {
-      unsubMessage?.()
-      unsubMission?.()
-      unsubAccepted?.()
-      unsubCompleted?.()
-      unsubNotif?.()
-      unsubAll?.()
-    }
+   return () => {
+
+    unsubDebug?.()
+    unsubMessage?.()
+    unsubMission?.()
+    unsubAccepted?.()
+    unsubCompleted?.()
+    unsubNotif?.()
+  }
   }, [onEvent, user])
 }
