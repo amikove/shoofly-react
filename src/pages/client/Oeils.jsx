@@ -6,6 +6,73 @@ import { Spinner, EmptyState, Avatar, Stars, toast } from '../../components/ui'
 import NewMissionModal from '../../components/missions/NewMissionModal'
 import OeilProfileModal from '../../components/missions/OeilProfileModal'
 
+function AvisPopup({ oeil, onClose }) {
+  const [reviews, setReviews] = useState([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    if (!oeil?.id) return
+    usersAPI.oeil(oeil.id)
+      .then(({ data }) => setReviews(data.reviews || []))
+      .catch(() => setReviews([]))
+      .finally(() => setLoading(false))
+  }, [oeil?.id])
+
+  return (
+    <div className="fixed inset-0 bg-black/75 z-[60] flex items-center justify-center p-4 backdrop-blur-sm"
+         onClick={(e) => e.target === e.currentTarget && onClose()}>
+      <div className="bg-[#181818] border border-white/20 rounded-2xl p-5 w-full max-w-sm max-h-[80vh] flex flex-col shadow-[0_24px_60px_rgba(0,0,0,0.6)]">
+        
+        {/* Header */}
+        <div className="flex items-center justify-between mb-4 flex-shrink-0">
+          <div>
+            <div className="font-semibold text-sm">{oeil.first_name} {oeil.last_name}</div>
+            <div className="flex items-center gap-1.5 mt-0.5">
+              <Stars value={oeil.rating_avg || 0} />
+              <span className="text-xs text-yellow-400 font-semibold">{oeil.rating_avg || '—'}</span>
+              <span className="text-xs text-[#AAA]">({oeil.rating_count || 0} avis)</span>
+            </div>
+          </div>
+          <button onClick={onClose} className="text-[#AAA] hover:text-white text-lg">✕</button>
+        </div>
+
+        {/* Liste avis */}
+        <div className="flex-1 overflow-y-auto space-y-3 pr-1">
+          {loading ? (
+            <div className="flex justify-center py-8"><Spinner size="md" /></div>
+          ) : reviews.length === 0 ? (
+            <div className="text-center py-8 text-[#AAA]">
+              <div className="text-3xl mb-2 opacity-30">⭐</div>
+              <p className="text-sm">Aucun avis pour le moment</p>
+            </div>
+          ) : reviews.map((r, i) => (
+            <div key={i} className="bg-[#222] rounded-xl p-3">
+              <div className="flex items-center justify-between mb-1.5">
+                <div className="flex items-center gap-2">
+                  <Stars value={r.score} />
+                  <span className="text-xs font-semibold text-yellow-400">{r.score}/5</span>
+                </div>
+                <span className="text-[11px] text-[#555]">
+                  {new Date(r.created_at).toLocaleDateString('fr-FR', { day:'numeric', month:'short', year:'numeric' })}
+                </span>
+              </div>
+              {r.comment
+                ? <p className="text-xs text-white/70 leading-relaxed">"{r.comment}"</p>
+                : <p className="text-xs text-[#555] italic">Aucun commentaire</p>
+              }
+              <p className="text-[11px] text-[#AAA] mt-1.5">— {r.client_name}</p>
+            </div>
+          ))}
+        </div>
+
+        <button onClick={onClose} className="btn btn-ghost btn-sm mt-4 flex-shrink-0 w-full justify-center">
+          Fermer
+        </button>
+      </div>
+    </div>
+  )
+}
+
 export default function ClientOeils() {
   const [oeils, setOeils]               = useState([])
   const [loading, setLoading]           = useState(true)
@@ -14,6 +81,7 @@ export default function ClientOeils() {
   const [showNew, setShowNew]           = useState(false)
   const [selectedOeil, setSelectedOeil] = useState(null)
   const [profileOeil, setProfileOeil]   = useState(null)
+  const [avisOeil, setAvisOeil] = useState(null)
 
   useEffect(() => {
     setLoading(true)
@@ -106,10 +174,11 @@ export default function ClientOeils() {
                   >
                     {o.is_available ? 'Commander' : 'Indisponible'}
                   </button>
+
                   <button
-                    onClick={() => setProfileOeil(o)}
+                    onClick={() => setAvisOeil(o)}
                     className="btn btn-ghost btn-sm"
-                    title="Voir le profil et les avis"
+                    title="Voir les avis"
                   >
                     ★ Avis
                   </button>
@@ -148,6 +217,12 @@ export default function ClientOeils() {
           )
         }}
       />
+
+      {avisOeil && (
+  <AvisPopup oeil={avisOeil} onClose={() => setAvisOeil(null)} />
+)}
+
+
     </AppLayout>
   )
 }
