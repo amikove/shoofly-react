@@ -22,6 +22,8 @@ function InterestsModal({ mission, onClose, onHired }) {
       .finally(() => setLoading(false))
   }, [mission.id])
 
+  
+
   const hire = async (oeilId) => {
     setHiring(oeilId)
     try {
@@ -167,18 +169,8 @@ export default function ClientMissions() {
   const [statusFilter, setStatus]         = useState('')
   const [typeFilter, setType]             = useState('')
 
-
-const load = useCallback(() => {
-  setLoading(true)
-  return missionsAPI.list({ search, status: statusFilter, type: typeFilter })
-    .then(({ data }) => setMissions(data.missions || []))
-    .catch(() => toast('Erreur de chargement', 'error'))
-    .finally(() => setLoading(false))
-}, [search, statusFilter, typeFilter])
-
-
-useEffect(() => {
-  load().then(() => {
+  // Ouvrir le chat depuis une notification
+  useEffect(() => {
     if (window.__notifChatMissionId) {
       const id = window.__notifChatMissionId
       window.__notifChatMissionId = null
@@ -187,9 +179,21 @@ useEffect(() => {
         .catch(() => {})
     }
   })
-}, [load])
+
+  const load = useCallback(() => {
+    setLoading(true)
+    return missionsAPI.list({ search, status: statusFilter, type: typeFilter })
+      .then(({ data }) => setMissions(data.missions || []))
+      .catch(() => toast('Erreur de chargement', 'error'))
+      .finally(() => setLoading(false))
+  }, [search, statusFilter, typeFilter])
+
+  useEffect(() => {
+    load()
+  }, [load])
 
   const cancel = async (id) => {
+    
     if (!window.confirm('Confirmer l\'annulation ?')) return
     try {
       await missionsAPI.status(id, { status: 'cancelled' })

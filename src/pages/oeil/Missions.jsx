@@ -22,6 +22,19 @@ export default function OeilMissions() {
   const [error, setError]       = useState('')
   const [chatMission, setChatMission] = useState(null)
 
+// Ouvrir le chat depuis une notification
+useEffect(() => {
+  if (window.__notifChatMissionId) {
+    const id = window.__notifChatMissionId
+    window.__notifChatMissionId = null
+    missionsAPI.get(id)
+      .then(({ data }) => setChatMission(data.mission || data))
+      .catch(() => {})
+  }
+})
+
+
+
   const load = useCallback((t) => {
     setLoading(true)
     setError('')
