@@ -124,7 +124,7 @@ export default function OeilMissions() {
   return (
     <AppLayout>
       <Topbar title="Missions" />
-      <div className="p-6">
+      <div className="p-4 md:p-6">
         <div className="flex gap-1 bg-[#222] rounded-xl p-1 w-fit mb-6">
           {TABS.map((t) => (
             <button key={t.id} onClick={() => setTab(t.id)}

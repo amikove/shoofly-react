@@ -80,10 +80,10 @@ export default function OeilDashboard() {
   return (
     <AppLayout>
       <Topbar title="Tableau de bord" />
-      <div className="p-6 space-y-6">
+      <div className="p-4 md:p-6 space-y-4 md:space-y-6">
 
         {/* Stats */}
-        <div className="grid grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
           <div className="stat-card">
             <div className="text-xs text-[#AAA] mb-1">Missions complétées</div>
             <div className="text-2xl font-bold">{stats?.completed || 0}</div>
@@ -113,7 +113,7 @@ export default function OeilDashboard() {
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
 
           {/* Missions disponibles */}
           <div className="card">

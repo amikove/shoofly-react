@@ -238,73 +238,99 @@ useEffect(() => {
           <EmptyState icon="📋" title="Aucune mission trouvée" description="Créez votre première mission."
             action={<button onClick={() => setShowNew(true)} className="btn btn-primary">+ Nouvelle mission</button>} />
         ) : (
-          <div className="card p-0">
-            <div className="table-wrap">
-              <table>
-                <thead>
-                  <tr>
-                    <th>Mission</th><th>Type</th><th>Œil</th>
-                    <th>Date</th><th>Prix</th><th>Statut</th><th>Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {missions.map((m) => (
-                    <tr key={m.id}>
-                      <td>
-                        <div className="font-semibold">{m.title}</div>
-                        <div className="text-[11px] text-[#AAA]">#{String(m.id).slice(-6).toUpperCase()}</div>
-                      </td>
-                      <td className="text-lg">{TYPE_ICONS[m.type] || '📋'}</td>
-                      <td className="text-[#AAA]">{m.oeil_name || '—'}</td>
-                      <td className="text-[#AAA] text-xs">{new Date(m.created_at).toLocaleDateString('fr-MA')}</td>
-                      <td className="text-green-400 font-semibold">{parseFloat(m.price).toFixed(0)} MAD</td>
-                      <td><StatusBadge status={m.status} /></td>
-                      <td>
-                        <div className="flex gap-1 flex-wrap">
-                          {m.status === 'pending' && (
-                          <button
-                            onClick={(e) => { e.preventDefault(); e.stopPropagation(); setInterestsMission(m); }}
-                            className="btn btn-ghost btn-sm"
-                            title="Voir les Œils intéressés"
-                          >👁️</button>
-                        )}
-                          {['assigned','en_route','active'].includes(m.status) && (
-                            <button
-                              onClick={(e) => { e.preventDefault(); e.stopPropagation(); setChatMission(m); }}
-                              className="btn btn-ghost btn-sm"
-                              title="Chat avec l'Œil"
-                            >💬</button>
-                          )}
-                          {m.status === 'completed' && (
-                            <button
-                              onClick={(e) => { e.preventDefault(); e.stopPropagation(); setReportMission(m); }}
-                              className="btn btn-ghost btn-sm"
-                              title="Voir le rapport"
-                            >📄</button>
-                          )}
-                          {m.status === 'completed' && (
-                            <button
-                              onClick={(e) => { e.preventDefault(); e.stopPropagation(); setRatingMission(m); }}
-                              className="btn btn-ghost btn-sm"
-                              title="Noter l'Œil"
-                            >⭐</button>
-                          )}
-                          {['pending','assigned'].includes(m.status) && (
-                            <button
-                              onClick={(e) => { e.preventDefault(); e.stopPropagation(); cancel(m.id); }}
-                              className="btn btn-ghost btn-sm text-red-400"
-                            >Annuler</button>
-                          )}
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+          
+          {/* Desktop: tableau */}
+<div className="hidden md:block card p-0">
+  <div className="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Mission</th><th>Type</th><th>Œil</th>
+          <th>Date</th><th>Prix</th><th>Statut</th><th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {missions.map((m) => (
+          <tr key={m.id}>
+            <td>
+              <div className="font-semibold">{m.title}</div>
+              <div className="text-[11px] text-[#AAA]">#{String(m.id).slice(-6).toUpperCase()}</div>
+            </td>
+            <td className="text-lg">{TYPE_ICONS[m.type] || '📋'}</td>
+            <td className="text-[#AAA]">{m.oeil_name || '—'}</td>
+            <td className="text-[#AAA] text-xs">{new Date(m.created_at).toLocaleDateString('fr-MA')}</td>
+            <td className="text-green-400 font-semibold">{parseFloat(m.price).toFixed(0)} MAD</td>
+            <td><StatusBadge status={m.status} /></td>
+            <td>
+              <div className="flex gap-1 flex-wrap">
+                {m.status === 'pending' && (
+                  <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); setInterestsMission(m); }}
+                    className="btn btn-ghost btn-sm" title="Voir les Œils intéressés">👁️</button>
+                )}
+                {['assigned','en_route','active'].includes(m.status) && (
+                  <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); setChatMission(m); }}
+                    className="btn btn-ghost btn-sm" title="Chat avec l'Œil">💬</button>
+                )}
+                {m.status === 'completed' && (
+                  <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); setReportMission(m); }}
+                    className="btn btn-ghost btn-sm" title="Voir le rapport">📄</button>
+                )}
+                {m.status === 'completed' && (
+                  <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); setRatingMission(m); }}
+                    className="btn btn-ghost btn-sm" title="Noter l'Œil">⭐</button>
+                )}
+                {['pending','assigned'].includes(m.status) && (
+                  <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); cancel(m.id); }}
+                    className="btn btn-ghost btn-sm text-red-400">Annuler</button>
+                )}
+              </div>
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+{/* Mobile: cartes */}
+<div className="md:hidden space-y-3">
+  {missions.map((m) => (
+    <div key={m.id} className="card">
+      <div className="flex items-start justify-between gap-2 mb-3">
+        <div className="flex-1 min-w-0">
+          <div className="font-semibold text-sm truncate">{m.title}</div>
+          <div className="text-[11px] text-[#AAA] mt-0.5">
+            {TYPE_ICONS[m.type]} · {m.oeil_name || 'Non assigné'} · {new Date(m.created_at).toLocaleDateString('fr-MA')}
           </div>
+        </div>
+        <div className="flex-shrink-0 flex flex-col items-end gap-1">
+          <span className="text-green-400 font-bold text-sm">{parseFloat(m.price).toFixed(0)} MAD</span>
+          <StatusBadge status={m.status} />
+        </div>
+      </div>
+      <div className="flex gap-2 flex-wrap pt-2 border-t border-white/10">
+        {m.status === 'pending' && (
+          <button onClick={() => setInterestsMission(m)} className="btn btn-ghost btn-sm">👁️ Intéressés</button>
+        )}
+        {['assigned','en_route','active'].includes(m.status) && (
+          <button onClick={() => setChatMission(m)} className="btn btn-ghost btn-sm">💬 Chat</button>
+        )}
+        {m.status === 'completed' && (
+          <button onClick={() => setReportMission(m)} className="btn btn-ghost btn-sm">📄 Rapport</button>
+        )}
+        {m.status === 'completed' && (
+          <button onClick={() => setRatingMission(m)} className="btn btn-ghost btn-sm">⭐ Noter</button>
+        )}
+        {['pending','assigned'].includes(m.status) && (
+          <button onClick={() => cancel(m.id)} className="btn btn-ghost btn-sm text-red-400">Annuler</button>
         )}
       </div>
+    </div>
+  ))}
+</div>
+
+
+
 
       <NewMissionModal
         open={showNew}
