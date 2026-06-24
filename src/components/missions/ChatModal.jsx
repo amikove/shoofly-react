@@ -72,7 +72,7 @@ export default function ChatModal({ mission, onClose }) {
     setUploading(true)
     try {
       const formData = new FormData()
-      formData.append('file', file)
+      formData.append('files', file)
       formData.append('caption', file.name)
       const { data } = await mediaAPI.upload(mission.id, formData)
       toast('Fichier envoyé ✓', 'success')
@@ -83,7 +83,7 @@ export default function ChatModal({ mission, onClose }) {
         sender_id: user?.id,
         sender_role: user?.role,
         type: 'media',
-        media_url: data.url,
+        media_url: data.media?.[0]?.url,
         created_at: new Date().toISOString()
       }])
     } catch {
