@@ -17,13 +17,32 @@ export default function ChatModal({ mission, onClose }) {
   const fileRef                 = useRef(null)
 
   // Charger les messages existants
-  useEffect(() => {
-    if (!mission) return
-    setLoading(true)
-    missionsAPI.get(mission.id)
-      .then(({ data }) => setMessages(data.messages || []))
-      .catch(() => toast('Erreur chargement messages', 'error'))
-      .finally(() => setLoading(false))
+useEffect(() => {
+  if (!mission) return
+  setLoading(true)
+  Promise.all([
+    missionsAPI.get(mission.id),
+    mediaAPI.list(mission.id),
+  ])
+    .then(([msgRes, mediaRes]) => {
+      const msgs = msgRes.data.messages || []
+      const medias = (mediaRes.data.media || []).map((m) => ({
+        id: `media-${m.id}`,
+        content: `📎 ${m.filename || 'Fichier'}`,
+        sender_id: m.uploader_id,
+        sender_role: m.uploader_role,
+        type: 'media',
+        media_url: m.url,
+        created_at: m.created_at,
+      }))
+      // Fusionner et trier par date
+      const all = [...msgs, ...medias].sort(
+        (a, b) => new Date(a.created_at) - new Date(b.created_at)
+      )
+      setMessages(all)
+    })
+    .catch(() => toast('Erreur chargement messages', 'error'))
+    .finally(() => setLoading(false))
 
     // Rejoindre la room Socket.io
     joinMission?.(mission.id)
@@ -143,12 +162,16 @@ export default function ChatModal({ mission, onClose }) {
                     ? 'bg-[#FF4D00] text-white rounded-br-sm'
                     : 'bg-[#2A2A2A] text-white rounded-bl-sm'
                 }`}>
-                  {m.media_url ? (
-                    <a href={m.media_url} target="_blank" rel="noreferrer"
-                       className="flex items-center gap-1.5 underline">
-                      📎 {m.content}
-                    </a>
-                  ) : m.content}
+                    {m.media_url ? (
+                      m.media_url.match(/\.(mp4|mov)$/i) ? (
+                        <video src={m.media_url} controls className="max-w-full rounded-lg max-h-40" />
+                      ) : (
+                        <a href={m.media_url} target="_blank" rel="noreferrer">
+                          <img src={m.media_url} alt="media" className="max-w-full rounded-lg max-h-40 cursor-pointer" />
+                        </a>
+                      )
+                    ) : m.content}
+
                 </div>
               )}
               {m.type !== 'system' && (
