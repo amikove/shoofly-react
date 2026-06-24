@@ -326,11 +326,15 @@ useEffect(() => {
         )}
       </div>
     </div>
-  ))}
+    
+  )
+
+  
+)}
 </div>
-
-
-
+          </>
+        )}
+      </div>
 
       <NewMissionModal
         open={showNew}
