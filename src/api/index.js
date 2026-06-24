@@ -54,9 +54,10 @@ export const adminAPI = {
 
 // MEDIA
 export const mediaAPI = {
-  upload: (missionId, formData) =>
-    api.post(`/api/media/${missionId}`, formData, {
-      headers: { 'Content-Type': 'multipart/form-data' },
-    }),
+    upload: (missionId, formData) =>
+      api.post(`/api/media/${missionId}`, formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+        transformRequest: (data) => data,
+      }),
   list: (missionId) => api.get(`/api/media/${missionId}`),
 }
