@@ -4,14 +4,16 @@ import Topbar from '../../components/layout/Topbar'
 import { usersAPI } from '../../api'
 import { Spinner, EmptyState, Avatar, Stars, toast } from '../../components/ui'
 import NewMissionModal from '../../components/missions/NewMissionModal'
+import OeilProfileModal from '../../components/missions/OeilProfileModal'
 
 export default function ClientOeils() {
-  const [oeils, setOeils]             = useState([])
-  const [loading, setLoading]         = useState(true)
-  const [search, setSearch]           = useState('')
-  const [city, setCity]               = useState('')
-  const [showNew, setShowNew]         = useState(false)
+  const [oeils, setOeils]               = useState([])
+  const [loading, setLoading]           = useState(true)
+  const [search, setSearch]             = useState('')
+  const [city, setCity]                 = useState('')
+  const [showNew, setShowNew]           = useState(false)
   const [selectedOeil, setSelectedOeil] = useState(null)
+  const [profileOeil, setProfileOeil]   = useState(null)
 
   useEffect(() => {
     setLoading(true)
@@ -105,6 +107,13 @@ export default function ClientOeils() {
                     {o.is_available ? 'Commander' : 'Indisponible'}
                   </button>
                   <button
+                    onClick={() => setProfileOeil(o)}
+                    className="btn btn-ghost btn-sm"
+                    title="Voir le profil et les avis"
+                  >
+                    ★ Avis
+                  </button>
+                  <button
                     onClick={() => toast('Ajouté aux favoris ❤️', 'success')}
                     className="btn btn-ghost btn-sm"
                   >
@@ -117,12 +126,19 @@ export default function ClientOeils() {
         )}
       </div>
 
-      {/* Modal nouvelle mission — attribution directe */}
+      {/* Modal profil Œil + avis */}
+      <OeilProfileModal
+        oeil={profileOeil}
+        onClose={() => setProfileOeil(null)}
+        onCommander={handleCommander}
+      />
+
+      {/* Modal nouvelle mission */}
       <NewMissionModal
         open={showNew}
         onClose={handleClose}
         preselectedOeil={selectedOeil}
-        onCreated={(mission) => {
+        onCreated={() => {
           handleClose()
           toast(
             selectedOeil
