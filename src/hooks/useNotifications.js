@@ -58,6 +58,11 @@ export function useNotifications({ onChatOpen } = {}) {
   // Écouter les nouveaux messages via Socket.io
   useEffect(() => {
     if (!onEvent || !user) return
+    console.log('🔔 useNotifications actif pour:', user.id)
+
+const unsubAll = onEvent('*', (data) => {
+  console.log('📡 Socket event reçu:', data)
+})
 
     // Nouveau message reçu
 
@@ -145,6 +150,7 @@ const unsubNotif = onEvent('notification', (notif) => {
       unsubAccepted?.()
       unsubCompleted?.()
       unsubNotif?.()
+      unsubAll?.()
     }
   }, [onEvent, user])
 }
