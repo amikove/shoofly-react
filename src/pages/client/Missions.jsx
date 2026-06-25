@@ -169,7 +169,6 @@ export default function ClientMissions() {
   const [search, setSearch]               = useState('')
   const [statusFilter, setStatus]         = useState('')
   const [typeFilter, setType]             = useState('')
-  const { pendingChatMissionId, clearPendingChat } = useNotif()
   const { pendingChatMissionId, clearPendingChat, getPending } = useNotif()
 
 
