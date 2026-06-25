@@ -1,23 +1,41 @@
 import { useState } from 'react'
 import AppLayout from '../../components/layout/AppLayout'
 import Topbar from '../../components/layout/Topbar'
-import { authAPI, usersAPI } from '../../api'
+import { authAPI } from '../../api'
 import { useAuth } from '../../context/AuthContext'
 import { toast, Avatar, Stars } from '../../components/ui'
+
+const JOURS = ['Lun','Mar','Mer','Jeu','Ven','Sam','Dim']
+
+const defaultDispo = () => JOURS.map((j, i) => ({
+  jour: j,
+  actif: i < 5,
+  debut: i < 5 ? '08:00' : '09:00',
+  fin:   i < 5 ? '20:00' : '14:00',
+}))
 
 export default function OeilCompte() {
   const { user, updateUser } = useAuth()
   const [saving, setSaving]  = useState(false)
-  const [form, setForm]      = useState({
+  const [savingDispo, setSavingDispo] = useState(false)
+  const [form, setForm] = useState({
     first_name: user?.first_name || '',
     last_name:  user?.last_name  || '',
     phone:      user?.phone      || '',
     city:       user?.city       || '',
-    zone:       user?.zone       || '',
     bio:        user?.bio        || '',
   })
+  const [dispo, setDispo] = useState(
+    user?.disponibilites?.length ? user.disponibilites : defaultDispo()
+  )
 
   const set = (k) => (e) => setForm((f) => ({ ...f, [k]: e.target.value }))
+
+  const toggleJour = (i) =>
+    setDispo((d) => d.map((x, idx) => idx === i ? { ...x, actif: !x.actif } : x))
+
+  const setHeure = (i, key, val) =>
+    setDispo((d) => d.map((x, idx) => idx === i ? { ...x, [key]: val } : x))
 
   const save = async () => {
     setSaving(true)
@@ -29,14 +47,25 @@ export default function OeilCompte() {
     finally { setSaving(false) }
   }
 
+  const saveDispo = async () => {
+    setSavingDispo(true)
+    try {
+      const { data } = await authAPI.update({ disponibilites: dispo })
+      updateUser(data.user)
+      toast('Disponibilités enregistrées ✓', 'success')
+    } catch { toast('Erreur', 'error') }
+    finally { setSavingDispo(false) }
+  }
+
   const requestWithdraw = () => toast('Fonctionnalité virement disponible bientôt', 'info')
 
   return (
     <AppLayout>
       <Topbar title="Mon profil" />
-      <div className="p-6">
+      <div className="p-4 md:p-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
-          {/* Profile */}
+
+          {/* Profil */}
           <div className="card">
             <div className="flex items-center gap-3 mb-6 pb-6 border-b border-white/10">
               <Avatar name={`${user?.first_name} ${user?.last_name}`} size={52} />
@@ -57,12 +86,12 @@ export default function OeilCompte() {
             <div className="mt-3"><label className="label">Email</label><input className="input" value={user?.email || ''} disabled /></div>
             <div className="mt-3"><label className="label">Téléphone</label><input className="input" value={form.phone} onChange={set('phone')} /></div>
             <div className="mt-3"><label className="label">Bio</label><textarea className="input resize-none h-20" value={form.bio} onChange={set('bio')} placeholder="Décrivez votre expérience..." /></div>
-            <button onClick={save} disabled={saving} className="btn btn-primary mt-5 disabled:opacity-60">
+            <button onClick={save} disabled={saving} className="btn btn-primary w-full justify-center mt-5 disabled:opacity-60">
               {saving ? 'Sauvegarde...' : 'Enregistrer'}
             </button>
           </div>
 
-          {/* Right column */}
+          {/* Colonne droite */}
           <div className="space-y-4">
             {/* Paiements */}
             <div className="card">
@@ -80,20 +109,39 @@ export default function OeilCompte() {
             {/* Disponibilités */}
             <div className="card">
               <h2 className="font-semibold text-sm mb-4">Disponibilités</h2>
-              {['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'].map((j, i) => (
-                <div key={j} className="flex items-center justify-between py-2 border-b border-white/10 last:border-0">
-                  <span className="text-sm font-medium w-9">{j}</span>
-                  <div className="flex items-center gap-2 flex-1 mx-3">
-                    <input type="time" className="input py-1 px-2 text-xs max-w-[90px]" defaultValue={i < 5 ? '08:00' : '09:00'} />
-                    <span className="text-[#AAA]">→</span>
-                    <input type="time" className="input py-1 px-2 text-xs max-w-[90px]" defaultValue={i < 5 ? '20:00' : '14:00'} />
-                  </div>
-                  <div className={`w-8 h-4 rounded-full cursor-pointer transition-colors ${i < 6 ? 'bg-[#FF4D00]' : 'bg-[#333]'}`} />
+              {dispo.map((d, i) => (
+                <div key={d.jour} className={`flex items-center gap-2 py-2 border-b border-white/10 last:border-0 transition-opacity ${!d.actif ? 'opacity-40' : ''}`}>
+                  <span className="text-sm font-medium w-9 shrink-0">{d.jour}</span>
+                  <input
+                    type="time"
+                    disabled={!d.actif}
+                    value={d.debut}
+                    onChange={(e) => setHeure(i, 'debut', e.target.value)}
+                    className="input py-1 px-2 text-xs w-[82px] shrink-0"
+                  />
+                  <span className="text-[#AAA] shrink-0">→</span>
+                  <input
+                    type="time"
+                    disabled={!d.actif}
+                    value={d.fin}
+                    onChange={(e) => setHeure(i, 'fin', e.target.value)}
+                    className="input py-1 px-2 text-xs w-[82px] shrink-0"
+                  />
+                  {/* Toggle on/off */}
+                  <button
+                    onClick={() => toggleJour(i)}
+                    className={`ml-auto w-10 h-5 rounded-full transition-colors shrink-0 relative ${d.actif ? 'bg-[#FF4D00]' : 'bg-[#333]'}`}
+                  >
+                    <span className={`absolute top-0.5 w-4 h-4 bg-white rounded-full shadow transition-all ${d.actif ? 'left-5' : 'left-0.5'}`} />
+                  </button>
                 </div>
               ))}
-              <button onClick={() => toast('Disponibilités enregistrées ✓', 'success')} className="btn btn-primary btn-sm mt-4">Enregistrer</button>
+              <button onClick={saveDispo} disabled={savingDispo} className="btn btn-primary btn-sm w-full justify-center mt-4 disabled:opacity-60">
+                {savingDispo ? 'Sauvegarde...' : 'Enregistrer les disponibilités'}
+              </button>
             </div>
           </div>
+
         </div>
       </div>
     </AppLayout>
