@@ -402,9 +402,16 @@ useEffect(() => {
         {['assigned','en_route','active'].includes(m.status) && (
           <button onClick={() => setChatMission(m)} className="btn btn-ghost btn-sm">💬 Chat</button>
         )}
-        {m.status === 'completed' && (
-          <button onClick={() => setReportMission(m)} className="btn btn-ghost btn-sm">📄 Rapport</button>
-        )}
+          {m.status === 'completed' && (
+            <>
+              {['airbnb','booking'].some(s => m.subcategory?.toLowerCase().includes(s.toLowerCase())) && (
+                <button onClick={() => navigate(`/client/missions/${m.id}/rapport`)} className="btn btn-ghost btn-sm">📄 Rapport</button>
+              )}
+              {m.type === 'audit' && (
+                <button onClick={() => navigate(`/client/missions/${m.id}/audit`)} className="btn btn-ghost btn-sm">📋 Audit</button>
+              )}
+            </>
+          )}
 
           {m.type === 'immobilier' && ['Airbnb','Booking'].some(s => m.subcategory?.includes(s)) && (
             <button
