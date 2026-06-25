@@ -321,9 +321,7 @@ export default function NewMissionModal({ open, onClose, onCreated, preselectedO
             <input type="number" className="input" value={form.price} onChange={set('price')}
               placeholder={type === 'immobilier' ? '200' : type === 'file_attente' ? '150' : type === 'audit' ? '450' : '180'}
               min="50" required />
-            <p className="text-[11px] text-[#AAA] mt-1">
-              L'Œil recevra {form.price ? Math.round(parseFloat(form.price) * 0.8) : '—'} MAD (80%)
-            </p>
+
           </div>
 
           {/* Actions */}
