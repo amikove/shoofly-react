@@ -162,7 +162,53 @@ export default function AirbnbReport() {
     finally { setSaving(false) }
   }
 
+  
+  
+// tous les champs du formulaire sont obligatoire
+
+const validateAirbnb = () => {
+    const missing = []
+    // Section 1 — Première impression
+    if (!data.conformite)        missing.push('S1 — Conformité annonce')
+    if (!data.note_generale)     missing.push('S1 — Note générale')
+    // Section 2 — Propreté
+    if (!data.proprete_note)     missing.push('S2 — Note propreté')
+    if (!data.sols_propres)      missing.push('S2 — Sols propres')
+    if (!data.sdb_propre)        missing.push('S2 — Salle de bain')
+    if (!data.literie_propre)    missing.push('S2 — Literie')
+    if (!data.odeurs)            missing.push('S2 — Odeurs')
+    // Section 3 — Confort
+    if (!data.confort_lit)       missing.push('S3 — Confort lit')
+    if (!data.confort_global)    missing.push('S3 — Confort global')
+    // Section 4 — Bruit
+    if (!data.bruit_exterieur)   missing.push('S4 — Bruit extérieur')
+    if (!data.isolation_phonique) missing.push('S4 — Isolation phonique')
+    // Section 6 — Luminosité
+    if (!data.luminosite)        missing.push('S6 — Luminosité')
+    // Section 7 — Sécurité
+    if (!data.securite_note)     missing.push('S7 — Sécurité')
+    if (!data.porte_securisee)   missing.push('S7 — Porte sécurisée')
+    if (!data.quartier_rassurant) missing.push('S7 — Quartier rassurant')
+    // Section 9 — Environnement
+    if (!data.restaurants)       missing.push('S9 — Restaurants')
+    if (!data.commerces)         missing.push('S9 — Commerces')
+    if (!data.transports)        missing.push('S9 — Transports')
+    // Section 10 — Photos
+    if (!data.photos_conformite) missing.push('S10 — Conformité photos')
+    // Section 11 — Points forts/faibles
+    if (!data.points_forts?.length)  missing.push('S11 — Au moins 1 point fort')
+    if (!data.points_faibles?.length) missing.push('S11 — Au moins 1 point faible')
+    // Section 12 — Recommandation
+    if (!data.recommandation)    missing.push('S12 — Recommandation finale')
+    return missing
+  }
+
   const submit = async () => {
+    const missing = validateAirbnb()
+    if (missing.length > 0) {
+      toast(`⚠️ Champs manquants (${missing.length}) — faites défiler pour tout compléter`, 'error')
+      return
+    }
     if (!window.confirm('Soumettre le rapport ? Le client sera notifié.')) return
     setSaving(true)
     try {
@@ -172,6 +218,8 @@ export default function AirbnbReport() {
     } catch { toast('Erreur soumission', 'error') }
     finally { setSaving(false) }
   }
+
+
 
   if (loading) return (
     <AppLayout><Topbar title="Rapport de visite" />

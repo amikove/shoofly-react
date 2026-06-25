@@ -222,8 +222,69 @@ export default function AuditReport() {
     finally { setSaving(false) }
   }
 
+
+  // Cette partie va rendre tous les champs du formulaire obligatoire
+
+  const validateForm = () => {
+    const missing = []
+    // Infos générales
+    if (!data.date_visite)      missing.push('Date de visite')
+    if (!data.heure_visite)     missing.push('Heure de visite')
+    if (!data.duree_visite)     missing.push('Durée de visite')
+    if (!data.clients_presents && data.clients_presents !== 0) missing.push('Nombre de clients présents')
+    // Section 1
+    if (!data.premiere_impression)  missing.push('S1 — Facilité à trouver')
+    if (!data.aspect_exterieur)     missing.push('S1 — Aspect extérieur')
+    if (!data.visibilite_enseigne)  missing.push('S1 — Visibilité enseigne')
+    if (!data.attractivite)         missing.push('S1 — Attractivité')
+    if (!data.impression_globale)   missing.push('S1 — Impression globale')
+    // Section 2
+    if (!data.temps_prise_charge)          missing.push('S2 — Temps prise en charge')
+    if (!data.politesse)                   missing.push('S2 — Politesse')
+    if (!data.sourire)                     missing.push('S2 — Sourire')
+    if (!data.disponibilite)               missing.push('S2 — Disponibilité')
+    if (!data.professionnalisme_accueil)   missing.push('S2 — Professionnalisme')
+    if (!data.envie_rester)                missing.push('S2 — Envie de rester')
+    // Section 3
+    if (!data.proprete_generale)   missing.push('S3 — Propreté générale')
+    if (!data.organisation)        missing.push('S3 — Organisation')
+    if (!data.etat_mobilier)       missing.push('S3 — État du mobilier')
+    if (!data.ambiance)            missing.push('S3 — Ambiance')
+    if (!data.confort)             missing.push('S3 — Confort')
+    // Section 4
+    if (!data.rapidite_service)      missing.push('S4 — Rapidité')
+    if (!data.comprehension_besoin)  missing.push('S4 — Compréhension besoin')
+    if (!data.pertinence_reponses)   missing.push('S4 — Pertinence réponses')
+    if (!data.qualite_conseils)      missing.push('S4 — Qualité conseils')
+    if (!data.niveau_pro)            missing.push('S4 — Niveau pro')
+    if (!data.connaissance_produit)  missing.push('S4 — Connaissance produit')
+    // Section 5
+    if (!data.competence_commerciale?.length) missing.push('S5 — Compétence commerciale (au moins 1)')
+    // Section 6
+    if (!data.clarte_prix)          missing.push('S6 — Clarté des prix')
+    if (!data.transparence)         missing.push('S6 — Transparence')
+    if (!data.simplicite_parcours)  missing.push('S6 — Simplicité parcours')
+    if (!data.confiance_inspiree)   missing.push('S6 — Confiance inspirée')
+    if (!data.satisfaction_generale) missing.push('S6 — Satisfaction générale')
+    // Section 7
+    if (!data.points_positifs?.length) missing.push('S7 — Au moins 1 point positif')
+    if (!data.points_negatifs?.length) missing.push('S7 — Au moins 1 point négatif')
+    // Section 8
+    if (!data.incidents?.length)    missing.push('S8 — Au moins 1 incident (ou "Aucun incident")')
+    // Section 9
+    if (!data.achat_produit)        missing.push('S9 — Réponse achat produit')
+    if (!data.recommandation_note)  missing.push('S9 — Note recommandation')
+    return missing
+  }
+
   const submit = async () => {
+    const missing = validateForm()
+    if (missing.length > 0) {
+      toast(`⚠️ Champs manquants (${missing.length}) — faites défiler pour tout compléter`, 'error')
+      return
+    }
     if (!window.confirm('Soumettre le rapport ? Le client sera notifié.')) return
+    
     setSaving(true)
     try {
       await reportsAPI.save(missionId, { ...data, score_final: score }, true)
