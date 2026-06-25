@@ -53,6 +53,9 @@ export default function AirbnbReportView() {
   const [mission, setMission] = useState(null)
   const [report, setReport] = useState(null)
   const [loading, setLoading] = useState(true)
+  const [dismissed, setDismissed] = useState(
+  localStorage.getItem(`report-disclaimer-${missionId}`) === 'true'
+    )
 
   useEffect(() => {
     Promise.all([
@@ -84,6 +87,34 @@ export default function AirbnbReportView() {
   const d = report.data || {}
   const score = report.score || 0
   const { label: scoreLbl, color: scoreColor } = scoreLabel(score)
+
+
+                if (!dismissed) return (
+                <AppLayout>
+                    <Topbar title="Rapport de visite" />
+                    <div className="flex-1 flex items-center justify-center p-6">
+                    <div className="bg-[#181818] border border-white/20 rounded-2xl p-6 w-full max-w-md">
+                        <div className="text-2xl mb-4">📋</div>
+                        <h2 className="font-bold text-base mb-3">Rapport de visite indépendant</h2>
+                        <p className="text-sm text-[#AAA] leading-relaxed mb-6">
+                        Le score est indicatif car les <strong className="text-white">étoiles ⭐</strong> reflètent la perception personnelle de l'Œil. Pour une information plus fiable, concentrez-vous sur les réponses <strong className="text-white">Oui / Non</strong> qui sont objectives et vérifiables sur place.
+                        </p>
+                        <button
+                        onClick={() => {
+                            localStorage.setItem(`report-disclaimer-${missionId}`, 'true')
+                            setDismissed(true)
+                        }}
+                        className="btn btn-primary w-full justify-center"
+                        >
+                        ✅ Compris
+                        </button>
+                    </div>
+                    </div>
+                </AppLayout>
+                )
+
+
+
 
   return (
     <AppLayout>
