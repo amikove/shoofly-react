@@ -249,12 +249,13 @@ const load = useCallback((t) => {
                           {(m.interested || m.has_interested) ? '✅ Demande envoyée' : '👁️ Je suis intéressé'}
                         </button>
                         <button
-                          onClick={() => refuse(m.id)}
-                          className="btn btn-ghost btn-sm text-red-400"
-                          title="Ignorer cette mission"
-                        >
-                          ✕
-                        </button>
+                              onClick={() => refuse(m.id)}
+                              className="btn btn-ghost btn-sm flex-1 justify-center text-red-400"
+                            >
+                              ✕ Ignorer
+                            </button>
+
+
                       </>
                     )}
 

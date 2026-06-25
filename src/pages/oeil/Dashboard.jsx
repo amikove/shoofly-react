@@ -142,15 +142,22 @@ export default function OeilDashboard() {
 
                 </div>
                 
-                <div className="flex gap-2">
-                  <button
-                    onClick={() => interest(m.id)}
-                    disabled={m.interested || m.has_interested}
-                    className="btn btn-primary btn-sm flex-1 justify-center disabled:opacity-50"
-                  >
-                    {(m.interested || m.has_interested) ? '✅ Demande envoyée' : '👁️ Je suis intéressé'}
-                  </button>
-                </div> 
+
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => interest(m.id)}
+                      disabled={m.interested || m.has_interested}
+                      className="btn btn-primary btn-sm flex-1 justify-center disabled:opacity-50"
+                    >
+                      {(m.interested || m.has_interested) ? '✅ Demande envoyée' : '👁️ Je suis intéressé'}
+                    </button>
+                    <button
+                      onClick={() => refuse(m.id)}
+                      className="btn btn-ghost btn-sm flex-1 justify-center text-red-400"
+                    >
+                      ✕ Ignorer
+                    </button>
+                  </div>
 
 
               </div>
