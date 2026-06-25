@@ -33,6 +33,7 @@ import AdminMissions   from './pages/admin/Missions'
 import AdminOeils      from './pages/admin/Oeils'
 import AdminClients    from './pages/admin/Clients'
 import AdminFraude     from './pages/admin/Fraude'
+import AdminReclamations from './pages/admin/Reclamations'
 import AdminParametres from './pages/admin/Parametres'
 
 // Route guard
@@ -92,6 +93,7 @@ export default function App() {
       <Route path="/admin/oeils"        element={<RequireAuth allowedRoles={['admin']}><AdminOeils /></RequireAuth>} />
       <Route path="/admin/clients"      element={<RequireAuth allowedRoles={['admin']}><AdminClients /></RequireAuth>} />
       <Route path="/admin/fraude"       element={<RequireAuth allowedRoles={['admin']}><AdminFraude /></RequireAuth>} />
+      <Route path="/admin/reclamations" element={<RequireAuth allowedRoles={['admin']}><AdminReclamations /></RequireAuth>} />
       <Route path="/admin/parametres"   element={<RequireAuth allowedRoles={['admin']}><AdminParametres /></RequireAuth>} />
 
       {/* Redirect */}

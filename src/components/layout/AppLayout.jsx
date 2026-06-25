@@ -5,7 +5,7 @@ import { Avatar } from '../ui'
 import { useNotifications } from '../../hooks/useNotifications'
 import NotificationBanner from '../ui/NotificationBanner'
 import { useState, useEffect } from 'react'
-import { missionsAPI } from '../../api'
+import { missionsAPI, adminAPI } from '../../api'
 
 const MENUS = {
   client: [
@@ -21,13 +21,15 @@ const MENUS = {
     { to: '/oeil/messages',    icon: '💬',  label: 'Messages'    },
     { to: '/oeil/compte',      icon: '👤',  label: 'Profil'      },
   ],
+
   admin: [
-    { to: '/admin',            icon: '⊞', label: 'Dashboard',  section: 'Vue globale' },
-    { to: '/admin/missions',   icon: '📋', label: 'Missions',   section: 'Vue globale' },
-    { to: '/admin/oeils',      icon: '👁️', label: 'Œils',       section: 'Gestion'     },
-    { to: '/admin/clients',    icon: '👥', label: 'Clients',    section: 'Gestion'     },
-    { to: '/admin/fraude',     icon: '🛡️', label: 'Fraude',     section: 'Gestion'     },
-    { to: '/admin/parametres', icon: '⚙️', label: 'Paramètres', section: 'Système'     },
+    { to: '/admin',              icon: '⊞',  label: 'Dashboard',    section: 'Vue globale' },
+    { to: '/admin/missions',     icon: '📋',  label: 'Missions',     section: 'Vue globale' },
+    { to: '/admin/oeils',        icon: '👁️',  label: 'Œils',         section: 'Gestion'     },
+    { to: '/admin/clients',      icon: '👥',  label: 'Clients',      section: 'Gestion'     },
+    { to: '/admin/reclamations', icon: '🚨',  label: 'Réclamations', section: 'Gestion', badge: 'claims' },
+    { to: '/admin/fraude',       icon: '🛡️',  label: 'Fraude',       section: 'Gestion'     },
+    { to: '/admin/parametres',   icon: '⚙️',  label: 'Paramètres',   section: 'Système'     },
   ],
 }
 
@@ -43,6 +45,20 @@ export default function AppLayout({ children }) {
   const [isAvail, setIsAvail] = useState(true)
 
   const [unreadCount, setUnreadCount] = useState(0)
+
+  const [claimsCount, setClaimsCount] = useState(0)
+
+useEffect(() => {
+  if (user?.role !== 'admin') return
+  const fetchClaims = () => {
+    adminAPI.claims()
+      .then(({ data }) => setClaimsCount((data.claims || []).length))
+      .catch(() => {})
+  }
+  fetchClaims()
+  const interval = setInterval(fetchClaims, 60000)
+  return () => clearInterval(interval)
+}, [user])
 
 useEffect(() => {
   if (!user) return
@@ -114,11 +130,19 @@ useEffect(() => {
                   >
                     <span className="w-4 text-center text-base">{item.icon}</span>
                     <span className="flex-1">{item.label}</span>
-                    {item.to.includes('/messages') && unreadCount > 0 && (
-                      <span className="bg-[#FF4D00] text-white text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center">
-                        {unreadCount > 9 ? '9+' : unreadCount}
-                      </span>
-                    )}
+                    
+                      {item.to.includes('/messages') && unreadCount > 0 && (
+                        <span className="bg-[#FF4D00] text-white text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center">
+                          {unreadCount > 9 ? '9+' : unreadCount}
+                        </span>
+                      )}
+                      {item.badge === 'claims' && claimsCount > 0 && (
+                        <span className="bg-red-500 text-white text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center">
+                          {claimsCount > 9 ? '9+' : claimsCount}
+                        </span>
+                      )}
+
+
                   </NavLink>
                 ))}
 
