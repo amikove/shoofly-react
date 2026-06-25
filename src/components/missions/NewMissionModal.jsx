@@ -192,6 +192,7 @@ export default function NewMissionModal({ open, onClose, onCreated, preselectedO
         title:        form.title,
         address:      form.address || adresseFull,
         city:         form.city,
+        quartier:     form.quartier || null,
         price:        parseFloat(form.price),
         description:  form.description,
         scheduled_at: new Date(Date.now() + 3600000).toISOString(),
