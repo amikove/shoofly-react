@@ -8,19 +8,24 @@ import { Spinner } from './components/ui'
 import Login    from './pages/auth/Login'
 import Register from './pages/auth/Register'
 
-// Client pages
-import ClientDashboard from './pages/client/Dashboard'
-import ClientMissions  from './pages/client/Missions'
-import ClientOeils     from './pages/client/Oeils'
-import ClientCompte    from './pages/client/Compte'
-import AirbnbReportView from './pages/client/AirbnbReportView'
 
+// Client pages
+import ClientDashboard  from './pages/client/Dashboard'
+import ClientMissions   from './pages/client/Missions'
+import ClientOeils      from './pages/client/Oeils'
+import ClientCompte     from './pages/client/Compte'
+import AirbnbReportView from './pages/client/AirbnbReportView'
+import ClientMessagerie from './pages/shared/Messagerie'
 
 // Oeil pages
 import OeilDashboard from './pages/oeil/Dashboard'
 import OeilMissions  from './pages/oeil/Missions'
 import OeilCompte    from './pages/oeil/Compte'
-import AirbnbReport from './pages/oeil/AirbnbReport'
+import AirbnbReport  from './pages/oeil/AirbnbReport'
+import OeilMessagerie from './pages/shared/Messagerie'
+
+
+
 
 // Admin pages
 import AdminDashboard  from './pages/admin/Dashboard'
@@ -70,13 +75,15 @@ export default function App() {
       <Route path="/client" element={<RequireAuth allowedRoles={['client']}><ClientDashboard /></RequireAuth>} />
       <Route path="/client/missions" element={<RequireAuth allowedRoles={['client']}><ClientMissions /></RequireAuth>} />
       <Route path="/client/oeils"    element={<RequireAuth allowedRoles={['client']}><ClientOeils /></RequireAuth>} />
-      <Route path="/client/compte"   element={<RequireAuth allowedRoles={['client']}><ClientCompte /></RequireAuth>} />
+      <Route path="/client/compte"    element={<RequireAuth allowedRoles={['client']}><ClientCompte /></RequireAuth>} />
+      <Route path="/client/messages"  element={<RequireAuth allowedRoles={['client']}><ClientMessagerie /></RequireAuth>} />
       <Route path="/client/missions/:missionId/rapport" element={<RequireAuth allowedRoles={['client']}><AirbnbReportView /></RequireAuth>} />
 
       {/* Oeil */}
       <Route path="/oeil"           element={<RequireAuth allowedRoles={['oeil']}><OeilDashboard /></RequireAuth>} />
       <Route path="/oeil/missions"  element={<RequireAuth allowedRoles={['oeil']}><OeilMissions /></RequireAuth>} />
-      <Route path="/oeil/compte"    element={<RequireAuth allowedRoles={['oeil']}><OeilCompte /></RequireAuth>} />
+     <Route path="/oeil/compte"    element={<RequireAuth allowedRoles={['oeil']}><OeilCompte /></RequireAuth>} />
+      <Route path="/oeil/messages"  element={<RequireAuth allowedRoles={['oeil']}><OeilMessagerie /></RequireAuth>} />
       <Route path="/oeil/missions/:missionId/rapport" element={<RequireAuth allowedRoles={['oeil']}><AirbnbReport /></RequireAuth>} />
 
       {/* Admin */}

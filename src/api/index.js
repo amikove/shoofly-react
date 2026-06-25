@@ -24,6 +24,8 @@ export const missionsAPI = {
   message:  (id, data) => api.post(`/api/missions/${id}/messages`, data),
   report:   (id, data) => api.post(`/api/missions/${id}/report`, data),
   rate:     (id, data) => api.post(`/api/missions/${id}/rate`, data),
+  inbox: ()      => api.get('/api/missions/inbox'),
+  seen:  (id)    => api.post(`/api/missions/${id}/seen`),
 }
 
 // USERS

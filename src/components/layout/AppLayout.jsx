@@ -7,15 +7,17 @@ import NotificationBanner from '../ui/NotificationBanner'
 
 const MENUS = {
   client: [
-    { to: '/client',          icon: '⊞', label: 'Dashboard'   },
-    { to: '/client/missions', icon: '📋', label: 'Missions'    },
-    { to: '/client/oeils',    icon: '👁️', label: 'Les Œils'    },
-    { to: '/client/compte',   icon: '👤', label: 'Compte'      },
+    { to: '/client',           icon: '⊞',  label: 'Dashboard'   },
+    { to: '/client/missions',  icon: '📋',  label: 'Missions'    },
+    { to: '/client/messages',  icon: '💬',  label: 'Messages'    },
+    { to: '/client/oeils',     icon: '👁️',  label: 'Les Œils'    },
+    { to: '/client/compte',    icon: '👤',  label: 'Compte'      },
   ],
   oeil: [
-    { to: '/oeil',          icon: '⊞', label: 'Dashboard'    },
-    { to: '/oeil/missions', icon: '🎯', label: 'Missions'     },
-    { to: '/oeil/compte',   icon: '👤', label: 'Profil'       },
+    { to: '/oeil',             icon: '⊞',  label: 'Dashboard'   },
+    { to: '/oeil/missions',    icon: '🎯',  label: 'Missions'    },
+    { to: '/oeil/messages',    icon: '💬',  label: 'Messages'    },
+    { to: '/oeil/compte',      icon: '👤',  label: 'Profil'      },
   ],
   admin: [
     { to: '/admin',            icon: '⊞', label: 'Dashboard',  section: 'Vue globale' },
