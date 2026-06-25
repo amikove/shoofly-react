@@ -5,13 +5,22 @@ import Topbar from '../../components/layout/Topbar'
 import { missionsAPI, reportsAPI } from '../../api'
 import { Spinner, Stars } from '../../components/ui'
 
+
+
 function ScoreBar({ label, value, max }) {
   const pct = Math.round((value / max) * 100)
+  const getColor = (p) => {
+    if (p >= 80) return '#22c55e'
+    if (p >= 60) return '#84cc16'
+    if (p >= 40) return '#f97316'
+    if (p >= 20) return '#ef4444'
+    return '#dc2626'
+  }
   return (
     <div className="flex items-center gap-3">
       <div className="text-xs text-[#AAA] w-36 flex-shrink-0">{label}</div>
       <div className="flex-1 h-2 bg-white/10 rounded-full overflow-hidden">
-        <div className="h-full bg-[#FF4D00] rounded-full transition-all" style={{ width: `${pct}%` }} />
+        <div className="h-full rounded-full transition-all" style={{ width: `${pct}%`, backgroundColor: getColor(pct) }} />
       </div>
       <div className="text-xs font-semibold text-white w-12 text-right">{value}/{max}</div>
     </div>
