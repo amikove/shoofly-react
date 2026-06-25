@@ -80,7 +80,7 @@ const load = useCallback((t) => {
     .then(({ data }) => {
       let ms = data.missions || []
       if (t === 'active') {
-        ms = ms.filter((m) => ['assigned','en_route','active'].includes(m.status))
+        ms = ms.filter((m) => ['assigned','en_route','active','sous_reclamation'].includes(m.status))
       }
       setMissions(ms)
     })
