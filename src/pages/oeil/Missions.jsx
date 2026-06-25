@@ -4,6 +4,7 @@ import AppLayout from '../../components/layout/AppLayout'
 import Topbar from '../../components/layout/Topbar'
 import { missionsAPI } from '../../api'
 import { StatusBadge, Spinner, EmptyState, toast } from '../../components/ui'
+import { useNotif } from '../../context/NotifContext'
 
 const TABS = [
   { id: 'available', label: 'Disponibles' },
@@ -21,24 +22,21 @@ export default function OeilMissions() {
   const [loading, setLoading]   = useState(true)
   const [error, setError]       = useState('')
   const [chatMission, setChatMission] = useState(null)
-
+  const { pendingChatMissionId, clearPendingChat } = useNotif()
 // Ouvrir le chat depuis une notification
 
+
+
 useEffect(() => {
-    const handler = (e) => {
-      const id = e.detail?.missionId || window.__notifChatMissionId
-      if (id) {
-        window.__notifChatMissionId = null
-        setTab('active')
-        missionsAPI.get(id)
-          .then(({ data }) => setChatMission(data.mission || data))
-          .catch(() => {})
-      }
-    }
-    window.addEventListener('open-chat-from-notif', handler)
-    if (window.__notifChatMissionId) handler({ detail: null })
-    return () => window.removeEventListener('open-chat-from-notif', handler)
-  }, [])
+  if (pendingChatMissionId) {
+    const id = pendingChatMissionId
+    clearPendingChat()
+    setTab('active')
+    missionsAPI.get(id)
+      .then(({ data }) => setChatMission(data.mission || data))
+      .catch(() => {})
+  }
+}, [pendingChatMissionId])
 
 
 

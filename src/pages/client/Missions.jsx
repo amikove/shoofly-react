@@ -7,6 +7,7 @@ import NewMissionModal from '../../components/missions/NewMissionModal'
 import RateModal from '../../components/missions/RateModal'
 import ChatModal from '../../components/missions/ChatModal'
 import { useAuth } from '../../context/AuthContext'
+import { useNotif } from '../../context/NotifContext'
 
 const TYPE_ICONS = { immobilier:'🏠', file_attente:'⏳', audit:'🔎', personnalisee:'🎯' }
 
@@ -168,25 +169,22 @@ export default function ClientMissions() {
   const [search, setSearch]               = useState('')
   const [statusFilter, setStatus]         = useState('')
   const [typeFilter, setType]             = useState('')
+  const { pendingChatMissionId, clearPendingChat } = useNotif()
+
+
 
   // Ouvrir le chat depuis une notification
 
-  
   useEffect(() => {
-      const handler = (e) => {
-        const id = e.detail?.missionId || window.__notifChatMissionId
-        if (id) {
-          window.__notifChatMissionId = null
-          missionsAPI.get(id)
-            .then(({ data }) => setChatMission(data.mission || data))
-            .catch(() => {})
-        }
-      }
-      window.addEventListener('open-chat-from-notif', handler)
-      // Vérifier aussi au montage
-      if (window.__notifChatMissionId) handler({ detail: null })
-      return () => window.removeEventListener('open-chat-from-notif', handler)
-    }, [])
+  if (pendingChatMissionId) {
+    const id = pendingChatMissionId
+    clearPendingChat()
+    missionsAPI.get(id)
+      .then(({ data }) => setChatMission(data.mission || data))
+      .catch(() => {})
+  }
+}, [pendingChatMissionId])
+
 
   const load = useCallback(() => {
     setLoading(true)

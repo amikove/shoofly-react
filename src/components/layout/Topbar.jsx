@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { usersAPI } from '../../api'
 import { useAuth } from '../../context/AuthContext'
 import { useSocket } from '../../context/SocketContext'
+import { useNotif } from '../../context/NotifContext'
 
 export default function Topbar({ title, actions }) {
   const { user }    = useAuth()
@@ -11,6 +12,7 @@ export default function Topbar({ title, actions }) {
   const [notifs, setNotifs]       = useState([])
   const [unread, setUnread]       = useState(0)
   const [showNotifs, setShowNotifs] = useState(false)
+  const { openChat } = useNotif()
 
   const loadNotifs = useCallback(() => {
     usersAPI.notifications()
@@ -42,15 +44,10 @@ export default function Topbar({ title, actions }) {
 
 const handleClick = (n) => {
   if (n.mission_id) {
-    window.__notifChatMissionId = n.mission_id
     setShowNotifs(false)
     const route = user?.role === 'oeil' ? '/oeil/missions' : '/client/missions'
-    if (window.location.pathname === route) {
-      // Déjà sur la page — forcer l'ouverture du chat directement
-      window.dispatchEvent(new CustomEvent('open-chat-from-notif', { detail: { missionId: n.mission_id } }))
-    } else {
-      navigate(route)
-    }
+    openChat(n.mission_id)
+    navigate(route)
   }
 }
   
