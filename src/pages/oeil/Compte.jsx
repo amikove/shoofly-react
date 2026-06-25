@@ -25,9 +25,15 @@ export default function OeilCompte() {
     city:       user?.city       || '',
     bio:        user?.bio        || '',
   })
-  const [dispo, setDispo] = useState(
-    user?.disponibilites?.length ? user.disponibilites : defaultDispo()
-  )
+
+  
+  const parseDispo = (d) => {
+  if (!d) return defaultDispo()
+  if (typeof d === 'string') { try { return JSON.parse(d) } catch {} }
+  if (Array.isArray(d) && d.length) return d
+  return defaultDispo()
+}
+const [dispo, setDispo] = useState(() => parseDispo(user?.disponibilites))
 
   const set = (k) => (e) => setForm((f) => ({ ...f, [k]: e.target.value }))
 
