@@ -265,12 +265,17 @@ const load = useCallback((t) => {
                     <>
                       <button onClick={() => setChatMission(m)} className="btn btn-ghost btn-sm">💬 Chat</button>
                       
-                      {tab === 'active' && ['airbnb','booking','Airbnb','Booking'].some(s => m.subcategory?.toLowerCase().includes(s.toLowerCase())) && (
-                        <button onClick={() => navigate(`/oeil/missions/${m.id}/rapport`)}
-                          className="btn btn-ghost btn-sm">
-                          📋 Rapport
-                        </button>
-                      )}
+
+                        {['en_route','active'].includes(m.status) && ['airbnb','booking','Airbnb','Booking'].some(s => m.subcategory?.toLowerCase().includes(s.toLowerCase())) && (
+                          <button onClick={() => navigate(`/oeil/missions/${m.id}/rapport`)} className="btn btn-ghost btn-sm">
+                            📋 Rapport
+                          </button>
+                        )}
+                        {['en_route','active'].includes(m.status) && m.type === 'audit' && (
+                          <button onClick={() => navigate(`/oeil/missions/${m.id}/audit`)} className="btn btn-ghost btn-sm">
+                            📋 Audit
+                          </button>
+                        )}
 
                       <button className="btn btn-ghost btn-sm">📸 Photos</button>
                       {advanceLabel[m.status] && (
