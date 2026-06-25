@@ -1,10 +1,10 @@
 import { NavLink, useNavigate } from 'react-router-dom'
-import { useState } from 'react'
+
 import { useAuth } from '../../context/AuthContext'
 import { Avatar } from '../ui'
 import { useNotifications } from '../../hooks/useNotifications'
 import NotificationBanner from '../ui/NotificationBanner'
-import { useEffect, useState } from 'react'
+import { useState, useEffect } from 'react'
 import { missionsAPI } from '../../api'
 
 const MENUS = {
