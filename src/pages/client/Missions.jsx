@@ -173,22 +173,18 @@ export default function ClientMissions() {
 
 
 
-  // Ouvrir le chat depuis une notification
 
-useEffect(() => {
-  const id = pendingChatMissionId || window.__notifChatMissionId
-  if (id) {
-    clearPendingChat()
-    window.__notifChatMissionId = null
-    // Attendre que les missions soient chargées
-    setTimeout(() => {
+// Ouvrir le chat depuis une notification
+  useEffect(() => {
+    const id = pendingChatMissionId || window.__notifChatMissionId
+    if (id) {
+      window.__notifChatMissionId = null
+      clearPendingChat()
       missionsAPI.get(id)
         .then(({ data }) => setChatMission(data.mission || data))
         .catch(() => {})
-    }, 500)
-  }
-}, [pendingChatMissionId])
-  
+    }
+  }, [pendingChatMissionId])
 
 
 
