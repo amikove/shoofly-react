@@ -244,7 +244,7 @@ const load = useCallback((t) => {
                         <button
                           onClick={() => interest(m.id)}
                           disabled={m.interested || m.has_interested}
-                          className="btn btn-sm flex-1 justify-center disabled:opacity-50 bg-black text-green-400 border border-green-400/30 hover:bg-black/80"
+                          className="btn btn-sm flex-1 justify-center disabled:opacity-50 bg-green-500 text-white hover:bg-green-600"
                         >
                           {(m.interested || m.has_interested) ? '✅ Demande envoyée' : '👁️ Je suis intéressé'}
                         </button>
