@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import AppLayout from '../../components/layout/AppLayout'
 import Topbar from '../../components/layout/Topbar'
-import { authAPI } from '../../api'
 import { useAuth } from '../../context/AuthContext'
 import { toast, Avatar, Stars } from '../../components/ui'
 import { authAPI, usersAPI } from '../../api'
