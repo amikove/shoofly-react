@@ -16,7 +16,7 @@ export default function ClientCompte() {
   })
   const [pwd, setPwd] = useState({ current: '', next: '', confirm: '' })
 
-  const set = (k) => (e) => setForm((f) => ({ ...f, [k]: e.target.value }))
+  const set  = (k) => (e) => setForm((f) => ({ ...f, [k]: e.target.value }))
   const setPw = (k) => (e) => setPwd((p) => ({ ...p, [k]: e.target.value }))
 
   const saveProfile = async () => {
@@ -43,42 +43,59 @@ export default function ClientCompte() {
   return (
     <AppLayout>
       <Topbar title="Mon compte" />
-      <div className="p-6">
-        <div className="grid grid-cols-2 gap-6">
-          {/* Profile */}
+      <div className="p-4 md:p-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+
+          {/* Profil */}
           <div className="card">
             <div className="flex items-center gap-3 mb-6 pb-6 border-b border-white/10">
-              <Avatar name={`${user?.first_name} ${user?.last_name}`} size={48} />
+              <Avatar name={`${user?.first_name} ${user?.last_name}`} size={52} />
               <div>
-                <div className="font-semibold">{user?.first_name} {user?.last_name}</div>
-                <div className="text-xs text-[#AAA]">{user?.email}</div>
+                <div className="font-semibold text-base">{user?.first_name} {user?.last_name}</div>
+                <div className="text-xs text-[#AAA] mt-0.5">{user?.email}</div>
               </div>
             </div>
+
             <h2 className="font-semibold text-sm mb-4">Informations personnelles</h2>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div><label className="label">Prénom</label><input className="input" value={form.first_name} onChange={set('first_name')} /></div>
               <div><label className="label">Nom</label><input className="input" value={form.last_name} onChange={set('last_name')} /></div>
             </div>
             <div className="mt-3"><label className="label">Email</label><input className="input" value={user?.email || ''} disabled /></div>
             <div className="mt-3"><label className="label">Téléphone</label><input className="input" value={form.phone} onChange={set('phone')} placeholder="+212 6xx xxx xxx" /></div>
-            <div className="mt-3"><label className="label">Ville</label>
+            <div className="mt-3">
+              <label className="label">Ville</label>
               <select className="input" value={form.city} onChange={set('city')}>
-                {['Rabat','Casablanca','Salé','Témara'].map((c) => <option key={c}>{c}</option>)}
+                {['Rabat','Casablanca','Salé','Témara','Marrakech','Fès','Tanger','Agadir'].map((c) => (
+                  <option key={c}>{c}</option>
+                ))}
               </select>
             </div>
-            <button onClick={saveProfile} disabled={saving} className="btn btn-primary mt-5 disabled:opacity-60">
+            <button onClick={saveProfile} disabled={saving} className="btn btn-primary w-full justify-center mt-5 disabled:opacity-60">
               {saving ? 'Sauvegarde...' : 'Enregistrer'}
             </button>
           </div>
 
-          {/* Password */}
+          {/* Sécurité */}
           <div className="card h-fit">
             <h2 className="font-semibold text-sm mb-4">Sécurité</h2>
-            <div><label className="label">Mot de passe actuel</label><input type="password" className="input" value={pwd.current} onChange={setPw('current')} placeholder="••••••••" /></div>
-            <div className="mt-3"><label className="label">Nouveau mot de passe</label><input type="password" className="input" value={pwd.next} onChange={setPw('next')} placeholder="Min. 6 caractères" /></div>
-            <div className="mt-3"><label className="label">Confirmer</label><input type="password" className="input" value={pwd.confirm} onChange={setPw('confirm')} placeholder="••••••••" /></div>
-            <button onClick={savePassword} disabled={saving} className="btn btn-ghost mt-5 disabled:opacity-60">Changer</button>
+            <div>
+              <label className="label">Mot de passe actuel</label>
+              <input type="password" className="input" value={pwd.current} onChange={setPw('current')} placeholder="••••••••" />
+            </div>
+            <div className="mt-3">
+              <label className="label">Nouveau mot de passe</label>
+              <input type="password" className="input" value={pwd.next} onChange={setPw('next')} placeholder="Min. 6 caractères" />
+            </div>
+            <div className="mt-3">
+              <label className="label">Confirmer</label>
+              <input type="password" className="input" value={pwd.confirm} onChange={setPw('confirm')} placeholder="••••••••" />
+            </div>
+            <button onClick={savePassword} disabled={saving} className="btn btn-ghost w-full justify-center mt-5 disabled:opacity-60">
+              Changer le mot de passe
+            </button>
           </div>
+
         </div>
       </div>
     </AppLayout>
