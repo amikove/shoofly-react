@@ -53,7 +53,7 @@ function CritereNote({ label, noteKey, remarqueKey, data, set, disabled }) {
 }
 
 // ── Composant Checkbox liste ───────────────────────────────
-function CheckList({ items, dataKey, data, set, disabled }) {
+function CheckList({ items, dataKey, data, set, disabled, variant }) {
   const toggle = (item) => {
     const current = data[dataKey] || []
     const next = current.includes(item) ? current.filter(i => i !== item) : [...current, item]
@@ -61,14 +61,23 @@ function CheckList({ items, dataKey, data, set, disabled }) {
   }
   return (
     <div className="grid grid-cols-1 gap-1.5 mt-2">
-      {items.map(item => (
-        <label key={item} className="flex items-center gap-2 text-sm text-[#CCC] cursor-pointer">
-          <input type="checkbox" checked={(data[dataKey] || []).includes(item)}
-            onChange={() => !disabled && toggle(item)}
-            className="accent-[#FF4D00] w-4 h-4" disabled={disabled} />
-          {item}
-        </label>
-      ))}
+      {items.map(item => {
+        const checked = (data[dataKey] || []).includes(item)
+        const bg = checked
+          ? variant === 'green' ? 'bg-green-500/20 border border-green-500/30'
+          : variant === 'red'   ? 'bg-red-500/20 border border-red-500/30'
+          : 'bg-white/5 border border-white/10'
+          : 'border border-white/10'
+        return (
+          <label key={item} className={`flex items-center gap-2 text-sm cursor-pointer px-3 py-2 rounded-lg transition-all ${bg} ${checked ? variant === 'green' ? 'text-green-300' : variant === 'red' ? 'text-red-300' : 'text-white' : 'text-[#CCC]'}`}>
+            <input type="checkbox" checked={checked}
+              onChange={() => !disabled && toggle(item)}
+              className={`w-4 h-4 ${variant === 'green' ? 'accent-green-500' : variant === 'red' ? 'accent-red-500' : 'accent-[#FF4D00]'}`}
+              disabled={disabled} />
+            {item}
+          </label>
+        )
+      })}
     </div>
   )
 }
@@ -350,16 +359,18 @@ export default function AuditReport() {
         {/* Section 7 — Observations */}
         <Section number="7" title="Observations importantes">
           <div className="text-xs text-[#AAA] mb-1">✅ Points positifs observés :</div>
-          <CheckList
-            items={['Personnel accueillant','Service rapide','Très propre','Bonne ambiance','Produits attractifs','Très professionnel','Bons conseils','Excellent rapport qualité/prix','Très bonne organisation','Forte confiance']}
-            dataKey="points_positifs" data={data} set={set} disabled={submitted}
-          />
-          <div className="text-xs text-[#AAA] mt-4 mb-1">❌ Points négatifs observés :</div>
-          <CheckList
-            items={['Attente excessive','Personnel peu accueillant','Manque de professionnalisme','Mauvaise organisation','Prix peu clairs','Établissement sale','Manque de disponibilité','Produits mal présentés','Mauvais conseils','Faible confiance']}
-            dataKey="points_negatifs" data={data} set={set} disabled={submitted}
-          />
-        </Section>
+                <CheckList
+                items={['Personnel accueillant','Service rapide','Très propre','Bonne ambiance','Produits attractifs','Très professionnel','Bons conseils','Excellent rapport qualité/prix','Très bonne organisation','Forte confiance']}
+                dataKey="points_positifs" data={data} set={set} disabled={submitted} variant="green"
+                />
+                <div className="text-xs text-[#AAA] mt-4 mb-1">❌ Points négatifs observés :</div>
+                <CheckList
+                items={['Attente excessive','Personnel peu accueillant','Manque de professionnalisme','Mauvaise organisation','Prix peu clairs','Établissement sale','Manque de disponibilité','Produits mal présentés','Mauvais conseils','Faible confiance']}
+                dataKey="points_negatifs" data={data} set={set} disabled={submitted} variant="red"
+                />
+                        
+                   
+                  </Section>
 
         {/* Section 8 — Incidents */}
         <Section number="8" title="Incidents majeurs">
