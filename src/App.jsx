@@ -22,6 +22,7 @@ import OeilDashboard from './pages/oeil/Dashboard'
 import OeilMissions  from './pages/oeil/Missions'
 import OeilCompte    from './pages/oeil/Compte'
 import AirbnbReport  from './pages/oeil/AirbnbReport'
+import AuditReport from './pages/oeil/AuditReport'
 import OeilMessagerie from './pages/shared/Messagerie'
 
 
@@ -85,7 +86,7 @@ export default function App() {
       <Route path="/oeil/missions"  element={<RequireAuth allowedRoles={['oeil']}><OeilMissions /></RequireAuth>} />
      <Route path="/oeil/compte"    element={<RequireAuth allowedRoles={['oeil']}><OeilCompte /></RequireAuth>} />
       <Route path="/oeil/messages"  element={<RequireAuth allowedRoles={['oeil']}><OeilMessagerie /></RequireAuth>} />
-      <Route path="/oeil/missions/:missionId/rapport" element={<RequireAuth allowedRoles={['oeil']}><AirbnbReport /></RequireAuth>} />
+      <Route path="/oeil/missions/:missionId/audit" element={<RequireAuth allowedRoles={['oeil']}><AuditReport /></RequireAuth>} />
 
       {/* Admin */}
       <Route path="/admin"              element={<RequireAuth allowedRoles={['admin']}><AdminDashboard /></RequireAuth>} />
