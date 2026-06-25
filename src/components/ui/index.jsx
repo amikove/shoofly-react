@@ -24,7 +24,8 @@ export function StatusBadge({ status }) {
     en_route:  { label: 'En route',    variant: 'blue'   },
     pending:   { label: 'En attente',  variant: 'yellow' },
     completed: { label: 'Complétée',   variant: 'gray'   },
-    cancelled: { label: 'Annulée',     variant: 'red'    },
+    cancelled: { label: 'Annulée',        variant: 'red'    },
+    sous_reclamation:  { label: '🚨 Réclamation', variant: 'orange' },
   }
   const { label, variant } = map[status] || { label: status, variant: 'gray' }
   return <Badge variant={variant}>{label}</Badge>
@@ -117,4 +118,4 @@ export function Field({ label, error, children }) {
 // ── Toast Container ────────────────────────────────────────
 let toastCallback = null
 export function setToastCallback(fn) { toastCallback = fn }
-export function toast(msg, type = 'info') { toastCallback?.(msg, type) }
+export function toast(msg, type = 'info', options = {}) { toastCallback?.(msg, type, options) }
