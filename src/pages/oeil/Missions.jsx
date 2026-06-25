@@ -28,13 +28,16 @@ export default function OeilMissions() {
 
 
 useEffect(() => {
-  if (pendingChatMissionId) {
-    const id = pendingChatMissionId
+  const id = pendingChatMissionId || window.__notifChatMissionId
+  if (id) {
     clearPendingChat()
+    window.__notifChatMissionId = null
     setTab('active')
-    missionsAPI.get(id)
-      .then(({ data }) => setChatMission(data.mission || data))
-      .catch(() => {})
+    setTimeout(() => {
+      missionsAPI.get(id)
+        .then(({ data }) => setChatMission(data.mission || data))
+        .catch(() => {})
+    }, 500)
   }
 }, [pendingChatMissionId])
 

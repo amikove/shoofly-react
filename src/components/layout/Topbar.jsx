@@ -42,11 +42,14 @@ export default function Topbar({ title, actions }) {
     setNotifs((n) => n.map((x) => ({ ...x, is_read: true })))
   }
 
-const handleClick = (n) => {
+
+  
+  const handleClick = (n) => {
   if (n.mission_id) {
     setShowNotifs(false)
-    const route = user?.role === 'oeil' ? '/oeil/missions' : '/client/missions'
+    window.__notifChatMissionId = n.mission_id
     openChat(n.mission_id)
+    const route = user?.role === 'oeil' ? '/oeil/missions' : '/client/missions'
     navigate(route)
   }
 }
