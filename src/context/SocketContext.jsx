@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useRef } from 'react'
+import { createContext, useContext, useEffect, useRef, useState } from 'react'
 import { io } from 'socket.io-client'
 import { useAuth } from './AuthContext'
 
@@ -7,6 +7,7 @@ const SocketContext = createContext(null)
 export function SocketProvider({ children }) {
   const { user } = useAuth()
   const socketRef = useRef(null)
+  const [connected, setConnected] = useState(false)
 
   useEffect(() => {
     const token = localStorage.getItem('shoofly_token')
@@ -14,15 +15,36 @@ export function SocketProvider({ children }) {
 
     socketRef.current = io(import.meta.env.VITE_API_URL || 'http://localhost:3001', {
       auth: { token },
-    transports: ['websocket', 'polling'],
+      transports: ['websocket', 'polling'],
+      reconnection: true,
+      reconnectionAttempts: Infinity,
+      reconnectionDelay: 1000,
+      reconnectionDelayMax: 5000,
+      timeout: 20000,
     })
 
     socketRef.current.on('connect', () => {
       console.log('🔌 Socket connecté')
+      setConnected(true)
+    })
+
+    socketRef.current.on('disconnect', (reason) => {
+      console.warn('🔌 Socket déconnecté:', reason)
+      setConnected(false)
+      // Forcer la reconnexion si le serveur a coupé
+      if (reason === 'io server disconnect') {
+        socketRef.current.connect()
+      }
     })
 
     socketRef.current.on('connect_error', (err) => {
       console.warn('Socket erreur:', err.message)
+      setConnected(false)
+    })
+
+    socketRef.current.on('reconnect', (attempt) => {
+      console.log('🔌 Socket reconnecté après', attempt, 'tentatives')
+      setConnected(true)
     })
 
     return () => {
@@ -47,12 +69,13 @@ export function SocketProvider({ children }) {
   }
 
   const onEvent = (event, callback) => {
-    socketRef.current?.on(event, callback)
+    if (!socketRef.current) return () => {}
+    socketRef.current.on(event, callback)
     return () => socketRef.current?.off(event, callback)
   }
 
   return (
-    <SocketContext.Provider value={{ joinMission, leaveMission, sendMessage, sendLocation, onEvent, socket: socketRef }}>
+    <SocketContext.Provider value={{ joinMission, leaveMission, sendMessage, sendLocation, onEvent, socket: socketRef, connected }}>
       {children}
     </SocketContext.Provider>
   )
