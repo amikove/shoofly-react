@@ -2,6 +2,8 @@ import { Routes, Route, Navigate } from 'react-router-dom'
 import { useAuth } from './context/AuthContext'
 import { Spinner } from './components/ui'
 
+
+
 // Auth pages
 import Login    from './pages/auth/Login'
 import Register from './pages/auth/Register'
@@ -11,6 +13,8 @@ import ClientDashboard from './pages/client/Dashboard'
 import ClientMissions  from './pages/client/Missions'
 import ClientOeils     from './pages/client/Oeils'
 import ClientCompte    from './pages/client/Compte'
+import AirbnbReportView from './pages/client/AirbnbReportView'
+
 
 // Oeil pages
 import OeilDashboard from './pages/oeil/Dashboard'
@@ -67,6 +71,7 @@ export default function App() {
       <Route path="/client/missions" element={<RequireAuth allowedRoles={['client']}><ClientMissions /></RequireAuth>} />
       <Route path="/client/oeils"    element={<RequireAuth allowedRoles={['client']}><ClientOeils /></RequireAuth>} />
       <Route path="/client/compte"   element={<RequireAuth allowedRoles={['client']}><ClientCompte /></RequireAuth>} />
+      <Route path="/client/missions/:missionId/rapport" element={<RequireAuth allowedRoles={['client']}><AirbnbReportView /></RequireAuth>} />
 
       {/* Oeil */}
       <Route path="/oeil"           element={<RequireAuth allowedRoles={['oeil']}><OeilDashboard /></RequireAuth>} />

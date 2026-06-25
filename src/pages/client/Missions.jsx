@@ -8,6 +8,7 @@ import RateModal from '../../components/missions/RateModal'
 import ChatModal from '../../components/missions/ChatModal'
 import { useAuth } from '../../context/AuthContext'
 import { useNotif } from '../../context/NotifContext'
+import { useNavigate } from 'react-router-dom'
 
 const TYPE_ICONS = { immobilier:'🏠', file_attente:'⏳', audit:'🔎', personnalisee:'🎯' }
 
@@ -159,6 +160,8 @@ function ReportViewer({ mission, onClose }) {
 }
 
 export default function ClientMissions() {
+
+  const navigate = useNavigate()
   const [missions, setMissions]           = useState([])
   const [loading, setLoading]             = useState(true)
   const [showNew, setShowNew]             = useState(false)
@@ -289,6 +292,16 @@ useEffect(() => {
                   <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); setReportMission(m); }}
                     className="btn btn-ghost btn-sm" title="Voir le rapport">📄</button>
                 )}
+
+                {m.type === 'immobilier' && ['Airbnb','Booking'].some(s => m.subcategory?.includes(s)) && (
+                <button
+                  onClick={(e) => { e.preventDefault(); e.stopPropagation(); navigate(`/client/missions/${m.id}/rapport`); }}
+                  className="btn btn-ghost btn-sm"
+                  title="Rapport de visite Airbnb"
+                >📋</button>
+              )}
+
+
                 {m.status === 'completed' && (
                   <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); setRatingMission(m); }}
                     className="btn btn-ghost btn-sm" title="Noter l'Œil">⭐</button>
@@ -332,6 +345,14 @@ useEffect(() => {
         {m.status === 'completed' && (
           <button onClick={() => setReportMission(m)} className="btn btn-ghost btn-sm">📄 Rapport</button>
         )}
+
+          {m.type === 'immobilier' && ['Airbnb','Booking'].some(s => m.subcategory?.includes(s)) && (
+            <button
+              onClick={() => navigate(`/client/missions/${m.id}/rapport`)}
+              className="btn btn-ghost btn-sm"
+            >📋 Visite</button>
+          )}
+
         {m.status === 'completed' && (
           <button onClick={() => setRatingMission(m)} className="btn btn-ghost btn-sm">⭐ Noter</button>
         )}
