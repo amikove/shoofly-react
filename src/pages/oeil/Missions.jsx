@@ -128,7 +128,8 @@ const advance = async (mission) => {
     if (!next) { toast('Statut invalide', 'error'); return }
 
     // Bloquer si mission audit sans rapport soumis
-    if (next === 'completed' && mission.type === 'audit') {
+  console.log('Mission type:', mission.type, 'subcategory:', mission.subcategory)
+if (next === 'completed' && mission.type === 'audit') {
       try {
         const { data: rData } = await reportsAPI.get(mission.id)
         if (!rData.report || !rData.report.submitted) {
