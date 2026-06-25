@@ -231,8 +231,9 @@ const load = useCallback((t) => {
                     </div>
                   </div>
                   <div className="text-right flex-shrink-0">
-                    <div className="text-green-400 font-bold text-base">{parseFloat(m.price).toFixed(0)} MAD</div>
-                    <div className="text-[11px] text-[#AAA]">net : {Math.round(m.price * 0.8)} MAD</div>
+
+                    <div className="text-green-400 font-bold text-base">{parseFloat(m.oeil_earning || m.price).toFixed(0)} MAD</div>
+                    <div className="text-[11px] text-[#AAA]">votre gain</div>
                   </div>
                 </div>
 
