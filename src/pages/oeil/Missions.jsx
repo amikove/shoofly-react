@@ -5,6 +5,7 @@ import Topbar from '../../components/layout/Topbar'
 import { missionsAPI } from '../../api'
 import { StatusBadge, Spinner, EmptyState, toast } from '../../components/ui'
 import { useNotif } from '../../context/NotifContext'
+import { useNavigate } from 'react-router-dom'
 
 const TABS = [
   { id: 'available', label: 'Disponibles' },
@@ -19,6 +20,7 @@ export default function OeilMissions() {
   const [loading, setLoading]   = useState(true)
   const [error, setError]       = useState('')
   const [chatMission, setChatMission] = useState(null)
+  const navigate = useNavigate()
 
   const { pendingChatMissionId, clearPendingChat, getPending } = useNotif()
 
@@ -206,6 +208,14 @@ useEffect(() => {
                   {tab === 'active' && (
                     <>
                       <button onClick={() => setChatMission(m)} className="btn btn-ghost btn-sm">💬 Chat</button>
+                      
+                      {tab === 'active' && ['airbnb','booking','Airbnb','Booking'].some(s => m.subcategory?.toLowerCase().includes(s.toLowerCase())) && (
+                        <button onClick={() => navigate(`/oeil/missions/${m.id}/rapport`)}
+                          className="btn btn-ghost btn-sm">
+                          📋 Rapport
+                        </button>
+                      )}
+
                       <button className="btn btn-ghost btn-sm">📸 Photos</button>
                       {advanceLabel[m.status] && (
                         <button onClick={() => advance(m)} className="btn btn-primary btn-sm flex-1 justify-center">

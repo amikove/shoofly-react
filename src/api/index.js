@@ -61,3 +61,9 @@ export const mediaAPI = {
       }),
   list: (missionId) => api.get(`/api/media/${missionId}`),
 }
+
+// REPORTS
+export const reportsAPI = {
+  get:    (missionId) => api.get(`/api/reports/${missionId}`),
+  save:   (missionId, data, submitted = false) => api.post(`/api/reports/${missionId}`, { data, submitted }),
+}
