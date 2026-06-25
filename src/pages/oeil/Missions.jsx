@@ -19,7 +19,7 @@ export default function OeilMissions() {
   const [loading, setLoading]   = useState(true)
   const [error, setError]       = useState('')
   const [chatMission, setChatMission] = useState(null)
-  const { pendingChatMissionId, clearPendingChat } = useNotif()
+
   const { pendingChatMissionId, clearPendingChat, getPending } = useNotif()
 
 
