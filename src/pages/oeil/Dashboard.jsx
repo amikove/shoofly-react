@@ -135,9 +135,11 @@ export default function OeilDashboard() {
                     <div className="font-semibold text-sm truncate">{m.title}</div>
                     <div className="text-xs text-[#AAA] mt-0.5">📍 {m.city}</div>
                   </div>
-                  <div className="text-green-400 font-bold whitespace-nowrap text-sm">
-                    {parseFloat(m.price).toFixed(0)} MAD
+                 
+                 <div className="text-green-400 font-bold whitespace-nowrap text-sm">
+                    {parseFloat(m.oeil_earning || m.price).toFixed(0)} MAD
                   </div>
+
                 </div>
                 
                 <div className="flex gap-2">
