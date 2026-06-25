@@ -44,12 +44,11 @@ export default function Topbar({ title, actions }) {
 
 
   
-  const handleClick = (n) => {
+const handleClick = (n) => {
   if (n.mission_id) {
     setShowNotifs(false)
-    window.__notifChatMissionId = n.mission_id
-    openChat(n.mission_id)
     const route = user?.role === 'oeil' ? '/oeil/missions' : '/client/missions'
+    window.dispatchEvent(new CustomEvent('shoofly-open-chat', { detail: n.mission_id }))
     navigate(route)
   }
 }

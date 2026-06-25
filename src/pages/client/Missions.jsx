@@ -177,15 +177,17 @@ export default function ClientMissions() {
 
 // Ouvrir le chat depuis une notification
 useEffect(() => {
-  const id = getPending() || window.__notifChatMissionId
-  if (id) {
-    window.__notifChatMissionId = null
-    clearPendingChat()
-    missionsAPI.get(id)
-      .then(({ data }) => setChatMission(data.mission || data))
-      .catch(() => {})
+  const handler = (e) => {
+    const id = e.detail
+    if (id) {
+      missionsAPI.get(id)
+        .then(({ data }) => setChatMission(data.mission || data))
+        .catch(() => {})
+    }
   }
-}, [pendingChatMissionId])
+  window.addEventListener('shoofly-open-chat', handler)
+  return () => window.removeEventListener('shoofly-open-chat', handler)
+}, [])
 
 
 

@@ -27,16 +27,18 @@ export default function OeilMissions() {
   // Ouvrir le chat depuis une notification
 
 useEffect(() => {
-  const id = getPending() || window.__notifChatMissionId
-  if (id) {
-    window.__notifChatMissionId = null
-    clearPendingChat()
-    setTab('active')
-    missionsAPI.get(id)
-      .then(({ data }) => setChatMission(data.mission || data))
-      .catch(() => {})
+  const handler = (e) => {
+    const id = e.detail
+    if (id) {
+      setTab('active')
+      missionsAPI.get(id)
+        .then(({ data }) => setChatMission(data.mission || data))
+        .catch(() => {})
+    }
   }
-}, [pendingChatMissionId])
+  window.addEventListener('shoofly-open-chat', handler)
+  return () => window.removeEventListener('shoofly-open-chat', handler)
+}, [])
 
   const load = useCallback((t) => {
     setLoading(true)
