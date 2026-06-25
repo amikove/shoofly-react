@@ -4,6 +4,7 @@ import Topbar from '../../components/layout/Topbar'
 import { authAPI } from '../../api'
 import { useAuth } from '../../context/AuthContext'
 import { toast, Avatar, Stars } from '../../components/ui'
+import { authAPI, usersAPI } from '../../api'
 
 const JOURS = ['Lun','Mar','Mer','Jeu','Ven','Sam','Dim']
 
@@ -18,6 +19,8 @@ export default function OeilCompte() {
   const { user, updateUser } = useAuth()
   const [saving, setSaving]  = useState(false)
   const [savingDispo, setSavingDispo] = useState(false)
+  const [isAvailable, setIsAvailable] = useState(user?.is_available || false)
+  const [togglingDispo, setTogglingDispo] = useState(false)
   const [form, setForm] = useState({
     first_name: user?.first_name || '',
     last_name:  user?.last_name  || '',
@@ -62,6 +65,17 @@ const [dispo, setDispo] = useState(() => parseDispo(user?.disponibilites))
     } catch { toast('Erreur', 'error') }
     finally { setSavingDispo(false) }
   }
+
+  const toggleAvailable = async () => {
+  setTogglingDispo(true)
+  try {
+    const { data } = await usersAPI.toggleAvailable()
+    setIsAvailable(data.is_available)
+    updateUser({ is_available: data.is_available })
+    toast(data.is_available ? '🟢 Vous êtes maintenant disponible' : '🔴 Vous êtes maintenant hors ligne', 'info')
+  } catch { toast('Erreur', 'error') }
+  finally { setTogglingDispo(false) }
+}
 
   const requestWithdraw = () => toast('Fonctionnalité virement disponible bientôt', 'info')
 
@@ -114,7 +128,21 @@ const [dispo, setDispo] = useState(() => parseDispo(user?.disponibilites))
 
             {/* Disponibilités */}
             <div className="card">
-              <h2 className="font-semibold text-sm mb-4">Disponibilités</h2>
+              
+              <div className="flex items-center justify-between mb-4">
+                  <h2 className="font-semibold text-sm">Disponibilités</h2>
+                  <button
+                    onClick={toggleAvailable}
+                    disabled={togglingDispo}
+                    className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold transition-colors disabled:opacity-60 ${
+                      isAvailable ? 'bg-green-500/20 text-green-400 border border-green-500/30' : 'bg-[#333] text-[#AAA] border border-white/10'
+                    }`}
+                  >
+                    <span className={`w-2 h-2 rounded-full ${isAvailable ? 'bg-green-400' : 'bg-[#666]'}`} />
+                    {togglingDispo ? '...' : isAvailable ? 'Disponible' : 'Hors ligne'}
+                  </button>
+                </div>
+
               {dispo.map((d, i) => (
                 <div key={d.jour} className={`flex items-center gap-2 py-2 border-b border-white/10 last:border-0 transition-opacity ${!d.actif ? 'opacity-40' : ''}`}>
                   <span className="text-sm font-medium w-9 shrink-0">{d.jour}</span>
