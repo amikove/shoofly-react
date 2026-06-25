@@ -170,21 +170,22 @@ export default function ClientMissions() {
   const [statusFilter, setStatus]         = useState('')
   const [typeFilter, setType]             = useState('')
   const { pendingChatMissionId, clearPendingChat } = useNotif()
+  const { pendingChatMissionId, clearPendingChat, getPending } = useNotif()
 
 
 
 
 // Ouvrir le chat depuis une notification
-  useEffect(() => {
-    const id = pendingChatMissionId || window.__notifChatMissionId
-    if (id) {
-      window.__notifChatMissionId = null
-      clearPendingChat()
-      missionsAPI.get(id)
-        .then(({ data }) => setChatMission(data.mission || data))
-        .catch(() => {})
-    }
-  }, [pendingChatMissionId])
+useEffect(() => {
+  const id = getPending() || window.__notifChatMissionId
+  if (id) {
+    window.__notifChatMissionId = null
+    clearPendingChat()
+    missionsAPI.get(id)
+      .then(({ data }) => setChatMission(data.mission || data))
+      .catch(() => {})
+  }
+}, [pendingChatMissionId])
 
 
 

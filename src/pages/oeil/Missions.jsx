@@ -13,9 +13,6 @@ const TABS = [
 ]
 const TYPE_ICONS = { immobilier:'🏠', file_attente:'⏳', audit:'🔎', personnalisee:'🎯' }
 
-// Modal chat simple
-
-
 export default function OeilMissions() {
   const [tab, setTab]           = useState('available')
   const [missions, setMissions] = useState([])
@@ -23,25 +20,23 @@ export default function OeilMissions() {
   const [error, setError]       = useState('')
   const [chatMission, setChatMission] = useState(null)
   const { pendingChatMissionId, clearPendingChat } = useNotif()
-// Ouvrir le chat depuis une notification
+  const { pendingChatMissionId, clearPendingChat, getPending } = useNotif()
 
 
+
+  // Ouvrir le chat depuis une notification
 
 useEffect(() => {
-  const id = pendingChatMissionId || window.__notifChatMissionId
+  const id = getPending() || window.__notifChatMissionId
   if (id) {
-    clearPendingChat()
     window.__notifChatMissionId = null
+    clearPendingChat()
     setTab('active')
-    setTimeout(() => {
-      missionsAPI.get(id)
-        .then(({ data }) => setChatMission(data.mission || data))
-        .catch(() => {})
-    }, 500)
+    missionsAPI.get(id)
+      .then(({ data }) => setChatMission(data.mission || data))
+      .catch(() => {})
   }
 }, [pendingChatMissionId])
-
-
 
   const load = useCallback((t) => {
     setLoading(true)
@@ -50,7 +45,6 @@ useEffect(() => {
     if (t === 'available') {
       params = { mode: 'available' }
     } else if (t === 'active') {
-      // Missions assigned, en_route ou active = toutes mes missions non terminées
       params = { mode: 'mine' }
     } else {
       params = { mode: 'mine', status: 'completed' }
@@ -58,7 +52,6 @@ useEffect(() => {
     return missionsAPI.list(params)
       .then(({ data }) => {
         let ms = data.missions || []
-        // Filtrer côté front selon l'onglet
         if (t === 'active') {
           ms = ms.filter((m) => ['assigned','en_route','active'].includes(m.status))
         }
@@ -72,20 +65,8 @@ useEffect(() => {
       .finally(() => setLoading(false))
   }, [])
 
-  useEffect(() => {
-  load(tab).then(() => {
-    if (tab === 'active' && window.__notifChatMissionId) {
-      const id = window.__notifChatMissionId
-      window.__notifChatMissionId = null
-      missionsAPI.get(id)
-        .then(({ data }) => setChatMission(data.mission || data))
-        .catch(() => {})
-    }
-  })
-}, [tab, load])
+  useEffect(() => { load(tab) }, [tab, load])
 
-
-  // Bug 1 fix : après refus, retirer la mission du fil localement
   const refuse = async (id) => {
     try {
       await missionsAPI.refuse(id)
@@ -96,20 +77,16 @@ useEffect(() => {
     }
   }
 
-  
   const interest = async (id) => {
-  try {
-    await missionsAPI.interest(id)
-    setMissions((prev) => prev.map((m) => m.id === id ? { ...m, interested: true } : m))
-    toast('Intérêt exprimé 👁️ Le client va vous contacter.', 'success')
-  } catch (err) {
-    toast(err.response?.data?.error || 'Erreur', 'error')
+    try {
+      await missionsAPI.interest(id)
+      setMissions((prev) => prev.map((m) => m.id === id ? { ...m, interested: true } : m))
+      toast('Intérêt exprimé 👁️ Le client va vous contacter.', 'success')
+    } catch (err) {
+      toast(err.response?.data?.error || 'Erreur', 'error')
+    }
   }
-}
 
-
-
-  // Bug 3 fix : respecter les transitions assigned → en_route → active → completed
   const advance = async (mission) => {
     const next = {
       assigned: 'en_route',
@@ -146,7 +123,6 @@ useEffect(() => {
     done:      { icon:'✅', title:'Aucune mission terminée',   desc:'Vos missions complétées apparaîtront ici.'               },
   }
 
-  // Label du bouton d'avancement selon le statut
   const advanceLabel = {
     assigned: '🚗 Je suis en route',
     en_route: '▶️ Démarrer la mission',
@@ -224,29 +200,23 @@ useEffect(() => {
                       {(m.interested || m.has_interested) ? '✅ Demande envoyée' : '👁️ Je suis intéressé'}
                     </button>
                   )}
-                  
-                {tab === 'active' && (
-  <>
-    <button onClick={() => setChatMission(m)} className="btn btn-ghost btn-sm">💬 Chat</button>
-    <button className="btn btn-ghost btn-sm">📸 Photos</button>
-    {advanceLabel[m.status] && (
-      <button onClick={() => advance(m)} className="btn btn-primary btn-sm flex-1 justify-center">
-        {advanceLabel[m.status]}
-      </button>
-    )}
-    {m.status === 'assigned' && (
-      <button
-        onClick={() => refuse(m.id)}
-        className="btn btn-ghost btn-sm text-red-400"
-      >
-        ✕ Refuser
-      </button>
-    )}
-  </>
-)}
 
-
-
+                  {tab === 'active' && (
+                    <>
+                      <button onClick={() => setChatMission(m)} className="btn btn-ghost btn-sm">💬 Chat</button>
+                      <button className="btn btn-ghost btn-sm">📸 Photos</button>
+                      {advanceLabel[m.status] && (
+                        <button onClick={() => advance(m)} className="btn btn-primary btn-sm flex-1 justify-center">
+                          {advanceLabel[m.status]}
+                        </button>
+                      )}
+                      {m.status === 'assigned' && (
+                        <button onClick={() => refuse(m.id)} className="btn btn-ghost btn-sm text-red-400">
+                          ✕ Refuser
+                        </button>
+                      )}
+                    </>
+                  )}
 
                   {tab === 'done' && (
                     <button className="btn btn-ghost btn-sm">📄 Voir rapport</button>
@@ -258,7 +228,6 @@ useEffect(() => {
         )}
       </div>
 
-      {/* Bug 2 fix : modal chat */}
       {chatMission && (
         <ChatModal mission={chatMission} onClose={() => setChatMission(null)} />
       )}
