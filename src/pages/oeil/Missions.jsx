@@ -2,7 +2,7 @@ import ChatModal from '../../components/missions/ChatModal'
 import { useState, useEffect, useCallback } from 'react'
 import AppLayout from '../../components/layout/AppLayout'
 import Topbar from '../../components/layout/Topbar'
-import { missionsAPI } from '../../api'
+import { missionsAPI, reportsAPI } from '../../api'
 import { StatusBadge, Spinner, EmptyState, toast } from '../../components/ui'
 import { useNotif } from '../../context/NotifContext'
 import { useNavigate } from 'react-router-dom'
@@ -118,7 +118,7 @@ const load = useCallback((t) => {
     }
   }
 
-  const advance = async (mission) => {
+const advance = async (mission) => {
     const next = {
       assigned: 'en_route',
       en_route: 'active',
@@ -126,6 +126,36 @@ const load = useCallback((t) => {
     }[mission.status]
 
     if (!next) { toast('Statut invalide', 'error'); return }
+
+    // Bloquer si mission audit sans rapport soumis
+    if (next === 'completed' && mission.type === 'audit') {
+      try {
+        const { data: rData } = await reportsAPI.get(mission.id)
+        if (!rData.report || !rData.report.submitted) {
+          toast('Vous devez soumettre le rapport d\'audit avant de terminer la mission 📋', 'error')
+          navigate(`/oeil/missions/${mission.id}/audit`)
+          return
+        }
+      } catch {
+        toast('Impossible de vérifier le rapport', 'error')
+        return
+      }
+    }
+
+    // Bloquer si mission Airbnb sans rapport soumis
+    if (next === 'completed' && ['airbnb','booking'].some(s => mission.subcategory?.toLowerCase().includes(s.toLowerCase()))) {
+      try {
+        const { data: rData } = await reportsAPI.get(mission.id)
+        if (!rData.report || !rData.report.submitted) {
+          toast('Vous devez soumettre le rapport de visite avant de terminer la mission 📋', 'error')
+          navigate(`/oeil/missions/${mission.id}/rapport`)
+          return
+        }
+      } catch {
+        toast('Impossible de vérifier le rapport', 'error')
+        return
+      }
+    }
 
     const labels = {
       en_route:  'En route vers la mission ✓',
