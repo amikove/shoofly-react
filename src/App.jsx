@@ -15,6 +15,7 @@ import ClientMissions   from './pages/client/Missions'
 import ClientOeils      from './pages/client/Oeils'
 import ClientCompte     from './pages/client/Compte'
 import AirbnbReportView from './pages/client/AirbnbReportView'
+import AuditReportView from './pages/client/AuditReportView'
 import ClientMessagerie from './pages/shared/Messagerie'
 
 // Oeil pages
@@ -80,6 +81,7 @@ export default function App() {
       <Route path="/client/compte"    element={<RequireAuth allowedRoles={['client']}><ClientCompte /></RequireAuth>} />
       <Route path="/client/messages"  element={<RequireAuth allowedRoles={['client']}><ClientMessagerie /></RequireAuth>} />
       <Route path="/client/missions/:missionId/rapport" element={<RequireAuth allowedRoles={['client']}><AirbnbReportView /></RequireAuth>} />
+      <Route path="/client/missions/:missionId/audit" element={<RequireAuth allowedRoles={['client']}><AuditReportView /></RequireAuth>} />
 
       {/* Oeil */}
       <Route path="/oeil"           element={<RequireAuth allowedRoles={['oeil']}><OeilDashboard /></RequireAuth>} />

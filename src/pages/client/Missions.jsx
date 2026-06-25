@@ -330,10 +330,18 @@ useEffect(() => {
                   <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); setChatMission(m); }}
                     className="btn btn-ghost btn-sm" title="Chat avec l'Œil">💬</button>
                 )}
-                {m.status === 'completed' && (
-                  <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); setReportMission(m); }}
-                    className="btn btn-ghost btn-sm" title="Voir le rapport">📄</button>
-                )}
+                    {m.status === 'completed' && (
+                      <>
+                        {['airbnb','booking'].some(s => m.subcategory?.toLowerCase().includes(s.toLowerCase())) && (
+                          <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); navigate(`/client/missions/${m.id}/rapport`) }}
+                            className="btn btn-ghost btn-sm" title="Rapport de visite">📄</button>
+                        )}
+                        {m.type === 'audit' && (
+                          <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); navigate(`/client/missions/${m.id}/audit`) }}
+                            className="btn btn-ghost btn-sm" title="Rapport d'audit">📋</button>
+                        )}
+                      </>
+                    )}
 
                 {m.type === 'immobilier' && ['Airbnb','Booking'].some(s => m.subcategory?.includes(s)) && (
                 <button
