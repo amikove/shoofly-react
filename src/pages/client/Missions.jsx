@@ -159,6 +159,47 @@ function ReportViewer({ mission, onClose }) {
   )
 }
 
+
+function ClaimModal({ mission, onClose, onClaimed }) {
+  const [comment, setComment] = useState('')
+  const [saving, setSaving]   = useState(false)
+
+  const submit = async () => {
+    if (!comment.trim()) { toast('Commentaire obligatoire', 'error'); return }
+    setSaving(true)
+    try {
+      await missionsAPI.claim(mission.id, comment)
+      toast('Réclamation envoyée 🚨', 'info')
+      onClaimed()
+    } catch (err) {
+      toast(err.response?.data?.error || 'Erreur', 'error')
+    } finally { setSaving(false) }
+  }
+
+  return (
+    <div className="fixed inset-0 bg-black/75 z-[60] flex items-center justify-center p-4 backdrop-blur-sm"
+         onClick={(e) => e.target === e.currentTarget && onClose()}>
+      <div className="bg-[#181818] border border-white/20 rounded-2xl p-5 w-full max-w-sm shadow-xl">
+        <h2 className="font-semibold mb-1">🚨 Réclamer cette mission</h2>
+        <p className="text-xs text-[#AAA] mb-4">"{mission.title}" — Expliquez pourquoi vous contestez la validation.</p>
+        <textarea
+          className="input resize-none h-28 w-full"
+          placeholder="Décrivez le problème en détail..."
+          value={comment}
+          onChange={(e) => setComment(e.target.value)}
+        />
+        <div className="flex gap-2 mt-4">
+          <button onClick={onClose} className="btn btn-ghost flex-1 justify-center">Annuler</button>
+          <button onClick={submit} disabled={saving || !comment.trim()} className="btn btn-primary flex-1 justify-center disabled:opacity-60">
+            {saving ? 'Envoi...' : 'Envoyer la réclamation'}
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+
 export default function ClientMissions() {
 
   const navigate = useNavigate()
@@ -169,6 +210,7 @@ export default function ClientMissions() {
   const [chatMission, setChatMission]     = useState(null)
   const [reportMission, setReportMission] = useState(null)
   const [interestsMission, setInterestsMission] = useState(null)
+  const [claimMission, setClaimMission] = useState(null)
   const [search, setSearch]               = useState('')
   const [statusFilter, setStatus]         = useState('')
   const [typeFilter, setType]             = useState('')
@@ -301,15 +343,25 @@ useEffect(() => {
                 >📋</button>
               )}
 
-
-                {m.status === 'completed' && (
-                  <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); setRatingMission(m); }}
-                    className="btn btn-ghost btn-sm" title="Noter l'Œil">⭐</button>
-                )}
-                {['pending','assigned'].includes(m.status) && (
-                  <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); cancel(m.id); }}
-                    className="btn btn-ghost btn-sm text-red-400">Annuler</button>
-                )}
+{m.status === 'completed' && (
+  <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); setRatingMission(m); }}
+    className="btn btn-ghost btn-sm" title="Noter l'Œil">⭐</button>
+)}
+{m.status === 'completed' && !m.validated_at && m.completed_by_oeil_at && (
+  (() => {
+    const hours = (Date.now() - new Date(m.completed_by_oeil_at).getTime()) / 3600000;
+    return hours < 12 ? (
+      <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); setClaimMission(m); }}
+        className="btn btn-ghost btn-sm text-orange-400" title="Réclamer">🚨</button>
+    ) : null;
+  })()
+)}
+{['pending','assigned'].includes(m.status) && (
+  <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); cancel(m.id); }}
+    className="btn btn-ghost btn-sm text-red-400">Annuler</button>
+)}
+                
+                
               </div>
             </td>
           </tr>
@@ -353,12 +405,22 @@ useEffect(() => {
             >📋 Visite</button>
           )}
 
-        {m.status === 'completed' && (
-          <button onClick={() => setRatingMission(m)} className="btn btn-ghost btn-sm">⭐ Noter</button>
-        )}
-        {['pending','assigned'].includes(m.status) && (
-          <button onClick={() => cancel(m.id)} className="btn btn-ghost btn-sm text-red-400">Annuler</button>
-        )}
+{m.status === 'completed' && (
+  <button onClick={() => setRatingMission(m)} className="btn btn-ghost btn-sm">⭐ Noter</button>
+)}
+{m.status === 'completed' && !m.validated_at && m.completed_by_oeil_at && (
+  (() => {
+    const hours = (Date.now() - new Date(m.completed_by_oeil_at).getTime()) / 3600000;
+    return hours < 12 ? (
+      <button onClick={() => setClaimMission(m)} className="btn btn-ghost btn-sm text-orange-400">🚨 Réclamer</button>
+    ) : null;
+  })()
+)}
+{['pending','assigned'].includes(m.status) && (
+  <button onClick={() => cancel(m.id)} className="btn btn-ghost btn-sm text-red-400">Annuler</button>
+)}
+        
+        
       </div>
     </div>
     
@@ -384,6 +446,10 @@ useEffect(() => {
           onRated={() => { setRatingMission(null); load() }}
         />
       )}
+
+{claimMission && (
+  <ClaimModal mission={claimMission} onClose={() => setClaimMission(null)} onClaimed={() => { setClaimMission(null); load() }} />
+)}
 
       {chatMission && (
         <ChatModal
