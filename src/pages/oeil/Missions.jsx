@@ -238,15 +238,27 @@ const load = useCallback((t) => {
                 </div>
 
                 <div className="flex gap-2 mt-4 pt-3 border-t border-white/10">
+                  
                   {tab === 'available' && (
-                    <button
-                      onClick={() => interest(m.id)}
-                      disabled={m.interested || m.has_interested}
-                      className="btn btn-primary btn-sm flex-1 justify-center disabled:opacity-50"
-                    >
-                      {(m.interested || m.has_interested) ? '✅ Demande envoyée' : '👁️ Je suis intéressé'}
-                    </button>
-                  )}
+                      <>
+                        <button
+                          onClick={() => interest(m.id)}
+                          disabled={m.interested || m.has_interested}
+                          className="btn btn-primary btn-sm flex-1 justify-center disabled:opacity-50"
+                        >
+                          {(m.interested || m.has_interested) ? '✅ Demande envoyée' : '👁️ Je suis intéressé'}
+                        </button>
+                        <button
+                          onClick={() => refuse(m.id)}
+                          className="btn btn-ghost btn-sm text-red-400"
+                          title="Ignorer cette mission"
+                        >
+                          ✕
+                        </button>
+                      </>
+                    )}
+
+                  
 
                   {tab === 'active' && (
                     <>
