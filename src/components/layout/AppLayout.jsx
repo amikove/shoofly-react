@@ -4,6 +4,8 @@ import { useAuth } from '../../context/AuthContext'
 import { Avatar } from '../ui'
 import { useNotifications } from '../../hooks/useNotifications'
 import NotificationBanner from '../ui/NotificationBanner'
+import { useEffect, useState } from 'react'
+import { missionsAPI } from '../../api'
 
 const MENUS = {
   client: [
@@ -39,6 +41,23 @@ export default function AppLayout({ children }) {
   const { user, logout }      = useAuth()
   const navigate               = useNavigate()
   const [isAvail, setIsAvail] = useState(true)
+
+  const [unreadCount, setUnreadCount] = useState(0)
+
+useEffect(() => {
+  if (!user) return
+  const fetchUnread = () => {
+    missionsAPI.inbox()
+      .then(({ data }) => {
+        const total = (data.inbox || []).reduce((acc, m) => acc + (m.unread_count || 0), 0)
+        setUnreadCount(total)
+      })
+      .catch(() => {})
+  }
+  fetchUnread()
+  const interval = setInterval(fetchUnread, 30000) // refresh toutes les 30s
+  return () => clearInterval(interval)
+}, [user])
 
 
   useNotifications({ onChatOpen: (missionId) => {
@@ -85,17 +104,24 @@ export default function AppLayout({ children }) {
                   {section}
                 </div>
               )}
-              {navItems.map((item) => (
-                <NavLink
-                  key={item.to}
-                  to={item.to}
-                  end={item.to === '/client' || item.to === '/oeil' || item.to === '/admin'}
-                  className={({ isActive }) => `nav-item ${isActive ? 'nav-item-active' : ''}`}
-                >
-                  <span className="w-4 text-center text-base">{item.icon}</span>
-                  <span>{item.label}</span>
-                </NavLink>
-              ))}
+
+                {navItems.map((item) => (
+                  <NavLink
+                    key={item.to}
+                    to={item.to}
+                    end={item.to === '/client' || item.to === '/oeil' || item.to === '/admin'}
+                    className={({ isActive }) => `nav-item ${isActive ? 'nav-item-active' : ''}`}
+                  >
+                    <span className="w-4 text-center text-base">{item.icon}</span>
+                    <span className="flex-1">{item.label}</span>
+                    {item.to.includes('/messages') && unreadCount > 0 && (
+                      <span className="bg-[#FF4D00] text-white text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center">
+                        {unreadCount > 9 ? '9+' : unreadCount}
+                      </span>
+                    )}
+                  </NavLink>
+                ))}
+
             </div>
           ))}
         </nav>
@@ -148,17 +174,30 @@ export default function AppLayout({ children }) {
 
       {/* BOTTOM NAV — mobile uniquement */}
       <nav className="mobile-nav">
-        {items.map((item) => (
-          <NavLink
-            key={item.to}
-            to={item.to}
-            end={item.to === '/client' || item.to === '/oeil' || item.to === '/admin'}
-            className={({ isActive }) => isActive ? 'active' : ''}
-          >
-            <span className="icon">{item.icon}</span>
-            <span>{item.label}</span>
-          </NavLink>
-        ))}
+
+          {items.map((item) => (
+            <NavLink
+              key={item.to}
+              to={item.to}
+              end={item.to === '/client' || item.to === '/oeil' || item.to === '/admin'}
+              className={({ isActive }) => isActive ? 'active' : ''}
+            >
+              <span className="icon" style={{ position: 'relative', display: 'inline-block' }}>
+                {item.icon}
+                {item.to.includes('/messages') && unreadCount > 0 && (
+                  <span style={{
+                    position: 'absolute', top: -4, right: -6,
+                    background: '#FF4D00', color: 'white',
+                    fontSize: 9, fontWeight: 700, borderRadius: '50%',
+                    width: 14, height: 14, display: 'flex', alignItems: 'center', justifyContent: 'center'
+                  }}>
+                    {unreadCount > 9 ? '9+' : unreadCount}
+                  </span>
+                )}
+              </span>
+              <span>{item.label}</span>
+            </NavLink>
+          ))}
         <button
           onClick={handleLogout}
           style={{ flex:1, display:'flex', flexDirection:'column', alignItems:'center', gap:2, padding:'6px 4px', color:'#777', fontSize:10, fontWeight:500, background:'none', border:'none', cursor:'pointer' }}
