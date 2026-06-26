@@ -260,7 +260,7 @@ try {
                         <span>📍 {m.city}</span>
                         <span>📅 {m.scheduled_at ? new Date(m.scheduled_at).toLocaleDateString('fr-MA') : '—'}</span>
                         {m.client_name && <span>👤 {m.client_name}</span>}
-                        {tab !== 'available' && <StatusBadge status={m.status} />}
+                        {tab !== 'available' && <StatusBadge status={m.status} validated={!!m.validated_at} role="oeil" />}
                       </div>
                       {m.description && (
                         <p className="text-xs text-[#777] mt-1 line-clamp-1">{m.description}</p>

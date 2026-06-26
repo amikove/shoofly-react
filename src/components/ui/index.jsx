@@ -17,16 +17,28 @@ export function Badge({ children, variant = 'gray' }) {
 }
 
 // ── Status Badge ───────────────────────────────────────────
-export function StatusBadge({ status }) {
+
+export function StatusBadge({ status, validated, role }) {
   const map = {
-    active:    { label: 'Live',        variant: 'green'  },
-    assigned:  { label: 'Assigné',     variant: 'blue'   },
-    en_route:  { label: 'En route',    variant: 'blue'   },
-    pending:   { label: 'En attente',  variant: 'yellow' },
-    completed: { label: 'Complétée',   variant: 'gray'   },
-    cancelled: { label: 'Annulée',        variant: 'red'    },
-    sous_reclamation:  { label: '🚨 Réclamation', variant: 'orange' },
+    active:           { label: 'Live',              variant: 'green'  },
+    assigned:         { label: 'Assigné',            variant: 'blue'   },
+    en_route:         { label: 'En route',           variant: 'blue'   },
+    pending:          { label: 'En attente',         variant: 'yellow' },
+    cancelled:        { label: 'Annulée',            variant: 'red'    },
+    sous_reclamation: { label: '🚨 Réclamation',     variant: 'orange' },
+    completed:        { label: 'Complétée',          variant: 'gray'   },
   }
+
+  if (status === 'completed') {
+    if (validated) {
+      return <Badge variant="green">✅ Mission terminée</Badge>
+    }
+    if (role === 'oeil') {
+      return <Badge variant="yellow">⏳ Attente validation</Badge>
+    }
+    return <Badge variant="yellow">⏳ Attente validation</Badge>
+  }
+
   const { label, variant } = map[status] || { label: status, variant: 'gray' }
   return <Badge variant={variant}>{label}</Badge>
 }
