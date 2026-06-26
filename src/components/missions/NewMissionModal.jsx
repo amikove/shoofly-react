@@ -174,10 +174,16 @@ export default function NewMissionModal({ open, onClose, onCreated, preselectedO
 
   const submit = async (e) => {
     e.preventDefault()
+
     if (!form.title || !form.city || !form.price) {
       toast('Titre, ville et budget sont requis', 'error')
       return
     }
+    if (!form.quartier) {
+      toast('Quartier obligatoire', 'error')
+      return
+    }
+    
     if ((type === 'file_attente' || type === 'audit') && !subcategory) {
       toast('Veuillez sélectionner une sous-catégorie', 'error')
       return
@@ -286,7 +292,7 @@ export default function NewMissionModal({ open, onClose, onCreated, preselectedO
               placeholder="Ex: Rabat"
             />
             <Autocomplete
-              label="Quartier"
+              label="Quartier *"
               value={form.quartier}
               onChange={setVal('quartier')}
               suggestions={VILLES[form.city] || []}
