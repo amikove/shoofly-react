@@ -404,7 +404,7 @@ useEffect(() => {
         </div>
         <div className="flex-shrink-0 flex flex-col items-end gap-1">
           <span className="text-green-400 font-bold text-sm">{parseFloat(m.price).toFixed(0)} MAD</span>
-          <<StatusBadge status={m.status} validated={!!m.validated_at} role="client" />
+          <StatusBadge status={m.status} validated={!!m.validated_at} role="client" />
         </div>
       </div>
       <div className="flex gap-2 flex-wrap pt-2 border-t border-white/10">
