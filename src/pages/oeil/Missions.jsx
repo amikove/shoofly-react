@@ -146,7 +146,8 @@ const advance = async (mission) => {
 
 
           // Bloquer si mission Airbnb sans rapport soumis
-          if (next === 'completed' && ['airbnb','booking'].some(s => mission.subcategory?.toLowerCase().includes(s.toLowerCase()))) {
+            console.log('Airbnb check:', ['airbnb','booking'].some(s => mission.subcategory?.toLowerCase().includes(s.toLowerCase())), mission.subcategory)
+            if (next === 'completed' && ['airbnb','booking'].some(s => mission.subcategory?.toLowerCase().includes(s.toLowerCase()))) {
             try {
               const { data: rData } = await reportsAPI.get(mission.id)
               if (!rData.report || !rData.report.submitted) {
