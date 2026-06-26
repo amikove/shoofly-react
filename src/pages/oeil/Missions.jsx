@@ -8,6 +8,7 @@ import { useNotif } from '../../context/NotifContext'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
 import MissionHistoryModal from '../../components/missions/MissionHistoryModal'
+import MissionSummaryModal from '../../components/missions/MissionSummaryModal'
 
 const TABS = [
   { id: 'available', label: 'Disponibles' },
@@ -48,6 +49,7 @@ export default function OeilMissions() {
   const { pendingChatMissionId, clearPendingChat, getPending } = useNotif()
   const { user } = useAuth()
   const [historyMission, setHistoryMission] = useState(null)
+  const [summaryMission, setSummaryMission] = useState(null)
 
 
 
@@ -331,9 +333,11 @@ try {
                     </>
                   )}
 
+
                   {tab === 'done' && (
-                    <button className="btn btn-ghost btn-sm">📄 Voir rapport</button>
+                    <button onClick={() => setSummaryMission(m)} className="btn btn-ghost btn-sm">📄 Résumé</button>
                   )}
+
                 </div>
               </div>
             ))}
@@ -344,6 +348,10 @@ try {
       {historyMission && (
         <MissionHistoryModal mission={historyMission} onClose={() => setHistoryMission(null)} />
       )}
+
+{summaryMission && (
+  <MissionSummaryModal mission={summaryMission} onClose={() => setSummaryMission(null)} />
+)}
 
       {chatMission && (
         <ChatModal mission={chatMission} onClose={() => setChatMission(null)} />
