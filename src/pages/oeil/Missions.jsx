@@ -171,26 +171,6 @@ const load = useCallback((t) => {
 }
 
 
-    const labels = {
-      en_route:  'En route vers la mission ✓',
-      active:    'Mission démarrée ✓',
-      completed: 'Mission terminée ! Bien joué 🎉',
-    }
-
-    try {
-      await missionsAPI.status(mission.id, { status: next })
-      if (next === 'completed') {
-        setMissions((prev) => prev.filter((m) => m.id !== mission.id))
-        setTab('done')
-        load('done')
-      } else {
-        setMissions((prev) => prev.map((m) => m.id === mission.id ? { ...m, status: next } : m))
-      }
-      toast(labels[next], 'success')
-    } catch (err) {
-      toast(err.response?.data?.error || 'Erreur', 'error')
-    }
-  }
 
   const emptyProps = {
     available: { icon:'🎯', title:'Aucune mission disponible', desc:'Toutes les missions ont été assignées. Revenez bientôt !' },
