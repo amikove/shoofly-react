@@ -28,6 +28,7 @@ export const missionsAPI = {
   seen:  (id)    => api.post(`/api/missions/${id}/seen`),
   claim: (id, comment) => api.post(`/api/missions/${id}/claim`, { comment }),
   validate: (id) => api.post(`/api/missions/${id}/validate`),
+  history:  (id) => api.get(`/api/missions/${id}/history`),
 }
 
 // USERS
