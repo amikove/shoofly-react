@@ -259,6 +259,18 @@ useEffect(() => {
     }
   }
 
+
+  const validateMission = async (id) => {
+    if (!window.confirm('Confirmer que la mission a été bien réalisée ? Le paiement sera transféré à l\'Œil.')) return
+    try {
+      await missionsAPI.validate(id)
+      setMissions(prev => prev.map(m => m.id === id ? { ...m, validated_at: new Date().toISOString() } : m))
+      toast('Mission validée ✅ Paiement transféré à l\'Œil', 'success')
+    } catch (err) {
+      toast(err.response?.data?.error || 'Erreur', 'error')
+    }
+  }
+
   return (
     <AppLayout>
       <Topbar
