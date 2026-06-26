@@ -52,6 +52,11 @@ export default function OeilDashboard() {
   }
 }
 
+const refuse = (id) => {
+  setPending(prev => prev.filter(m => m.id !== id))
+  toast('Mission ignorée', 'info')
+}
+
 
 
   const advance = async (mission) => {
