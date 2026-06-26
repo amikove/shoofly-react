@@ -7,6 +7,7 @@ import { StatusBadge, Spinner, EmptyState, toast } from '../../components/ui'
 import { useNotif } from '../../context/NotifContext'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
+import MissionHistoryModal from '../../components/missions/MissionHistoryModal'
 
 const TABS = [
   { id: 'available', label: 'Disponibles' },
@@ -46,6 +47,7 @@ export default function OeilMissions() {
   const [quartier, setQuartier] = useState('')
   const { pendingChatMissionId, clearPendingChat, getPending } = useNotif()
   const { user } = useAuth()
+  const [historyMission, setHistoryMission] = useState(null)
 
 
 
@@ -301,6 +303,7 @@ try {
                   {tab === 'active' && (
                     <>
                       <button onClick={() => setChatMission(m)} className="btn btn-ghost btn-sm">💬 Chat</button>
+                      <button onClick={() => setHistoryMission(m)} className="btn btn-ghost btn-sm">🕐</button>
                       
 
                         {['en_route','active'].includes(m.status) && ['airbnb','booking','Airbnb','Booking'].some(s => m.subcategory?.toLowerCase().includes(s.toLowerCase())) && (
@@ -337,6 +340,10 @@ try {
           </div>
         )}
       </div>
+
+      {historyMission && (
+        <MissionHistoryModal mission={historyMission} onClose={() => setHistoryMission(null)} />
+      )}
 
       {chatMission && (
         <ChatModal mission={chatMission} onClose={() => setChatMission(null)} />

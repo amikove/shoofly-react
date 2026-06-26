@@ -9,6 +9,7 @@ import ChatModal from '../../components/missions/ChatModal'
 import { useAuth } from '../../context/AuthContext'
 import { useNotif } from '../../context/NotifContext'
 import { useNavigate } from 'react-router-dom'
+import MissionHistoryModal from '../../components/missions/MissionHistoryModal'
 
 const TYPE_ICONS = { immobilier:'🏠', file_attente:'⏳', audit:'🔎', personnalisee:'🎯' }
 
@@ -211,6 +212,7 @@ export default function ClientMissions() {
   const [reportMission, setReportMission] = useState(null)
   const [interestsMission, setInterestsMission] = useState(null)
   const [claimMission, setClaimMission] = useState(null)
+  const [historyMission, setHistoryMission] = useState(null)
   const [search, setSearch]               = useState('')
   const [statusFilter, setStatus]         = useState('')
   const [typeFilter, setType]             = useState('')
@@ -254,18 +256,6 @@ useEffect(() => {
       await missionsAPI.status(id, { status: 'cancelled' })
       setMissions(prev => prev.map(m => m.id === id ? { ...m, status: 'cancelled' } : m))
       toast('Mission annulée', 'info')
-    } catch (err) {
-      toast(err.response?.data?.error || 'Erreur', 'error')
-    }
-  }
-
-
-  const validateMission = async (id) => {
-    if (!window.confirm('Confirmer que la mission a été bien réalisée ? Le paiement sera transféré à l\'Œil.')) return
-    try {
-      await missionsAPI.validate(id)
-      setMissions(prev => prev.map(m => m.id === id ? { ...m, validated_at: new Date().toISOString() } : m))
-      toast('Mission validée ✅ Paiement transféré à l\'Œil', 'success')
     } catch (err) {
       toast(err.response?.data?.error || 'Erreur', 'error')
     }
@@ -331,7 +321,7 @@ useEffect(() => {
             <td className="text-[#AAA]">{m.oeil_name || '—'}</td>
             <td className="text-[#AAA] text-xs">{new Date(m.created_at).toLocaleDateString('fr-MA')}</td>
             <td className="text-green-400 font-semibold">{parseFloat(m.price).toFixed(0)} MAD</td>
-            <td><StatusBadge status={m.status} validated={!!m.validated_at} role="client" /></td>
+            <td><StatusBadge status={m.status} /></td>
             <td>
               <div className="flex gap-1 flex-wrap">
                 {m.status === 'pending' && (
@@ -363,23 +353,27 @@ useEffect(() => {
                 >📋</button>
               )}
 
-            {m.status === 'completed' && (
-              <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); setRatingMission(m); }}
-                className="btn btn-ghost btn-sm" title="Noter l'Œil">⭐</button>
-            )}
-            {m.status === 'completed' && !m.validated_at && m.completed_by_oeil_at && (
-              (() => {
-                const hours = (Date.now() - new Date(m.completed_by_oeil_at).getTime()) / 3600000;
-                return hours < 12 ? (
-                  <>
-                    <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); validateMission(m.id); }}
-                      className="btn btn-ghost btn-sm text-green-400" title="Valider la mission">✅</button>
-                    <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); setClaimMission(m); }}
-                      className="btn btn-ghost btn-sm text-orange-400" title="Réclamer">🚨</button>
-                  </>
-                ) : null;
-              })()
-            )}
+<button onClick={(e) => { e.preventDefault(); e.stopPropagation(); setHistoryMission(m); }}
+  className="btn btn-ghost btn-sm" title="Historique">🕐</button>
+
+
+{m.status === 'completed' && (
+  <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); setRatingMission(m); }}
+    className="btn btn-ghost btn-sm" title="Noter l'Œil">⭐</button>
+)}
+{m.status === 'completed' && !m.validated_at && m.completed_by_oeil_at && (
+  (() => {
+    const hours = (Date.now() - new Date(m.completed_by_oeil_at).getTime()) / 3600000;
+    return hours < 12 ? (
+      <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); setClaimMission(m); }}
+        className="btn btn-ghost btn-sm text-orange-400" title="Réclamer">🚨</button>
+    ) : null;
+  })()
+)}
+{['pending','assigned'].includes(m.status) && (
+  <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); cancel(m.id); }}
+    className="btn btn-ghost btn-sm text-red-400">Annuler</button>
+)}
                 
                 
               </div>
@@ -404,7 +398,7 @@ useEffect(() => {
         </div>
         <div className="flex-shrink-0 flex flex-col items-end gap-1">
           <span className="text-green-400 font-bold text-sm">{parseFloat(m.price).toFixed(0)} MAD</span>
-          <StatusBadge status={m.status} validated={!!m.validated_at} role="client" />
+          <StatusBadge status={m.status} />
         </div>
       </div>
       <div className="flex gap-2 flex-wrap pt-2 border-t border-white/10">
@@ -431,18 +425,22 @@ useEffect(() => {
               className="btn btn-ghost btn-sm"
             >📋 Visite</button>
           )}
+<button onClick={() => setHistoryMission(m)} className="btn btn-ghost btn-sm">🕐 Historique</button>
 
-        {m.status === 'completed' && !m.validated_at && m.completed_by_oeil_at && (
-          (() => {
-            const hours = (Date.now() - new Date(m.completed_by_oeil_at).getTime()) / 3600000;
-            return hours < 12 ? (
-              <>
-                <button onClick={() => validateMission(m.id)} className="btn btn-ghost btn-sm text-green-400">✅ Valider</button>
-                <button onClick={() => setClaimMission(m)} className="btn btn-ghost btn-sm text-orange-400">🚨 Réclamer</button>
-              </>
-            ) : null;
-          })()
-        )}
+{m.status === 'completed' && (
+  <button onClick={() => setRatingMission(m)} className="btn btn-ghost btn-sm">⭐ Noter</button>
+)}
+{m.status === 'completed' && !m.validated_at && m.completed_by_oeil_at && (
+  (() => {
+    const hours = (Date.now() - new Date(m.completed_by_oeil_at).getTime()) / 3600000;
+    return hours < 12 ? (
+      <button onClick={() => setClaimMission(m)} className="btn btn-ghost btn-sm text-orange-400">🚨 Réclamer</button>
+    ) : null;
+  })()
+)}
+{['pending','assigned'].includes(m.status) && (
+  <button onClick={() => cancel(m.id)} className="btn btn-ghost btn-sm text-red-400">Annuler</button>
+)}
         
         
       </div>
@@ -473,6 +471,10 @@ useEffect(() => {
 
 {claimMission && (
   <ClaimModal mission={claimMission} onClose={() => setClaimMission(null)} onClaimed={() => { setClaimMission(null); load() }} />
+)}
+
+{historyMission && (
+  <MissionHistoryModal mission={historyMission} onClose={() => setHistoryMission(null)} />
 )}
 
       {chatMission && (
