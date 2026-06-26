@@ -15,23 +15,28 @@ export default function ClientDashboard() {
   const [showNew, setShowNew]   = useState(false)
 
   useEffect(() => {
+
     Promise.all([
       missionsAPI.list({ limit: 5 }),
       usersAPI.oeils({ limit: 3, verified: true }),
+      usersAPI.clientStats().catch(() => ({ data: {} })),
     ])
-      .then(([mRes, oRes]) => {
+      .then(([mRes, oRes, sRes]) => {
         const ms = mRes.data.missions || []
+        const s  = sRes?.data || {}
         setMissions(ms)
         setOeils(oRes.data.oeils || [])
         setStats({
-          total:     ms.length,
-          active:    ms.filter((m) => ['active','assigned','en_route'].includes(m.status)).length,
-          completed: ms.filter((m) => m.status === 'completed').length,
-          budget:    ms.reduce((s, m) => s + parseFloat(m.price || 0), 0),
+          total:     s.total     ?? ms.length,
+          active:    s.active    ?? ms.filter(m => ['active','assigned','en_route'].includes(m.status)).length,
+          completed: s.completed ?? ms.filter(m => m.status === 'completed').length,
+          budget:    parseFloat(s.total_spent || 0),
+          wallet:    parseFloat(s.wallet_balance || 0),
         })
       })
       .catch(() => toast('Erreur de chargement', 'error'))
       .finally(() => setLoading(false))
+
   }, [])
 
   if (loading) return (
@@ -58,12 +63,13 @@ export default function ClientDashboard() {
       <div className="p-4 md:p-6 space-y-4 md:space-y-6">
 
         {/* Stats — 2 colonnes mobile, 4 desktop */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-3 md:gap-4">
           {[
             { label: 'Missions totales', value: stats.total,           color: 'text-white'     },
             { label: 'En cours',         value: stats.active,          color: 'text-[#FF4D00]' },
             { label: 'Complétées',       value: stats.completed,       color: 'text-green-400' },
-            { label: 'Budget dépensé',   value: `${Math.round(stats.budget)} MAD`, color: 'text-white' },
+            { label: 'Total dépensé',  value: `${Math.round(stats.budget || 0)} MAD`, color: 'text-green-400' },
+            { label: 'Portefeuille',   value: `${Math.round(stats.wallet || 0)} MAD`, color: 'text-[#FF4D00]'  },
           ].map((s) => (
             <div key={s.label} className="stat-card">
               <div className="text-[11px] text-[#AAA] mb-1 leading-tight">{s.label}</div>

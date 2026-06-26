@@ -43,6 +43,7 @@ export const usersAPI = {
   addFavorite:      (id)     => api.post(`/api/users/favorites/${id}`),
   removeFavorite:   (id)     => api.delete(`/api/users/favorites/${id}`),
   withdraw:         (data)   => api.post('/api/users/oeil/withdraw', data),
+  clientStats:      ()       => api.get('/api/users/client/stats'),
 }
 
 // ADMIN
