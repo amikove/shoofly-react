@@ -357,19 +357,25 @@ useEffect(() => {
   className="btn btn-ghost btn-sm" title="Historique">🕐</button>
 
 
-{m.status === 'completed' && (
+{m.status === 'completed' && m.validated_at && (
   <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); setRatingMission(m); }}
     className="btn btn-ghost btn-sm" title="Noter l'Œil">⭐</button>
 )}
+
 {m.status === 'completed' && !m.validated_at && m.completed_by_oeil_at && (
   (() => {
     const hours = (Date.now() - new Date(m.completed_by_oeil_at).getTime()) / 3600000;
     return hours < 12 ? (
-      <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); setClaimMission(m); }}
-        className="btn btn-ghost btn-sm text-orange-400" title="Réclamer">🚨</button>
+      <>
+        <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); validateMission(m.id); }}
+          className="btn btn-ghost btn-sm text-green-400" title="Valider">✅</button>
+        <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); setClaimMission(m); }}
+          className="btn btn-ghost btn-sm text-orange-400" title="Réclamer">🚨</button>
+      </>
     ) : null;
   })()
 )}
+
 {['pending','assigned'].includes(m.status) && (
   <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); cancel(m.id); }}
     className="btn btn-ghost btn-sm text-red-400">Annuler</button>
@@ -427,19 +433,21 @@ useEffect(() => {
           )}
 <button onClick={() => setHistoryMission(m)} className="btn btn-ghost btn-sm">🕐 Historique</button>
 
-{m.status === 'completed' && (
+{m.status === 'completed' && m.validated_at && (
   <button onClick={() => setRatingMission(m)} className="btn btn-ghost btn-sm">⭐ Noter</button>
 )}
+
+
 {m.status === 'completed' && !m.validated_at && m.completed_by_oeil_at && (
   (() => {
     const hours = (Date.now() - new Date(m.completed_by_oeil_at).getTime()) / 3600000;
     return hours < 12 ? (
-      <button onClick={() => setClaimMission(m)} className="btn btn-ghost btn-sm text-orange-400">🚨 Réclamer</button>
+      <>
+        <button onClick={() => validateMission(m.id)} className="btn btn-ghost btn-sm text-green-400">✅ Valider</button>
+        <button onClick={() => setClaimMission(m)} className="btn btn-ghost btn-sm text-orange-400">🚨 Réclamer</button>
+      </>
     ) : null;
   })()
-)}
-{['pending','assigned'].includes(m.status) && (
-  <button onClick={() => cancel(m.id)} className="btn btn-ghost btn-sm text-red-400">Annuler</button>
 )}
         
         
