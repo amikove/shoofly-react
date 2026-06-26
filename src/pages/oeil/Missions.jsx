@@ -142,12 +142,16 @@ const load = useCallback((t) => {
     if (isAudit || isAirbnb) {
       try {
         const { data: rData } = await reportsAPI.get(mission.id)
+
         if (!rData.report || !rData.report.submitted) {
+          const url = isAudit
+            ? `/oeil/missions/${mission.id}/audit`
+            : `/oeil/missions/${mission.id}/rapport`
           toast('Vous devez soumettre le rapport avant de terminer la mission 📋', 'error')
-          if (isAudit)   navigate(`/oeil/missions/${mission.id}/audit`)
-          if (isAirbnb)  navigate(`/oeil/missions/${mission.id}/rapport`)
+          setTimeout(() => navigate(url), 300)
           return
         }
+        
       } catch {
         toast('Impossible de vérifier le rapport', 'error')
         return
