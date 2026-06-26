@@ -99,16 +99,12 @@ const load = useCallback((t) => {
 
   useEffect(() => { load(tab) }, [tab, load])
 
+
   const refuse = async (id, isAvailable = false) => {
-    if (isAvailable) {
-      setMissions((prev) => prev.filter((m) => m.id !== id))
-      toast('Mission ignorée', 'info')
-      return
-    }
     try {
-      await missionsAPI.refuse(id)
+      await missionsAPI.refuse(id, isAvailable)
       setMissions((prev) => prev.filter((m) => m.id !== id))
-      toast('Mission refusée', 'info')
+      toast(isAvailable ? 'Mission ignorée' : 'Mission refusée', 'info')
     } catch {
       toast('Erreur', 'error')
     }
