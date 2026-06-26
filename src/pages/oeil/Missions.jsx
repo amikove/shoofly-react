@@ -118,53 +118,57 @@ const load = useCallback((t) => {
     }
   }
 
-const advance = async (mission) => {
-    const next = {
-      assigned: 'en_route',
-      en_route: 'active',
-      active:   'completed',
-    }[mission.status]
 
-    if (!next) { toast('Statut invalide', 'error'); return }
+  const advance = async (mission) => {
+  const next = {
+    assigned: 'en_route',
+    en_route: 'active',
+    active:   'completed',
+  }[mission.status]
 
-    // Bloquer si mission audit sans rapport soumis
-          console.log('Mission type:', mission.type, 'subcategory:', mission.subcategory)
-        if (next === 'completed' && mission.type === 'audit') {
-              try {
-                const { data: rData } = await reportsAPI.get(mission.id)
-                if (!rData.report || !rData.report.submitted) {
-                  toast('Vous devez soumettre le rapport d\'audit avant de terminer la mission 📋', 'error')
+  if (!next) { toast('Statut invalide', 'error'); return }
 
-        navigate(`/oeil/missions/${mission.id}/audit`)
-                  return
-                }
-              } catch {
-                toast('Impossible de vérifier le rapport', 'error')
-                return
-              }
-            }
+  const labels = {
+    en_route:  'En route vers la mission ✓',
+    active:    'Mission démarrée ✓',
+    completed: 'Mission terminée ! Bien joué 🎉',
+  }
 
+  // Bloquer si rapport obligatoire non soumis
+  if (next === 'completed') {
+    const isAudit  = mission.type === 'audit'
+    const isAirbnb = ['airbnb','booking'].some(s => mission.subcategory?.toLowerCase().includes(s.toLowerCase()))
 
-          // Bloquer si mission Airbnb sans rapport soumis
-
-          console.log('Airbnb check:', ['airbnb','booking'].some(s => mission.subcategory?.toLowerCase().includes(s.toLowerCase())), mission.subcategory)
-    if (next === 'completed' && ['airbnb','booking'].some(s => mission.subcategory?.toLowerCase().includes(s.toLowerCase()))) {
+    if (isAudit || isAirbnb) {
       try {
         const { data: rData } = await reportsAPI.get(mission.id)
-        console.log('Report data:', rData)
         if (!rData.report || !rData.report.submitted) {
-          toast('Vous devez soumettre le rapport de visite avant de terminer la mission 📋', 'error')
-          navigate(`/oeil/missions/${mission.id}/rapport`)
+          toast('Vous devez soumettre le rapport avant de terminer la mission 📋', 'error')
+          if (isAudit)   navigate(`/oeil/missions/${mission.id}/audit`)
+          if (isAirbnb)  navigate(`/oeil/missions/${mission.id}/rapport`)
           return
         }
-      } catch (e) {
-        console.log('Report error:', e)
+      } catch {
         toast('Impossible de vérifier le rapport', 'error')
         return
       }
     }
+  }
 
-
+  try {
+    await missionsAPI.status(mission.id, { status: next })
+    if (next === 'completed') {
+      setMissions((prev) => prev.filter((m) => m.id !== mission.id))
+      setTab('done')
+      load('done')
+    } else {
+      setMissions((prev) => prev.map((m) => m.id === mission.id ? { ...m, status: next } : m))
+    }
+    toast(labels[next], 'success')
+  } catch (err) {
+    toast(err.response?.data?.error || 'Erreur', 'error')
+  }
+}
 
 
     const labels = {
