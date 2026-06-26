@@ -151,7 +151,7 @@ const load = useCallback((t) => {
           setTimeout(() => navigate(url), 300)
           return
         }
-        
+
       } catch {
         toast('Impossible de vérifier le rapport', 'error')
         return
@@ -159,7 +159,7 @@ const load = useCallback((t) => {
     }
   }
 
-  try {
+try {
     await missionsAPI.status(mission.id, { status: next })
     if (next === 'completed') {
       setMissions((prev) => prev.filter((m) => m.id !== mission.id))
@@ -170,7 +170,14 @@ const load = useCallback((t) => {
     }
     toast(labels[next], 'success')
   } catch (err) {
-    toast(err.response?.data?.error || 'Erreur', 'error')
+    const msg = err.response?.data?.error || 'Erreur'
+    toast(msg, 'error')
+    if (msg.includes('rapport')) {
+      const isAudit  = mission.type === 'audit'
+      const isAirbnb = ['airbnb','booking'].some(s => mission.subcategory?.toLowerCase().includes(s.toLowerCase()))
+      if (isAudit)  navigate(`/oeil/missions/${mission.id}/audit`)
+      if (isAirbnb) navigate(`/oeil/missions/${mission.id}/rapport`)
+    }
   }
 }
 
