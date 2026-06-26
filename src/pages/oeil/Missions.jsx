@@ -95,10 +95,16 @@ const load = useCallback((t) => {
 
 
 
+ // refuser les missions par l'oeil
 
   useEffect(() => { load(tab) }, [tab, load])
 
-  const refuse = async (id) => {
+  const refuse = async (id, isAvailable = false) => {
+    if (isAvailable) {
+      setMissions((prev) => prev.filter((m) => m.id !== id))
+      toast('Mission ignorée', 'info')
+      return
+    }
     try {
       await missionsAPI.refuse(id)
       setMissions((prev) => prev.filter((m) => m.id !== id))
@@ -284,11 +290,11 @@ try {
                           {(m.interested || m.has_interested) ? '✅ Demande envoyée' : '👁️ Je suis intéressé'}
                         </button>
                         <button
-                              onClick={() => refuse(m.id)}
-                              className="btn btn-sm flex-1 justify-center bg-red-500 text-white hover:bg-red-600"
-                            >
-                              ✕ Ignorer
-                            </button>
+                        onClick={() => refuse(m.id, true)}
+                        className="btn btn-sm flex-1 justify-center bg-red-500 text-white hover:bg-red-600"
+                      >
+                        ✕ Ignorer
+                      </button>
 
 
                       </>

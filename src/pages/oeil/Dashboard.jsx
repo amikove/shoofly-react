@@ -152,7 +152,7 @@ export default function OeilDashboard() {
                       {(m.interested || m.has_interested) ? '✅ Demande envoyée' : '👁️ Je suis intéressé'}
                     </button>
                     <button
-                      onClick={() => refuse(m.id)}
+                      onClick={() => refuse(m.id, true)}
                       className="btn btn-sm flex-1 justify-center bg-red-500 text-white hover:bg-red-600"
                     >
                       ✕ Ignorer
