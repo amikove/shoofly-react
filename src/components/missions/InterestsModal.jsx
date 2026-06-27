@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react'
 import { missionsAPI } from '../../api'
 import { Spinner, toast } from '../ui'
+import ComplianceModal from './ComplianceModal'
 
 export default function InterestsModal({ mission, onClose, onHired }) {
   const [interests, setInterests] = useState([])
   const [loading, setLoading]     = useState(true)
   const [hiring, setHiring]       = useState(null)
+
 
   useEffect(() => {
     missionsAPI.interests(mission.id)
@@ -14,13 +16,16 @@ export default function InterestsModal({ mission, onClose, onHired }) {
       .finally(() => setLoading(false))
   }, [mission.id])
 
-  const hire = async (oeilId) => {
+
+const hire = async (oeilId) => {
     setHiring(oeilId)
     try {
       await missionsAPI.hire(mission.id, oeilId)
+      
+setInterests([])
+      onClose()
       toast('Œil embauché ! 🎉', 'success')
       onHired()
-      onClose()
     } catch (err) {
       toast(err.response?.data?.error || 'Erreur', 'error')
     } finally { setHiring(null) }
@@ -37,6 +42,8 @@ export default function InterestsModal({ mission, onClose, onHired }) {
           </div>
           <button onClick={onClose} className="text-[#AAA] hover:text-white text-lg">✕</button>
         </div>
+
+     
 
         {loading ? (
           <div className="flex justify-center py-10"><Spinner size="lg" /></div>
