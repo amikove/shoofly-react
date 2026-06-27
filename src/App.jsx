@@ -8,6 +8,9 @@ import { Spinner } from './components/ui'
 import Login    from './pages/auth/Login'
 import Register from './pages/auth/Register'
 import Landing from './pages/Landing'
+import Confidentialite from './pages/legal/Confidentialite'
+import CGV from './pages/legal/CGV'
+import Verification from './pages/legal/Verification'
 
 // Client pages
 import ClientDashboard  from './pages/client/Dashboard'
@@ -71,6 +74,10 @@ export default function App() {
   return (
     <Routes>
       {/* Public */}
+
+      <Route path="/confidentialite" element={<Confidentialite />} />
+      <Route path="/cgv" element={<CGV />} />
+      <Route path="/verification" element={<Verification />} />
     
       <Route path="/" element={user ? <Navigate to={`/${user.role}`} replace /> : <Landing />} />
       <Route path="/login"    element={user ? <Navigate to={`/${user.role}`} /> : <Login />} />
@@ -102,12 +109,7 @@ export default function App() {
       <Route path="/admin/reclamations" element={<RequireAuth allowedRoles={['admin']}><AdminReclamations /></RequireAuth>} />
       <Route path="/admin/parametres"   element={<RequireAuth allowedRoles={['admin']}><AdminParametres /></RequireAuth>} />
 
-      {/* Redirect */}
-<Route path="/" element={
-        user
-          ? <Navigate to={`/${user.role}`} replace />
-          : <Landing />
-      } />
+
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   )
