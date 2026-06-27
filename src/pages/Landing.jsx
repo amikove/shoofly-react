@@ -1,14 +1,14 @@
 import { useNavigate } from 'react-router-dom'
 
 const MISSIONS = [
-  { icon: '🏠', label: 'Immobilier',     desc: 'Visites de biens, état des lieux, vérification d\'annonces' },
+  { icon: '🏠', label: 'Immobilier',     desc: 'vérification d\'annonces, Visites de biens, état des lieux ' },
   { icon: '⏳', label: 'File d\'attente', desc: 'CNSS, consulats, hôpitaux, banques, administrations'        },
-  { icon: '🔍', label: 'Audit mystère',  desc: 'Évaluation anonyme de commerces et services'                },
+  { icon: '🔍', label: 'Audit mystère',  desc: 'Évaluation anonyme de restaurants, commerces et services'                },
   { icon: '🎯', label: 'Personnalisée',  desc: 'Toute mission de présence physique sur mesure'              },
 ]
 
 const STEPS = [
-  { n: '01', title: 'Créez votre mission', desc: 'Décrivez votre besoin, choisissez la ville et le budget. 2 minutes suffisent.' },
+  { n: '01', title: 'Créez votre mission', desc: 'Décrivez votre besoin, choisissez la ville et le budget. 1 minute suffit.' },
   { n: '02', title: 'Un Œil accepte',      desc: 'Un agent de terrain vérifié près de chez vous prend en charge votre mission.'  },
   { n: '03', title: 'Mission accomplie',   desc: 'Vous recevez un rapport détaillé et validez quand vous êtes satisfait.'        },
 ]
@@ -20,7 +20,9 @@ const WHY = [
   { icon: '📸', label: 'Preuves d\'exécution',                  desc: 'Photos et vidéos transmises à chaque mission pour confirmer l\'accomplissement'        },
   { icon: '⭐', label: 'Notes et avis clients',                  desc: 'Choisissez votre Œil en toute confiance grâce aux avis des précédents clients'        },
   { icon: '📊', label: 'Rapport complet',                       desc: 'Un rapport détaillé vous est remis à la fin de chaque mission'                        },
-  { icon: '🔐', label: 'Paiement 100% sécurisé',               desc: 'L\'agent est payé uniquement lorsque vous validez la mission — jamais avant'           },
+  { icon: '🔐', label: 'Paiement libéré après votre validation',               desc: 'L\'agent est payé uniquement lorsque vous validez la mission — jamais avant'           },
+  { icon: '📋', label: 'Rapports standardisés et objectifs',    desc: 'Chaque mission est documentée selon une grille de contrôle complète : photos de preuves, observations détaillées et note globale. Vous décidez en toute confiance, sans vous déplacer.' },
+]
 ]
 
 export default function Landing() {
