@@ -72,10 +72,10 @@ useEffect(() => {
 const send = async () => {
     if (!msg.trim()) return
     // Afficher compliance au premier message si pas encore accepté
-    if (!complianceAccepted) {
-      setShowCompliance(true)
-      return
-    }
+    if (!complianceAccepted && !showCompliance) {
+          setShowCompliance(true)
+          return
+        }
     const content = msg.trim()
     setMsg('')
     setSending(true)
@@ -222,13 +222,13 @@ const send = async () => {
           />
 
           {/* Bouton envoyer */}
-          {showCompliance && (
-            <ComplianceModal onAccept={() => {
-              setShowCompliance(false)
-              setComplianceAccepted(true)
-              send()
-            }} />
-          )}
+            {showCompliance && (
+              <ComplianceModal onAccept={() => {
+                setShowCompliance(false)
+                setComplianceAccepted(true)
+                setTimeout(() => send(), 100)
+              }} />
+            )}
           <button
             onClick={send}
             disabled={sending || !msg.trim()}

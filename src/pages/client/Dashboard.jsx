@@ -160,7 +160,10 @@ export default function ClientDashboard() {
   <InterestsModal
     mission={interestsMission}
     onClose={() => setInterestsMission(null)}
-    onHired={() => { setInterestsMission(null); load() }}
+   onHired={() => {
+  setInterestsMission(null)
+  setMissions(prev => prev.filter(m => m.id !== interestsMission?.id))
+}}
   />
 )}
 
