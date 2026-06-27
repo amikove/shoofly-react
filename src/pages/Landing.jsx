@@ -48,14 +48,20 @@ export default function Landing() {
         <div className="inline-block bg-[#FF4D00]/10 border border-[#FF4D00]/20 text-[#FF4D00] text-xs font-semibold px-4 py-1.5 rounded-full mb-6">
           🇲🇦 Disponible au Maroc
         </div>
-        <h1 className="font-display font-bold text-4xl md:text-6xl leading-tight mb-6">
-          Votre présence,<br />
-          <span className="text-[#FF4D00]">sans vous déplacer.</span>
-        </h1>
-        <p className="text-[#AAA] text-lg md:text-xl max-w-2xl mx-auto mb-10 leading-relaxed">
-          Shoofly connecte les clients avec des agents de terrain vérifiés — les <strong className="text-white">Œils</strong> — 
-          pour accomplir toute mission physique à leur place.
-        </p>
+
+<div className="text-[#AAA] text-sm font-medium tracking-widest uppercase mb-4">
+  Nous attendons. Vous vivez.
+</div>
+<h1 className="font-display font-bold text-4xl md:text-6xl leading-tight mb-6">
+  Soyez partout.<br />
+  <span className="text-[#FF4D00]">Sans bouger.</span>
+</h1>
+<p className="text-[#AAA] text-lg md:text-xl max-w-2xl mx-auto mb-10 leading-relaxed">
+  Shoofly met un agent de terrain à votre disposition pour toute mission physique — 
+  file d'attente, visite d'appartement à votre place, audit anonyme de magasin — 
+  où que ce soit au Maroc.
+</p>
+
         <div className="flex flex-col sm:flex-row gap-3 justify-center">
           <button onClick={() => navigate('/register')}
             className="bg-[#FF4D00] hover:bg-[#e04400] text-white font-semibold px-8 py-4 rounded-2xl text-base transition-colors">
