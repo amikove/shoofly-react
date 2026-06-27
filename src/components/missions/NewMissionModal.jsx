@@ -208,7 +208,11 @@ const submit = async (e) => {
         quartier:     form.quartier || null,
         price:        parseFloat(form.price),
         description:  form.description,
-        scheduled_at: new Date(`${form.scheduled_date}T${form.scheduled_time}`).toISOString(),
+        scheduled_at: (() => {
+  const dt = new Date(`${form.scheduled_date}T${form.scheduled_time}`)
+  console.log('scheduled_at:', dt.toISOString(), 'valid:', !isNaN(dt))
+  return dt.toISOString()
+})(),
       }
       if (preselectedOeil?.id) payload.oeil_id = preselectedOeil.id
 
