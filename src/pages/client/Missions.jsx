@@ -169,9 +169,21 @@ useEffect(() => {
     load()
   }, [load])
 
-  const cancel = async (id) => {
-    
-    if (!window.confirm('Confirmer l\'annulation ?')) return
+const cancel = async (id) => {
+    const mission = missions.find(m => m.id === id)
+    const isAssigned = mission?.status === 'assigned'
+    const hoursBeforeMission = mission?.scheduled_at
+      ? (new Date(mission.scheduled_at).getTime() - Date.now()) / 3600000
+      : 999
+
+    let confirmMsg = 'Confirmer l\'annulation ?'
+    if (isAssigned && hoursBeforeMission > 2) {
+      confirmMsg = '⚠️ Cette mission est déjà assignée à un Œil.\n\nConformément aux CGV, le remboursement dans votre wallet sera de 50% du montant payé.\n\nConfirmer l\'annulation ?'
+    } else if (isAssigned && hoursBeforeMission <= 2) {
+      confirmMsg = '⚠️ Cette mission débute dans moins de 2 heures.\n\nConformément aux CGV, aucun remboursement ne sera effectué en cas d\'annulation dans ce délai.\n\nConfirmer l\'annulation ?'
+    }
+
+    if (!window.confirm(confirmMsg)) return
     try {
       await missionsAPI.status(id, { status: 'cancelled' })
       setMissions(prev => prev.map(m => m.id === id ? { ...m, status: 'cancelled' } : m))
