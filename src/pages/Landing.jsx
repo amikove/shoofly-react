@@ -13,11 +13,14 @@ const STEPS = [
   { n: '03', title: 'Mission accomplie',   desc: 'Vous recevez un rapport détaillé et validez quand vous êtes satisfait.'        },
 ]
 
+
 const WHY = [
-  { icon: '⚡', label: 'Rapide',      desc: 'Mission prise en charge en quelques minutes'    },
-  { icon: '✅', label: 'Vérifié',     desc: 'Tous les Œils sont vérifiés et notés'           },
-  { icon: '🔒', label: 'Sécurisé',   desc: 'Paiement sécurisé, validation avant tout débit' },
-  { icon: '📋', label: 'Transparent', desc: 'Rapport complet à chaque mission'               },
+  { icon: '✅', label: 'Agents vérifiés et identifiés',        desc: 'Chaque Œil est vérifié, identifié et évalué avant d\'accéder à la plateforme'         },
+  { icon: '📡', label: 'Suivi en temps réel',                   desc: 'Suivez l\'avancement de votre mission en direct, étape par étape'                      },
+  { icon: '📸', label: 'Preuves d\'exécution',                  desc: 'Photos et vidéos transmises à chaque mission pour confirmer l\'accomplissement'        },
+  { icon: '⭐', label: 'Notes et avis clients',                  desc: 'Choisissez votre Œil en toute confiance grâce aux avis des précédents clients'        },
+  { icon: '📊', label: 'Rapport complet',                       desc: 'Un rapport détaillé vous est remis à la fin de chaque mission'                        },
+  { icon: '🔐', label: 'Paiement 100% sécurisé',               desc: 'L\'agent est payé uniquement lorsque vous validez la mission — jamais avant'           },
 ]
 
 export default function Landing() {
@@ -49,18 +52,22 @@ export default function Landing() {
           🇲🇦 Disponible au Maroc
         </div>
 
-<div className="text-[#AAA] text-sm font-medium tracking-widest uppercase mb-4">
-  Nous attendons. Vous vivez.
-</div>
-<h1 className="font-display font-bold text-4xl md:text-6xl leading-tight mb-6">
-  Soyez partout.<br />
-  <span className="text-[#FF4D00]">Sans bouger.</span>
-</h1>
-<p className="text-[#AAA] text-lg md:text-xl max-w-2xl mx-auto mb-10 leading-relaxed">
-  <strong className="font-display font-bold text-white">SHOOF<span className="text-[#FF4D00]">LY</span></strong> met un agent de terrain à votre disposition pour toute mission physique — 
-  une longue file d'attente, visite d'appartement à votre place "Airbnb", audit anonyme de magasin — 
-  où que ce soit au Maroc.
-</p>
+            <div className="text-[#AAA] text-sm font-medium tracking-widest uppercase mb-4">
+            Nous attendons. Vous vivez.
+            </div>
+            <h1 className="font-display font-bold text-4xl md:text-5xl leading-tight mb-6">
+            Soyez partout.<br />
+            <span className="text-[#FF4D00]">Sans bouger.</span>
+            </h1>
+            <p className="text-white/80 text-base md:text-lg max-w-2xl mx-auto mb-4 leading-relaxed">
+            Pourquoi perdre une demi-journée dans une file d'attente (CNSS, cabinet, consulat...), parcourir des centaines de kilomètres pour être choqué d'un Airbnb qui ne correspond pas à l'annonce, ou interrompre votre journée de congé pour une simple démarche administrative ?
+            </p>
+            <p className="text-[#FF4D00] font-semibold text-base md:text-lg mb-4">
+            Votre temps a plus de valeur que cela.
+            </p>
+            <p className="text-[#AAA] text-base md:text-lg max-w-2xl mx-auto mb-10 leading-relaxed">
+            <strong className="font-display font-bold text-white">SHOOF<span className="text-[#FF4D00]">LY</span></strong> vous met en relation avec votre Œil sur le terrain : une personne vérifiée qui attend, visite, vérifie, récupère ou accomplit toute mission physique à votre place, partout au Maroc.
+            </p>
 
         <div className="flex flex-col sm:flex-row gap-3 justify-center">
           <button onClick={() => navigate('/register')}
@@ -120,15 +127,19 @@ export default function Landing() {
           <h2 className="font-display font-bold text-2xl md:text-3xl text-center mb-12">
             Pourquoi Shoofly ?
           </h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-            {WHY.map((w) => (
-              <div key={w.label} className="text-center">
-                <div className="text-4xl mb-3">{w.icon}</div>
-                <div className="font-semibold mb-1">{w.label}</div>
-                <div className="text-xs text-[#AAA] leading-relaxed">{w.desc}</div>
-              </div>
-            ))}
-          </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                {WHY.map((w) => (
+                    <div key={w.label} className="flex items-start gap-4 bg-[#1A1A1A] border border-white/10 rounded-2xl p-5 hover:border-[#FF4D00]/30 transition-colors">
+                    <div className="w-12 h-12 rounded-xl bg-[#FF4D00]/10 flex items-center justify-center text-2xl flex-shrink-0">
+                        {w.icon}
+                    </div>
+                    <div>
+                        <div className="font-semibold text-sm mb-1">{w.label}</div>
+                        <div className="text-xs text-[#AAA] leading-relaxed">{w.desc}</div>
+                    </div>
+                    </div>
+                ))}
+                </div>
         </div>
       </section>
 
