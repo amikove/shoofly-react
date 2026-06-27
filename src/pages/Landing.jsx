@@ -15,14 +15,13 @@ const STEPS = [
 
 
 const WHY = [
-  { icon: '✅', label: 'Agents vérifiés et identifiés',        desc: 'Chaque Œil est vérifié, identifié et évalué avant d\'accéder à la plateforme'         },
+  { icon: '🛡️', label: 'Agents vérifiés et identifiés',        desc: 'Chaque Œil est vérifié, identifié et évalué avant d\'accéder à la plateforme'         },
   { icon: '📡', label: 'Suivi en temps réel',                   desc: 'Suivez l\'avancement de votre mission en direct, étape par étape'                      },
-  { icon: '📸', label: 'Preuves d\'exécution',                  desc: 'Photos et vidéos transmises à chaque mission pour confirmer l\'accomplissement'        },
-  { icon: '⭐', label: 'Notes et avis clients',                  desc: 'Choisissez votre Œil en toute confiance grâce aux avis des précédents clients'        },
-  { icon: '📊', label: 'Rapport complet',                       desc: 'Un rapport détaillé vous est remis à la fin de chaque mission'                        },
-  { icon: '🔐', label: 'Paiement libéré après votre validation',               desc: 'L\'agent est payé uniquement lorsque vous validez la mission — jamais avant'           },
+  { icon: '🎥', label: 'Preuves d\'exécution',                  desc: 'Photos et vidéos transmises à chaque mission pour confirmer l\'accomplissement'        },
   { icon: '📋', label: 'Rapports standardisés et objectifs',    desc: 'Chaque mission est documentée selon une grille de contrôle complète : photos de preuves, observations détaillées et note globale. Vous décidez en toute confiance, sans vous déplacer.' },
-           ]
+  { icon: '⭐', label: 'Notes et avis clients',                  desc: 'Choisissez votre Œil en toute confiance grâce aux avis des précédents clients'        },
+  { icon: '🔐', label: 'Paiement libéré après validation',      desc: 'L\'agent est payé uniquement lorsque vous validez la mission — jamais avant. Votre argent est sécurisé jusqu\'à votre confirmation.' },
+]
 
 export default function Landing() {
   const navigate = useNavigate()
@@ -93,11 +92,13 @@ export default function Landing() {
           <p className="text-[#AAA] text-center mb-12">Toute situation nécessitant une présence physique</p>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
             {MISSIONS.map((m) => (
-              <div key={m.label} className="bg-[#1A1A1A] border border-white/10 rounded-2xl p-6 hover:border-[#FF4D00]/30 transition-colors">
+              
+              <div key={m.label} className="bg-[#1A1A1A] border border-white/10 rounded-2xl p-6 hover:border-[#FF4D00]/30 transition-colors text-center">
                 <div className="text-4xl mb-4">{m.icon}</div>
                 <div className="font-semibold mb-2">{m.label}</div>
                 <div className="text-xs text-[#AAA] leading-relaxed">{m.desc}</div>
               </div>
+              
             ))}
           </div>
         </div>
