@@ -46,13 +46,11 @@ export default function AppLayout({ children }) {
   const [isAvail, setIsAvail] = useState(true)
 
   const [unreadCount, setUnreadCount] = useState(0)
-
+const [flaggedCount, setFlaggedCount] = useState(0)
   const [claimsCount, setClaimsCount] = useState(0)
 
 useEffect(() => {
   if (user?.role !== 'admin') return
-
-  const [flaggedCount, setFlaggedCount] = useState(0)
 
     const fetchClaims = () => {
       adminAPI.claims()
