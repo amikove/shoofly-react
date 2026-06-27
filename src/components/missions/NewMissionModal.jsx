@@ -1,7 +1,9 @@
 import { useState, useRef, useEffect } from 'react'
+import ComplianceModal from './ComplianceModal'
 import { missionsAPI } from '../../api'
 import { toast } from '../ui'
 import { useAuth } from '../../context/AuthContext'
+
 
 // ── Données villes / quartiers ─────────────────────────────
 const VILLES = {
@@ -163,6 +165,7 @@ export default function NewMissionModal({ open, onClose, onCreated, preselectedO
   const [form, setForm]   = useState({
     title: '', address: '', city: '', quartier: '', price: '', description: ''
   })
+  const [showCompliance, setShowCompliance] = useState(false)
 
   const set = (k) => (e) => setForm((f) => ({ ...f, [k]: e.target.value }))
   const setVal = (k) => (v) => setForm((f) => ({ ...f, [k]: v }))
@@ -172,10 +175,11 @@ export default function NewMissionModal({ open, onClose, onCreated, preselectedO
   // Quartiers disponibles selon la ville sélectionnée
   const quartiersDispos = VILLES[form.city] || VILLES_LIST
 
-  const submit = async (e) => {
+const submit = async (e) => {
     e.preventDefault()
-
+    if (!showCompliance) { setShowCompliance(true); return }
     if (!form.title || !form.city || !form.price) {
+
       toast('Titre, ville et budget sont requis', 'error')
       return
     }
@@ -338,6 +342,10 @@ export default function NewMissionModal({ open, onClose, onCreated, preselectedO
             </button>
             <button type="button" onClick={onClose} className="btn btn-ghost btn-lg">Annuler</button>
           </div>
+
+          {showCompliance && (
+            <ComplianceModal onAccept={() => { setShowCompliance(false); submit({ preventDefault: () => {}, _bypassed: true }) }} />
+          )}
         </form>
       </div>
     </div>

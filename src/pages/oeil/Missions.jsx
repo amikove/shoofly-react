@@ -9,6 +9,7 @@ import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
 import MissionHistoryModal from '../../components/missions/MissionHistoryModal'
 import MissionSummaryModal from '../../components/missions/MissionSummaryModal'
+import ComplianceModal from '../../components/missions/ComplianceModal'
 
 const TABS = [
   { id: 'available', label: 'Disponibles' },
@@ -39,6 +40,7 @@ const VILLES = {
 }
 
 export default function OeilMissions() {
+  const [complianceMission, setComplianceMission] = useState(null)
   const [tab, setTab]           = useState('available')
   const [missions, setMissions] = useState([])
   const [loading, setLoading]   = useState(true)
@@ -50,6 +52,7 @@ export default function OeilMissions() {
   const { user } = useAuth()
   const [historyMission, setHistoryMission] = useState(null)
   const [summaryMission, setSummaryMission] = useState(null)
+
 
 
 
@@ -114,7 +117,9 @@ const load = useCallback((t) => {
     }
   }
 
-  const interest = async (id) => {
+const interest = async (id) => {
+    if (!complianceMission) { setComplianceMission(id); return }
+    setComplianceMission(null)
     try {
       await missionsAPI.interest(id)
       setMissions((prev) => prev.map((m) => m.id === id ? { ...m, interested: true } : m))
@@ -352,6 +357,11 @@ try {
 {summaryMission && (
   <MissionSummaryModal mission={summaryMission} onClose={() => setSummaryMission(null)} />
 )}
+
+
+      {complianceMission && (
+  <ComplianceModal onAccept={() => interest(complianceMission)} />
+      )}
 
       {chatMission && (
         <ChatModal mission={chatMission} onClose={() => setChatMission(null)} />
