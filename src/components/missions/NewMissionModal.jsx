@@ -404,12 +404,15 @@ if (parseFloat(form.price) < minPrice) {
 
 
           {/* Date et heure */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <label className="label">Date de la mission *</label>
               <input
                 type="date"
                 className="input"
+                style={{ colorScheme: 'dark', accentColor: '#FF4D00' }}
                 value={form.scheduled_date}
                 min={new Date().toISOString().split('T')[0]}
                 onChange={(e) => setForm(f => ({ ...f, scheduled_date: e.target.value }))}
@@ -421,6 +424,7 @@ if (parseFloat(form.price) < minPrice) {
               <input
                 type="time"
                 className="input"
+                style={{ colorScheme: 'dark', accentColor: '#FF4D00' }}
                 value={form.scheduled_time}
                 onChange={(e) => setForm(f => ({ ...f, scheduled_time: e.target.value }))}
                 required
