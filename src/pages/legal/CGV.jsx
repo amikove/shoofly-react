@@ -28,7 +28,7 @@ export default function CGV() {
                 '**Client** : toute personne physique ou morale créant et commandant des missions sur la plateforme',
                 '**Œil** : prestataire indépendant inscrit sur la plateforme pour effectuer des missions physiques',
                 '**Mission** : tâche physique commandée par un Client et exécutée par un Œil',
-                '**Commission** : rémunération prélevée par SHOOFLY sur le prix de chaque mission (20%)',
+                '**Commission** : rémunération prélevée par SHOOFLY sur le prix de chaque mission (30%)',
               ].map((item, i) => (
                 <li key={i} className="flex items-start gap-2">
                   <span className="text-[#FF4D00] mt-0.5">→</span>
@@ -87,11 +87,11 @@ export default function CGV() {
             <ul className="space-y-2">
               {[
                 'Le prix de chaque mission est fixé librement par le Client, avec un minimum de 50 MAD',
-                'SHOOFLY prélève une commission de 20% sur chaque mission complétée',
-                'L\'Œil perçoit 80% du montant de la mission après validation par le Client',
+                'SHOOFLY prélève une commission de 30% sur chaque mission complétée',
+                'L\'Œil perçoit 70% du montant de la mission après validation par le Client',
                 'Le paiement est effectué via CMI (Centre Monétique Interbancaire)',
                 'Le paiement est sécurisé et libéré uniquement après validation de la mission',
-                'En cas de validation automatique (après 12h), le paiement est transféré automatiquement',
+                'Si le client ne valide pas la mission dans les 12 heures suivant sa réalisation, celle-ci sera automatiquement considérée comme terminée et le paiement sera libéré.',
               ].map((item, i) => (
                 <li key={i} className="flex items-start gap-2">
                   <span className="text-[#FF4D00] mt-0.5">→</span>
@@ -105,11 +105,11 @@ export default function CGV() {
             <h2 className="text-white font-semibold text-lg mb-3">7. Politique de remboursement</h2>
             <ul className="space-y-2">
               {[
-                'Annulation avant assignation d\'un Œil : remboursement intégral sous 5 jours ouvrés',
+                'Annulation avant assignation d\'un Œil : l\'intégralité du montant est créditée sur votre portefeuille (Wallet) et reste disponible pour une future réservation, sans limite de durée.',
                 'Annulation après assignation : remboursement de 50% du montant si annulation plus de 2h avant la mission, aucun remboursement dans les 2h précédant la mission',
-                'Mission non exécutée par l\'Œil : remboursement intégral automatique',
+                'Mission non exécutée par l\'Œil : remboursement intégral automatique sur votre Wallet, disponible immédiatement pour une prochaine mission.',
                 'Réclamation acceptée par l\'admin : remboursement intégral crédité sur le portefeuille SHOOFLY',
-                'Le portefeuille SHOOFLY peut être utilisé pour de futures missions ou faire l\'objet d\'une demande de virement bancaire sous 10 jours ouvrés',
+                'Les crédits portefeuille SHOOFLY ne sont pas remboursables en espèces ou par virement, sauf en cas de fermeture définitive du compte sur demande écrite à legal@shoofly.ma',
               ].map((item, i) => (
                 <li key={i} className="flex items-start gap-2">
                   <span className="text-[#FF4D00] mt-0.5">→</span>
