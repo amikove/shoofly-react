@@ -130,14 +130,22 @@ const interest = async (id) => {
   }
 
 
-  const advance = async (mission) => {
+const [complianceAdvance, setComplianceAdvance] = useState(null)
+
+const advance = async (mission, bypassed = false) => {
   const next = {
     assigned: 'en_route',
     en_route: 'active',
     active:   'completed',
   }[mission.status]
 
-  if (!next) { toast('Statut invalide', 'error'); return }
+    if (!next) { toast('Statut invalide', 'error'); return }
+
+    // Afficher compliance quand l'Œil passe en "en_route"
+    if (next === 'en_route' && !bypassed) {
+      setComplianceAdvance(mission)
+      return
+    }
 
   const labels = {
     en_route:  'En route vers la mission ✓',
@@ -265,12 +273,18 @@ try {
                         {m.title}
                         {m.is_urgent && <span className="badge badge-orange text-[10px]">🚨 Urgent</span>}
                       </div>
-                      <div className="text-xs text-[#AAA] mt-1 flex flex-wrap gap-3">
-                        <span>📍 {m.city}</span>
-                        <span>📅 {m.scheduled_at ? new Date(m.scheduled_at).toLocaleDateString('fr-MA') : '—'}</span>
-                        {m.client_name && <span>👤 {m.client_name}</span>}
-                        {tab !== 'available' && <StatusBadge status={m.status} validated={!!m.validated_at} role="oeil" />}
+                      
+                        <div className="text-xs text-[#AAA] mt-1 space-y-0.5">
+                        <div className="flex flex-wrap gap-3">
+                          <span>📍 {m.city}{m.quartier ? ` · ${m.quartier}` : ''}</span>
+                          <span>📅 {m.scheduled_at ? `${new Date(m.scheduled_at).toLocaleDateString('fr-FR', { day:'numeric', month:'short', year:'numeric' })} à ${new Date(m.scheduled_at).toLocaleTimeString('fr-FR', { hour:'2-digit', minute:'2-digit' })}` : '—'}</span>
+                          {m.client_name && <span>👤 {m.client_name}</span>}
+                          {tab !== 'available' && <StatusBadge status={m.status} validated={!!m.validated_at} role="oeil" />}
+                        </div>
+                        {m.address && <div>🏠 {m.address}</div>}
+                        {m.description && <div className="text-[#666] line-clamp-2">💬 {m.description}</div>}
                       </div>
+                      
                       {m.description && (
                         <p className="text-xs text-[#777] mt-1 line-clamp-1">{m.description}</p>
                       )}
@@ -359,9 +373,12 @@ try {
 )}
 
 
-      {complianceMission && (
-  <ComplianceModal onAccept={() => interest(complianceMission)} />
-      )}
+  {complianceMission && (
+    <ComplianceModal onAccept={() => interest(complianceMission)} />
+  )}
+  {complianceAdvance && (
+    <ComplianceModal onAccept={() => { const m = complianceAdvance; setComplianceAdvance(null); advance(m, true) }} />
+  )}
 
       {chatMission && (
         <ChatModal mission={chatMission} onClose={() => setChatMission(null)} />
