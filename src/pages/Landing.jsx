@@ -57,7 +57,7 @@ export default function Landing() {
   <span className="text-[#FF4D00]">Sans bouger.</span>
 </h1>
 <p className="text-[#AAA] text-lg md:text-xl max-w-2xl mx-auto mb-10 leading-relaxed">
-  Shoofly met un agent de terrain à votre disposition pour toute mission physique — 
+  <strong className="font-display font-bold text-white">SHOOF<span className="text-[#FF4D00]">LY</span></strong> met un agent de terrain à votre disposition pour toute mission physique — 
   file d'attente, visite d'appartement à votre place, audit anonyme de magasin — 
   où que ce soit au Maroc.
 </p>
