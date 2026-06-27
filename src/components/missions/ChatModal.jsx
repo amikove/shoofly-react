@@ -80,11 +80,7 @@ const send = async () => {
     setMsg('')
     setSending(true)
     try {
-      const { data } = await missionsAPI.message(mission.id, { content })
-      setMessages(prev => [...prev, data.message || {
-        id: Date.now(), content, sender_id: user?.id,
-        sender_role: user?.role, created_at: new Date().toISOString()
-      }])
+          await missionsAPI.message(mission.id, { content })
     } catch {
       toast('Erreur envoi message', 'error')
       setMsg(content)
