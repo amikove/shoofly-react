@@ -178,10 +178,22 @@ const submit = async (e) => {
 console.log('bypassed:', e._bypassed, 'showCompliance:', showCompliance)
     if (!e._bypassed) { setShowCompliance(true); return }
     console.log('form:', form.title, form.city, form.price, form.quartier, form.scheduled_date, form.scheduled_time)
-    if (!form.title || !form.city || !form.price) {
+
+if (!form.title || !form.city || !form.price) {
       toast('Titre, ville et budget sont requis', 'error')
       return
     }
+    if (form.title.trim().length < 6) {
+      toast('Le titre de la mission doit contenir au moins 6 caractères', 'error')
+      return
+    }
+
+    if (parseFloat(form.price) < 50) {
+  toast('Le budget minimum est de 70 MAD', 'error')
+  return
+}
+
+
     if (!form.quartier) {
       toast('Quartier obligatoire', 'error')
       return
