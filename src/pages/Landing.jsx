@@ -22,14 +22,15 @@ const WHY = [
   { icon: '📊', label: 'Rapport complet',                       desc: 'Un rapport détaillé vous est remis à la fin de chaque mission'                        },
   { icon: '🔐', label: 'Paiement libéré après votre validation',               desc: 'L\'agent est payé uniquement lorsque vous validez la mission — jamais avant'           },
   { icon: '📋', label: 'Rapports standardisés et objectifs',    desc: 'Chaque mission est documentée selon une grille de contrôle complète : photos de preuves, observations détaillées et note globale. Vous décidez en toute confiance, sans vous déplacer.' },
-]
-]
+           ]
 
 export default function Landing() {
   const navigate = useNavigate()
 
   return (
     <div className="min-h-screen bg-[#0F0F0F] text-white">
+
+
 
       {/* NAV */}
       <nav className="flex items-center justify-between px-6 md:px-16 py-5 border-b border-white/10">
