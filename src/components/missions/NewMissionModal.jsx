@@ -162,9 +162,7 @@ export default function NewMissionModal({ open, onClose, onCreated, preselectedO
   const [type, setType]   = useState('immobilier')
   const [subcategory, setSub] = useState('')
   const [loading, setLoading] = useState(false)
-  const [form, setForm]   = useState({
-    title: '', address: '', city: '', quartier: '', price: '', description: ''
-  })
+  const [form, setForm]   = useState({ title: '', address: '', city: '', quartier: '', price: '', description: '', scheduled_date: '', scheduled_time: ''  })
   const [showCompliance, setShowCompliance] = useState(false)
 
   const set = (k) => (e) => setForm((f) => ({ ...f, [k]: e.target.value }))
@@ -188,6 +186,11 @@ const submit = async (e) => {
       return
     }
     
+    if (!form.scheduled_date || !form.scheduled_time) {
+  toast('Date et heure de la mission obligatoires', 'error')
+  return
+}
+
     if ((type === 'file_attente' || type === 'audit') && !subcategory) {
       toast('Veuillez sélectionner une sous-catégorie', 'error')
       return
@@ -205,7 +208,7 @@ const submit = async (e) => {
         quartier:     form.quartier || null,
         price:        parseFloat(form.price),
         description:  form.description,
-        scheduled_at: new Date(Date.now() + 3600000).toISOString(),
+        scheduled_at: new Date(`${form.scheduled_date}T${form.scheduled_time}`).toISOString(),
       }
       if (preselectedOeil?.id) payload.oeil_id = preselectedOeil.id
 
@@ -324,6 +327,37 @@ const submit = async (e) => {
               }
             />
           </div>
+
+
+
+
+
+          {/* Date et heure */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label className="label">Date de la mission *</label>
+              <input
+                type="date"
+                className="input"
+                value={form.scheduled_date}
+                min={new Date().toISOString().split('T')[0]}
+                onChange={(e) => setForm(f => ({ ...f, scheduled_date: e.target.value }))}
+                required
+              />
+            </div>
+            <div>
+              <label className="label">Heure de la mission *</label>
+              <input
+                type="time"
+                className="input"
+                value={form.scheduled_time}
+                onChange={(e) => setForm(f => ({ ...f, scheduled_time: e.target.value }))}
+                required
+              />
+            </div>
+          </div>
+
+
 
           {/* Budget */}
           <div>
