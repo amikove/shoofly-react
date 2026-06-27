@@ -175,9 +175,10 @@ export default function NewMissionModal({ open, onClose, onCreated, preselectedO
 
 const submit = async (e) => {
     e.preventDefault()
+console.log('bypassed:', e._bypassed, 'showCompliance:', showCompliance)
     if (!e._bypassed) { setShowCompliance(true); return }
+    console.log('form:', form.title, form.city, form.price, form.quartier, form.scheduled_date, form.scheduled_time)
     if (!form.title || !form.city || !form.price) {
-
       toast('Titre, ville et budget sont requis', 'error')
       return
     }
@@ -185,12 +186,10 @@ const submit = async (e) => {
       toast('Quartier obligatoire', 'error')
       return
     }
-    
     if (!form.scheduled_date || !form.scheduled_time) {
-  toast('Date et heure de la mission obligatoires', 'error')
-  return
-}
-
+      toast('Date et heure de la mission obligatoires', 'error')
+      return
+    }
     if ((type === 'file_attente' || type === 'audit') && !subcategory) {
       toast('Veuillez sélectionner une sous-catégorie', 'error')
       return
