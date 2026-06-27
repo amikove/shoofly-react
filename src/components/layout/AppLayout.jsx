@@ -28,6 +28,7 @@ const MENUS = {
     { to: '/admin/oeils',        icon: '👁️',  label: 'Œils',         section: 'Gestion'     },
     { to: '/admin/clients',      icon: '👥',  label: 'Clients',      section: 'Gestion'     },
     { to: '/admin/reclamations', icon: '🚨',  label: 'Réclamations', section: 'Gestion', badge: 'claims' },
+    { to: '/admin/messages-suspects', icon: '⚠️', label: 'Messages suspects', section: 'Gestion', badge: 'flagged' },
     { to: '/admin/fraude',       icon: '🛡️',  label: 'Fraude',       section: 'Gestion'     },
     { to: '/admin/parametres',   icon: '⚙️',  label: 'Paramètres',   section: 'Système'     },
   ],
@@ -50,14 +51,24 @@ export default function AppLayout({ children }) {
 
 useEffect(() => {
   if (user?.role !== 'admin') return
-  const fetchClaims = () => {
-    adminAPI.claims()
-      .then(({ data }) => setClaimsCount((data.claims || []).length))
-      .catch(() => {})
-  }
-  fetchClaims()
-  const interval = setInterval(fetchClaims, 60000)
-  return () => clearInterval(interval)
+
+  const [flaggedCount, setFlaggedCount] = useState(0)
+
+    const fetchClaims = () => {
+      adminAPI.claims()
+        .then(({ data }) => setClaimsCount((data.claims || []).length))
+        .catch(() => {})
+    }
+    const fetchFlagged = () => {
+      adminAPI.flaggedMessages()
+        .then(({ data }) => setFlaggedCount((data.messages || []).length))
+        .catch(() => {})
+    }
+    fetchClaims()
+    fetchFlagged()
+    const interval = setInterval(() => { fetchClaims(); fetchFlagged() }, 60000)
+    return () => clearInterval(interval)
+
 }, [user])
 
 useEffect(() => {
@@ -141,6 +152,12 @@ useEffect(() => {
                           {claimsCount > 9 ? '9+' : claimsCount}
                         </span>
                       )}
+
+                      {item.badge === 'flagged' && flaggedCount > 0 && (
+                      <span className="bg-orange-500 text-white text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center">
+                        {flaggedCount > 9 ? '9+' : flaggedCount}
+                      </span>
+                    )}
 
 
                   </NavLink>

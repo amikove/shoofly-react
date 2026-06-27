@@ -57,6 +57,9 @@ export const adminAPI = {
   processWithdraw:(id, data) => api.put(`/api/users/admin/withdrawals/${id}`, data),
   fraudDashboard: ()       => api.get('/api/anti-fraud/dashboard'),
   claims:         ()       => api.get('/api/users/admin/claims'),
+  flaggedMessages: () => api.get('/api/users/admin/flagged-messages'),
+
+
 resolveClaim:   (id, decision) => api.put(`/api/users/admin/claims/${id}/resolve`, { decision }),
 }
 

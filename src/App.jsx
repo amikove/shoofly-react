@@ -39,6 +39,7 @@ import AdminOeils      from './pages/admin/Oeils'
 import AdminClients    from './pages/admin/Clients'
 import AdminFraude     from './pages/admin/Fraude'
 import AdminReclamations from './pages/admin/Reclamations'
+import AdminMessagesSuspects from './pages/admin/MessagesSuspects'
 import AdminParametres from './pages/admin/Parametres'
 
 // Route guard
@@ -107,6 +108,7 @@ export default function App() {
       <Route path="/admin/clients"      element={<RequireAuth allowedRoles={['admin']}><AdminClients /></RequireAuth>} />
       <Route path="/admin/fraude"       element={<RequireAuth allowedRoles={['admin']}><AdminFraude /></RequireAuth>} />
       <Route path="/admin/reclamations" element={<RequireAuth allowedRoles={['admin']}><AdminReclamations /></RequireAuth>} />
+      <Route path="/admin/messages-suspects" element={<RequireAuth allowedRoles={['admin']}><AdminMessagesSuspects /></RequireAuth>} />
       <Route path="/admin/parametres"   element={<RequireAuth allowedRoles={['admin']}><AdminParametres /></RequireAuth>} />
 
 
