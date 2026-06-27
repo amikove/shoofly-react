@@ -82,6 +82,60 @@ function Autocomplete({ label, value, onChange, suggestions, placeholder, disabl
   )
 }
 
+const MIN_PRICES = {
+  // Immobilier
+  'Airbnb':              170,
+  'Booking':             170,
+  'Avito':               129,
+  'Mubawab':             129,
+  'Agence immobilière':  149,
+  'Particulier':         129,
+  // File d'attente
+  'Hôpital & clinique':          99,
+  'Cabinet de spécialiste':      85,
+  'Laboratoire':                 69,
+  'CNSS':                       129,
+  'ANCFCC':                     109,
+  "Services d'état civil":       85,
+  'ONEE':                        85,
+  'REDAL':                       85,
+  'RADEEMA':                     85,
+  'Consulat étranger':          169,
+  'Centre de visas':            149,
+  'Attijariwafa':                69,
+  'CIH Bank':                    69,
+  'Banque Populaire':            69,
+  'BMCE':                        69,
+  'BMCI':                        69,
+  'Al Barid Bank':               69,
+  'Inscription universitaire':   99,
+  'École privée':                85,
+  'Bourse & dossier étudiant':   99,
+  // Audit
+  'Restaurant (Temps d\'attente, Propreté, Qualité du service)': 209,
+  'Café (Accueil, Rapidité, Propreté)':                         169,
+  'Hôtel (Check-in, Service client, Propreté)':                 299,
+  'Salle de sport (Accueil commercial, État des équipements, Suivi coachs)': 249,
+  'Concession automobile (Qualité vendeur, Temps de prise en charge, Suivi commercial)': 249,
+  'Agence immobilière (Qualité accueil, Réactivité, Compétence commerciale)': 209,
+  // Personnalisée
+  'Présence physique':  85,
+  'Accompagnement':    129,
+  'Vérification':       99,
+  'Livraison':          69,
+  // Défaut par type
+  '_immobilier':        129,
+  '_file_attente':       85,
+  '_audit':             209,
+  '_personnalisee':      85,
+  '_default':            50,
+}
+
+function getMinPrice(type, sub) {
+  if (sub && MIN_PRICES[sub]) return MIN_PRICES[sub]
+  return MIN_PRICES[`_${type}`] || MIN_PRICES['_default']
+}
+
 // ── Catégories et sous-catégories ─────────────────────────
 const CATEGORIES = {
   immobilier: {
@@ -188,8 +242,9 @@ if (!form.title || !form.city || !form.price) {
       return
     }
 
-    if (parseFloat(form.price) < 50) {
-  toast('Le budget minimum est de 70 MAD', 'error')
+const minPrice = getMinPrice(type, subcategory)
+if (parseFloat(form.price) < minPrice) {
+  toast(`Le budget minimum pour cette mission est de ${minPrice} MAD`, 'error')
   return
 }
 
@@ -379,8 +434,13 @@ if (!form.title || !form.city || !form.price) {
           <div>
             <label className="label">Budget (MAD) *</label>
             <input type="number" className="input" value={form.price} onChange={set('price')}
-              placeholder={type === 'immobilier' ? '200' : type === 'file_attente' ? '150' : type === 'audit' ? '450' : '180'}
-              min="50" required />
+              placeholder={`Min. ${getMinPrice(type, subcategory)} MAD`}
+              min={getMinPrice(type, subcategory)} required />
+            {subcategory && (
+              <p className="text-[11px] text-[#AAA] mt-1">
+                Budget minimum pour cette mission : <span className="text-[#FF4D00] font-semibold">{getMinPrice(type, subcategory)} MAD</span>
+              </p>
+            )}
 
           </div>
 
