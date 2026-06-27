@@ -198,6 +198,7 @@ const submit = async (e) => {
 
     setLoading(true)
     try {
+      console.log('form values:', form.scheduled_date, form.scheduled_time, form.title, form.city, form.quartier, form.price)
       const adresseFull = [form.quartier, form.city].filter(Boolean).join(', ')
       const payload = {
         type,
