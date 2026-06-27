@@ -382,7 +382,10 @@ console.log('bypassed:', e._bypassed, 'showCompliance:', showCompliance)
           </div>
 
           {showCompliance && (
-            <ComplianceModal onAccept={() => { setShowCompliance(false); submit({ preventDefault: () => {}, _bypassed: true }) }} />
+            <ComplianceModal onAccept={() => {
+              setShowCompliance(false)
+              setTimeout(() => submit({ preventDefault: () => {}, _bypassed: true }), 100)
+            }} />
           )}
         </form>
       </div>
