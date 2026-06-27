@@ -14,9 +14,11 @@ export default function ChatModal({ mission, onClose }) {
   const [loading, setLoading]   = useState(true)
   const [sending, setSending]   = useState(false)
   const [uploading, setUploading] = useState(false)
-const [showCompliance, setShowCompliance] = useState(false)
 const [complianceAccepted, setComplianceAccepted] = useState(
-  () => localStorage.getItem(`compliance_${mission?.id}`) === 'true'
+  () => localStorage.getItem(`compliance_${mission?.id}_${user?.id}`) === 'true'
+)
+const [showCompliance, setShowCompliance] = useState(
+  () => localStorage.getItem(`compliance_${mission?.id}_${user?.id}`) !== 'true'
 )
   const bottomRef               = useRef(null)
   const fileRef                 = useRef(null)
@@ -73,11 +75,7 @@ useEffect(() => {
 
 const send = async () => {
     if (!msg.trim()) return
-    // Afficher compliance au premier message si pas encore accepté
-    if (!complianceAccepted && !showCompliance) {
-          setShowCompliance(true)
-          return
-        }
+
     const content = msg.trim()
     setMsg('')
     setSending(true)
