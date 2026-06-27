@@ -1,26 +1,69 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import AppLayout from '../../components/layout/AppLayout'
 import Topbar from '../../components/layout/Topbar'
-import { toast } from '../../components/ui'
+import { adminAPI } from '../../api'
+import { toast, Spinner } from '../../components/ui'
 
 export default function AdminParametres() {
   const [params, setParams] = useState({ commission: 20, min_price: 80, urgency_fee: 30, accept_delay: 15 })
+  const [loading, setLoading] = useState(true)
+  const [saving, setSaving]   = useState(false)
+
+  useEffect(() => {
+    adminAPI.settings()
+      .then(({ data }) => {
+        const s = data.settings || {}
+        setParams({
+          commission:   parseFloat(s.commission || 0.20) * 100,
+          min_price:    parseFloat(s.min_price   || 80),
+          urgency_fee:  parseFloat(s.urgency_fee || 0.30) * 100,
+          accept_delay: parseFloat(s.accept_delay || 15),
+        })
+      })
+      .catch(() => toast('Erreur chargement', 'error'))
+      .finally(() => setLoading(false))
+  }, [])
+
   const set = (k) => (e) => setParams((p) => ({ ...p, [k]: e.target.value }))
+
+  const save = async () => {
+    setSaving(true)
+    try {
+      await adminAPI.saveSettings({
+        commission:   parseFloat(params.commission) / 100,
+        min_price:    parseFloat(params.min_price),
+        urgency_fee:  parseFloat(params.urgency_fee) / 100,
+        accept_delay: parseFloat(params.accept_delay),
+      })
+      toast('Paramètres enregistrés ✓', 'success')
+    } catch { toast('Erreur sauvegarde', 'error') }
+    finally { setSaving(false) }
+  }
+
+  if (loading) return <AppLayout><Topbar title="Paramètres" /><div className="flex justify-center py-20"><Spinner size="lg" /></div></AppLayout>
 
   return (
     <AppLayout>
       <Topbar title="Paramètres" />
       <div className="p-6">
-        <div className="grid grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="card">
             <h2 className="font-semibold text-sm mb-4">Tarification plateforme</h2>
-            {[['Commission SHOOFLY (%)', 'commission'],['Tarif minimum (MAD)','min_price'],['Frais urgence (%)','urgency_fee'],['Délai acceptation (min)','accept_delay']].map(([label, key]) => (
+            {[
+              ['Commission SHOOFLY (%)', 'commission', 'Ex: 20 pour 20%'],
+              ['Tarif minimum (MAD)',    'min_price',   'Ex: 80'],
+              ['Frais urgence (%)',      'urgency_fee', 'Ex: 30 pour 30%'],
+              ['Délai acceptation (min)','accept_delay','Ex: 15'],
+            ].map(([label, key, hint]) => (
               <div key={key} className="mb-3">
                 <label className="label">{label}</label>
                 <input type="number" className="input" value={params[key]} onChange={set(key)} />
+                <p className="text-[11px] text-[#555] mt-1">{hint}</p>
               </div>
             ))}
-            <button onClick={() => toast('Paramètres enregistrés ✓', 'success')} className="btn btn-primary mt-2">Enregistrer</button>
+            <button onClick={save} disabled={saving} className="btn btn-primary mt-2 disabled:opacity-60">
+              {saving ? 'Sauvegarde...' : 'Enregistrer'}
+            </button>
           </div>
           <div className="card">
             <h2 className="font-semibold text-sm mb-4">Villes couvertes</h2>

@@ -56,6 +56,8 @@ export const adminAPI = {
   withdrawals:    ()       => api.get('/api/users/admin/withdrawals'),
   processWithdraw:(id, data) => api.put(`/api/users/admin/withdrawals/${id}`, data),
   fraudDashboard: ()       => api.get('/api/anti-fraud/dashboard'),
+  settings:       ()       => api.get('/api/users/admin/settings'),
+  saveSettings:   (data)   => api.put('/api/users/admin/settings', data),
   claims:         ()       => api.get('/api/users/admin/claims'),
   flaggedMessages: () => api.get('/api/users/admin/flagged-messages'),
 
