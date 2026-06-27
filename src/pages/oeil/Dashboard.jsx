@@ -143,7 +143,12 @@ const refuse = async (id) => {
                 <div className="flex items-start justify-between gap-2 mb-3">
                   <div className="min-w-0">
                     <div className="font-semibold text-sm truncate">{m.title}</div>
-                    <div className="text-xs text-[#AAA] mt-0.5">📍 {m.city}</div>
+                    <div className="text-xs text-[#AAA] mt-0.5 space-y-0.5">
+                      <div>📍 {m.city} {m.quartier ? `· ${m.quartier}` : ''}</div>
+                      {m.address && <div>🏠 {m.address}</div>}
+                      {m.scheduled_at && <div>📅 {new Date(m.scheduled_at).toLocaleDateString('fr-FR', { day:'numeric', month:'short', year:'numeric' })} à {new Date(m.scheduled_at).toLocaleTimeString('fr-FR', { hour:'2-digit', minute:'2-digit' })}</div>}
+                      {m.description && <div className="text-[#666] line-clamp-2">💬 {m.description}</div>}
+                    </div>
                   </div>
                  
                  <div className="text-green-400 font-bold whitespace-nowrap text-sm">
@@ -192,7 +197,14 @@ const refuse = async (id) => {
                 <div className="flex items-start justify-between mb-2">
                   <div>
                     <div className="font-semibold text-sm">{m.title}</div>
-                    <div className="text-xs text-[#AAA]">Client : {m.client_name}</div>
+                    <div className="text-xs text-[#AAA] mt-0.5 space-y-0.5">
+                      <div>👤 {m.client_name}</div>
+                      <div>📍 {m.city} {m.quartier ? `· ${m.quartier}` : ''}</div>
+                      {m.address && <div>🏠 {m.address}</div>}
+                      {m.scheduled_at && <div>📅 {new Date(m.scheduled_at).toLocaleDateString('fr-FR', { day:'numeric', month:'short', year:'numeric' })} à {new Date(m.scheduled_at).toLocaleTimeString('fr-FR', { hour:'2-digit', minute:'2-digit' })}</div>}
+                      {m.description && <div className="text-[#666] line-clamp-2">💬 {m.description}</div>}
+                    </div>
+
                   </div>
                   <StatusBadge status={m.status} />
                 </div>
