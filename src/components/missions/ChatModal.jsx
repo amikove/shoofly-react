@@ -14,12 +14,19 @@ export default function ChatModal({ mission, onClose }) {
   const [loading, setLoading]   = useState(true)
   const [sending, setSending]   = useState(false)
   const [uploading, setUploading] = useState(false)
+const complianceKey = `compliance_${mission?.id}_${user?.id}`
 const [complianceAccepted, setComplianceAccepted] = useState(
   () => localStorage.getItem(`compliance_${mission?.id}_${user?.id}`) === 'true'
 )
-const [showCompliance, setShowCompliance] = useState(
-  () => localStorage.getItem(`compliance_${mission?.id}_${user?.id}`) !== 'true'
-)
+const [showCompliance, setShowCompliance] = useState(false)
+
+useEffect(() => {
+  if (user?.id && mission?.id) {
+    const accepted = localStorage.getItem(`compliance_${mission.id}_${user.id}`) === 'true'
+    setComplianceAccepted(accepted)
+    setShowCompliance(!accepted)
+  }
+}, [user?.id, mission?.id])
   const bottomRef               = useRef(null)
   const fileRef                 = useRef(null)
 
