@@ -22,11 +22,18 @@ const [showCompliance, setShowCompliance] = useState(false)
 
 useEffect(() => {
   if (user?.id && mission?.id) {
-    const accepted = localStorage.getItem(`compliance_${mission.id}_${user.id}`) === 'true'
+    const newKey = `compliance_${mission.id}_${user.id}`
+    const oldKey = `compliance_${mission.id}`
+    // Migrer l'ancienne clé si elle existe
+    if (localStorage.getItem(oldKey) === 'true' && !localStorage.getItem(newKey)) {
+      localStorage.setItem(newKey, 'true')
+    }
+    const accepted = localStorage.getItem(newKey) === 'true'
     setComplianceAccepted(accepted)
     setShowCompliance(!accepted)
   }
 }, [user?.id, mission?.id])
+
   const bottomRef               = useRef(null)
   const fileRef                 = useRef(null)
 
