@@ -14,8 +14,10 @@ export default function ChatModal({ mission, onClose }) {
   const [loading, setLoading]   = useState(true)
   const [sending, setSending]   = useState(false)
   const [uploading, setUploading] = useState(false)
-  const [showCompliance, setShowCompliance] = useState(false)
-  const [complianceAccepted, setComplianceAccepted] = useState(false)
+const [showCompliance, setShowCompliance] = useState(false)
+const [complianceAccepted, setComplianceAccepted] = useState(
+  () => localStorage.getItem(`compliance_${mission?.id}`) === 'true'
+)
   const bottomRef               = useRef(null)
   const fileRef                 = useRef(null)
 
@@ -222,6 +224,7 @@ const send = async () => {
               <ComplianceModal onAccept={() => {
                 setShowCompliance(false)
                 setComplianceAccepted(true)
+                localStorage.setItem(`compliance_${mission?.id}`, 'true')
                 setTimeout(() => send(), 100)
               }} />
             )}
