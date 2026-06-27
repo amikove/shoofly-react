@@ -80,7 +80,9 @@ export default function MissionSummaryModal({ mission, onClose }) {
               <div className={`text-xl font-bold ${isValidated ? 'text-green-400' : 'text-[#AAA]'}`}>
                 {parseFloat(mission.oeil_earning || 0).toFixed(0)} MAD
               </div>
-              {!isValidated && <div className="text-[10px] text-[#555]">En attente</div>}
+              {!isValidated && (
+                  <div className="text-[10px] text-orange-400 mt-1">⏳ En attente de validation client</div>
+                )}
             </div>
           </div>
 
@@ -159,6 +161,12 @@ export default function MissionSummaryModal({ mission, onClose }) {
 
           {loading && <div className="flex justify-center py-4"><Spinner size="sm" /></div>}
         </div>
+
+          {!isValidated && mission.completed_by_oeil_at && (
+            <div className="bg-orange-500/10 border border-orange-500/20 rounded-xl p-3 mt-2 text-xs text-orange-400 text-center">
+              ⏳ En attente de la validation du client 😉
+            </div>
+          )}
 
         <button onClick={onClose} className="btn btn-ghost btn-sm mt-4 flex-shrink-0 w-full justify-center">
           Fermer
