@@ -7,7 +7,7 @@ import { Spinner } from './components/ui'
 // Auth pages
 import Login    from './pages/auth/Login'
 import Register from './pages/auth/Register'
-
+import Landing from './pages/Landing'
 
 // Client pages
 import ClientDashboard  from './pages/client/Dashboard'
@@ -71,6 +71,8 @@ export default function App() {
   return (
     <Routes>
       {/* Public */}
+    
+      <Route path="/" element={user ? <Navigate to={`/${user.role}`} replace /> : <Landing />} />
       <Route path="/login"    element={user ? <Navigate to={`/${user.role}`} /> : <Login />} />
       <Route path="/register" element={user ? <Navigate to={`/${user.role}`} /> : <Register />} />
 
@@ -101,10 +103,10 @@ export default function App() {
       <Route path="/admin/parametres"   element={<RequireAuth allowedRoles={['admin']}><AdminParametres /></RequireAuth>} />
 
       {/* Redirect */}
-      <Route path="/" element={
+<Route path="/" element={
         user
           ? <Navigate to={`/${user.role}`} replace />
-          : <Navigate to="/login" replace />
+          : <Landing />
       } />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
