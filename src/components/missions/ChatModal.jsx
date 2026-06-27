@@ -1,6 +1,7 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { missionsAPI, mediaAPI } from '../../api'
+import ComplianceModal from './ComplianceModal'
 import { toast, Spinner } from '../ui'
 import { useSocket } from '../../context/SocketContext'
 import { useAuth } from '../../context/AuthContext'
@@ -13,6 +14,8 @@ export default function ChatModal({ mission, onClose }) {
   const [loading, setLoading]   = useState(true)
   const [sending, setSending]   = useState(false)
   const [uploading, setUploading] = useState(false)
+  const [showCompliance, setShowCompliance] = useState(false)
+  const [complianceAccepted, setComplianceAccepted] = useState(false)
   const bottomRef               = useRef(null)
   const fileRef                 = useRef(null)
 
@@ -66,8 +69,13 @@ useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages])
 
-  const send = async () => {
+const send = async () => {
     if (!msg.trim()) return
+    // Afficher compliance au premier message si pas encore accepté
+    if (!complianceAccepted) {
+      setShowCompliance(true)
+      return
+    }
     const content = msg.trim()
     setMsg('')
     setSending(true)
@@ -214,6 +222,13 @@ useEffect(() => {
           />
 
           {/* Bouton envoyer */}
+          {showCompliance && (
+            <ComplianceModal onAccept={() => {
+              setShowCompliance(false)
+              setComplianceAccepted(true)
+              send()
+            }} />
+          )}
           <button
             onClick={send}
             disabled={sending || !msg.trim()}
