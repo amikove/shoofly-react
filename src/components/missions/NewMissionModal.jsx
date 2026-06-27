@@ -60,7 +60,7 @@ function Autocomplete({ label, value, onChange, suggestions, placeholder, disabl
         value={query}
         placeholder={placeholder}
         disabled={disabled}
-        onChange={(e) => { setQuery(e.target.value); onChange(e.target.value); setOpen(true) }}
+        onChange={(e) => { setQuery(e.target.value); onChange(''); setOpen(true) }}
         onFocus={() => setOpen(true)}
       />
       {open && filtered.length > 0 && (
