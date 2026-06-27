@@ -254,7 +254,7 @@ useEffect(() => {
             <td className="text-[#AAA]">{m.oeil_name || '—'}</td>
             <td className="text-[#AAA] text-xs">{new Date(m.created_at).toLocaleDateString('fr-MA')}</td>
             <td className="text-green-400 font-semibold">{parseFloat(m.price).toFixed(0)} MAD</td>
-            <td><StatusBadge status={m.status} /></td>
+            <td><StatusBadge status={m.status} validated={!!m.validated_at} role="client" /></td>
             <td>
               <div className="flex gap-1 flex-wrap">
                 {m.status === 'pending' && (
@@ -290,10 +290,14 @@ useEffect(() => {
                       className="btn btn-ghost btn-sm" title="Historique">🕐</button>
 
 
-                    {m.status === 'completed' && m.validated_at && (
-                      <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); setRatingMission(m); }}
-                        className="btn btn-ghost btn-sm" title="Noter l'Œil">⭐</button>
-                    )}
+                        {m.status === 'completed' && m.validated_at && (
+                          m.rating_score ? (
+                            <span className="text-xs text-yellow-400 font-semibold">⭐ {m.rating_score}/5</span>
+                          ) : (
+                            <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); setRatingMission(m); }}
+                              className="btn btn-ghost btn-sm" title="Noter l'Œil">⭐ Noter</button>
+                          )
+                        )}
 
                     {m.status === 'completed' && !m.validated_at && m.completed_by_oeil_at && (
                       (() => {
@@ -337,7 +341,7 @@ useEffect(() => {
         </div>
         <div className="flex-shrink-0 flex flex-col items-end gap-1">
           <span className="text-green-400 font-bold text-sm">{parseFloat(m.price).toFixed(0)} MAD</span>
-          <StatusBadge status={m.status} />
+          <StatusBadge status={m.status} validated={!!m.validated_at} role="client" />
         </div>
       </div>
       <div className="flex gap-2 flex-wrap pt-2 border-t border-white/10">
@@ -364,14 +368,17 @@ useEffect(() => {
               className="btn btn-ghost btn-sm"
             >📋 Visite</button>
           )}
-<button onClick={() => setHistoryMission(m)} className="btn btn-ghost btn-sm">🕐 Historique</button>
+          <button onClick={() => setHistoryMission(m)} className="btn btn-ghost btn-sm">🕐 Historique</button>
 
-{m.status === 'completed' && m.validated_at && (
-  <button onClick={() => setRatingMission(m)} className="btn btn-ghost btn-sm">⭐ Noter</button>
-)}
+          {m.status === 'completed' && m.validated_at && (
+            m.rating_score ? (
+              <span className="text-xs text-yellow-400 font-semibold">⭐ {m.rating_score}/5{m.rating_comment ? ` · "${m.rating_comment.slice(0,30)}${m.rating_comment.length > 30 ? '...' : ''}"` : ''}</span>
+            ) : (
+              <button onClick={() => setRatingMission(m)} className="btn btn-ghost btn-sm">⭐ Noter</button>
+            )
+          )}
 
-
-{m.status === 'completed' && !m.validated_at && m.completed_by_oeil_at && (
+          {m.status === 'completed' && !m.validated_at && m.completed_by_oeil_at && (
   (() => {
     const hours = (Date.now() - new Date(m.completed_by_oeil_at).getTime()) / 3600000;
     return hours < 12 ? (
@@ -409,7 +416,7 @@ useEffect(() => {
           onRated={() => { setRatingMission(null); load() }}
         />
       )}
-// ceci est un commentaire vide 
+
 {claimMission && (
   <ClaimModal mission={claimMission} onClose={() => setClaimMission(null)} onClaimed={() => { setClaimMission(null); load() }} />
 )}
