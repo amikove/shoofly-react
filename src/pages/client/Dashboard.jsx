@@ -5,6 +5,8 @@ import { missionsAPI, usersAPI } from '../../api'
 import { StatusBadge, Spinner, EmptyState, Avatar, Stars, toast } from '../../components/ui'
 import { useAuth } from '../../context/AuthContext'
 import NewMissionModal from '../../components/missions/NewMissionModal'
+import InterestsModal from '../../components/missions/InterestsModal'
+
 
 export default function ClientDashboard() {
   const { user } = useAuth()
@@ -13,6 +15,7 @@ export default function ClientDashboard() {
   const [stats, setStats]       = useState({ total:0, active:0, completed:0, budget:0 })
   const [loading, setLoading]   = useState(true)
   const [showNew, setShowNew]   = useState(false)
+  const [interestsMission, setInterestsMission] = useState(null)
 
   useEffect(() => {
 
@@ -102,9 +105,16 @@ export default function ClientDashboard() {
                     <StatusBadge status={m.status} />
                   </div>
                 </div>
-                <a href="/client/missions" className="btn btn-primary btn-sm w-full justify-center">
-                  Voir →
-                </a>
+                  {m.status === 'pending' ? (
+                    <button onClick={() => setInterestsMission(m)}
+                      className="btn btn-primary btn-sm w-full justify-center">
+                      👁️ Voir les Œils intéressés
+                    </button>
+                  ) : (
+                    <a href="/client/missions" className="btn btn-primary btn-sm w-full justify-center">
+                      Voir →
+                    </a>
+                  )}
               </div>
             ))}
           </div>
@@ -144,6 +154,17 @@ export default function ClientDashboard() {
         setStats((s) => ({ ...s, total: s.total + 1 }))
         toast('Mission créée ! 🎉', 'success')
       }} />
+
+
+      {interestsMission && (
+  <InterestsModal
+    mission={interestsMission}
+    onClose={() => setInterestsMission(null)}
+    onHired={() => { setInterestsMission(null); load() }}
+  />
+)}
+
+
     </AppLayout>
   )
 }

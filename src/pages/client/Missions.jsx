@@ -10,91 +10,11 @@ import { useAuth } from '../../context/AuthContext'
 import { useNotif } from '../../context/NotifContext'
 import { useNavigate } from 'react-router-dom'
 import MissionHistoryModal from '../../components/missions/MissionHistoryModal'
+import InterestsModal from '../../components/missions/InterestsModal'
 
 const TYPE_ICONS = { immobilier:'🏠', file_attente:'⏳', audit:'🔎', personnalisee:'🎯' }
 
-function InterestsModal({ mission, onClose, onHired }) {
-  const [interests, setInterests] = useState([])
-  const [loading, setLoading]     = useState(true)
-  const [hiring, setHiring]       = useState(null)
 
-  useEffect(() => {
-    missionsAPI.interests(mission.id)
-      .then(({ data }) => setInterests(data.interests || []))
-      .catch(() => toast('Erreur chargement', 'error'))
-      .finally(() => setLoading(false))
-  }, [mission.id])
-
-  
-
-  const hire = async (oeilId) => {
-    setHiring(oeilId)
-    try {
-      await missionsAPI.hire(mission.id, oeilId)
-      toast('Œil embauché ! 🎉', 'success')
-      onHired()
-      onClose()
-    } catch (err) {
-      toast(err.response?.data?.error || 'Erreur', 'error')
-    } finally { setHiring(null) }
-  }
-
-  return (
-    <div className="fixed inset-0 bg-black/75 z-50 flex items-center justify-center p-4 backdrop-blur-sm"
-         onClick={(e) => e.target === e.currentTarget && onClose()}>
-      <div className="bg-[#181818] border border-white/20 rounded-2xl p-6 w-full max-w-lg max-h-[90vh] overflow-y-auto">
-        <div className="flex items-start justify-between mb-5">
-          <div>
-            <h2 className="font-bold text-base">Œils intéressés</h2>
-            <p className="text-xs text-[#AAA] mt-0.5">{mission.title}</p>
-          </div>
-          <button onClick={onClose} className="text-[#AAA] hover:text-white text-lg">✕</button>
-        </div>
-
-        {loading ? (
-          <div className="flex justify-center py-10"><Spinner size="lg" /></div>
-        ) : interests.length === 0 ? (
-          <div className="text-center py-10 text-[#AAA]">
-            <div className="text-4xl mb-3 opacity-30">👁️</div>
-            <p className="text-sm">Aucun Œil intéressé pour le moment.</p>
-            <p className="text-xs mt-1">Revenez dans quelques minutes.</p>
-          </div>
-        ) : (
-          <div className="space-y-3">
-            {interests.map((o) => (
-              <div key={o.id} className="bg-[#222] rounded-xl p-4 flex items-start gap-3">
-                <div className="w-10 h-10 rounded-full bg-[#FF4D00]/10 text-[#FF4D00] flex items-center justify-center font-bold text-sm flex-shrink-0">
-                  {o.first_name?.[0]}{o.last_name?.[0]}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="font-semibold text-sm">{o.first_name} {o.last_name}</div>
-                  <div className="text-xs text-[#AAA] flex gap-3 mt-0.5 flex-wrap">
-                    <span>📍 {o.city || '—'}</span>
-                    <span>⭐ {o.rating_avg || '0'}/5 ({o.rating_count || 0} avis)</span>
-                    <span>✅ {o.total_missions || 0} missions</span>
-                  </div>
-                  {o.bio && <p className="text-xs text-[#777] mt-1 line-clamp-2">{o.bio}</p>}
-                  {o.message && (
-                    <div className="mt-2 bg-[#2A2A2A] rounded-lg px-3 py-2 text-xs text-[#AAA] italic">
-                      "{o.message}"
-                    </div>
-                  )}
-                </div>
-                <button
-                  onClick={() => hire(o.id)}
-                  disabled={hiring === o.id}
-                  className="btn btn-primary btn-sm flex-shrink-0 disabled:opacity-50"
-                >
-                  {hiring === o.id ? '...' : 'Embaucher'}
-                </button>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
-    </div>
-  )
-}
 
 function ReportViewer({ mission, onClose }) {
   const [report, setReport] = useState(null)
@@ -272,6 +192,7 @@ useEffect(() => {
   }
 }
 
+
   return (
     <AppLayout>
       <Topbar
@@ -311,6 +232,7 @@ useEffect(() => {
             action={<button onClick={() => setShowNew(true)} className="btn btn-primary">+ Nouvelle mission</button>} />
         ) : (
           <>
+
           {/* Desktop: tableau */}
 <div className="hidden md:block card p-0">
   <div className="table-wrap">
@@ -364,33 +286,33 @@ useEffect(() => {
                 >📋</button>
               )}
 
-<button onClick={(e) => { e.preventDefault(); e.stopPropagation(); setHistoryMission(m); }}
-  className="btn btn-ghost btn-sm" title="Historique">🕐</button>
+                    <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); setHistoryMission(m); }}
+                      className="btn btn-ghost btn-sm" title="Historique">🕐</button>
 
 
-{m.status === 'completed' && m.validated_at && (
-  <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); setRatingMission(m); }}
-    className="btn btn-ghost btn-sm" title="Noter l'Œil">⭐</button>
-)}
+                    {m.status === 'completed' && m.validated_at && (
+                      <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); setRatingMission(m); }}
+                        className="btn btn-ghost btn-sm" title="Noter l'Œil">⭐</button>
+                    )}
 
-{m.status === 'completed' && !m.validated_at && m.completed_by_oeil_at && (
-  (() => {
-    const hours = (Date.now() - new Date(m.completed_by_oeil_at).getTime()) / 3600000;
-    return hours < 12 ? (
-      <>
-        <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); validateMission(m.id); }}
-          className="btn btn-ghost btn-sm text-green-400" title="Valider">✅</button>
-        <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); setClaimMission(m); }}
-          className="btn btn-ghost btn-sm text-orange-400" title="Réclamer">🚨</button>
-      </>
-    ) : null;
-  })()
-)}
+                    {m.status === 'completed' && !m.validated_at && m.completed_by_oeil_at && (
+                      (() => {
+                        const hours = (Date.now() - new Date(m.completed_by_oeil_at).getTime()) / 3600000;
+                        return hours < 12 ? (
+                          <>
+                            <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); validateMission(m.id); }}
+                              className="btn btn-ghost btn-sm text-green-400" title="Valider">✅</button>
+                            <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); setClaimMission(m); }}
+                              className="btn btn-ghost btn-sm text-orange-400" title="Réclamer">🚨</button>
+                          </>
+                        ) : null;
+                      })()
+                    )}
 
-{['pending','assigned'].includes(m.status) && (
-  <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); cancel(m.id); }}
-    className="btn btn-ghost btn-sm text-red-400">Annuler</button>
-)}
+                    {['pending','assigned'].includes(m.status) && (
+                      <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); cancel(m.id); }}
+                        className="btn btn-ghost btn-sm text-red-400">Annuler</button>
+                    )}
                 
                 
               </div>
@@ -487,7 +409,7 @@ useEffect(() => {
           onRated={() => { setRatingMission(null); load() }}
         />
       )}
-
+// ceci est un commentaire vide 
 {claimMission && (
   <ClaimModal mission={claimMission} onClose={() => setClaimMission(null)} onClaimed={() => { setClaimMission(null); load() }} />
 )}
