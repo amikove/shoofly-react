@@ -175,7 +175,7 @@ export default function NewMissionModal({ open, onClose, onCreated, preselectedO
 
 const submit = async (e) => {
     e.preventDefault()
-    if (!showCompliance) { setShowCompliance(true); return }
+    if (!e._bypassed) { setShowCompliance(true); return }
     if (!form.title || !form.city || !form.price) {
 
       toast('Titre, ville et budget sont requis', 'error')
