@@ -25,13 +25,15 @@ export default function AdminPromos() {
   const set = (k) => (e) => setForm((f) => ({ ...f, [k]: e.target.value }))
 
   const create = async () => {
-    if (!form.code || !form.value) { toast('Code et valeur requis', 'error'); return }
+    if (!form.code) { toast('Code requis', 'error'); return }
+    if (form.type !== 'free' && !form.value) { toast('Valeur requise', 'error'); return }
     setCreating(true)
+
     try {
       await adminAPI.createPromo({
         code:               form.code.toUpperCase(),
         type:               form.type,
-        value:              parseFloat(form.value),
+        value:              form.type === 'free' ? 100 : parseFloat(form.value),
         max_uses:           form.max_uses ? parseInt(form.max_uses) : null,
         max_uses_per_user:  parseInt(form.max_uses_per_user) || 1,
         expires_at:         form.expires_at || null,
