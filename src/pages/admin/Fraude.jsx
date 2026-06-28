@@ -10,10 +10,10 @@ export default function AdminFraude() {
   const [tab, setTab]       = useState('missions')
 const [acting, setActing] = useState({})
 
-const warn = async (userId, ruleLabel, ruleCode) => {
+const warn = async (userId, ruleLabel, ruleCode, missionId = null) => {
   setActing((a) => ({ ...a, [userId]: true }))
   try {
-    await adminAPI.warnUser(userId, { rule_label: ruleLabel, rule_code: ruleCode })
+    await adminAPI.warnUser(userId, { rule_label: ruleLabel, rule_code: ruleCode, mission_id: missionId })
     toast('Avertissement envoyé à l\'utilisateur ✓', 'success')
   } catch { toast('Erreur envoi avertissement', 'error') }
   finally { setActing((a) => ({ ...a, [userId]: false })) }
@@ -78,7 +78,7 @@ const warn = async (userId, ruleLabel, ruleCode) => {
               <div className="text-sm italic text-[#AAA]">"{m.content}"</div>
               <div className="text-xs text-[#777] mt-1">Envoyé par {m.sender_name}</div>
               <button
-                onClick={() => warn(m.sender_id, 'Échange de coordonnées directes détecté dans les messages', 'BYPASS_PLATFORM')}
+                onClick={() => warn(m.sender_id, 'Échange de coordonnées directes détecté dans les messages', 'BYPASS_PLATFORM', m.mission_id)}
                 disabled={acting[m.sender_id]}
                 className="btn btn-ghost btn-sm mt-3 text-yellow-400 disabled:opacity-50"
               >
