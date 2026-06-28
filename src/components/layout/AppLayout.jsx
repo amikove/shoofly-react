@@ -93,7 +93,7 @@ useEffect(() => {
   navigate(route)
 }})
 
-  const { user, logout, hasPermission, isSuperAdmin } = useAuth()
+  
   const role  = user?.role || 'client'
 
   // Filtrer les items selon les permissions
