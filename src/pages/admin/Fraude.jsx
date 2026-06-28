@@ -8,9 +8,10 @@ export default function AdminFraude() {
   const [data, setData]     = useState(null)
   const [loading, setLoading] = useState(true)
   const [tab, setTab]       = useState('missions')
-const [acting, setActing] = useState({})
-
-const warn = async (userId, ruleLabel, ruleCode, missionId = null) => {
+  const [acting, setActing] = useState({})
+  const [ignored, setIgnored] = useState([])
+  const ignore = (missionId) => setIgnored((prev) => [...prev, missionId])
+  const warn = async (userId, ruleLabel, ruleCode, missionId = null) => {
   setActing((a) => ({ ...a, [userId]: true }))
   try {
     await adminAPI.warnUser(userId, { rule_label: ruleLabel, rule_code: ruleCode, mission_id: missionId })
@@ -52,24 +53,28 @@ const warn = async (userId, ruleLabel, ruleCode, missionId = null) => {
 
         {tab === 'missions' && (flagged.length === 0
           ? <div className="card text-center py-12 text-[#AAA]">✅ Aucune mission suspecte détectée</div>
-          : flagged.map((f) => (
-            <div key={f.id} className="card">
-              <div className="font-semibold">{f.title}</div>
-              <div className="text-xs text-[#AAA]">Œil : {f.oeil_name}</div>
-              <div className="flex gap-2 mt-3">
-                <button
-                onClick={() => { console.log('f=', f); warn(f.oeil_id, 'Mission complétée sans média / trop rapidement', 'OEIL_SUSPICIOUS') }}
-                disabled={acting[f.oeil_id]}
-                className="btn btn-ghost btn-sm text-yellow-400 disabled:opacity-50"
-              >
-                {acting[f.oeil_id] ? '...' : 'Avertir'}
-              </button>
-                <button onClick={() => toast('Compte suspendu', 'error')} className="btn btn-ghost btn-sm text-red-400">Suspendre</button>
-                <button onClick={() => toast('Alerte ignorée', 'info')} className="btn btn-ghost btn-sm ml-auto">Ignorer</button>
-              </div>
-            </div>
-          ))
-        )}
+          : flagged.filter((f) => !ignored.includes(f.id)).map((f) => (
+                      <div key={f.id} className="card">
+                        <div className="font-semibold">{f.title}</div>
+                        <div className="text-xs text-[#AAA]">Œil : {f.oeil_name}</div>
+                        <div className="flex items-center gap-2 mt-1">
+                          <span className="badge badge-yellow text-[10px]">⚠️ Aucun média envoyé</span>
+                          <span className="text-[10px] text-[#555]">· {f.media_count} fichier(s)</span>
+                        </div>
+                        <div className="flex gap-2 mt-3">
+                          <button
+                            onClick={() => warn(f.oeil_id, 'Mission complétée sans média / trop rapidement', 'OEIL_SUSPICIOUS')}
+                            disabled={acting[f.oeil_id]}
+                            className="btn btn-ghost btn-sm text-yellow-400 disabled:opacity-50"
+                          >
+                            {acting[f.oeil_id] ? '...' : 'Avertir'}
+                          </button>
+                          <button onClick={() => toast('Compte suspendu', 'error')} className="btn btn-ghost btn-sm text-red-400">Suspendre</button>
+                          <button onClick={() => { ignore(f.id); toast('Alerte ignorée', 'info') }} className="btn btn-ghost btn-sm ml-auto">Ignorer</button>
+                        </div>
+                      </div>
+                    ))
+                  )}
 
         {tab === 'messages' && (suspMsgs.length === 0
           ? <div className="card text-center py-12 text-[#AAA]">✅ Aucun message suspect détecté</div>
