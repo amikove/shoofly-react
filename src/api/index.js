@@ -34,7 +34,7 @@ export const missionsAPI = {
 // USERS
 export const usersAPI = {
   oeils:            (params) => api.get('/api/users/oeils', { params }),
-  oeil:             (id)     => api.get(`/api/users/oeils/${id}`, { headers: { 'Cache-Control': 'no-cache' }, params: { _t: Date.now() } }),
+  oeil:             (id)     => api.get(`/api/users/oeils/${id}`, { params: { _t: Date.now() } }),
   notifications:    ()       => api.get('/api/users/notifications'),
   markRead:         (data)   => api.put('/api/users/notifications/read', data),
   availability:     ()       => api.get('/api/users/oeil/availability'),
