@@ -1,6 +1,7 @@
 import { Routes, Route, Navigate } from 'react-router-dom'
 import { useAuth } from './context/AuthContext'
 import { Spinner } from './components/ui'
+import VerificationIdentite from './pages/oeil/VerificationIdentite'
 
 
 
@@ -100,6 +101,7 @@ export default function App() {
       <Route path="/oeil/messages"  element={<RequireAuth allowedRoles={['oeil']}><OeilMessagerie /></RequireAuth>} />
       <Route path="/oeil/missions/:missionId/audit" element={<RequireAuth allowedRoles={['oeil']}><AuditReport /></RequireAuth>} />
       <Route path="/oeil/missions/:missionId/rapport" element={<RequireAuth allowedRoles={['oeil']}><AirbnbReport /></RequireAuth>} />
+      <Route path="/oeil/verification-identite" element={<RequireAuth allowedRoles={['oeil']}><VerificationIdentite /></RequireAuth>} />
 
       {/* Admin */}
       <Route path="/admin"              element={<RequireAuth allowedRoles={['admin']}><AdminDashboard /></RequireAuth>} />

@@ -4,10 +4,12 @@ import Topbar from '../../components/layout/Topbar'
 import { missionsAPI, usersAPI } from '../../api'
 import { StatusBadge, Spinner, EmptyState, toast } from '../../components/ui'
 import { useAuth } from '../../context/AuthContext'
+import { useNavigate } from 'react-router-dom'
 import ChatModal from '../../components/missions/ChatModal'
 
 export default function OeilDashboard() {
   const { user } = useAuth()
+  const navigate = useNavigate()
   const [pending, setPending]         = useState([])
   const [active, setActive]           = useState([])
   const [stats, setStats]             = useState(null)
@@ -92,6 +94,37 @@ const refuse = async (id) => {
       <Topbar title="Tableau de bord" />
       <div className="p-4 md:p-6 space-y-4 md:space-y-6">
 
+        {/* Bannière vérification identité */}
+        {!user?.is_verified && (
+          <div className={`rounded-xl p-4 flex items-center gap-3 ${
+            user?.id_verified_at === null && !user?.is_verified
+              ? 'bg-orange-500/10 border border-orange-500/30'
+              : 'bg-yellow-500/10 border border-yellow-500/30'
+          }`}>
+            <span className="text-2xl flex-shrink-0">
+              {user?.id_verified_at ? '⏳' : '🛡️'}
+            </span>
+            <div className="flex-1">
+              <p className="text-sm font-semibold text-white">
+                {user?.id_verified_at ? 'Vérification en cours' : 'Identité non vérifiée'}
+              </p>
+              <p className="text-xs text-[#AAA] mt-0.5">
+                {user?.id_verified_at
+                  ? 'Notre équipe examine vos documents. Vous serez notifié dès validation.'
+                  : 'Vérifiez votre identité pour pouvoir postuler aux missions.'}
+              </p>
+            </div>
+            {!user?.id_verified_at && (
+              <button
+                onClick={() => navigate('/oeil/verification-identite')}
+                className="btn btn-primary btn-sm flex-shrink-0"
+              >
+                Vérifier →
+              </button>
+            )}
+          </div>
+        )}
+
         {/* Stats */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
           <div className="stat-card">
@@ -159,12 +192,12 @@ const refuse = async (id) => {
                 
 
                   <div className="flex gap-2">
-                    <button
-                      onClick={() => interest(m.id)}
+                  <button
+                      onClick={() => user?.is_verified ? interest(m.id) : navigate('/oeil/verification-identite')}
                       disabled={m.interested || m.has_interested}
                       className="btn btn-sm flex-1 justify-center disabled:opacity-50 bg-green-500 text-white hover:bg-green-600"
                     >
-                      {(m.interested || m.has_interested) ? '✅ Demande envoyée' : '👁️ Je suis intéressé'}
+                      {(m.interested || m.has_interested) ? '✅ Demande envoyée' : user?.is_verified ? '👁️ Je suis intéressé' : '🛡️ Vérification requise'}
                     </button>
                     <button
                       onClick={() => refuse(m.id, true)}
