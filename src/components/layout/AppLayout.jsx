@@ -43,6 +43,7 @@ const LABELS = {
 }
 
 export default function AppLayout({ children }) {
+  const { user, logout, hasPermission, isSuperAdmin } = useAuth()
   const navigate               = useNavigate()
   const [isAvail, setIsAvail] = useState(true)
 
