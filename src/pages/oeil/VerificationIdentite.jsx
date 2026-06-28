@@ -3,7 +3,7 @@ import AppLayout from '../../components/layout/AppLayout'
 import Topbar from '../../components/layout/Topbar'
 import { toast } from '../../components/ui'
 import { useNavigate } from 'react-router-dom'
-import api from '../../api'
+import api from '../../api/client'
 
 export default function VerificationIdentite() {
   const navigate = useNavigate()
