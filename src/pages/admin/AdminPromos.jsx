@@ -4,7 +4,7 @@ import Topbar from '../../components/layout/Topbar'
 import { adminAPI } from '../../api'
 import { Spinner, toast } from '../../components/ui'
 
-const EMPTY_FORM = { code: '', type: 'percent', value: '', max_uses: '', max_uses_per_user: '1', expires_at: '' }
+const EMPTY_FORM = { code: '', type: 'percent', value: '', max_uses: '', max_uses_per_user: '1', expires_at: '', platform_amount: '' }
 
 export default function AdminPromos() {
   const [promos, setPromos]     = useState([])
@@ -34,6 +34,7 @@ export default function AdminPromos() {
         code:               form.code.toUpperCase(),
         type:               form.type,
         value:              form.type === 'free' ? 100 : parseFloat(form.value),
+        platform_amount:    form.type === 'free' ? parseFloat(form.platform_amount) : null,
         max_uses:           form.max_uses ? parseInt(form.max_uses) : null,
         max_uses_per_user:  parseInt(form.max_uses_per_user) || 1,
         expires_at:         form.expires_at || null,
@@ -96,6 +97,13 @@ export default function AdminPromos() {
                   <input type="number" className="input" value={form.value} onChange={set('value')}
                     placeholder={form.type === 'percent' ? 'Ex: 20' : 'Ex: 50'}
                     min={1} max={form.type === 'percent' ? 100 : undefined} />
+                </div>
+              )}
+              {form.type === 'free' && (
+                <div>
+                  <label className="label">Montant payé à l'Œil par Shoofly (MAD) *</label>
+                  <input type="number" className="input" value={form.platform_amount} onChange={set('platform_amount')}
+                    placeholder="Ex: 200" min={1} />
                 </div>
               )}
               <div>

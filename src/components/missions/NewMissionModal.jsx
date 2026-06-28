@@ -302,10 +302,11 @@ if (parseFloat(form.price) < minPrice) {
       }
       if (preselectedOeil?.id) payload.oeil_id = preselectedOeil.id
       if (promoResult) {
-        payload.promo_code     = promoResult.code
-        payload.discount       = promoResult.discount
-        payload.original_price = promoResult.original_price
-        payload.price          = promoResult.final_price
+        payload.promo_code      = promoResult.code
+        payload.discount        = promoResult.discount
+        payload.original_price  = promoResult.original_price
+        payload.price           = promoResult.final_price
+        if (promoResult.platform_amount) payload.platform_amount = promoResult.platform_amount
       }
 
       const { data } = await missionsAPI.create(payload)
@@ -479,15 +480,23 @@ if (parseFloat(form.price) < minPrice) {
           <div>
             <label className="label">Code promo</label>
             {promoResult ? (
-              <div className="flex items-center justify-between bg-green-500/10 border border-green-500/30 rounded-xl px-4 py-3">
-                <div>
-                  <span className="text-sm font-semibold text-green-400">{promoResult.code}</span>
-                  <span className="text-xs text-[#AAA] ml-2">− {promoResult.discount} MAD</span>
+              <div className="bg-green-500/10 border border-green-500/30 rounded-xl px-4 py-3 space-y-2">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <span className="text-sm font-semibold text-green-400">{promoResult.code}</span>
+                    <span className="text-xs text-[#AAA] ml-2">− {promoResult.discount} MAD</span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <span className="text-sm font-bold text-white">{promoResult.final_price} MAD</span>
+                    <button onClick={removePromo} className="text-xs text-red-400 hover:text-red-300">✕ Retirer</button>
+                  </div>
                 </div>
-                <div className="flex items-center gap-3">
-                  <span className="text-sm font-bold text-white">{promoResult.final_price} MAD</span>
-                  <button onClick={removePromo} className="text-xs text-red-400 hover:text-red-300">✕ Retirer</button>
-                </div>
+                {promoResult.type === 'free' && (
+                  <div className="border-t border-green-500/20 pt-2 space-y-1">
+                    <p className="text-xs text-green-400">🎁 Mission offerte — 0 MAD pour vous</p>
+                    <p className="text-xs text-[#AAA]">💸 Shoofly prend en charge la rémunération de l'Œil</p>
+                  </div>
+                )}
               </div>
             ) : (
               <div className="flex gap-2">
