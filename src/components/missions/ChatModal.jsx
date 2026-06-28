@@ -1,7 +1,7 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { missionsAPI, mediaAPI } from '../../api'
-import ComplianceModal from './ComplianceModal'
+import ComplianceModal from './ComplianceModalClient'
 import { toast, Spinner } from '../ui'
 import { useSocket } from '../../context/SocketContext'
 import { useAuth } from '../../context/AuthContext'

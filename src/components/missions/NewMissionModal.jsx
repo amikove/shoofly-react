@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
-import ComplianceModal from './ComplianceModal'
+import ComplianceModal from './ComplianceModalClient'
 import { missionsAPI } from '../../api'
 import { toast } from '../ui'
 import { useAuth } from '../../context/AuthContext'
