@@ -30,6 +30,7 @@ const MENUS = {
     { to: '/admin/reclamations', icon: '🚨',  label: 'Réclamations', section: 'Gestion', badge: 'claims' },
     { to: '/admin/messages-suspects', icon: '⚠️', label: 'Messages suspects', section: 'Gestion', badge: 'flagged' },
     { to: '/admin/fraude',       icon: '🛡️',  label: 'Fraude',       section: 'Gestion'     },
+    { to: '/admin/promos',       icon: '🎟️',  label: 'Codes Promo',  section: 'Système'     },
     { to: '/admin/parametres',   icon: '⚙️',  label: 'Paramètres',   section: 'Système'     },
   ],
 }

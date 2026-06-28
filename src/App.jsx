@@ -2,6 +2,7 @@ import { Routes, Route, Navigate } from 'react-router-dom'
 import { useAuth } from './context/AuthContext'
 import { Spinner } from './components/ui'
 import VerificationIdentite from './pages/oeil/VerificationIdentite'
+import AdminPromos from './pages/admin/AdminPromos'
 
 
 
@@ -42,6 +43,7 @@ import AdminFraude     from './pages/admin/Fraude'
 import AdminReclamations from './pages/admin/Reclamations'
 import AdminMessagesSuspects from './pages/admin/MessagesSuspects'
 import AdminParametres from './pages/admin/Parametres'
+import AdminPromos from './pages/admin/Promos'
 
 // Route guard
 function RequireAuth({ children, allowedRoles }) {
@@ -112,6 +114,7 @@ export default function App() {
       <Route path="/admin/reclamations" element={<RequireAuth allowedRoles={['admin']}><AdminReclamations /></RequireAuth>} />
       <Route path="/admin/messages-suspects" element={<RequireAuth allowedRoles={['admin']}><AdminMessagesSuspects /></RequireAuth>} />
       <Route path="/admin/parametres"   element={<RequireAuth allowedRoles={['admin']}><AdminParametres /></RequireAuth>} />
+      <Route path="/admin/promos" element={<RequireAuth allowedRoles={['admin']}><AdminPromos /></RequireAuth>} />
 
 
       <Route path="*" element={<Navigate to="/" replace />} />
