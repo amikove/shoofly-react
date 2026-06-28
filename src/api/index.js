@@ -45,6 +45,10 @@ export const usersAPI = {
   removeFavorite:   (id)     => api.delete(`/api/users/favorites/${id}`),
   withdraw:         (data)   => api.post('/api/users/oeil/withdraw', data),
   clientStats:      ()       => api.get('/api/users/client/stats'),
+  identityRequests:  (status) => api.get('/api/users/admin/identity-requests', { params: { status } }),
+  approveIdentity:   (id)     => api.post(`/api/users/admin/identity-requests/${id}/approve`),
+  rejectIdentity:    (id, data) => api.post(`/api/users/admin/identity-requests/${id}/reject`, data),
+  submitIdentity:    (data)   => api.post('/api/users/oeil/identity', data),
 }
 
 // ADMIN
@@ -63,7 +67,10 @@ export const adminAPI = {
   warnUser: (userId, data) => api.post(`/api/anti-fraud/warn/${userId}`, data),
 
 
-resolveClaim:   (id, decision) => api.put(`/api/users/admin/claims/${id}/resolve`, { decision }),
+resolveClaim:    (id, decision) => api.put(`/api/users/admin/claims/${id}/resolve`, { decision }),
+identityRequests:(status)       => api.get('/api/users/admin/identity-requests', { params: { status } }),
+approveIdentity: (id)           => api.post(`/api/users/admin/identity-requests/${id}/approve`),
+rejectIdentity:  (id, data)     => api.post(`/api/users/admin/identity-requests/${id}/reject`, data),
 }
 
 // MEDIA
