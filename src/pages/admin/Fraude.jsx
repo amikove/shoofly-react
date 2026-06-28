@@ -8,6 +8,16 @@ export default function AdminFraude() {
   const [data, setData]     = useState(null)
   const [loading, setLoading] = useState(true)
   const [tab, setTab]       = useState('missions')
+const [acting, setActing] = useState({})
+
+const warn = async (userId, ruleLabel, ruleCode) => {
+  setActing((a) => ({ ...a, [userId]: true }))
+  try {
+    await adminAPI.warnUser(userId, { rule_label: ruleLabel, rule_code: ruleCode })
+    toast('Avertissement envoyé à l\'utilisateur ✓', 'success')
+  } catch { toast('Erreur envoi avertissement', 'error') }
+  finally { setActing((a) => ({ ...a, [userId]: false })) }
+}
 
   useEffect(() => {
     adminAPI.fraudDashboard()
@@ -47,7 +57,13 @@ export default function AdminFraude() {
               <div className="font-semibold">{f.title}</div>
               <div className="text-xs text-[#AAA]">Œil : {f.oeil_name}</div>
               <div className="flex gap-2 mt-3">
-                <button onClick={() => toast('Avertissement envoyé', 'info')} className="btn btn-ghost btn-sm text-yellow-400">Avertir</button>
+                <button
+                onClick={() => warn(f.oeil_id, 'Mission complétée sans média / trop rapidement', 'OEIL_SUSPICIOUS')}
+                disabled={acting[f.oeil_id]}
+                className="btn btn-ghost btn-sm text-yellow-400 disabled:opacity-50"
+              >
+                {acting[f.oeil_id] ? '...' : 'Avertir'}
+              </button>
                 <button onClick={() => toast('Compte suspendu', 'error')} className="btn btn-ghost btn-sm text-red-400">Suspendre</button>
                 <button onClick={() => toast('Alerte ignorée', 'info')} className="btn btn-ghost btn-sm ml-auto">Ignorer</button>
               </div>
@@ -61,7 +77,13 @@ export default function AdminFraude() {
             <div key={m.id} className="card">
               <div className="text-sm italic text-[#AAA]">"{m.content}"</div>
               <div className="text-xs text-[#777] mt-1">Envoyé par {m.sender_name}</div>
-              <button onClick={() => toast('Signalé', 'info')} className="btn btn-ghost btn-sm mt-3 text-red-400">Signaler</button>
+              <button
+                onClick={() => warn(m.sender_id, 'Échange de coordonnées directes détecté dans les messages', 'BYPASS_PLATFORM')}
+                disabled={acting[m.sender_id]}
+                className="btn btn-ghost btn-sm mt-3 text-yellow-400 disabled:opacity-50"
+              >
+                {acting[m.sender_id] ? '...' : 'Avertir'}
+              </button>
             </div>
           ))
         )}
