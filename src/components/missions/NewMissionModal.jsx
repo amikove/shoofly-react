@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react'
 import ComplianceModal from './ComplianceModalClient'
-import { missionsAPI } from '../../api'
+import { missionsAPI, usersAPI } from '../../api'
 import { toast } from '../ui'
 import { useAuth } from '../../context/AuthContext'
 
@@ -218,9 +218,28 @@ export default function NewMissionModal({ open, onClose, onCreated, preselectedO
   const [loading, setLoading] = useState(false)
   const [form, setForm]   = useState({ title: '', address: '', city: '', quartier: '', price: '', description: '', scheduled_date: '', scheduled_time: ''  })
   const [showCompliance, setShowCompliance] = useState(false)
+  const [promoCode, setPromoCode]     = useState('')
+  const [promoResult, setPromoResult] = useState(null)
+  const [promoLoading, setPromoLoading] = useState(false)
 
   const set = (k) => (e) => setForm((f) => ({ ...f, [k]: e.target.value }))
   const setVal = (k) => (v) => setForm((f) => ({ ...f, [k]: v }))
+
+  const validatePromo = async () => {
+    if (!promoCode.trim()) return
+    if (!form.price) { toast('Entrez un budget avant d\'appliquer un code', 'error'); return }
+    setPromoLoading(true)
+    try {
+      const { data } = await usersAPI.validatePromo({ code: promoCode, price: parseFloat(form.price) })
+      setPromoResult(data)
+      toast(`Code "${data.code}" appliqué — ${data.discount} MAD de réduction ✓`, 'success')
+    } catch (err) {
+      setPromoResult(null)
+      toast(err.response?.data?.error || 'Code invalide', 'error')
+    } finally { setPromoLoading(false) }
+  }
+
+  const removePromo = () => { setPromoCode(''); setPromoResult(null) }
 
   const changeType = (t) => { setType(t); setSub('') }
 
@@ -282,13 +301,21 @@ if (parseFloat(form.price) < minPrice) {
 })(),
       }
       if (preselectedOeil?.id) payload.oeil_id = preselectedOeil.id
+      if (promoResult) {
+        payload.promo_code     = promoResult.code
+        payload.discount       = promoResult.discount
+        payload.original_price = promoResult.original_price
+        payload.price          = promoResult.final_price
+      }
 
       const { data } = await missionsAPI.create(payload)
       onCreated?.(data.mission)
       onClose()
-      setForm({ title: '', address: '', city: '', quartier: '', price: '', description: '' })
-      setType('immobilier')
-      setSub('')
+    setForm({ title: '', address: '', city: '', quartier: '', price: '', description: '' })
+          setType('immobilier')
+          setSub('')
+          setPromoCode('')
+          setPromoResult(null)
     } catch (err) {
       toast(err.response?.data?.error || 'Erreur lors de la création', 'error')
     } finally {
@@ -446,6 +473,40 @@ if (parseFloat(form.price) < minPrice) {
               </p>
             )}
 
+          </div>
+
+          {/* Code promo */}
+          <div>
+            <label className="label">Code promo</label>
+            {promoResult ? (
+              <div className="flex items-center justify-between bg-green-500/10 border border-green-500/30 rounded-xl px-4 py-3">
+                <div>
+                  <span className="text-sm font-semibold text-green-400">{promoResult.code}</span>
+                  <span className="text-xs text-[#AAA] ml-2">− {promoResult.discount} MAD</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <span className="text-sm font-bold text-white">{promoResult.final_price} MAD</span>
+                  <button onClick={removePromo} className="text-xs text-red-400 hover:text-red-300">✕ Retirer</button>
+                </div>
+              </div>
+            ) : (
+              <div className="flex gap-2">
+                <input
+                  className="input flex-1"
+                  value={promoCode}
+                  onChange={(e) => setPromoCode(e.target.value.toUpperCase())}
+                  placeholder="Ex: WELCOME20"
+                />
+                <button
+                  type="button"
+                  onClick={validatePromo}
+                  disabled={promoLoading || !promoCode.trim()}
+                  className="btn btn-ghost btn-sm px-4 disabled:opacity-50"
+                >
+                  {promoLoading ? '...' : 'Appliquer'}
+                </button>
+              </div>
+            )}
           </div>
 
           {/* Actions */}
