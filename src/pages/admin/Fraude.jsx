@@ -58,7 +58,7 @@ const warn = async (userId, ruleLabel, ruleCode) => {
               <div className="text-xs text-[#AAA]">Œil : {f.oeil_name}</div>
               <div className="flex gap-2 mt-3">
                 <button
-                onClick={() => warn(f.oeil_id, 'Mission complétée sans média / trop rapidement', 'OEIL_SUSPICIOUS')}
+                onClick={() => { console.log('f=', f); warn(f.oeil_id, 'Mission complétée sans média / trop rapidement', 'OEIL_SUSPICIOUS') }}
                 disabled={acting[f.oeil_id]}
                 className="btn btn-ghost btn-sm text-yellow-400 disabled:opacity-50"
               >
