@@ -5,24 +5,47 @@ export default function ComplianceModal({ onAccept }) {
 
         <div className="flex items-center gap-3 mb-4">
           <div className="w-10 h-10 rounded-xl bg-orange-500/10 flex items-center justify-center text-xl flex-shrink-0">
-            ⚠️
+            📋
           </div>
-          <h2 className="font-bold text-base">Important — À lire avant de continuer</h2>
+          <h2 className="font-bold text-base">Rappel avant démarrage</h2>
         </div>
 
-        <div className="bg-orange-500/5 border border-orange-500/20 rounded-xl p-4 mb-5">
-          <p className="text-sm text-white/80 leading-relaxed mb-3">
-            Afin de garantir votre sécurité et le bon déroulement de la mission, toute communication doit rester sur <strong className="font-display font-bold text-white">SHOOF<span className="text-[#FF4D00]">LY</span></strong> jusqu'à sa clôture.
-          </p>
-          <p className="text-sm text-white/80 leading-relaxed">
-            Le partage de numéros de téléphone, d'adresses e-mail, de liens ou de comptes de messagerie externe est <strong className="text-orange-400">strictement interdit</strong>. Cette règle protège les deux parties et garantit que notre équipe puisse intervenir efficacement en cas de problème.
+        {/* Rappels mission */}
+        <div className="space-y-2 mb-4">
+          <div className="flex items-start gap-3 bg-[#222] rounded-xl p-3">
+            <span className="text-xl flex-shrink-0">📸</span>
+            <div>
+              <p className="text-sm font-semibold text-white">Photos obligatoires</p>
+              <p className="text-xs text-[#AAA] mt-0.5">Vous devez prendre des photos sur place pour prouver votre déplacement. Sans preuve visuelle, la mission peut être contestée.</p>
+            </div>
+          </div>
+          <div className="flex items-start gap-3 bg-[#222] rounded-xl p-3">
+            <span className="text-xl flex-shrink-0">📍</span>
+            <div>
+              <p className="text-sm font-semibold text-white">Restez sur le lieu de mission</p>
+              <p className="text-xs text-[#AAA] mt-0.5">Votre présence physique est requise. Toute incohérence de localisation sera détectée.</p>
+            </div>
+          </div>
+          <div className="flex items-start gap-3 bg-[#222] rounded-xl p-3">
+            <span className="text-xl flex-shrink-0">⏱️</span>
+            <div>
+              <p className="text-sm font-semibold text-white">Respectez les délais</p>
+              <p className="text-xs text-[#AAA] mt-0.5">Complétez la mission dans les délais convenus avec le client.</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Règle anti-contact */}
+        <div className="bg-orange-500/5 border border-orange-500/20 rounded-xl p-4 mb-4">
+          <p className="text-xs text-white/80 leading-relaxed">
+            🚫 Toute communication doit rester sur <strong className="text-white">SHOOFLY</strong>. Le partage de numéros, emails ou comptes externes est <strong className="text-orange-400">strictement interdit</strong> et entraîne la suspension du compte.
           </p>
         </div>
 
         <div className="flex items-start gap-2 mb-5">
           <span className="text-green-400 mt-0.5">✓</span>
           <p className="text-xs text-[#AAA] leading-relaxed">
-            En continuant, vous acceptez de respecter cette règle. Tout contournement de la plateforme entraîne la suspension du compte.
+            En continuant, vous acceptez ces conditions. Tout manquement peut entraîner un avertissement ou la suspension de votre compte.
           </p>
         </div>
 
@@ -30,7 +53,7 @@ export default function ComplianceModal({ onAccept }) {
           onClick={onAccept}
           className="btn btn-primary w-full justify-center"
         >
-          J'ai compris, je continue →
+          J'ai compris, je démarre →
         </button>
       </div>
     </div>
