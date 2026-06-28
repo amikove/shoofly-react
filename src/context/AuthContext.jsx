@@ -37,10 +37,18 @@ export function AuthProvider({ children }) {
     setUser(null)
   }
 
-  const updateUser = (updates) => setUser((u) => ({ ...u, ...updates }))
+const updateUser = (updates) => setUser((u) => ({ ...u, ...updates }))
+
+  const hasPermission = (permission) => {
+    if (!user || user.role !== 'admin') return false
+    if (user.is_super_admin) return true
+    return Array.isArray(user.permissions) && user.permissions.includes(permission)
+  }
+
+  const isSuperAdmin = user?.is_super_admin || false
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, logout, updateUser }}>
+    <AuthContext.Provider value={{ user, loading, login, logout, updateUser, hasPermission, isSuperAdmin }}>
       {children}
     </AuthContext.Provider>
   )

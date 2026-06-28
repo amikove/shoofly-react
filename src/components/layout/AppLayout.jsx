@@ -23,26 +23,26 @@ const MENUS = {
   ],
 
   admin: [
-    { to: '/admin',              icon: '⊞',  label: 'Dashboard',    section: 'Vue globale' },
-    { to: '/admin/missions',     icon: '📋',  label: 'Missions',     section: 'Vue globale' },
-    { to: '/admin/oeils',        icon: '👁️',  label: 'Œils',         section: 'Gestion'     },
-    { to: '/admin/clients',      icon: '👥',  label: 'Clients',      section: 'Gestion'     },
-    { to: '/admin/reclamations', icon: '🚨',  label: 'Réclamations', section: 'Gestion', badge: 'claims' },
-    { to: '/admin/messages-suspects', icon: '⚠️', label: 'Messages suspects', section: 'Gestion', badge: 'flagged' },
-    { to: '/admin/fraude',       icon: '🛡️',  label: 'Fraude',       section: 'Gestion'     },
-    { to: '/admin/promos',       icon: '🎟️',  label: 'Codes Promo',  section: 'Système'     },
-    { to: '/admin/parametres',   icon: '⚙️',  label: 'Paramètres',   section: 'Système'     },
+    { to: '/admin',              icon: '⊞',  label: 'Dashboard',    section: 'Vue globale', permission: 'dash'       },
+    { to: '/admin/missions',     icon: '📋',  label: 'Missions',     section: 'Vue globale', permission: 'missions'   },
+    { to: '/admin/oeils',        icon: '👁️',  label: 'Œils',         section: 'Gestion',     permission: 'users'      },
+    { to: '/admin/clients',      icon: '👥',  label: 'Clients',      section: 'Gestion',     permission: 'users'      },
+    { to: '/admin/reclamations', icon: '🚨',  label: 'Réclamations', section: 'Gestion',     permission: 'claims',  badge: 'claims'  },
+    { to: '/admin/messages-suspects', icon: '⚠️', label: 'Messages suspects', section: 'Gestion', permission: 'moderation', badge: 'flagged' },
+    { to: '/admin/fraude',       icon: '🛡️',  label: 'Fraude',       section: 'Gestion',     permission: 'moderation' },
+    { to: '/admin/promos',       icon: '🎟️',  label: 'Codes Promo',  section: 'Système',     permission: 'finance'    },
+    { to: '/admin/parametres',   icon: '⚙️',  label: 'Paramètres',   section: 'Système',     permission: 'settings'   },
+    { to: '/admin/admins',       icon: '👑',  label: 'Admins',       section: 'Système',     superAdminOnly: true     },
   ],
 }
 
 const LABELS = {
   client: 'Espace Client',
   oeil:   'Espace Œil',
-  admin:  'Super Admin',
+  admin:  'Administration',
 }
 
 export default function AppLayout({ children }) {
-  const { user, logout }      = useAuth()
   const navigate               = useNavigate()
   const [isAvail, setIsAvail] = useState(true)
 
@@ -92,8 +92,15 @@ useEffect(() => {
   navigate(route)
 }})
 
+  const { user, logout, hasPermission, isSuperAdmin } = useAuth()
   const role  = user?.role || 'client'
-  const items = MENUS[role] || []
+
+  // Filtrer les items selon les permissions
+  const items = (MENUS[role] || []).filter(item => {
+    if (item.superAdminOnly) return isSuperAdmin
+    if (item.permission && role === 'admin') return isSuperAdmin || hasPermission(item.permission)
+    return true
+  })
 
   const grouped = role === 'admin'
     ? items.reduce((acc, item) => {

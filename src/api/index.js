@@ -70,6 +70,10 @@ export const adminAPI = {
 
 resolveClaim:    (id, decision) => api.put(`/api/users/admin/claims/${id}/resolve`, { decision }),
 identityRequests:(status)       => api.get('/api/users/admin/identity-requests', { params: { status } }),
+  admins:          ()             => api.get('/api/super-admin/admins'),
+  createAdmin:     (data)         => api.post('/api/super-admin/admins', data),
+  updateAdmin:     (id, data)     => api.put(`/api/super-admin/admins/${id}`, data),
+  deleteAdmin:     (id)           => api.delete(`/api/super-admin/admins/${id}`),
   promos:          ()             => api.get('/api/promo/admin'),
   createPromo:     (data)         => api.post('/api/promo/admin', data),
   togglePromo:     (id)           => api.put(`/api/promo/admin/${id}/toggle`),

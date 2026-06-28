@@ -44,6 +44,7 @@ import AdminReclamations from './pages/admin/Reclamations'
 import AdminMessagesSuspects from './pages/admin/MessagesSuspects'
 import AdminParametres from './pages/admin/Parametres'
 import AdminPromos from './pages/admin/AdminPromos'
+import AdminGestion from './pages/admin/AdminGestion'
 
 // Route guard
 function RequireAuth({ children, allowedRoles }) {
@@ -115,6 +116,7 @@ export default function App() {
       <Route path="/admin/messages-suspects" element={<RequireAuth allowedRoles={['admin']}><AdminMessagesSuspects /></RequireAuth>} />
       <Route path="/admin/parametres"   element={<RequireAuth allowedRoles={['admin']}><AdminParametres /></RequireAuth>} />
       <Route path="/admin/promos" element={<RequireAuth allowedRoles={['admin']}><AdminPromos /></RequireAuth>} />
+      <Route path="/admin/admins" element={<RequireAuth allowedRoles={['admin']}><AdminGestion /></RequireAuth>} />
 
 
       <Route path="*" element={<Navigate to="/" replace />} />
