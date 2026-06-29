@@ -334,7 +334,7 @@ try {
           </div>
         )}
 
-        {loading ? (
+        {tab !== 'priority' && (loading ? (
           <div className="flex justify-center py-20"><Spinner size="lg" /></div>
         ) : missions.length === 0 ? (
           <EmptyState icon={emptyProps[tab].icon} title={emptyProps[tab].title} description={emptyProps[tab].desc} />
@@ -448,9 +448,8 @@ try {
               </div>
             ))}
           </div>
-        )}
+        ))}
       </div>
-
       {historyMission && (
         <MissionHistoryModal mission={historyMission} onClose={() => setHistoryMission(null)} />
       )}
