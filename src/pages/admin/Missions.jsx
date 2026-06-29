@@ -48,9 +48,14 @@ export default function AdminMissions() {
     } finally { setAssigning(false) }
   }
 
-  const filteredOeils = oeils.filter(o =>
-    `${o.first_name} ${o.last_name} ${o.city}`.toLowerCase().includes(oeilSearch.toLowerCase())
-  )
+  const filteredOeils = oeils.filter(o => {
+    const matchSearch = `${o.first_name} ${o.last_name} ${o.city}`.toLowerCase().includes(oeilSearch.toLowerCase())
+    const matchCity = !assignModal?.city || o.city === assignModal.city
+    return matchSearch && matchCity
+  })
+
+  const sameCity = oeils.filter(o => o.city === assignModal?.city)
+  const otherCity = oeils.filter(o => o.city !== assignModal?.city)
 
   return (
     <AppLayout>
@@ -161,18 +166,40 @@ export default function AdminMissions() {
               <p className="text-xs text-[#AAA]">⚠️ À utiliser après confirmation téléphonique avec l'Œil. L'Œil sera immédiatement notifié.</p>
             </div>
 
+            
+            {/* Infos transfert si applicable */}
+            {assignModal?.is_priority && assignModal?.transferred_from && (
+              <div className="bg-red-500/5 border border-red-500/20 rounded-xl p-3 mb-4 space-y-1">
+                <p className="text-xs font-semibold text-red-400">Mission transférée</p>
+                {assignModal.transfer_reason && <p className="text-xs text-[#AAA]">Raison : {assignModal.transfer_reason}</p>}
+                {assignModal.transfer_type && <p className="text-xs text-[#AAA]">Type : {assignModal.transfer_type === 'during' ? 'Pendant mission (50/50)' : 'Avant démarrage'}</p>}
+                {assignModal.transfer_deadline && (
+                  <p className="text-xs text-red-400">
+                    ⏱️ Expire à {new Date(assignModal.transfer_deadline).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
+                  </p>
+                )}
+              </div>
+            )}
+
             <div className="mb-4">
-              <label className="label">Rechercher un Œil</label>
+              <label className="label">
+                Œils disponibles
+                {assignModal?.city && <span className="ml-2 text-[#FF4D00] text-xs">📍 {assignModal.city} en priorité</span>}
+              </label>
               <input
                 className="input mb-2"
-                placeholder="Nom ou ville..."
+                placeholder="Rechercher par nom..."
                 value={oeilSearch}
                 onChange={e => setOeilSearch(e.target.value)}
               />
-              <div className="max-h-48 overflow-y-auto space-y-1">
-                {filteredOeils.length === 0 ? (
-                  <p className="text-xs text-[#555] text-center py-4">Aucun Œil disponible</p>
-                ) : filteredOeils.map(o => (
+              <div className="max-h-56 overflow-y-auto space-y-1">
+                {/* Même ville en premier */}
+                {sameCity.filter(o => `${o.first_name} ${o.last_name}`.toLowerCase().includes(oeilSearch.toLowerCase())).length > 0 && (
+                  <p className="text-[10px] text-[#555] uppercase tracking-wider px-1 mb-1">Même ville — {assignModal?.city}</p>
+                )}
+                {sameCity
+                  .filter(o => `${o.first_name} ${o.last_name}`.toLowerCase().includes(oeilSearch.toLowerCase()))
+                  .map(o => (
                   <div
                     key={o.id}
                     onClick={() => setSelectedOeil(o.id)}
@@ -189,6 +216,34 @@ export default function AdminMissions() {
                     {selectedOeil === o.id && <span className="text-[#FF4D00] text-sm">✓</span>}
                   </div>
                 ))}
+
+                {/* Autres villes */}
+                {oeilSearch === '' && otherCity.length > 0 && (
+                  <>
+                    <p className="text-[10px] text-[#555] uppercase tracking-wider px-1 mt-2 mb-1">Autres villes</p>
+                    {otherCity.map(o => (
+                      <div
+                        key={o.id}
+                        onClick={() => setSelectedOeil(o.id)}
+                        className={`flex items-center justify-between p-2.5 rounded-xl cursor-pointer transition-all opacity-60 ${
+                          selectedOeil === o.id
+                            ? 'bg-[#FF4D00]/15 border border-[#FF4D00]/40 opacity-100'
+                            : 'bg-[#222] hover:bg-[#2A2A2A]'
+                        }`}
+                      >
+                        <div>
+                          <div className="text-sm font-medium">{o.first_name} {o.last_name}</div>
+                          <div className="text-xs text-[#AAA]">📍 {o.city} · ⭐ {o.rating_avg || '—'} · {o.total_missions || 0} missions</div>
+                        </div>
+                        {selectedOeil === o.id && <span className="text-[#FF4D00] text-sm">✓</span>}
+                      </div>
+                    ))}
+                  </>
+                )}
+
+                {filteredOeils.length === 0 && (
+                  <p className="text-xs text-[#555] text-center py-4">Aucun Œil trouvé</p>
+                )}
               </div>
             </div>
 
