@@ -115,6 +115,8 @@ const load = useCallback((t) => {
       let ms = data.missions || []
       if (t === 'priority') {
         ms = ms.filter(m => m.is_priority)
+      } else if (t === 'available') {
+        ms = ms.filter(m => !m.is_priority)
       } else if (t === 'active') {
         ms = ms.filter((m) => ['assigned','en_route','active','sous_reclamation'].includes(m.status))
       }
