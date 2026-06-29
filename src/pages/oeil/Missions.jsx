@@ -45,6 +45,7 @@ export default function OeilMissions() {
   const [tab, setTab]             = useState('available')
   const [missions, setMissions]   = useState([])
   const [priorityMissions, setPriorityMissions] = useState([])
+  const [counts, setCounts] = useState({ priority: 0, available: 0, active: 0, done: 0 })
   const [loading, setLoading]   = useState(true)
   const [error, setError]       = useState('')
   const [chatMission, setChatMission] = useState(null)
@@ -95,10 +96,22 @@ const load = useCallback((t) => {
   setLoading(true)
   setError('')
 
-  // Charger les missions prioritaires en parallèle
-  missionsAPI.list({ mode: 'available', is_priority: true })
-    .then(({ data }) => setPriorityMissions((data.missions || []).filter(m => m.is_priority)))
-    .catch(() => {})
+  // Charger les compteurs de tous les onglets en parallèle
+  Promise.all([
+    missionsAPI.list({ mode: 'available', is_priority: true, limit: 100 }),
+    missionsAPI.list({ mode: 'available', limit: 100 }),
+    missionsAPI.list({ mode: 'mine', limit: 100 }),
+    missionsAPI.list({ mode: 'mine', status: 'completed', limit: 100 }),
+  ]).then(([prioRes, availRes, activeRes, doneRes]) => {
+    const prio = (prioRes.data.missions || []).filter(m => m.is_priority)
+    setPriorityMissions(prio)
+    setCounts({
+      priority:  prio.length,
+      available: (availRes.data.missions || []).filter(m => !m.is_priority).length,
+      active:    (activeRes.data.missions || []).filter(m => ['assigned','en_route','active','sous_reclamation'].includes(m.status)).length,
+      done:      (doneRes.data.missions || []).length,
+    })
+  }).catch(() => {})
 
   let params = {}
   if (t === 'priority') {
@@ -258,14 +271,18 @@ try {
               }`}>
               {t.id === 'priority' && <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />}
               {t.label}
-              {t.id === 'priority' && priorityMissions.length > 0 && (
+              {t.id === 'priority' && counts.priority > 0 && (
                 <span className="text-[10px] bg-red-500 text-white px-1.5 py-0.5 rounded-full font-bold">
-                  {priorityMissions.length}
+                  {counts.priority}
                 </span>
               )}
-              {tab === t.id && t.id !== 'priority' && !loading && (
-                <span className="text-[10px] bg-[#FF4D00]/20 text-[#FF4D00] px-1.5 py-0.5 rounded-full">
-                  {missions.length}
+              {t.id !== 'priority' && counts[t.id] > 0 && (
+                <span className={`text-[10px] px-1.5 py-0.5 rounded-full ${
+                  tab === t.id
+                    ? 'bg-[#FF4D00]/20 text-[#FF4D00]'
+                    : 'bg-white/10 text-[#AAA]'
+                }`}>
+                  {counts[t.id]}
                 </span>
               )}
             </button>
