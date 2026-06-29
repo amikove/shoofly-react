@@ -12,9 +12,10 @@ import MissionSummaryModal from '../../components/missions/MissionSummaryModal'
 import ComplianceModal from '../../components/missions/ComplianceModal'
 
 const TABS = [
-  { id: 'available', label: 'Disponibles' },
-  { id: 'active',    label: 'En cours'    },
-  { id: 'done',      label: 'Terminées'   },
+  { id: 'priority',  label: 'Prioritaires' },
+  { id: 'available', label: 'Disponibles'  },
+  { id: 'active',    label: 'En cours'     },
+  { id: 'done',      label: 'Terminées'    },
 ]
 const TYPE_ICONS = { immobilier:'🏠', file_attente:'⏳', audit:'🔎', personnalisee:'🎯' }
 const VILLES = {
@@ -41,8 +42,9 @@ const VILLES = {
 
 export default function OeilMissions() {
   const [complianceMission, setComplianceMission] = useState(null)
-  const [tab, setTab]           = useState('available')
-  const [missions, setMissions] = useState([])
+  const [tab, setTab]             = useState('available')
+  const [missions, setMissions]   = useState([])
+  const [priorityMissions, setPriorityMissions] = useState([])
   const [loading, setLoading]   = useState(true)
   const [error, setError]       = useState('')
   const [chatMission, setChatMission] = useState(null)
@@ -92,8 +94,16 @@ useEffect(() => {
 const load = useCallback((t) => {
   setLoading(true)
   setError('')
+
+  // Charger les missions prioritaires en parallèle
+  missionsAPI.list({ mode: 'available', is_priority: true })
+    .then(({ data }) => setPriorityMissions((data.missions || []).filter(m => m.is_priority)))
+    .catch(() => {})
+
   let params = {}
-  if (t === 'available') {
+  if (t === 'priority') {
+    params = { mode: 'available', is_priority: true }
+  } else if (t === 'available') {
     params = { mode: 'available', ...(quartier ? { quartier } : {}) }
   } else if (t === 'active') {
     params = { mode: 'mine' }
@@ -103,7 +113,9 @@ const load = useCallback((t) => {
   return missionsAPI.list(params)
     .then(({ data }) => {
       let ms = data.missions || []
-      if (t === 'active') {
+      if (t === 'priority') {
+        ms = ms.filter(m => m.is_priority)
+      } else if (t === 'active') {
         ms = ms.filter((m) => ['assigned','en_route','active','sous_reclamation'].includes(m.status))
       }
       setMissions(ms)
@@ -235,36 +247,83 @@ try {
     <AppLayout>
       <Topbar title="Missions" />
       <div className="p-4 md:p-6">
-        <div className="flex gap-1 bg-[#222] rounded-xl p-1 w-fit mb-6">
+        <div className="flex gap-1 bg-[#222] rounded-xl p-1 w-fit mb-6 flex-wrap">
           {TABS.map((t) => (
             <button key={t.id} onClick={() => setTab(t.id)}
-              className={`px-4 py-2 rounded-lg text-xs font-medium transition-all ${
+              className={`px-4 py-2 rounded-lg text-xs font-medium transition-all flex items-center gap-1.5 ${
                 tab === t.id ? 'bg-[#2A2A2A] text-white' : 'text-[#AAA] hover:text-white'
               }`}>
+              {t.id === 'priority' && <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />}
               {t.label}
-              {tab === t.id && !loading && (
-                <span className="ml-1.5 text-[10px] bg-[#FF4D00]/20 text-[#FF4D00] px-1.5 py-0.5 rounded-full">
+              {t.id === 'priority' && priorityMissions.length > 0 && (
+                <span className="text-[10px] bg-red-500 text-white px-1.5 py-0.5 rounded-full font-bold">
+                  {priorityMissions.length}
+                </span>
+              )}
+              {tab === t.id && t.id !== 'priority' && !loading && (
+                <span className="text-[10px] bg-[#FF4D00]/20 text-[#FF4D00] px-1.5 py-0.5 rounded-full">
                   {missions.length}
                 </span>
               )}
             </button>
           ))}
         </div>
-
-{tab === 'available' && (
-  <div className="mb-4">
-    <select
-      className="input max-w-[200px]"
-      value={quartier}
-      onChange={(e) => setQuartier(e.target.value)}
-    >
-      <option value="">Tous les quartiers</option>
-      {(VILLES[user?.city] || []).map((q) => (
-        <option key={q} value={q}>{q}</option>
+        {tab === 'priority' && (
+  priorityMissions.length === 0 ? (
+    <EmptyState icon="🟢" title="Aucune mission prioritaire" description="Toutes les missions sont couvertes." />
+  ) : (
+    <div className="space-y-3">
+      <div className="bg-red-500/5 border border-red-500/20 rounded-xl p-3 mb-4">
+        <p className="text-xs text-red-400 font-semibold">🔴 Ces missions nécessitent un Œil de toute urgence</p>
+        <p className="text-xs text-[#AAA] mt-0.5">L'Œil précédent a signalé un empêchement — postulez rapidement.</p>
+      </div>
+      {priorityMissions.map((m) => (
+        <div key={m.id} className="bg-red-500/10 border border-red-500/20 rounded-xl p-3">
+          <div className="flex items-start justify-between gap-2 mb-3">
+            <div className="min-w-0">
+              <div className="flex items-center gap-2 mb-1">
+                <span className="text-[10px] bg-red-500 text-white px-1.5 py-0.5 rounded font-bold">PRIORITÉ</span>
+                <span className="font-semibold text-sm truncate">{m.title}</span>
+              </div>
+              <div className="text-xs text-[#AAA] space-y-0.5">
+                <div>📍 {m.city} {m.quartier ? `· ${m.quartier}` : ''}</div>
+                {m.scheduled_at && (
+                  <div>📅 {new Date(m.scheduled_at).toLocaleDateString('fr-FR', { day:'numeric', month:'short' })} à {new Date(m.scheduled_at).toLocaleTimeString('fr-FR', { hour:'2-digit', minute:'2-digit' })}</div>
+                )}
+                {m.transfer_deadline && (
+                  <div className="text-red-400">⏱️ Expire à {new Date(m.transfer_deadline).toLocaleTimeString('fr-FR', { hour:'2-digit', minute:'2-digit' })}</div>
+                )}
+              </div>
+            </div>
+            <div className="text-green-400 font-bold whitespace-nowrap text-sm">
+              {parseFloat(m.oeil_earning || m.price).toFixed(0)} MAD
+            </div>
+          </div>
+          <button
+            onClick={() => user?.is_verified ? missionsAPI.interest(m.id).then(() => { toast('Intérêt exprimé ✓', 'success'); load(tab) }).catch(err => toast(err.response?.data?.error || 'Erreur', 'error')) : navigate('/oeil/verification-identite')}
+            className="btn btn-sm w-full justify-center bg-red-500 text-white hover:bg-red-600"
+          >
+            ⚡ Je prends cette mission →
+          </button>
+        </div>
       ))}
-    </select>
-  </div>
-)}
+    </div>
+  )
+)}    
+    {tab === 'available' && (
+      <div className="mb-4">
+        <select
+          className="input max-w-[200px]"
+          value={quartier}
+          onChange={(e) => setQuartier(e.target.value)}
+        >
+          <option value="">Tous les quartiers</option>
+          {(VILLES[user?.city] || []).map((q) => (
+            <option key={q} value={q}>{q}</option>
+          ))}
+        </select>
+      </div>
+    )}
 
         {error && (
           <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-4 mb-4 text-sm text-red-400">
