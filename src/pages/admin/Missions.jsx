@@ -35,7 +35,8 @@ export default function AdminMissions() {
     } catch { toast('Erreur chargement Œils', 'error') }
   }
 
-  const doAssign = async () => {
+const doAssign = async () => {
+    console.log('doAssign called', { selectedOeil, assignModal: assignModal?.id })
     if (!selectedOeil) { toast('Sélectionnez un Œil', 'error'); return }
     setAssigning(true)
     try {
