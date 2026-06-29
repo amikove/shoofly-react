@@ -15,6 +15,23 @@ export default function OeilDashboard() {
   const [stats, setStats]             = useState(null)
   const [loading, setLoading]         = useState(true)
   const [chatMission, setChatMission] = useState(null)
+  const [transferMission, setTransferMission] = useState(null)
+  const [transferReason, setTransferReason] = useState('')
+  const [transferring, setTransferring] = useState(false)
+
+  const doTransfer = async () => {
+    if (!transferReason) { toast('Veuillez sélectionner une raison', 'error'); return }
+    setTransferring(true)
+    try {
+      await missionsAPI.transfer(transferMission.id, { reason: transferReason })
+      toast('Empêchement signalé — mission remise en priorité', 'info')
+      setTransferMission(null)
+      setTransferReason('')
+      load()
+    } catch (err) {
+      toast(err.response?.data?.error || 'Erreur', 'error')
+    } finally { setTransferring(false) }
+  }
 
   const load = () => {
     setLoading(true)
@@ -156,6 +173,47 @@ const refuse = async (id) => {
           </div>
         </div>
 
+        {/* Section PRIORITÉ */}
+        {pending.filter(m => m.is_priority).length > 0 && (
+          <div className="rounded-xl border-2 border-red-500/40 bg-red-500/5 p-4">
+            <div className="flex items-center gap-2 mb-3">
+              <span className="text-lg">🔴</span>
+              <h2 className="font-bold text-sm text-red-400 uppercase tracking-wider">Missions prioritaires</h2>
+              <span className="bg-red-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">
+                {pending.filter(m => m.is_priority).length}
+              </span>
+            </div>
+            <p className="text-xs text-[#AAA] mb-3">Ces missions nécessitent un Œil de toute urgence — l'Œil précédent a signalé un empêchement.</p>
+            {pending.filter(m => m.is_priority).map((m) => (
+              <div key={m.id} className="bg-red-500/10 border border-red-500/20 rounded-xl p-3 mb-2 last:mb-0">
+                <div className="flex items-start justify-between gap-2 mb-2">
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-2">
+                      <span className="text-[10px] bg-red-500 text-white px-1.5 py-0.5 rounded font-bold">PRIORITÉ</span>
+                      <span className="font-semibold text-sm truncate">{m.title}</span>
+                    </div>
+                    <div className="text-xs text-[#AAA] mt-1 space-y-0.5">
+                      <div>📍 {m.city} {m.quartier ? `· ${m.quartier}` : ''}</div>
+                      {m.scheduled_at && <div>📅 {new Date(m.scheduled_at).toLocaleDateString('fr-FR', { day:'numeric', month:'short' })} à {new Date(m.scheduled_at).toLocaleTimeString('fr-FR', { hour:'2-digit', minute:'2-digit' })}</div>}
+                      {m.transfer_deadline && <div className="text-red-400">⏱️ Expire à {new Date(m.transfer_deadline).toLocaleTimeString('fr-FR', { hour:'2-digit', minute:'2-digit' })}</div>}
+                    </div>
+                  </div>
+                  <div className="text-green-400 font-bold whitespace-nowrap text-sm">
+                    {parseFloat(m.oeil_earning || m.price).toFixed(0)} MAD
+                  </div>
+                </div>
+                <button
+                  onClick={() => user?.is_verified ? interest(m.id) : navigate('/oeil/verification-identite')}
+                  disabled={m.interested || m.has_interested}
+                  className="btn btn-sm w-full justify-center disabled:opacity-50 bg-red-500 text-white hover:bg-red-600"
+                >
+                  {(m.interested || m.has_interested) ? '✅ Demande envoyée' : '⚡ Je prends cette mission →'}
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
 
           {/* Missions disponibles */}
@@ -254,6 +312,18 @@ const refuse = async (id) => {
                     </button>
                   )}
                 </div>
+                {['assigned','en_route','active'].includes(m.status) && (
+                  <button
+                    onClick={() => { setTransferMission(m); setTransferReason('') }}
+                    className="text-xs text-[#555] hover:text-red-400 transition-colors mt-2 w-full text-center"
+                  >
+                    Signaler un empêchement majeur
+                  </button>
+                )}
+
+
+
+
               </div>
             ))}
           </div>
@@ -261,11 +331,52 @@ const refuse = async (id) => {
         </div>
       </div>
 
-      {chatMission && (
-        <ChatModal
-          mission={chatMission}
-          onClose={() => setChatMission(null)}
-        />
+{chatMission && <ChatModal mission={chatMission} onClose={() => setChatMission(null)} />}
+
+      {transferMission && (
+        <div className="fixed inset-0 bg-black/80 z-[70] flex items-center justify-center p-4 backdrop-blur-sm">
+          <div className="bg-[#181818] border border-red-500/30 rounded-2xl p-6 w-full max-w-md shadow-xl">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-10 h-10 rounded-xl bg-red-500/10 flex items-center justify-center text-xl flex-shrink-0">🚨</div>
+              <h2 className="font-bold text-base">Empêchement en cours de mission</h2>
+            </div>
+            <div className="bg-red-500/5 border border-red-500/20 rounded-xl p-4 mb-4 space-y-1.5">
+              <p className="text-xs text-white/80">Cette action est irréversible et réservée aux situations d'urgence réelle. Le client a planifié ce rendez-vous — votre départ impacte directement sa mission.</p>
+            </div>
+            <div className="bg-[#222] rounded-xl p-3 mb-4 space-y-1">
+              <p className="text-xs text-[#AAA]">Conséquences :</p>
+              {['assigned'].includes(transferMission.status)
+                ? <p className="text-xs text-white/70">• Vous ne recevrez aucune rémunération pour cette mission</p>
+                : <>
+                    <p className="text-xs text-white/70">• Vous recevrez 50% de la rémunération si un remplaçant est trouvé</p>
+                    <p className="text-xs text-white/70">• Vous ne pourrez pas postuler pendant 4 heures</p>
+                  </>
+              }
+              <p className="text-xs text-white/70">• Cet incident sera noté sur votre profil</p>
+            </div>
+            <div className="mb-5">
+              <label className="label">Raison (obligatoire)</label>
+              <select className="input" value={transferReason} onChange={e => setTransferReason(e.target.value)}>
+                <option value="">Sélectionner une raison</option>
+                <option value="Urgence médicale">Urgence médicale</option>
+                <option value="Accident / incident">Accident / incident sur place</option>
+                <option value="Problème de sécurité">Problème de sécurité</option>
+                <option value="Empêchement familial grave">Empêchement familial grave</option>
+                <option value="Autre cas de force majeure">Autre cas de force majeure</option>
+              </select>
+            </div>
+            <div className="flex gap-3">
+              <button onClick={() => setTransferMission(null)} className="btn btn-ghost flex-1 justify-center">Retour</button>
+              <button
+                onClick={doTransfer}
+                disabled={transferring || !transferReason}
+                className="btn btn-sm flex-1 justify-center bg-red-500 text-white hover:bg-red-600 disabled:opacity-50"
+              >
+                {transferring ? '...' : 'Confirmer l\'empêchement →'}
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </AppLayout>
   )
