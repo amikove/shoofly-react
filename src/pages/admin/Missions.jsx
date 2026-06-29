@@ -44,8 +44,9 @@ const doAssign = async () => {
       toast('Mission assignée ✓', 'success')
       setAssignModal(null)
       load()
-    } catch (err) {
-      toast(err.response?.data?.error || 'Erreur', 'error')
+} catch (err) {
+      console.error('Assign error:', err)
+      toast(err.response?.data?.error || err.message || 'Erreur', 'error')
     } finally { setAssigning(false) }
   }
 
