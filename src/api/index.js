@@ -27,7 +27,9 @@ export const missionsAPI = {
   inbox: ()      => api.get('/api/missions/inbox'),
   seen:  (id)    => api.post(`/api/missions/${id}/seen`),
   claim: (id, comment) => api.post(`/api/missions/${id}/claim`, { comment }),
-  validate: (id) => api.post(`/api/missions/${id}/validate`),
+  validate:     (id)         => api.post(`/api/missions/${id}/validate`),
+  transfer:     (id, data)   => api.post(`/api/missions/${id}/transfer`, data),
+  assignAdmin:  (id, data)   => api.post(`/api/missions/${id}/assign-admin`, data), // v2
   history:  (id) => api.get(`/api/missions/${id}/history`),
 }
 
