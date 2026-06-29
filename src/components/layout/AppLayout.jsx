@@ -17,7 +17,6 @@ const MENUS = {
   ],
   oeil: [
     { to: '/oeil',                      icon: '⊞',  label: 'Dashboard'        },
-    { to: '/oeil/missions?tab=priority', icon: '🔴',  label: 'Prioritaires',   badge: 'priority' },
     { to: '/oeil/missions',             icon: '🎯',  label: 'Missions'         },
     { to: '/oeil/messages',             icon: '💬',  label: 'Messages'         },
     { to: '/oeil/compte',               icon: '👤',  label: 'Profil'           },
