@@ -108,7 +108,7 @@ const load = useCallback((t) => {
     setCounts({
       priority:  prio.length,
       available: (availRes.data.missions || []).filter(m => !m.is_priority).length,
-      active:    (activeRes.data.missions || []).filter(m => ['assigned','en_route','active','sous_reclamation'].includes(m.status)).length,
+      active:    (activeRes.data.missions || []).filter(m => ['assigned','en_route','active'].includes(m.status)).length,
       done:      (doneRes.data.missions || []).length,
     })
   }).catch(() => {})
