@@ -234,9 +234,10 @@ try {
 
 
   const emptyProps = {
-    available: { icon:'🎯', title:'Aucune mission disponible', desc:'Toutes les missions ont été assignées. Revenez bientôt !' },
-    active:    { icon:'📋', title:'Aucune mission en cours',   desc:'Acceptez une mission pour commencer.'                    },
-    done:      { icon:'✅', title:'Aucune mission terminée',   desc:'Vos missions complétées apparaîtront ici.'               },
+    priority:  { icon:'🟢', title:'Aucune mission prioritaire', desc:'Toutes les missions sont couvertes.'           },
+    available: { icon:'🎯', title:'Aucune mission disponible',  desc:'Toutes les missions ont été assignées. Revenez bientôt !' },
+    active:    { icon:'📋', title:'Aucune mission en cours',    desc:'Acceptez une mission pour commencer.'          },
+    done:      { icon:'✅', title:'Aucune mission terminée',    desc:'Vos missions complétées apparaîtront ici.'     },
   }
 
   const advanceLabel = {
