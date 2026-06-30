@@ -84,6 +84,13 @@ approveIdentity: (id)           => api.post(`/api/users/admin/identity-requests/
 rejectIdentity:  (id, data)     => api.post(`/api/users/admin/identity-requests/${id}/reject`, data),
 }
 
+export const reliabilityAPI = {
+  me:             ()           => api.get('/api/reliability/me'),
+  requestReview:  (data)       => api.post('/api/reliability/review-request', data),
+  adminRequests:  (status)     => api.get('/api/reliability/admin/requests', { params: { status } }),
+  adminHistory:   (oeilId)     => api.get(`/api/reliability/admin/${oeilId}/history`),
+  decideRequest:  (id, data)   => api.post(`/api/reliability/admin/requests/${id}/decide`, data),
+}
 // MEDIA
 export const mediaAPI = {
     upload: (missionId, formData) =>
