@@ -45,6 +45,7 @@ import AdminMessagesSuspects from './pages/admin/MessagesSuspects'
 import AdminParametres from './pages/admin/Parametres'
 import AdminPromos from './pages/admin/AdminPromos'
 import AdminGestion from './pages/admin/AdminGestion'
+import CompteSuspendu from './pages/oeil/CompteSuspendu'
 
 // Route guard
 function RequireAuth({ children, allowedRoles }) {
@@ -105,6 +106,7 @@ export default function App() {
       <Route path="/oeil/missions/:missionId/audit" element={<RequireAuth allowedRoles={['oeil']}><AuditReport /></RequireAuth>} />
       <Route path="/oeil/missions/:missionId/rapport" element={<RequireAuth allowedRoles={['oeil']}><AirbnbReport /></RequireAuth>} />
       <Route path="/oeil/verification-identite" element={<RequireAuth allowedRoles={['oeil']}><VerificationIdentite /></RequireAuth>} />
+      <Route path="/oeil/suspendu" element={<RequireAuth allowedRoles={['oeil']}><CompteSuspendu /></RequireAuth>} />
 
       {/* Admin */}
       <Route path="/admin"              element={<RequireAuth allowedRoles={['admin']}><AdminDashboard /></RequireAuth>} />

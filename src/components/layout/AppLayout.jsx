@@ -45,6 +45,11 @@ const LABELS = {
 export default function AppLayout({ children }) {
   const { user, logout, hasPermission, isSuperAdmin } = useAuth()
   const navigate               = useNavigate()
+  const location = window.location.pathname
+
+  if (user?.role === 'oeil' && user?.is_suspended && location !== '/oeil/suspendu') {
+    navigate('/oeil/suspendu')
+  }
   const [isAvail, setIsAvail] = useState(true)
 
   const [unreadCount, setUnreadCount] = useState(0)
