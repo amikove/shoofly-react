@@ -86,18 +86,28 @@ export default function AdminFiabilite() {
                 </button>
 
                 {expanded === r.oeil_id && (
-                  <div className="space-y-1.5 max-h-56 overflow-y-auto mb-3">
+                  <div className="space-y-2 max-h-72 overflow-y-auto mb-3">
                     {(history[r.oeil_id] || []).map((e, i) => (
-                      <div key={i} className={`flex items-center justify-between p-2 rounded-lg text-xs ${
-                        e.is_grave ? 'bg-red-500/10' : 'bg-[#222]'
+                      <div key={i} className={`p-2.5 rounded-lg text-xs ${
+                        e.is_grave ? 'bg-red-500/10 border border-red-500/20' : 'bg-[#222]'
                       }`}>
-                        <div>
-                          <span className="text-white/80">{e.reason}</span>
-                          {e.mission_title && <span className="text-[#555] ml-1">— {e.mission_title}</span>}
+                        <div className="flex items-center justify-between mb-1">
+                          <span className="text-white/80 font-medium">{e.reason}</span>
+                          <span className={`font-bold whitespace-nowrap ml-2 ${e.points >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                            {e.points >= 0 ? '+' : ''}{e.points}
+                          </span>
                         </div>
-                        <span className={`font-bold ${e.points >= 0 ? 'text-green-400' : 'text-red-400'}`}>
-                          {e.points >= 0 ? '+' : ''}{e.points}
-                        </span>
+                        {e.mission_title && (
+                          <div className="text-[#AAA] space-y-0.5 mt-1.5">
+                            <div>📋 {e.mission_title}</div>
+                            {e.client_first_name && <div>👤 {e.client_first_name} {e.client_last_name}</div>}
+                            {e.mission_scheduled_at && <div>📅 {new Date(e.mission_scheduled_at).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' })} à {new Date(e.mission_scheduled_at).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}</div>}
+                            {e.mission_city && <div>📍 {e.mission_city}{e.mission_quartier ? ` · ${e.mission_quartier}` : ''}</div>}
+                            {e.mission_status && <div>🔄 Statut : {e.mission_status}</div>}
+                            {e.media_count !== null && <div>📸 {e.media_count} média(s)</div>}
+                          </div>
+                        )}
+                        <div className="text-[10px] text-[#555] mt-1.5">{new Date(e.created_at).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</div>
                       </div>
                     ))}
                   </div>

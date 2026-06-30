@@ -9,7 +9,7 @@ export default function CompteSuspendu() {
   const [loading, setLoading] = useState(true)
   const [message, setMessage] = useState('')
   const [submitting, setSubmitting] = useState(false)
-  const [submitted, setSubmitted] = useState(false)
+
 
   const load = () => {
     reliabilityAPI.me()
@@ -25,7 +25,8 @@ export default function CompteSuspendu() {
     setSubmitting(true)
     try {
       await reliabilityAPI.requestReview({ message })
-      setSubmitted(true)
+      load()
+      setMessage('')
       toast('Demande envoyée ✓', 'success')
     } catch (err) {
       toast(err.response?.data?.error || 'Erreur', 'error')
@@ -84,14 +85,44 @@ export default function CompteSuspendu() {
           )}
         </div>
 
+        {/* Demandes précédentes avec réponses admin */}
+        {data?.review_requests?.length > 0 && (
+          <div className="card mb-6">
+            <p className="font-semibold text-sm mb-3">Vos demandes précédentes</p>
+            <div className="space-y-3">
+              {data.review_requests.map((r) => (
+                <div key={r.id} className={`rounded-xl p-3 border ${
+                  r.status === 'approved' ? 'bg-green-500/5 border-green-500/20' :
+                  r.status === 'rejected' ? 'bg-red-500/5 border-red-500/20' :
+                  'bg-[#222] border-white/10'
+                }`}>
+                  <div className="flex items-center justify-between mb-2">
+                    <span className={`badge ${r.status === 'approved' ? 'badge-green' : r.status === 'rejected' ? 'badge-red' : 'badge-yellow'}`}>
+                      {r.status === 'approved' ? '✅ Approuvée' : r.status === 'rejected' ? '❌ Refusée' : '⏳ En attente'}
+                    </span>
+                    <span className="text-[10px] text-[#555]">{new Date(r.created_at).toLocaleDateString('fr-FR')}</span>
+                  </div>
+                  <p className="text-xs text-[#AAA] mb-2">Votre message : {r.message}</p>
+                  {r.admin_response && (
+                    <div className="bg-[#181818] rounded-lg p-2.5 mt-2">
+                      <p className="text-[10px] text-[#777] mb-1">Réponse de l'équipe Shoofly :</p>
+                      <p className="text-xs text-white/80">{r.admin_response}</p>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
         {/* Demande d'examen */}
-        {submitted ? (
+        {data?.review_requests?.some(r => r.status === 'pending') ? (
           <div className="card text-center py-8">
             <div className="text-3xl mb-2">📨</div>
-            <p className="font-semibold text-sm">Demande envoyée</p>
+            <p className="font-semibold text-sm">Demande en cours d'examen</p>
             <p className="text-xs text-[#AAA] mt-1">Notre équipe examine votre dossier. Vous serez notifié de la décision.</p>
           </div>
-        ) : (
+        ) : data?.is_suspended ? (
           <div className="card">
             <p className="font-semibold text-sm mb-2">Demander un examen de votre dossier</p>
             <p className="text-xs text-[#AAA] mb-3">Expliquez votre situation — notre équipe étudiera votre demande individuellement.</p>
