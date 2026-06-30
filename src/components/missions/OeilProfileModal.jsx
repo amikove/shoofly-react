@@ -35,7 +35,7 @@ export default function OeilProfileModal({ oeil, onClose, onCommander }) {
       ) : (
         <div>
           {/* En-tête */}
-          <div className="flex items-center gap-4 mb-5">
+          <div className="flex items-center gap-4 mb-3">
             <Avatar name={`${profile.first_name} ${profile.last_name}`} size={60} />
             <div className="flex-1">
               <div className="flex items-center gap-2 mb-1">
@@ -49,6 +49,33 @@ export default function OeilProfileModal({ oeil, onClose, onCommander }) {
               }
             </div>
           </div>
+
+          {/* Score de fiabilité */}
+          {profile.reliability_score !== undefined && profile.reliability_score !== null && (
+            <div className={`flex items-center gap-2 rounded-xl px-3 py-2 mb-5 ${
+              profile.reliability_score >= 95 ? 'bg-green-500/10 border border-green-500/20' :
+              profile.reliability_score >= 90 ? 'bg-teal-500/10 border border-teal-500/20' :
+              profile.reliability_score >= 80 ? 'bg-blue-500/10 border border-blue-500/20' :
+              profile.reliability_score >= 70 ? 'bg-amber-500/10 border border-amber-500/20' :
+              'bg-red-500/10 border border-red-500/20'
+            }`}>
+              <span className="text-base">
+                {profile.reliability_score >= 95 ? '⭐⭐⭐⭐⭐' :
+                 profile.reliability_score >= 90 ? '⭐⭐⭐⭐' :
+                 profile.reliability_score >= 80 ? '⭐⭐⭐' :
+                 profile.reliability_score >= 70 ? '⭐⭐' : '⭐'}
+              </span>
+              <div>
+                <p className="text-xs font-semibold text-white">Score de fiabilité : {profile.reliability_score}%</p>
+                <p className="text-[10px] text-[#AAA]">
+                  {profile.reliability_score >= 95 ? 'Excellent — Œil prioritaire' :
+                   profile.reliability_score >= 90 ? 'Très bon prestataire' :
+                   profile.reliability_score >= 80 ? 'Bon prestataire' :
+                   profile.reliability_score >= 70 ? 'À surveiller' : 'Fiabilité critique'}
+                </p>
+              </div>
+            </div>
+          )}
 
           {/* Onglets */}
           <div className="flex gap-1 bg-[#222] rounded-xl p-1 mb-5">
