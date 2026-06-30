@@ -140,7 +140,7 @@ export default function CompteSuspendu() {
               {submitting ? 'Envoi...' : 'Envoyer ma demande →'}
             </button>
           </div>
-        )}
+        ) : null}
       </div>
     </AppLayout>
   )
