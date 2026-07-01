@@ -61,6 +61,8 @@ export default function OeilMissions() {
   const [reportType, setReportType] = useState('')
   const [reportDesc, setReportDesc] = useState('')
   const [reporting, setReporting] = useState(false)
+  const [assistanceMission, setAssistanceMission] = useState(null)
+  const [assistanceView, setAssistanceView] = useState('choice') // 'choice' | 'problem' | 'transfer'
 
   const doReport = async () => {
     if (!reportType) { toast('Sélectionnez un type de problème', 'error'); return }
@@ -470,20 +472,12 @@ try {
                     </>
                   )}
                   {tab === 'active' && ['assigned','en_route','active'].includes(m.status) && (
-                    <div className="flex gap-3 mt-2 w-full">
-                      <button
-                        onClick={() => { setReportMission(m); setReportType(''); setReportDesc('') }}
-                        className="text-xs text-orange-400 hover:text-orange-300 transition-colors flex-1 text-center"
-                      >
-                        ⚠️ Signaler un problème
-                      </button>
-                      <button
-                        onClick={() => { setTransferMission(m); setTransferReason('') }}
-                        className="text-xs text-[#555] hover:text-red-400 transition-colors flex-1 text-center"
-                      >
-                        Signaler un empêchement majeur
-                      </button>
-                    </div>
+                    <button
+                      onClick={() => setAssistanceMission(m)}
+                      className="text-xs text-[#555] hover:text-orange-400 transition-colors mt-2 w-full text-center"
+                    >
+                      🆘 Demander assistance
+                    </button>
                   )}
 
 
@@ -502,46 +496,147 @@ try {
         <MissionHistoryModal mission={historyMission} onClose={() => setHistoryMission(null)} />
       )}
 
-      {reportMission && (
+      {assistanceMission && (
         <div className="fixed inset-0 bg-black/80 z-[70] flex items-center justify-center p-4 backdrop-blur-sm">
           <div className="bg-[#181818] border border-orange-500/30 rounded-2xl p-6 w-full max-w-md shadow-xl">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 rounded-xl bg-orange-500/10 flex items-center justify-center text-xl">⚠️</div>
-              <div>
-                <h2 className="font-bold text-base">Signaler un problème</h2>
-                <p className="text-xs text-[#AAA]">{reportMission.title}</p>
-              </div>
-            </div>
-            <div className="mb-4">
-              <label className="label">Type de problème *</label>
-              <select className="input" value={reportType} onChange={e => setReportType(e.target.value)}>
-                <option value="">Sélectionner...</option>
-                <option value="Client irrespectueux / insultant">Client irrespectueux / insultant</option>
-                <option value="Client injoignable">Client injoignable</option>
-                <option value="Lieu dangereux">Lieu dangereux</option>
-                <option value="Demande illégale">Demande illégale</option>
-                <option value="Autre problème">Autre problème</option>
-              </select>
-            </div>
-            <div className="mb-5">
-              <label className="label">Description (optionnel)</label>
-              <textarea
-                className="input resize-none h-20 w-full text-sm"
-                placeholder="Décrivez la situation..."
-                value={reportDesc}
-                onChange={e => setReportDesc(e.target.value)}
-              />
-            </div>
-            <div className="flex gap-3">
-              <button onClick={() => setReportMission(null)} className="btn btn-ghost flex-1 justify-center">Annuler</button>
-              <button
-                onClick={doReport}
-                disabled={reporting || !reportType}
-                className="btn btn-sm flex-1 justify-center bg-orange-500 text-white hover:bg-orange-600 disabled:opacity-50"
-              >
-                {reporting ? '...' : 'Signaler →'}
-              </button>
-            </div>
+
+            {/* Choix initial */}
+            {assistanceView === 'choice' && (
+              <>
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="w-10 h-10 rounded-xl bg-orange-500/10 flex items-center justify-center text-xl">🆘</div>
+                  <div>
+                    <h2 className="font-bold text-base">Demander assistance</h2>
+                    <p className="text-xs text-[#AAA]">{assistanceMission.title}</p>
+                  </div>
+                </div>
+                <div className="space-y-3">
+                  <button
+                    onClick={() => { setAssistanceView('problem'); setReportType(''); setReportDesc('') }}
+                    className="w-full bg-[#222] hover:bg-[#2A2A2A] rounded-xl p-4 text-left transition-colors border border-white/5"
+                  >
+                    <p className="text-sm font-semibold text-orange-400 mb-1">⚠️ Signaler un problème</p>
+                    <p className="text-xs text-[#AAA]">Client irrespectueux, lieu dangereux, demande illégale...</p>
+                  </button>
+                  <button
+                    onClick={() => { setAssistanceView('transfer'); setTransferReason('') }}
+                    className="w-full bg-[#222] hover:bg-[#2A2A2A] rounded-xl p-4 text-left transition-colors border border-white/5"
+                  >
+                    <p className="text-sm font-semibold text-red-400 mb-1">🚨 Empêchement majeur</p>
+                    <p className="text-xs text-[#AAA]">Je ne peux pas effectuer cette mission</p>
+                  </button>
+                </div>
+                <button onClick={() => setAssistanceMission(null)} className="btn btn-ghost w-full justify-center mt-4">Annuler</button>
+              </>
+            )}
+
+            {/* Signaler un problème */}
+            {assistanceView === 'problem' && (
+              <>
+                <div className="flex items-center gap-3 mb-4">
+                  <button onClick={() => setAssistanceView('choice')} className="text-[#AAA] hover:text-white">←</button>
+                  <div>
+                    <h2 className="font-bold text-base">Signaler un problème</h2>
+                    <p className="text-xs text-[#AAA]">{assistanceMission.title}</p>
+                  </div>
+                </div>
+                <div className="mb-4">
+                  <label className="label">Type de problème *</label>
+                  <select className="input" value={reportType} onChange={e => setReportType(e.target.value)}>
+                    <option value="">Sélectionner...</option>
+                    <option value="Client irrespectueux / insultant">Client irrespectueux / insultant</option>
+                    <option value="Client injoignable">Client injoignable</option>
+                    <option value="Lieu dangereux">Lieu dangereux</option>
+                    <option value="Demande illégale">Demande illégale</option>
+                    <option value="Autre problème">Autre problème</option>
+                  </select>
+                </div>
+                <div className="mb-5">
+                  <label className="label">Description (optionnel)</label>
+                  <textarea className="input resize-none h-20 w-full text-sm" placeholder="Décrivez la situation..." value={reportDesc} onChange={e => setReportDesc(e.target.value)} />
+                </div>
+                <div className="flex gap-3">
+                  <button onClick={() => setAssistanceView('choice')} className="btn btn-ghost flex-1 justify-center">Retour</button>
+                  <button
+                    onClick={async () => {
+                      if (!reportType) { toast('Sélectionnez un type', 'error'); return }
+                      setReporting(true)
+                      try {
+                        await missionsAPI.reportProblem(assistanceMission.id, { type: reportType, description: reportDesc })
+                        toast('Problème signalé — Shoofly a été alerté ✓', 'success')
+                        setAssistanceMission(null)
+                        setAssistanceView('choice')
+                        load(tab)
+                      } catch (err) { toast(err.response?.data?.error || 'Erreur', 'error') }
+                      finally { setReporting(false) }
+                    }}
+                    disabled={reporting || !reportType}
+                    className="btn btn-sm flex-1 justify-center bg-orange-500 text-white hover:bg-orange-600 disabled:opacity-50"
+                  >
+                    {reporting ? '...' : 'Signaler →'}
+                  </button>
+                </div>
+              </>
+            )}
+
+            {/* Empêchement majeur */}
+            {assistanceView === 'transfer' && (
+              <>
+                <div className="flex items-center gap-3 mb-4">
+                  <button onClick={() => setAssistanceView('choice')} className="text-[#AAA] hover:text-white">←</button>
+                  <div>
+                    <h2 className="font-bold text-base">Empêchement en cours de mission</h2>
+                    <p className="text-xs text-[#AAA]">{assistanceMission.title}</p>
+                  </div>
+                </div>
+                <div className="bg-red-500/5 border border-red-500/20 rounded-xl p-4 mb-4">
+                  <p className="text-xs text-white/80">Cette action est irréversible et réservée aux situations d'urgence réelle.</p>
+                </div>
+                <div className="bg-[#222] rounded-xl p-3 mb-4 space-y-1">
+                  <p className="text-xs text-[#AAA]">Conséquences :</p>
+                  {assistanceMission.status === 'assigned'
+                    ? <p className="text-xs text-white/70">• Vous ne recevrez aucune rémunération</p>
+                    : <>
+                        <p className="text-xs text-white/70">• Vous recevrez 50% si un remplaçant est trouvé</p>
+                        <p className="text-xs text-white/70">• Cooldown 4 heures</p>
+                      </>
+                  }
+                  <p className="text-xs text-white/70">• Cet incident sera noté sur votre profil</p>
+                </div>
+                <div className="mb-5">
+                  <label className="label">Raison (obligatoire)</label>
+                  <select className="input" value={transferReason} onChange={e => setTransferReason(e.target.value)}>
+                    <option value="">Sélectionner une raison</option>
+                    <option value="Urgence médicale">Urgence médicale</option>
+                    <option value="Accident / incident">Accident / incident sur place</option>
+                    <option value="Problème de sécurité">Problème de sécurité</option>
+                    <option value="Empêchement familial grave">Empêchement familial grave</option>
+                    <option value="Autre cas de force majeure">Autre cas de force majeure</option>
+                  </select>
+                </div>
+                <div className="flex gap-3">
+                  <button onClick={() => setAssistanceView('choice')} className="btn btn-ghost flex-1 justify-center">Retour</button>
+                  <button
+                    onClick={async () => {
+                      if (!transferReason) { toast('Sélectionnez une raison', 'error'); return }
+                      setTransferring(true)
+                      try {
+                        await missionsAPI.transfer(assistanceMission.id, { reason: transferReason })
+                        toast('Empêchement signalé — mission remise en priorité', 'info')
+                        setAssistanceMission(null)
+                        setAssistanceView('choice')
+                        load(tab)
+                      } catch (err) { toast(err.response?.data?.error || 'Erreur', 'error') }
+                      finally { setTransferring(false) }
+                    }}
+                    disabled={transferring || !transferReason}
+                    className="btn btn-sm flex-1 justify-center bg-red-500 text-white hover:bg-red-600 disabled:opacity-50"
+                  >
+                    {transferring ? '...' : 'Confirmer →'}
+                  </button>
+                </div>
+              </>
+            )}
           </div>
         </div>
       )}
