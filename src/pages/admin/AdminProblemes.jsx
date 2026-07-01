@@ -124,9 +124,9 @@ export default function AdminProblemes() {
                         <button
                           onClick={() => resolve(r.id, nextStatus, adminNote)}
                           disabled={acting[r.id]}
-                          className={`btn btn-sm disabled:opacity-50 ${nextStatus === 'resolved' ? 'btn-primary' : 'btn-ghost text-[#AAA]'}`}
+                          className="btn btn-primary btn-sm disabled:opacity-50"
                         >
-                          {acting[r.id] ? '...' : nextStatus === 'resolved' ? '✅ Marquer résolu' : '🙈 Ignorer'}
+                          {acting[r.id] ? '...' : nextStatus === 'resolved' ? '✅ Marquer résolu' : nextStatus === 'in_progress' ? '🔄 Confirmer' : '🙈 Ignorer'}
                         </button>
                         <button onClick={() => { setNoteModal(null); setAdminNote('') }} className="btn btn-ghost btn-sm">Annuler</button>
                       </div>
@@ -145,11 +145,12 @@ export default function AdminProblemes() {
                       >
                         ✅ Résoudre
                       </button>
-                      <button
-                        onClick={() => { setNoteModal(r.id); setNextStatus('dismissed') }}
-                        className="btn btn-ghost btn-sm text-[#555]"
+                     <button
+                        onClick={() => resolve(r.id, 'dismissed', null)}
+                        disabled={acting[r.id]}
+                        className="btn btn-ghost btn-sm text-[#555] disabled:opacity-50"
                       >
-                        🙈 Ignorer
+                        {acting[r.id] ? '...' : '🙈 Ignorer'}
                       </button>
                     </div>
                   )
