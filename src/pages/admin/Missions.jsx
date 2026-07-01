@@ -5,10 +5,11 @@ import { missionsAPI, adminAPI, usersAPI } from '../../api'
 import { StatusBadge, Spinner, EmptyState, toast } from '../../components/ui'
 
 export default function AdminMissions() {
-  const [missions, setMissions]       = useState([])
+ const [missions, setMissions]       = useState([])
   const [loading, setLoading]         = useState(true)
   const [search, setSearch]           = useState('')
   const [status, setStatus]           = useState('')
+  const [tab, setTab]                 = useState('all') // 'all' | 'priority'
   const [assignModal, setAssignModal] = useState(null)
   const [oeils, setOeils]             = useState([])
   const [selectedOeil, setSelectedOeil] = useState('')
@@ -17,13 +18,16 @@ export default function AdminMissions() {
 
   const load = () => {
     setLoading(true)
-    missionsAPI.list({ search, status, admin: true })
+    const params = tab === 'priority'
+      ? { admin: true, is_priority: true }
+      : { search, status, admin: true }
+    missionsAPI.list(params)
       .then(({ data }) => setMissions(data.missions || []))
       .catch(() => toast('Erreur', 'error'))
       .finally(() => setLoading(false))
   }
 
-  useEffect(() => { load() }, [search, status])
+  useEffect(() => { load() }, [search, status, tab])
 
   const openAssign = async (mission) => {
     setAssignModal(mission)
@@ -98,17 +102,37 @@ const doAssign = async () => {
           </div>
         )}
 
-        <div className="flex flex-wrap gap-3 mb-5">
-          <input className="input max-w-[220px]" placeholder="🔍 Rechercher..." value={search} onChange={(e) => setSearch(e.target.value)} />
-          <select className="input max-w-[160px]" value={status} onChange={(e) => setStatus(e.target.value)}>
-            <option value="">Tous les statuts</option>
-            <option value="active">Live</option>
-            <option value="assigned">Assigné</option>
-            <option value="pending">En attente</option>
-            <option value="completed">Complétée</option>
-            <option value="cancelled">Annulée</option>
-          </select>
+        {/* Onglets */}
+        <div className="flex gap-1 bg-[#222] rounded-xl p-1 w-fit mb-5">
+          <button onClick={() => setTab('all')}
+            className={`px-4 py-2 rounded-lg text-xs font-medium transition-all ${tab === 'all' ? 'bg-[#2A2A2A] text-white' : 'text-[#AAA] hover:text-white'}`}>
+            Toutes les missions
+          </button>
+          <button onClick={() => setTab('priority')}
+            className={`px-4 py-2 rounded-lg text-xs font-medium transition-all flex items-center gap-1.5 ${tab === 'priority' ? 'bg-[#2A2A2A] text-white' : 'text-[#AAA] hover:text-white'}`}>
+            <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
+            Prioritaires
+            {missions.filter(m => m.is_priority).length > 0 && tab !== 'priority' && (
+              <span className="bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">
+                {missions.filter(m => m.is_priority).length}
+              </span>
+            )}
+          </button>
         </div>
+
+        {tab === 'all' && (
+          <div className="flex flex-wrap gap-3 mb-5">
+            <input className="input max-w-[220px]" placeholder="🔍 Rechercher..." value={search} onChange={(e) => setSearch(e.target.value)} />
+            <select className="input max-w-[160px]" value={status} onChange={(e) => setStatus(e.target.value)}>
+              <option value="">Tous les statuts</option>
+              <option value="active">Live</option>
+              <option value="assigned">Assigné</option>
+              <option value="pending">En attente</option>
+              <option value="completed">Complétée</option>
+              <option value="cancelled">Annulée</option>
+            </select>
+          </div>
+        )}
 
         {loading ? (
           <div className="flex justify-center py-20"><Spinner size="lg" /></div>
