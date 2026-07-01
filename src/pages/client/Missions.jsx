@@ -130,6 +130,25 @@ export default function ClientMissions() {
   const [ratingMission, setRatingMission] = useState(null)
   const [chatMission, setChatMission]     = useState(null)
   const [reportMission, setReportMission] = useState(null)
+  const [problemMission, setProblemMission] = useState(null)
+  const [problemType, setProblemType] = useState('')
+  const [problemDesc, setProblemDesc] = useState('')
+  const [reporting, setReporting] = useState(false)
+
+  const doReportProblem = async () => {
+    if (!problemType) { toast('Sélectionnez un type de problème', 'error'); return }
+    setReporting(true)
+    try {
+      await missionsAPI.reportProblem(problemMission.id, { type: problemType, description: problemDesc })
+      toast('Problème signalé — l\'équipe Shoofly a été alertée ✓', 'success')
+      setProblemMission(null)
+      setProblemType('')
+      setProblemDesc('')
+      load()
+    } catch (err) {
+      toast(err.response?.data?.error || 'Erreur', 'error')
+    } finally { setReporting(false) }
+  }
   const [interestsMission, setInterestsMission] = useState(null)
   const [claimMission, setClaimMission] = useState(null)
   const [historyMission, setHistoryMission] = useState(null)
@@ -276,6 +295,13 @@ const cancel = async (id) => {
                 {['assigned','en_route','active'].includes(m.status) && (
                   <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); setChatMission(m); }}
                     className="btn btn-ghost btn-sm" title="Chat avec l'Œil">💬</button>
+                )}
+                {['assigned','en_route','active'].includes(m.status) && (
+                  <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); setProblemMission(m); setProblemType(''); setProblemDesc('') }}
+                    className="btn btn-ghost btn-sm text-orange-400" title="Signaler un problème">⚠️</button>
+                )}
+                {m.under_surveillance && (
+                  <span className="badge badge-red text-[10px]">⚠️ Surveillance</span>
                 )}
                     {m.status === 'completed' && (
                       <>
@@ -457,6 +483,49 @@ const cancel = async (id) => {
     onHired={() => { setInterestsMission(null); load() }}
   />
 )}
+{problemMission && (
+        <div className="fixed inset-0 bg-black/80 z-[70] flex items-center justify-center p-4 backdrop-blur-sm">
+          <div className="bg-[#181818] border border-orange-500/30 rounded-2xl p-6 w-full max-w-md shadow-xl">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-10 h-10 rounded-xl bg-orange-500/10 flex items-center justify-center text-xl">⚠️</div>
+              <div>
+                <h2 className="font-bold text-base">Signaler un problème</h2>
+                <p className="text-xs text-[#AAA]">{problemMission.title}</p>
+              </div>
+            </div>
+            <div className="mb-4">
+              <label className="label">Type de problème *</label>
+              <select className="input" value={problemType} onChange={e => setProblemType(e.target.value)}>
+                <option value="">Sélectionner...</option>
+                <option value="Œil ne répond plus">Œil ne répond plus</option>
+                <option value="Œil n'est pas sur place">Œil n'est pas sur place</option>
+                <option value="Travail insuffisant / non conforme">Travail insuffisant / non conforme</option>
+                <option value="Comportement irrespectueux">Comportement irrespectueux</option>
+                <option value="Autre problème">Autre problème</option>
+              </select>
+            </div>
+            <div className="mb-5">
+              <label className="label">Description (optionnel)</label>
+              <textarea
+                className="input resize-none h-20 w-full text-sm"
+                placeholder="Décrivez la situation..."
+                value={problemDesc}
+                onChange={e => setProblemDesc(e.target.value)}
+              />
+            </div>
+            <div className="flex gap-3">
+              <button onClick={() => setProblemMission(null)} className="btn btn-ghost flex-1 justify-center">Annuler</button>
+              <button
+                onClick={doReportProblem}
+                disabled={reporting || !problemType}
+                className="btn btn-sm flex-1 justify-center bg-orange-500 text-white hover:bg-orange-600 disabled:opacity-50"
+              >
+                {reporting ? '...' : 'Signaler →'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </AppLayout>
   )
 }

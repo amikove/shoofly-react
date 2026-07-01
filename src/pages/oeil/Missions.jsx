@@ -57,6 +57,25 @@ export default function OeilMissions() {
   const [transferMission, setTransferMission] = useState(null)
   const [transferReason, setTransferReason] = useState('')
   const [transferring, setTransferring] = useState(false)
+  const [reportMission, setReportMission] = useState(null)
+  const [reportType, setReportType] = useState('')
+  const [reportDesc, setReportDesc] = useState('')
+  const [reporting, setReporting] = useState(false)
+
+  const doReport = async () => {
+    if (!reportType) { toast('Sélectionnez un type de problème', 'error'); return }
+    setReporting(true)
+    try {
+      await missionsAPI.reportProblem(reportMission.id, { type: reportType, description: reportDesc })
+      toast('Problème signalé — l\'équipe Shoofly a été alertée', 'success')
+      setReportMission(null)
+      setReportType('')
+      setReportDesc('')
+      load(tab)
+    } catch (err) {
+      toast(err.response?.data?.error || 'Erreur', 'error')
+    } finally { setReporting(false) }
+  }
 
   const doTransfer = async () => {
     if (!transferReason) { toast('Veuillez sélectionner une raison', 'error'); return }
@@ -365,10 +384,13 @@ try {
                       {TYPE_ICONS[m.type] || '📋'}
                     </div>
                     <div className="min-w-0">
+                      
                       <div className="font-semibold text-sm flex items-center gap-2 flex-wrap">
                         {m.title}
                         {m.is_urgent && <span className="badge badge-orange text-[10px]">🚨 Urgent</span>}
+                        {m.under_surveillance && <span className="badge badge-red text-[10px]">⚠️ Sous surveillance</span>}
                       </div>
+
                       
                         <div className="text-xs text-[#AAA] mt-1 space-y-0.5">
                         <div className="flex flex-wrap gap-3">
@@ -448,12 +470,20 @@ try {
                     </>
                   )}
                   {tab === 'active' && ['assigned','en_route','active'].includes(m.status) && (
-                    <button
-                      onClick={() => { setTransferMission(m); setTransferReason('') }}
-                      className="text-xs text-[#555] hover:text-red-400 transition-colors mt-2 w-full text-center"
-                    >
-                      Signaler un empêchement majeur
-                    </button>
+                    <div className="flex gap-3 mt-2 w-full">
+                      <button
+                        onClick={() => { setReportMission(m); setReportType(''); setReportDesc('') }}
+                        className="text-xs text-orange-400 hover:text-orange-300 transition-colors flex-1 text-center"
+                      >
+                        ⚠️ Signaler un problème
+                      </button>
+                      <button
+                        onClick={() => { setTransferMission(m); setTransferReason('') }}
+                        className="text-xs text-[#555] hover:text-red-400 transition-colors flex-1 text-center"
+                      >
+                        Signaler un empêchement majeur
+                      </button>
+                    </div>
                   )}
 
 
@@ -467,8 +497,53 @@ try {
           </div>
         ))}
       </div>
+      
       {historyMission && (
         <MissionHistoryModal mission={historyMission} onClose={() => setHistoryMission(null)} />
+      )}
+
+      {reportMission && (
+        <div className="fixed inset-0 bg-black/80 z-[70] flex items-center justify-center p-4 backdrop-blur-sm">
+          <div className="bg-[#181818] border border-orange-500/30 rounded-2xl p-6 w-full max-w-md shadow-xl">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-10 h-10 rounded-xl bg-orange-500/10 flex items-center justify-center text-xl">⚠️</div>
+              <div>
+                <h2 className="font-bold text-base">Signaler un problème</h2>
+                <p className="text-xs text-[#AAA]">{reportMission.title}</p>
+              </div>
+            </div>
+            <div className="mb-4">
+              <label className="label">Type de problème *</label>
+              <select className="input" value={reportType} onChange={e => setReportType(e.target.value)}>
+                <option value="">Sélectionner...</option>
+                <option value="Client irrespectueux / insultant">Client irrespectueux / insultant</option>
+                <option value="Client injoignable">Client injoignable</option>
+                <option value="Lieu dangereux">Lieu dangereux</option>
+                <option value="Demande illégale">Demande illégale</option>
+                <option value="Autre problème">Autre problème</option>
+              </select>
+            </div>
+            <div className="mb-5">
+              <label className="label">Description (optionnel)</label>
+              <textarea
+                className="input resize-none h-20 w-full text-sm"
+                placeholder="Décrivez la situation..."
+                value={reportDesc}
+                onChange={e => setReportDesc(e.target.value)}
+              />
+            </div>
+            <div className="flex gap-3">
+              <button onClick={() => setReportMission(null)} className="btn btn-ghost flex-1 justify-center">Annuler</button>
+              <button
+                onClick={doReport}
+                disabled={reporting || !reportType}
+                className="btn btn-sm flex-1 justify-center bg-orange-500 text-white hover:bg-orange-600 disabled:opacity-50"
+              >
+                {reporting ? '...' : 'Signaler →'}
+              </button>
+            </div>
+          </div>
+        </div>
       )}
 
       {transferMission && (
