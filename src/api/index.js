@@ -29,7 +29,10 @@ export const missionsAPI = {
   claim: (id, comment) => api.post(`/api/missions/${id}/claim`, { comment }),
   validate:     (id)         => api.post(`/api/missions/${id}/validate`),
   transfer:     (id, data)   => api.post(`/api/missions/${id}/transfer`, data),
-  assignAdmin:  (id, data)   => api.post(`/api/missions/${id}/assign-admin`, data), // v2
+  assignAdmin:     (id, data)   => api.post(`/api/missions/${id}/assign-admin`, data),
+  reportProblem:   (id, data)   => api.post(`/api/missions/${id}/report-problem`, data),
+  adminProblems:   (status)     => api.get('/api/missions/admin/problems', { params: { status } }),
+  resolveReport:   (id, data)   => api.put(`/api/missions/admin/problems/${id}`, data),
   history:  (id) => api.get(`/api/missions/${id}/history`),
 }
 
