@@ -18,6 +18,21 @@ export default function AdminProblemes() {
   const [acting, setActing]     = useState({})
   const [noteModal, setNoteModal] = useState(null)
   const [adminNote, setAdminNote] = useState('')
+  // Tri secondaire optionnel par date d'exécution de la mission (clic sur la date dans la carte)
+  const [sortByExecution, setSortByExecution] = useState(false)
+  const [sortDir, setSortDir] = useState('asc')
+  const toggleExecutionSort = () => {
+    if (!sortByExecution) { setSortByExecution(true); setSortDir('asc') }
+    else if (sortDir === 'asc') { setSortDir('desc') }
+    else { setSortByExecution(false) } // 3e clic : retour au tri par défaut (signalement le plus ancien)
+  }
+  const sortedReports = sortByExecution
+    ? [...reports].sort((a, b) => {
+        const va = a.scheduled_at ? new Date(a.scheduled_at).getTime() : Infinity
+        const vb = b.scheduled_at ? new Date(b.scheduled_at).getTime() : Infinity
+        return sortDir === 'asc' ? va - vb : vb - va
+      })
+    : reports
   const [nextStatus, setNextStatus] = useState('resolved')
 
   const load = () => {
@@ -70,7 +85,7 @@ export default function AdminProblemes() {
           <div className="card text-center py-12 text-[#AAA]">✅ Aucun ticket dans cette catégorie</div>
         ) : (
           <div className="space-y-4">
-            {reports.map(r => (
+              {sortedReports.map(r => (
               <div key={r.id} className="card">
                 {/* En-tête */}
                 <div className="flex items-start justify-between gap-3 mb-3">
@@ -91,7 +106,13 @@ export default function AdminProblemes() {
                 {/* Mission */}
                 <div className="bg-[#222] rounded-xl p-3 mb-3 space-y-1">
                   <p className="text-xs font-semibold text-white">📋 {r.mission_title}</p>
-                  <p className="text-xs text-[#AAA]">📍 {r.city} · 📅 {r.scheduled_at ? new Date(r.scheduled_at).toLocaleDateString('fr-FR') : '—'}</p>
+                  <p className="text-xs text-[#AAA]">
+                    📍 {r.city} ·{' '}
+                    <span className="cursor-pointer hover:text-white select-none" onClick={toggleExecutionSort} title="Trier par date d'exécution">
+                      📅 {r.scheduled_at ? new Date(r.scheduled_at).toLocaleDateString('fr-FR') : '—'}
+                      {sortByExecution && (sortDir === 'asc' ? ' ▲' : ' ▼')}
+                    </span>
+                  </p>
                   <p className="text-xs text-[#AAA]">👥 Client : {r.client_first} {r.client_last} · 👁️ Œil : {r.oeil_first || '—'} {r.oeil_last || ''}</p>
                 </div>
 
