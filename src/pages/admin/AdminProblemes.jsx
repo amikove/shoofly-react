@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import AppLayout from '../../components/layout/AppLayout'
 import Topbar from '../../components/layout/Topbar'
 import { missionsAPI } from '../../api'
-import { Spinner, toast } from '../../components/ui'
+import { Spinner, toast, Pagination } from '../../components/ui'
 
 const STATUS_TABS = [
   { id: 'open',        label: 'Ouverts',   color: 'text-red-400'    },
@@ -18,6 +18,9 @@ export default function AdminProblemes() {
   const [acting, setActing]     = useState({})
   const [noteModal, setNoteModal] = useState(null)
   const [adminNote, setAdminNote] = useState('')
+  // Pagination
+  const [page, setPage] = useState(1)
+  const [totalPages, setTotalPages] = useState(1)
   // Tri secondaire optionnel par date d'exécution de la mission (clic sur la date dans la carte)
   const [sortByExecution, setSortByExecution] = useState(false)
   const [sortDir, setSortDir] = useState('asc')
@@ -37,13 +40,18 @@ export default function AdminProblemes() {
 
   const load = () => {
     setLoading(true)
-    missionsAPI.adminProblems(tab)
-      .then(({ data }) => setReports(data.reports || []))
+    missionsAPI.adminProblems(tab, page)
+      .then(({ data }) => {
+        setReports(data.reports || [])
+        setTotalPages(data.pages || 1)
+      })
       .catch(() => toast('Erreur chargement', 'error'))
       .finally(() => setLoading(false))
   }
 
-  useEffect(() => { load() }, [tab])
+  useEffect(() => { load() }, [tab, page])
+  // Revenir à la page 1 quand on change d'onglet (évite une page vide hors limites)
+  useEffect(() => { setPage(1) }, [tab])
 
   const resolve = async (id, status, note) => {
     setActing(a => ({ ...a, [id]: true }))
@@ -86,7 +94,7 @@ export default function AdminProblemes() {
         ) : (
           <div className="space-y-4">
               {sortedReports.map(r => (
-              <div key={r.id} className="card">
+                <div key={r.id} className="card">
                 {/* En-tête */}
                 <div className="flex items-start justify-between gap-3 mb-3">
                   <div>
@@ -180,6 +188,7 @@ export default function AdminProblemes() {
             ))}
           </div>
         )}
+        <Pagination page={page} pages={totalPages} onPageChange={setPage} />
       </div>
     </AppLayout>
   )
