@@ -138,7 +138,8 @@ const load = useCallback((t) => {
   if (t === 'priority') {
     params = { mode: 'available', is_priority: true }
   } else if (t === 'available') {
-    params = { mode: 'available', ...(quartier ? { quartier } : {}) }
+      // Tri fixe par date d'exécution la plus proche (missions urgentes en premier)
+      params = { mode: 'available', sort: 'scheduled_asc', ...(quartier ? { quartier } : {}) }
   } else if (t === 'active') {
     params = { mode: 'mine' }
   } else {
@@ -641,51 +642,7 @@ try {
         </div>
       )}
 
-      {transferMission && (
-        <div className="fixed inset-0 bg-black/80 z-[70] flex items-center justify-center p-4 backdrop-blur-sm">
-          <div className="bg-[#181818] border border-red-500/30 rounded-2xl p-6 w-full max-w-md shadow-xl">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 rounded-xl bg-red-500/10 flex items-center justify-center text-xl flex-shrink-0">🚨</div>
-              <h2 className="font-bold text-base">Empêchement en cours de mission</h2>
-            </div>
-            <div className="bg-red-500/5 border border-red-500/20 rounded-xl p-4 mb-4">
-              <p className="text-xs text-white/80">Cette action est irréversible et réservée aux situations d'urgence réelle. Le client a planifié ce rendez-vous — votre départ impacte directement sa mission.</p>
-            </div>
-            <div className="bg-[#222] rounded-xl p-3 mb-4 space-y-1">
-              <p className="text-xs text-[#AAA]">Conséquences :</p>
-              {transferMission.status === 'assigned'
-                ? <p className="text-xs text-white/70">• Vous ne recevrez aucune rémunération pour cette mission</p>
-                : <>
-                    <p className="text-xs text-white/70">• Vous recevrez 50% de la rémunération si un remplaçant est trouvé</p>
-                    <p className="text-xs text-white/70">• Vous ne pourrez pas postuler pendant 4 heures</p>
-                  </>
-              }
-              <p className="text-xs text-white/70">• Cet incident sera noté sur votre profil</p>
-            </div>
-            <div className="mb-5">
-              <label className="label">Raison (obligatoire)</label>
-              <select className="input" value={transferReason} onChange={e => setTransferReason(e.target.value)}>
-                <option value="">Sélectionner une raison</option>
-                <option value="Urgence médicale">Urgence médicale</option>
-                <option value="Accident / incident">Accident / incident sur place</option>
-                <option value="Problème de sécurité">Problème de sécurité</option>
-                <option value="Empêchement familial grave">Empêchement familial grave</option>
-                <option value="Autre cas de force majeure">Autre cas de force majeure</option>
-              </select>
-            </div>
-            <div className="flex gap-3">
-              <button onClick={() => setTransferMission(null)} className="btn btn-ghost flex-1 justify-center">Retour</button>
-              <button
-                onClick={doTransfer}
-                disabled={transferring || !transferReason}
-                className="btn btn-sm flex-1 justify-center bg-red-500 text-white hover:bg-red-600 disabled:opacity-50"
-              >
-                {transferring ? '...' : 'Confirmer l\'empêchement →'}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+     
 {summaryMission && (
   <MissionSummaryModal mission={summaryMission} onClose={() => setSummaryMission(null)} />
 )}
