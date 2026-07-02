@@ -88,12 +88,14 @@ rejectIdentity:  (id, data)     => api.post(`/api/users/admin/identity-requests/
 }
 
 export const reliabilityAPI = {
-  me:             ()           => api.get('/api/reliability/me'),
-  requestReview:  (data)       => api.post('/api/reliability/review-request', data),
-  adminRequests:  (status)     => api.get('/api/reliability/admin/requests', { params: { status } }),
-  adminHistory:   (oeilId)     => api.get(`/api/reliability/admin/${oeilId}/history`),
-  decideRequest:  (id, data)   => api.post(`/api/reliability/admin/requests/${id}/decide`, data),
-}
+    me:             ()           => api.get('/api/reliability/me'),
+    requestReview:  (data)       => api.post('/api/reliability/review-request', data),
+    adminRequests:  (status)     => api.get('/api/reliability/admin/requests', { params: { status } }),
+    adminHistory:   (oeilId)     => api.get(`/api/reliability/admin/${oeilId}/history`),
+    decideRequest:  (id, data)   => api.post(`/api/reliability/admin/requests/${id}/decide`, data),
+    adminSuspended: ()           => api.get('/api/reliability/admin/suspended'),
+    adminAllScores: (params)     => api.get('/api/reliability/admin/all-scores', { params }),
+  }
 // MEDIA
 export const mediaAPI = {
     upload: (missionId, formData) =>
