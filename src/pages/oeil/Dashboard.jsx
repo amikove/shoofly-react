@@ -36,7 +36,7 @@ export default function OeilDashboard() {
   const load = () => {
     setLoading(true)
     Promise.all([
-      missionsAPI.list({ mode: 'available', limit: 5 }),
+      missionsAPI.list({ mode: 'available', sort: 'scheduled_asc', limit: 5 }), // Tri par date d'exécution la plus proche (aperçu des missions urgentes)
       missionsAPI.list({ mode: 'mine', limit: 50 }),
       user?.id ? usersAPI.oeil(user.id).catch(() => null) : Promise.resolve(null),
     ])
