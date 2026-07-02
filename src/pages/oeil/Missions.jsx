@@ -3,7 +3,7 @@ import { useState, useEffect, useCallback } from 'react'
 import AppLayout from '../../components/layout/AppLayout'
 import Topbar from '../../components/layout/Topbar'
 import { missionsAPI, reportsAPI } from '../../api'
-import { StatusBadge, Spinner, EmptyState, toast } from '../../components/ui'
+import { StatusBadge, Spinner, EmptyState, toast, Pagination } from '../../components/ui'
 import { useNotif } from '../../context/NotifContext'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
@@ -51,6 +51,9 @@ export default function OeilMissions() {
   const [chatMission, setChatMission] = useState(null)
   const navigate = useNavigate()
   const [quartier, setQuartier] = useState('')
+  // Pagination (uniquement sur l'onglet "Disponibles")
+  const [page, setPage] = useState(1)
+  const [totalPages, setTotalPages] = useState(1)
   const { pendingChatMissionId, clearPendingChat, getPending } = useNotif()
   const { user } = useAuth()
   const [historyMission, setHistoryMission] = useState(null)
@@ -139,16 +142,17 @@ const load = useCallback((t) => {
     params = { mode: 'available', is_priority: true }
   } else if (t === 'available') {
       // Tri fixe par date d'exécution la plus proche (missions urgentes en premier)
-      params = { mode: 'available', sort: 'scheduled_asc', ...(quartier ? { quartier } : {}) }
+      params = { mode: 'available', sort: 'scheduled_asc', page, limit: 20, ...(quartier ? { quartier } : {}) }
   } else if (t === 'active') {
       params = { mode: 'mine', limit: 100 } // Aligné avec le compteur pour éviter la troncature par défaut (limit=20)
   } else {
       params = { mode: 'mine', status: 'completed', limit: 100 } // Aligné avec le compteur pour éviter la troncature par défaut (limit=20)
   }
   return missionsAPI.list(params)
-    .then(({ data }) => {
-      let ms = data.missions || []
-      if (t === 'priority') {
+      .then(({ data }) => {
+        if (t === 'available') setTotalPages(data.pages || 1)
+        let ms = data.missions || []
+        if (t === 'priority') {
         ms = ms.filter(m => m.is_priority)
       } else if (t === 'available') {
         ms = ms.filter(m => !m.is_priority)
@@ -163,7 +167,10 @@ const load = useCallback((t) => {
       toast(msg, 'error')
     })
     .finally(() => setLoading(false))
-}, [quartier])
+}, [quartier, page])
+
+  // Revenir à la page 1 si le filtre quartier change (évite une page vide hors limites)
+  useEffect(() => { setPage(1) }, [quartier])
 
 
 
@@ -485,14 +492,13 @@ try {
                   {tab === 'done' && (
                     <button onClick={() => setSummaryMission(m)} className="btn btn-ghost btn-sm">📄 Résumé</button>
                   )}
-
                 </div>
               </div>
             ))}
           </div>
         ))}
+        {tab === 'available' && <Pagination page={page} pages={totalPages} onPageChange={setPage} />}
       </div>
-      
       {historyMission && (
         <MissionHistoryModal mission={historyMission} onClose={() => setHistoryMission(null)} />
       )}
