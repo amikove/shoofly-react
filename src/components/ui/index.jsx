@@ -155,7 +155,9 @@ export function Pagination({ page, pages, onPageChange }) {
   }
 
   return (
-    <div className="flex items-center justify-center gap-1.5 mt-5">
+    <div className="flex flex-col items-center gap-2 mt-5">
+      <p className="text-[11px] text-[#666]">Page {page} / {pages}</p>
+      <div className="flex items-center justify-center gap-1.5">
       <button
         onClick={() => goTo(page - 1)}
         disabled={page <= 1}
@@ -187,6 +189,7 @@ export function Pagination({ page, pages, onPageChange }) {
       >
         Suivant →
       </button>
+      </div>
     </div>
   )
 }
