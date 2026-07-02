@@ -127,7 +127,66 @@ export function Field({ label, error, children }) {
   )
 }
 
-// ── Toast Container ────────────────────────────────────────
+// ── Toast Container ────────────────────────────────────────────
 let toastCallback = null
 export function setToastCallback(fn) { toastCallback = fn }
 export function toast(msg, type = 'info', options = {}) { toastCallback?.(msg, type, options) }
+
+// ── Pagination ──────────────────────────────────────────────────
+// Composant générique réutilisable sur toutes les listes paginées (Admin Missions, Admin Problèmes, Missions Œil...)
+// Props : page (page actuelle), pages (nombre total de pages), onPageChange (callback appelé avec le nouveau numéro)
+export function Pagination({ page, pages, onPageChange }) {
+  if (!pages || pages <= 1) return null // Rien à afficher s'il n'y a qu'une seule page
+
+  const goTo = (p) => {
+    if (p < 1 || p > pages || p === page) return
+    onPageChange(p)
+  }
+
+  // Génère une liste compacte de numéros de page à afficher (avec "..." si besoin)
+  const getPageNumbers = () => {
+    const delta = 1 // nombre de pages visibles autour de la page actuelle
+    const range = []
+    for (let i = Math.max(1, page - delta); i <= Math.min(pages, page + delta); i++) range.push(i)
+    if (range[0] > 1) range.unshift(range[0] > 2 ? '...' : 1)
+    if (range[range.length - 1] < pages) range.push(range[range.length - 1] < pages - 1 ? '...' : pages)
+    if (range[0] !== 1) range.unshift(1)
+    return [...new Set(range)]
+  }
+
+  return (
+    <div className="flex items-center justify-center gap-1.5 mt-5">
+      <button
+        onClick={() => goTo(page - 1)}
+        disabled={page <= 1}
+        className="px-3 py-1.5 rounded-lg text-xs font-medium text-[#AAA] hover:text-white disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+      >
+        ← Précédent
+      </button>
+
+      {getPageNumbers().map((p, i) =>
+        p === '...' ? (
+          <span key={`dots-${i}`} className="px-2 text-xs text-[#555]">…</span>
+        ) : (
+          <button
+            key={p}
+            onClick={() => goTo(p)}
+            className={`w-8 h-8 rounded-lg text-xs font-medium transition-colors ${
+              p === page ? 'bg-[#FF4D00] text-white' : 'text-[#AAA] hover:text-white hover:bg-[#2A2A2A]'
+            }`}
+          >
+            {p}
+          </button>
+        )
+      )}
+
+      <button
+        onClick={() => goTo(page + 1)}
+        disabled={page >= pages}
+        className="px-3 py-1.5 rounded-lg text-xs font-medium text-[#AAA] hover:text-white disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+      >
+        Suivant →
+      </button>
+    </div>
+  )
+}
