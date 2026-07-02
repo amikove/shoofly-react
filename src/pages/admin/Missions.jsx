@@ -15,11 +15,31 @@ export default function AdminMissions() {
   const [selectedOeil, setSelectedOeil] = useState('')
   const [assigning, setAssigning]     = useState(false)
   const [oeilSearch, setOeilSearch]   = useState('')
+    // Tri par colonne cliquable (tableau Admin Missions)
+    const [sortBy, setSortBy] = useState(null)   // 'title' | 'client_name' | 'oeil_name' | 'price' | 'status'
+    const [sortDir, setSortDir] = useState('asc') // 'asc' | 'desc'
+    const handleSort = (col) => {
+      if (sortBy === col) {
+        setSortDir(d => d === 'asc' ? 'desc' : 'asc')
+      } else {
+        setSortBy(col)
+        setSortDir('asc')
+      }
+    }
+    const sortedMissions = [...missions].sort((a, b) => {
+      if (!sortBy) return 0
+      let va = a[sortBy], vb = b[sortBy]
+      if (sortBy === 'price') { va = parseFloat(va) || 0; vb = parseFloat(vb) || 0 }
+      else { va = (va || '').toString().toLowerCase(); vb = (vb || '').toString().toLowerCase() }
+      if (va < vb) return sortDir === 'asc' ? -1 : 1
+      if (va > vb) return sortDir === 'asc' ? 1 : -1
+      return 0
+    })
 
   const load = () => {
     setLoading(true)
     const params = tab === 'priority'
-      ? { admin: true, is_priority: true }
+      ? { admin: true, is_priority: true, status: 'pending' }
       : { search, status, admin: true }
     missionsAPI.list(params)
       .then(({ data }) => setMissions(data.missions || []))
@@ -143,10 +163,18 @@ const doAssign = async () => {
             <div className="table-wrap">
               <table>
                 <thead>
-                  <tr><th>Réf</th><th>Mission</th><th>Client</th><th>Œil</th><th>Prix</th><th>Statut</th><th>Action</th></tr>
+                  <tr>
+                    <th>Réf</th>
+                    <th className="cursor-pointer select-none" onClick={() => handleSort('title')}>Mission {sortBy === 'title' ? (sortDir === 'asc' ? '▲' : '▼') : ''}</th>
+                    <th className="cursor-pointer select-none" onClick={() => handleSort('client_name')}>Client {sortBy === 'client_name' ? (sortDir === 'asc' ? '▲' : '▼') : ''}</th>
+                    <th className="cursor-pointer select-none" onClick={() => handleSort('oeil_name')}>Œil {sortBy === 'oeil_name' ? (sortDir === 'asc' ? '▲' : '▼') : ''}</th>
+                    <th className="cursor-pointer select-none" onClick={() => handleSort('price')}>Prix {sortBy === 'price' ? (sortDir === 'asc' ? '▲' : '▼') : ''}</th>
+                    <th className="cursor-pointer select-none" onClick={() => handleSort('status')}>Statut {sortBy === 'status' ? (sortDir === 'asc' ? '▲' : '▼') : ''}</th>
+                    <th>Action</th>
+                  </tr>
                 </thead>
                 <tbody>
-                  {missions.map((m) => (
+                  {sortedMissions.map((m) => (
                     <tr key={m.id}>
                       <td className="text-[#AAA] text-xs">
                         #{String(m.id).slice(-6).toUpperCase()}
