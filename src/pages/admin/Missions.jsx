@@ -39,8 +39,8 @@ export default function AdminMissions() {
   const load = () => {
     setLoading(true)
     const params = tab === 'priority'
-      ? { admin: true, is_priority: true, status: 'pending' }
-      : { search, status, admin: true }
+        ? { admin: true, is_priority: true, status: 'pending', sort: 'deadline_asc' } // Priorité : deadline de transfert la plus proche en premier
+        : { search, status, admin: true, sort: 'created_desc' } // Toutes missions : les plus récentes en premier
     missionsAPI.list(params)
       .then(({ data }) => setMissions(data.missions || []))
       .catch(() => toast('Erreur', 'error'))
