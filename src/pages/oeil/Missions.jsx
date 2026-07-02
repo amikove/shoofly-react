@@ -1,7 +1,6 @@
-﻿import ChatModal from '../../components/missions/ChatModal'
+import ChatModal from '../../components/missions/ChatModal'
 import { useState, useEffect, useCallback } from 'react'
 import AppLayout from '../../components/layout/AppLayout'
-import { VILLES } from '../../constants/villes'
 import Topbar from '../../components/layout/Topbar'
 import { missionsAPI, reportsAPI } from '../../api'
 import { StatusBadge, Spinner, EmptyState, toast, Pagination } from '../../components/ui'
@@ -16,9 +15,31 @@ const TABS = [
   { id: 'priority',  label: 'Prioritaires' },
   { id: 'available', label: 'Disponibles'  },
   { id: 'active',    label: 'En cours'     },
-  { id: 'done',      label: 'TerminÃ©es'    },
+  { id: 'done',      label: 'Terminées'    },
 ]
-const TYPE_ICONS = { immobilier:'ðŸ ', file_attente:'â³', audit:'ðŸ”Ž', personnalisee:'ðŸŽ¯' }
+const TYPE_ICONS = { immobilier:'🏠', file_attente:'⏳', audit:'🔎', personnalisee:'🎯' }
+const VILLES = {
+  'Rabat': ['Agdal','Hassan','Océan','Souissi','Aviation','Hay Riad','Youssoufia','Akkari','Diour Jamaa','Médina','Orangers','Ryad','Centre Ville','Hay Nahda','Hay Fadoul','Takaddoum','Hay Karima','Hay Salama','Mabella','Hay Ennakhil'],
+  'Salé': ['Bettana','Hay Salam','Tabriquet','Laâyoune','Médina','Kébibat','Hssaine','Sidi Moussa','Bab Lamrissa','Hay Karima','Hay Arrahma','Hay Al Majd','Attacharouk','Hay Essalam','Layayda','Ouled Mtaa','Hay Nasr','Sidi Taibi','Hay Al Wifaq','Hay Al Massira'],
+  'Témara': ['Hay Al Fath','Massira','Oumassa','Centre Ville','Ain Attig','Menzeh','Hay Farah','Hay Al Amal','Hay Essalam','Hay Ennour','Hay Nakhil','Résidence Al Wifaq','Hay Nahda','Hay Rihane','Sidi Yahya','Mansouria'],
+  'Casablanca': ['Maarif','Bourgogne','Gauthier','Hay Hassani','Ain Chock','Ain Sebaa','Anfa','Bernoussi','Bouskoura','CIL','Californie','Derb Sultan','Hay Mohammadi','Moulay Rachid','Sidi Belyout','Sbata','Médina','Oulfa','Ben M\'sick','Sidi Bernoussi','Roches Noires','Polo','Racine','Val Fleuri','Riviera','Hay Al Farah','Hay Ennakhil','Hay Inara','Lissasfa','Lahraouiyine','Sidi Maarouf','Dar Bouazza','Belvédère','Palmier','Sidi Othmane','Hay El Hana','Zenata','Tit Mellil','Hay Moulay Abdallah','Sidi Moumen','Nassim'],
+  'Marrakech': ['Guéliz','Hivernage','Médina','Mellah','Daoudiate','Massira','Syba','M\'hamid','Targa','Azzouzia','Palmeraie','Hay Charaf','Douar Lahna','Sidi Youssef Ben Ali','Bab Doukkala','Ménara','Hay Al Majd','Tamansourt','Iziki','Hay Hassani','Hay Mohammadi','Mouassine','Bab Ghmat','Kennaria','Riad Zitoun','Arset El Maach','Hay Houta','Résidence Al Wifaq'],
+  'Fès': ['Médina','Ville Nouvelle','Jdid','Saïss','Narjiss','Bensouda','Aouinat Hajjaj','Zouagha','Hay Amal','Hay Mahatta','Atlas','Agdal','Hay Nakhil','Sidi Brahim','Hay Essalam','Ain Chkef','Hay Wifaq','Hay Massira','Dokkarat','Hay Moulay Slimane','Hay Ennahda','Hay Karima','Oued Fès','Hay Al Farah','Ain Kadous'],
+  'Meknès': ['Hamria','Médina','Ville Nouvelle','Ismaïlia','Marjane','Bassatine','Hay Salam','Hay Nour','Hay Wifaq','Hay Amal','Hay Inara','Résidence Ismaïlia','Hay Al Majd','Hay Doum','Riad','Hay Mansour','Hay Zitoune','Ain Smen','Borj Moulay Omar','Hay Karima'],
+  'Tanger': ['Médina','Malabata','Marshan','Gzenaya','Mesnana','Iberia','California','Achakar','Boukhalef','Hay Karima','Bni Makada','Hay Amal','Dradeb','Ain Ktiouet','Hay Nakhil','Moujahidine','Val Fleuri','Hay Almohades','Hay Nahda','Rmilat','Souani','Branes','Hay Hassani','Hay Mohammadi','Charf','Tanger City Center'],
+  'Agadir': ['Hay Mohammadi','Talborjt','Dakhla','Charaf','Bensergao','Anza','Tilila','Founty','Hay Salam','Hay Amal','Hay Al Massira','Tikiouine','Hay Hassani','Adrar','Cité Suisse','Résidence Yasmina','Hay Yassmine','Aourir','Hay Nahda','Hay Al Wifaq','Ait Melloul','Inezgane'],
+  'Oujda': ['Médina','Lazaret','Sidi Maâfa','Hay Al Qods','Isly','Université','Hay Salam','Hay Amal','Hay Nakhil','Hay Wifaq','Ain Sfa','Hay Essalam','Hay Al Majd','Hay Riad','Sidi Ziane','Hay Karima','Hay Mohammadi','Hay Andalous','Ennakhil'],
+  'Kénitra': ['Médina','Hay Mahatta','Hay Salam','Bir Rami','Saknia','Hay Amal','Hay Nakhil','Hay Wifaq','Hay Karima','Centre Ville','Hay Nassim','Hay El Wahda','Hay Hassani','Maamoura','Hay Mohammadi','Hay Al Farah','Résidence Al Wifaq','Hay Essalam'],
+  'Tétouan': ['Médina','Ensanche','Martil','Mhannech','Azla','Hay Salam','Hay Amal','Hay Nahda','Hay Nakhil','Hay Wifaq','Hay Karima','Dersa','Touabel','Sidi Mandri','Hay Al Majd','Hay Mohammadi','Hay Hassani','Résidence Al Farah','Ain Lhout','Hay Riad'],
+  'Mohammedia': ['Centre Ville','Ain Harrouda','Sidi Moumen','Médina','Hay Hassani','Hay Mohammadi','Hay Salam','Hay Amal','Hay Wifaq','Hay Nakhil','Hay Karima','Hay Al Majd','Hay Nassim','Sidi Maarouf','Hay Essalam','Résidence Al Wifaq','Hay Nahda','Ain Sbiaa'],
+  'El Jadida': ['Médina','Hay Hassani','Azemmour','Centre Ville','Hay Salam','Hay Amal','Hay Mohammadi','Hay Wifaq','Hay Nakhil','Hay Karima','Hay Al Majd','Haouzia','Hay Essalam','Bir Jdid','Résidence Al Farah','Hay Nahda','Sidi Bouzid'],
+  'Safi': ['Médina','Hay El Amal','Arsat Lhamra','Centre Ville','Hay Hassani','Hay Mohammadi','Hay Salam','Hay Wifaq','Hay Nakhil','Hay Karima','Hay Al Majd','Hay Essalam','Hay Nahda','Résidence Al Wifaq','Sidi Bouzid','Hay Inara','Jrifat'],
+  'Béni Mellal': ['Centre Ville','Hay Amal','Oulad Yaïch','Médina','Hay Hassani','Hay Salam','Hay Mohammadi','Hay Wifaq','Hay Nakhil','Hay Karima','Hay Al Majd','Hay Essalam','Hay Nahda','Taboun','Ain Asserdoun','Résidence Al Farah','Hay Inara','Hay Riad'],
+  'Nador': ['Centre Ville','Médina','Hay Salam','Hay Amal','Hay Nakhil','Hay Wifaq','Hay Karima','Hay Mohammadi','Hay Hassani','Beni Chiker','Hay Al Majd','Hay Nahda','Hay Essalam','Hay Riad','Résidence Al Wifaq','Azghangan'],
+  'Settat': ['Centre Ville','Hay Salam','Hay Amal','Hay Nakhil','Hay Wifaq','Hay Karima','Hay Mohammadi','Hay Hassani','Hay Al Majd','Hay Nahda','Hay Essalam','Médina','Résidence Al Farah','Hay Riad'],
+  'Laâyoune': ['Centre Ville','Hay Salam','Hay Amal','Hay Nakhil','Hay Wifaq','Hay Karima','Hay Mohammadi','Hay Hassani','Hay Al Majd','Hay Nahda','Hay Essalam','Cité Militaire','Résidence Al Wifaq','Hay Riad'],
+}
+
 export default function OeilMissions() {
   const [complianceMission, setComplianceMission] = useState(null)
   const [tab, setTab]             = useState('available')
@@ -47,11 +68,11 @@ export default function OeilMissions() {
   const [assistanceView, setAssistanceView] = useState('choice') // 'choice' | 'problem' | 'transfer'
 
   const doReport = async () => {
-    if (!reportType) { toast('SÃ©lectionnez un type de problÃ¨me', 'error'); return }
+    if (!reportType) { toast('Sélectionnez un type de problème', 'error'); return }
     setReporting(true)
     try {
       await missionsAPI.reportProblem(reportMission.id, { type: reportType, description: reportDesc })
-      toast('ProblÃ¨me signalÃ© â€” l\'Ã©quipe Shoofly a Ã©tÃ© alertÃ©e', 'success')
+      toast('Problème signalé — l\'équipe Shoofly a été alertée', 'success')
       setReportMission(null)
       setReportType('')
       setReportDesc('')
@@ -62,11 +83,11 @@ export default function OeilMissions() {
   }
 
   const doTransfer = async () => {
-    if (!transferReason) { toast('Veuillez sÃ©lectionner une raison', 'error'); return }
+    if (!transferReason) { toast('Veuillez sélectionner une raison', 'error'); return }
     setTransferring(true)
     try {
       await missionsAPI.transfer(transferMission.id, { reason: transferReason })
-      toast('EmpÃªchement signalÃ© â€” mission remise en prioritÃ©', 'info')
+      toast('Empêchement signalé — mission remise en priorité', 'info')
       setTransferMission(null)
       setTransferReason('')
       load()
@@ -99,7 +120,7 @@ const load = useCallback((t) => {
   setLoading(true)
   setError('')
 
-  // Charger les compteurs de tous les onglets en parallÃ¨le
+  // Charger les compteurs de tous les onglets en parallèle
   Promise.all([
     missionsAPI.list({ mode: 'available', is_priority: true, limit: 100 }),
     missionsAPI.list({ mode: 'available', limit: 100 }),
@@ -120,12 +141,12 @@ const load = useCallback((t) => {
   if (t === 'priority') {
     params = { mode: 'available', is_priority: true }
   } else if (t === 'available') {
-      // Tri fixe par date d'exÃ©cution la plus proche (missions urgentes en premier)
+      // Tri fixe par date d'exécution la plus proche (missions urgentes en premier)
       params = { mode: 'available', sort: 'scheduled_asc', page, limit: 20, ...(quartier ? { quartier } : {}) }
   } else if (t === 'active') {
-      params = { mode: 'mine', limit: 100 } // AlignÃ© avec le compteur pour Ã©viter la troncature par dÃ©faut (limit=20)
+      params = { mode: 'mine', limit: 100 } // Aligné avec le compteur pour éviter la troncature par défaut (limit=20)
   } else {
-      params = { mode: 'mine', status: 'completed', limit: 100 } // AlignÃ© avec le compteur pour Ã©viter la troncature par dÃ©faut (limit=20)
+      params = { mode: 'mine', status: 'completed', limit: 100 } // Aligné avec le compteur pour éviter la troncature par défaut (limit=20)
   }
   return missionsAPI.list(params)
       .then(({ data }) => {
@@ -148,7 +169,7 @@ const load = useCallback((t) => {
     .finally(() => setLoading(false))
 }, [quartier, page])
 
-  // Revenir Ã  la page 1 si le filtre quartier change (Ã©vite une page vide hors limites)
+  // Revenir à la page 1 si le filtre quartier change (évite une page vide hors limites)
   useEffect(() => { setPage(1) }, [quartier])
 
 
@@ -163,7 +184,7 @@ const load = useCallback((t) => {
     try {
       await missionsAPI.refuse(id, isAvailable)
       setMissions((prev) => prev.filter((m) => m.id !== id))
-      toast(isAvailable ? 'Mission ignorÃ©e' : 'Mission refusÃ©e', 'info')
+      toast(isAvailable ? 'Mission ignorée' : 'Mission refusée', 'info')
     } catch {
       toast('Erreur', 'error')
     }
@@ -175,7 +196,7 @@ const interest = async (id) => {
     try {
       await missionsAPI.interest(id)
       setMissions((prev) => prev.map((m) => m.id === id ? { ...m, interested: true } : m))
-      toast('IntÃ©rÃªt exprimÃ© ðŸ‘ï¸ Le client va vous contacter.', 'success')
+      toast('Intérêt exprimé 👁️ Le client va vous contacter.', 'success')
     } catch (err) {
       toast(err.response?.data?.error || 'Erreur', 'error')
     }
@@ -193,16 +214,16 @@ const advance = async (mission, bypassed = false) => {
 
     if (!next) { toast('Statut invalide', 'error'); return }
 
-    // Afficher compliance quand l'Å’il passe en "en_route"
+    // Afficher compliance quand l'Œil passe en "en_route"
     if (next === 'en_route' && !bypassed) {
       setComplianceAdvance(mission)
       return
     }
 
   const labels = {
-    en_route:  'En route vers la mission âœ“',
-    active:    'Mission dÃ©marrÃ©e âœ“',
-    completed: 'Mission terminÃ©e ! Bien jouÃ© ðŸŽ‰',
+    en_route:  'En route vers la mission ✓',
+    active:    'Mission démarrée ✓',
+    completed: 'Mission terminée ! Bien joué 🎉',
   }
 
   // Bloquer si rapport obligatoire non soumis
@@ -218,13 +239,13 @@ const advance = async (mission, bypassed = false) => {
           const url = isAudit
             ? `/oeil/missions/${mission.id}/audit`
             : `/oeil/missions/${mission.id}/rapport`
-          toast('Vous devez soumettre le rapport avant de terminer la mission ðŸ“‹', 'error')
+          toast('Vous devez soumettre le rapport avant de terminer la mission 📋', 'error')
           setTimeout(() => navigate(url), 300)
           return
         }
 
       } catch {
-        toast('Impossible de vÃ©rifier le rapport', 'error')
+        toast('Impossible de vérifier le rapport', 'error')
         return
       }
     }
@@ -255,16 +276,16 @@ try {
 
 
   const emptyProps = {
-    priority:  { icon:'ðŸŸ¢', title:'Aucune mission prioritaire', desc:'Toutes les missions sont couvertes.'           },
-    available: { icon:'ðŸŽ¯', title:'Aucune mission disponible',  desc:'Toutes les missions ont Ã©tÃ© assignÃ©es. Revenez bientÃ´t !' },
-    active:    { icon:'ðŸ“‹', title:'Aucune mission en cours',    desc:'Acceptez une mission pour commencer.'          },
-    done:      { icon:'âœ…', title:'Aucune mission terminÃ©e',    desc:'Vos missions complÃ©tÃ©es apparaÃ®tront ici.'     },
+    priority:  { icon:'🟢', title:'Aucune mission prioritaire', desc:'Toutes les missions sont couvertes.'           },
+    available: { icon:'🎯', title:'Aucune mission disponible',  desc:'Toutes les missions ont été assignées. Revenez bientôt !' },
+    active:    { icon:'📋', title:'Aucune mission en cours',    desc:'Acceptez une mission pour commencer.'          },
+    done:      { icon:'✅', title:'Aucune mission terminée',    desc:'Vos missions complétées apparaîtront ici.'     },
   }
 
   const advanceLabel = {
-    assigned: 'ðŸš— Je suis en route',
-    en_route: 'â–¶ï¸ DÃ©marrer la mission',
-    active:   'âœ“ Terminer la mission',
+    assigned: '🚗 Je suis en route',
+    en_route: '▶️ Démarrer la mission',
+    active:   '✓ Terminer la mission',
   }
 
   return (
@@ -298,28 +319,28 @@ try {
         </div>
         {tab === 'priority' && (
   priorityMissions.length === 0 ? (
-    <EmptyState icon="ðŸŸ¢" title="Aucune mission prioritaire" description="Toutes les missions sont couvertes." />
+    <EmptyState icon="🟢" title="Aucune mission prioritaire" description="Toutes les missions sont couvertes." />
   ) : (
     <div className="space-y-3">
       <div className="bg-red-500/5 border border-red-500/20 rounded-xl p-3 mb-4">
-        <p className="text-xs text-red-400 font-semibold">ðŸ”´ Ces missions nÃ©cessitent un Å’il de toute urgence</p>
-        <p className="text-xs text-[#AAA] mt-0.5">L'Å’il prÃ©cÃ©dent a signalÃ© un empÃªchement â€” postulez rapidement.</p>
+        <p className="text-xs text-red-400 font-semibold">🔴 Ces missions nécessitent un Œil de toute urgence</p>
+        <p className="text-xs text-[#AAA] mt-0.5">L'Œil précédent a signalé un empêchement — postulez rapidement.</p>
       </div>
       {priorityMissions.map((m) => (
         <div key={m.id} className="bg-red-500/10 border border-red-500/20 rounded-xl p-3">
           <div className="flex items-start justify-between gap-2 mb-3">
             <div className="min-w-0">
               <div className="flex items-center gap-2 mb-1">
-                <span className="text-[10px] bg-red-500 text-white px-1.5 py-0.5 rounded font-bold">PRIORITÃ‰</span>
+                <span className="text-[10px] bg-red-500 text-white px-1.5 py-0.5 rounded font-bold">PRIORITÉ</span>
                 <span className="font-semibold text-sm truncate">{m.title}</span>
               </div>
               <div className="text-xs text-[#AAA] space-y-0.5">
-                <div>ðŸ“ {m.city} {m.quartier ? `Â· ${m.quartier}` : ''}</div>
+                <div>📍 {m.city} {m.quartier ? `· ${m.quartier}` : ''}</div>
                 {m.scheduled_at && (
-                  <div>ðŸ“… {new Date(m.scheduled_at).toLocaleDateString('fr-FR', { day:'numeric', month:'short' })} Ã  {new Date(m.scheduled_at).toLocaleTimeString('fr-FR', { hour:'2-digit', minute:'2-digit' })}</div>
+                  <div>📅 {new Date(m.scheduled_at).toLocaleDateString('fr-FR', { day:'numeric', month:'short' })} à {new Date(m.scheduled_at).toLocaleTimeString('fr-FR', { hour:'2-digit', minute:'2-digit' })}</div>
                 )}
                 {m.transfer_deadline && (
-                  <div className="text-red-400">â±ï¸ Expire Ã  {new Date(m.transfer_deadline).toLocaleTimeString('fr-FR', { hour:'2-digit', minute:'2-digit' })}</div>
+                  <div className="text-red-400">⏱️ Expire à {new Date(m.transfer_deadline).toLocaleTimeString('fr-FR', { hour:'2-digit', minute:'2-digit' })}</div>
                 )}
               </div>
             </div>
@@ -328,10 +349,10 @@ try {
             </div>
           </div>
           <button
-            onClick={() => user?.is_verified ? missionsAPI.interest(m.id).then(() => { toast('IntÃ©rÃªt exprimÃ© âœ“', 'success'); load(tab) }).catch(err => toast(err.response?.data?.error || 'Erreur', 'error')) : navigate('/oeil/verification-identite')}
+            onClick={() => user?.is_verified ? missionsAPI.interest(m.id).then(() => { toast('Intérêt exprimé ✓', 'success'); load(tab) }).catch(err => toast(err.response?.data?.error || 'Erreur', 'error')) : navigate('/oeil/verification-identite')}
             className="btn btn-sm w-full justify-center bg-red-500 text-white hover:bg-red-600"
           >
-            âš¡ Je prends cette mission â†’
+            ⚡ Je prends cette mission →
           </button>
         </div>
       ))}
@@ -355,7 +376,7 @@ try {
 
         {error && (
           <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-4 mb-4 text-sm text-red-400">
-            âŒ {error}
+            ❌ {error}
           </div>
         )}
 
@@ -370,26 +391,26 @@ try {
                 <div className="flex items-start justify-between gap-4">
                   <div className="flex items-start gap-3 flex-1 min-w-0">
                     <div className="w-11 h-11 bg-[#222] rounded-xl flex items-center justify-center text-2xl flex-shrink-0">
-                      {TYPE_ICONS[m.type] || 'ðŸ“‹'}
+                      {TYPE_ICONS[m.type] || '📋'}
                     </div>
                     <div className="min-w-0">
                       
                       <div className="font-semibold text-sm flex items-center gap-2 flex-wrap">
                         {m.title}
-                        {m.is_urgent && <span className="badge badge-orange text-[10px]">ðŸš¨ Urgent</span>}
-                        {m.under_surveillance && <span className="badge badge-red text-[10px]">âš ï¸ Sous surveillance</span>}
+                        {m.is_urgent && <span className="badge badge-orange text-[10px]">🚨 Urgent</span>}
+                        {m.under_surveillance && <span className="badge badge-red text-[10px]">⚠️ Sous surveillance</span>}
                       </div>
 
                       
                         <div className="text-xs text-[#AAA] mt-1 space-y-0.5">
                         <div className="flex flex-wrap gap-3">
-                          <span>ðŸ“ {m.city}{m.quartier ? ` Â· ${m.quartier}` : ''}</span>
-                          <span>ðŸ“… {m.scheduled_at ? `${new Date(m.scheduled_at).toLocaleDateString('fr-FR', { day:'numeric', month:'short', year:'numeric' })} Ã  ${new Date(m.scheduled_at).toLocaleTimeString('fr-FR', { hour:'2-digit', minute:'2-digit' })}` : 'â€”'}</span>
-                          {m.client_name && <span>ðŸ‘¤ {m.client_name}</span>}
+                          <span>📍 {m.city}{m.quartier ? ` · ${m.quartier}` : ''}</span>
+                          <span>📅 {m.scheduled_at ? `${new Date(m.scheduled_at).toLocaleDateString('fr-FR', { day:'numeric', month:'short', year:'numeric' })} à ${new Date(m.scheduled_at).toLocaleTimeString('fr-FR', { hour:'2-digit', minute:'2-digit' })}` : '—'}</span>
+                          {m.client_name && <span>👤 {m.client_name}</span>}
                           {tab !== 'available' && <StatusBadge status={m.status} validated={!!m.validated_at} role="oeil" />}
                         </div>
-                        {m.address && <div>ðŸ  {m.address}</div>}
-                        {m.description && <div className="text-[#666] line-clamp-2">ðŸ’¬ {m.description}</div>}
+                        {m.address && <div>🏠 {m.address}</div>}
+                        {m.description && <div className="text-[#666] line-clamp-2">💬 {m.description}</div>}
                       </div>
                       
                       {m.description && (
@@ -413,13 +434,13 @@ try {
                           disabled={m.interested || m.has_interested}
                           className="btn btn-sm flex-1 justify-center disabled:opacity-50 bg-green-500 text-white hover:bg-green-600"
                         >
-                          {(m.interested || m.has_interested) ? 'âœ… Demande envoyÃ©e' : 'ðŸ‘ï¸ Je suis intÃ©ressÃ©'}
+                          {(m.interested || m.has_interested) ? '✅ Demande envoyée' : '👁️ Je suis intéressé'}
                         </button>
                         <button
                         onClick={() => refuse(m.id, true)}
                         className="btn btn-sm flex-1 justify-center bg-red-500 text-white hover:bg-red-600"
                       >
-                        âœ• Ignorer
+                        ✕ Ignorer
                       </button>
 
 
@@ -430,22 +451,22 @@ try {
 
                   {tab === 'active' && (
                     <>
-                      <button onClick={() => setChatMission(m)} className="btn btn-ghost btn-sm">ðŸ’¬ Chat</button>
-                      <button onClick={() => setHistoryMission(m)} className="btn btn-ghost btn-sm">ðŸ•</button>
+                      <button onClick={() => setChatMission(m)} className="btn btn-ghost btn-sm">💬 Chat</button>
+                      <button onClick={() => setHistoryMission(m)} className="btn btn-ghost btn-sm">🕐</button>
                       
 
                         {['en_route','active'].includes(m.status) && ['airbnb','booking','Airbnb','Booking'].some(s => m.subcategory?.toLowerCase().includes(s.toLowerCase())) && (
                           <button onClick={() => navigate(`/oeil/missions/${m.id}/rapport`)} className="btn btn-ghost btn-sm">
-                            ðŸ“‹ Rapport
+                            📋 Rapport
                           </button>
                         )}
                         {['en_route','active'].includes(m.status) && m.type === 'audit' && (
                           <button onClick={() => navigate(`/oeil/missions/${m.id}/audit`)} className="btn btn-ghost btn-sm">
-                            ðŸ“‹ Audit
+                            📋 Audit
                           </button>
                         )}
 
-                      <button className="btn btn-ghost btn-sm">ðŸ“¸ Photos</button>
+                      <button className="btn btn-ghost btn-sm">📸 Photos</button>
                       {advanceLabel[m.status] && (
                         <button onClick={() => advance(m)} className="btn btn-primary btn-sm flex-1 justify-center">
                           {advanceLabel[m.status]}
@@ -453,7 +474,7 @@ try {
                       )}
                       {m.status === 'assigned' && (
                         <button onClick={() => refuse(m.id)} className="btn btn-ghost btn-sm text-red-400">
-                          âœ• Refuser
+                          ✕ Refuser
                         </button>
                       )}
                     </>
@@ -463,13 +484,13 @@ try {
                       onClick={() => setAssistanceMission(m)}
                       className="text-xs text-[#555] hover:text-orange-400 transition-colors mt-2 w-full text-center"
                     >
-                      ðŸ†˜ Demander assistance
+                      🆘 Demander assistance
                     </button>
                   )}
 
 
                   {tab === 'done' && (
-                    <button onClick={() => setSummaryMission(m)} className="btn btn-ghost btn-sm">ðŸ“„ RÃ©sumÃ©</button>
+                    <button onClick={() => setSummaryMission(m)} className="btn btn-ghost btn-sm">📄 Résumé</button>
                   )}
                 </div>
               </div>
@@ -490,7 +511,7 @@ try {
             {assistanceView === 'choice' && (
               <>
                 <div className="flex items-center gap-3 mb-6">
-                  <div className="w-10 h-10 rounded-xl bg-orange-500/10 flex items-center justify-center text-xl">ðŸ†˜</div>
+                  <div className="w-10 h-10 rounded-xl bg-orange-500/10 flex items-center justify-center text-xl">🆘</div>
                   <div>
                     <h2 className="font-bold text-base">Demander assistance</h2>
                     <p className="text-xs text-[#AAA]">{assistanceMission.title}</p>
@@ -501,14 +522,14 @@ try {
                     onClick={() => { setAssistanceView('problem'); setReportType(''); setReportDesc('') }}
                     className="w-full bg-[#222] hover:bg-[#2A2A2A] rounded-xl p-4 text-left transition-colors border border-white/5"
                   >
-                    <p className="text-sm font-semibold text-orange-400 mb-1">âš ï¸ Signaler un problÃ¨me</p>
-                    <p className="text-xs text-[#AAA]">Client irrespectueux, lieu dangereux, demande illÃ©gale...</p>
+                    <p className="text-sm font-semibold text-orange-400 mb-1">⚠️ Signaler un problème</p>
+                    <p className="text-xs text-[#AAA]">Client irrespectueux, lieu dangereux, demande illégale...</p>
                   </button>
                   <button
                     onClick={() => { setAssistanceView('transfer'); setTransferReason('') }}
                     className="w-full bg-[#222] hover:bg-[#2A2A2A] rounded-xl p-4 text-left transition-colors border border-white/5"
                   >
-                    <p className="text-sm font-semibold text-red-400 mb-1">ðŸš¨ EmpÃªchement majeur</p>
+                    <p className="text-sm font-semibold text-red-400 mb-1">🚨 Empêchement majeur</p>
                     <p className="text-xs text-[#AAA]">Je ne peux pas effectuer cette mission</p>
                   </button>
                 </div>
@@ -516,40 +537,40 @@ try {
               </>
             )}
 
-            {/* Signaler un problÃ¨me */}
+            {/* Signaler un problème */}
             {assistanceView === 'problem' && (
               <>
                 <div className="flex items-center gap-3 mb-4">
-                  <button onClick={() => setAssistanceView('choice')} className="text-[#AAA] hover:text-white">â†</button>
+                  <button onClick={() => setAssistanceView('choice')} className="text-[#AAA] hover:text-white">←</button>
                   <div>
-                    <h2 className="font-bold text-base">Signaler un problÃ¨me</h2>
+                    <h2 className="font-bold text-base">Signaler un problème</h2>
                     <p className="text-xs text-[#AAA]">{assistanceMission.title}</p>
                   </div>
                 </div>
                 <div className="mb-4">
-                  <label className="label">Type de problÃ¨me *</label>
+                  <label className="label">Type de problème *</label>
                   <select className="input" value={reportType} onChange={e => setReportType(e.target.value)}>
-                    <option value="">SÃ©lectionner...</option>
+                    <option value="">Sélectionner...</option>
                     <option value="Client irrespectueux / insultant">Client irrespectueux / insultant</option>
                     <option value="Client injoignable">Client injoignable</option>
                     <option value="Lieu dangereux">Lieu dangereux</option>
-                    <option value="Demande illÃ©gale">Demande illÃ©gale</option>
-                    <option value="Autre problÃ¨me">Autre problÃ¨me</option>
+                    <option value="Demande illégale">Demande illégale</option>
+                    <option value="Autre problème">Autre problème</option>
                   </select>
                 </div>
                 <div className="mb-5">
                   <label className="label">Description (optionnel)</label>
-                  <textarea className="input resize-none h-20 w-full text-sm" placeholder="DÃ©crivez la situation..." value={reportDesc} onChange={e => setReportDesc(e.target.value)} />
+                  <textarea className="input resize-none h-20 w-full text-sm" placeholder="Décrivez la situation..." value={reportDesc} onChange={e => setReportDesc(e.target.value)} />
                 </div>
                 <div className="flex gap-3">
                   <button onClick={() => setAssistanceView('choice')} className="btn btn-ghost flex-1 justify-center">Retour</button>
                   <button
                     onClick={async () => {
-                      if (!reportType) { toast('SÃ©lectionnez un type', 'error'); return }
+                      if (!reportType) { toast('Sélectionnez un type', 'error'); return }
                       setReporting(true)
                       try {
                         await missionsAPI.reportProblem(assistanceMission.id, { type: reportType, description: reportDesc })
-                        toast('ProblÃ¨me signalÃ© â€” Shoofly a Ã©tÃ© alertÃ© âœ“', 'success')
+                        toast('Problème signalé — Shoofly a été alerté ✓', 'success')
                         setAssistanceMission(null)
                         setAssistanceView('choice')
                         load(tab)
@@ -559,44 +580,44 @@ try {
                     disabled={reporting || !reportType}
                     className="btn btn-sm flex-1 justify-center bg-orange-500 text-white hover:bg-orange-600 disabled:opacity-50"
                   >
-                    {reporting ? '...' : 'Signaler â†’'}
+                    {reporting ? '...' : 'Signaler →'}
                   </button>
                 </div>
               </>
             )}
 
-            {/* EmpÃªchement majeur */}
+            {/* Empêchement majeur */}
             {assistanceView === 'transfer' && (
               <>
                 <div className="flex items-center gap-3 mb-4">
-                  <button onClick={() => setAssistanceView('choice')} className="text-[#AAA] hover:text-white">â†</button>
+                  <button onClick={() => setAssistanceView('choice')} className="text-[#AAA] hover:text-white">←</button>
                   <div>
-                    <h2 className="font-bold text-base">EmpÃªchement en cours de mission</h2>
+                    <h2 className="font-bold text-base">Empêchement en cours de mission</h2>
                     <p className="text-xs text-[#AAA]">{assistanceMission.title}</p>
                   </div>
                 </div>
                 <div className="bg-red-500/5 border border-red-500/20 rounded-xl p-4 mb-4">
-                  <p className="text-xs text-white/80">Cette action est irrÃ©versible et rÃ©servÃ©e aux situations d'urgence rÃ©elle.</p>
+                  <p className="text-xs text-white/80">Cette action est irréversible et réservée aux situations d'urgence réelle.</p>
                 </div>
                 <div className="bg-[#222] rounded-xl p-3 mb-4 space-y-1">
-                  <p className="text-xs text-[#AAA]">ConsÃ©quences :</p>
+                  <p className="text-xs text-[#AAA]">Conséquences :</p>
                   {assistanceMission.status === 'assigned'
-                    ? <p className="text-xs text-white/70">â€¢ Vous ne recevrez aucune rÃ©munÃ©ration</p>
+                    ? <p className="text-xs text-white/70">• Vous ne recevrez aucune rémunération</p>
                     : <>
-                        <p className="text-xs text-white/70">â€¢ Vous recevrez 50% si un remplaÃ§ant est trouvÃ©</p>
-                        <p className="text-xs text-white/70">â€¢ Cooldown 4 heures</p>
+                        <p className="text-xs text-white/70">• Vous recevrez 50% si un remplaçant est trouvé</p>
+                        <p className="text-xs text-white/70">• Cooldown 4 heures</p>
                       </>
                   }
-                  <p className="text-xs text-white/70">â€¢ Cet incident sera notÃ© sur votre profil</p>
+                  <p className="text-xs text-white/70">• Cet incident sera noté sur votre profil</p>
                 </div>
                 <div className="mb-5">
                   <label className="label">Raison (obligatoire)</label>
                   <select className="input" value={transferReason} onChange={e => setTransferReason(e.target.value)}>
-                    <option value="">SÃ©lectionner une raison</option>
-                    <option value="Urgence mÃ©dicale">Urgence mÃ©dicale</option>
+                    <option value="">Sélectionner une raison</option>
+                    <option value="Urgence médicale">Urgence médicale</option>
                     <option value="Accident / incident">Accident / incident sur place</option>
-                    <option value="ProblÃ¨me de sÃ©curitÃ©">ProblÃ¨me de sÃ©curitÃ©</option>
-                    <option value="EmpÃªchement familial grave">EmpÃªchement familial grave</option>
+                    <option value="Problème de sécurité">Problème de sécurité</option>
+                    <option value="Empêchement familial grave">Empêchement familial grave</option>
                     <option value="Autre cas de force majeure">Autre cas de force majeure</option>
                   </select>
                 </div>
@@ -604,11 +625,11 @@ try {
                   <button onClick={() => setAssistanceView('choice')} className="btn btn-ghost flex-1 justify-center">Retour</button>
                   <button
                     onClick={async () => {
-                      if (!transferReason) { toast('SÃ©lectionnez une raison', 'error'); return }
+                      if (!transferReason) { toast('Sélectionnez une raison', 'error'); return }
                       setTransferring(true)
                       try {
                         await missionsAPI.transfer(assistanceMission.id, { reason: transferReason })
-                        toast('EmpÃªchement signalÃ© â€” mission remise en prioritÃ©', 'info')
+                        toast('Empêchement signalé — mission remise en priorité', 'info')
                         setAssistanceMission(null)
                         setAssistanceView('choice')
                         load(tab)
@@ -618,7 +639,7 @@ try {
                     disabled={transferring || !transferReason}
                     className="btn btn-sm flex-1 justify-center bg-red-500 text-white hover:bg-red-600 disabled:opacity-50"
                   >
-                    {transferring ? '...' : 'Confirmer â†’'}
+                    {transferring ? '...' : 'Confirmer →'}
                   </button>
                 </div>
               </>
