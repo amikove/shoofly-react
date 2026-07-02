@@ -29,8 +29,15 @@ export default function AdminMissions() {
     const sortedMissions = [...missions].sort((a, b) => {
       if (!sortBy) return 0
       let va = a[sortBy], vb = b[sortBy]
-      if (sortBy === 'price') { va = parseFloat(va) || 0; vb = parseFloat(vb) || 0 }
-      else { va = (va || '').toString().toLowerCase(); vb = (vb || '').toString().toLowerCase() }
+      if (sortBy === 'price') {
+        va = parseFloat(va) || 0; vb = parseFloat(vb) || 0
+      } else if (sortBy === 'scheduled_at' || sortBy === 'transfer_deadline') {
+        // Dates : valeurs absentes toujours reléguées en fin de liste, quel que soit le sens du tri
+        va = va ? new Date(va).getTime() : Infinity
+        vb = vb ? new Date(vb).getTime() : Infinity
+      } else {
+        va = (va || '').toString().toLowerCase(); vb = (vb || '').toString().toLowerCase()
+      }
       if (va < vb) return sortDir === 'asc' ? -1 : 1
       if (va > vb) return sortDir === 'asc' ? 1 : -1
       return 0
@@ -169,7 +176,12 @@ const doAssign = async () => {
                     <th className="cursor-pointer select-none" onClick={() => handleSort('client_name')}>Client {sortBy === 'client_name' ? (sortDir === 'asc' ? '▲' : '▼') : ''}</th>
                     <th className="cursor-pointer select-none" onClick={() => handleSort('oeil_name')}>Œil {sortBy === 'oeil_name' ? (sortDir === 'asc' ? '▲' : '▼') : ''}</th>
                     <th className="cursor-pointer select-none" onClick={() => handleSort('price')}>Prix {sortBy === 'price' ? (sortDir === 'asc' ? '▲' : '▼') : ''}</th>
-                    {tab === 'priority' && <th>Exécution</th>}
+                    {tab === 'priority' && (
+                        <>
+                          <th className="cursor-pointer select-none" onClick={() => handleSort('scheduled_at')}>Exécution {sortBy === 'scheduled_at' ? (sortDir === 'asc' ? '▲' : '▼') : ''}</th>
+                          <th className="cursor-pointer select-none" onClick={() => handleSort('transfer_deadline')}>Deadline {sortBy === 'transfer_deadline' ? (sortDir === 'asc' ? '▲' : '▼') : ''}</th>
+                        </>
+                      )}
                     <th className="cursor-pointer select-none" onClick={() => handleSort('status')}>Statut {sortBy === 'status' ? (sortDir === 'asc' ? '▲' : '▼') : ''}</th>
                     <th>Action</th>
                   </tr>
@@ -186,16 +198,18 @@ const doAssign = async () => {
                       <td>{m.oeil_name || '—'}</td>
                       <td className="text-green-400 font-semibold">{parseFloat(m.price).toFixed(0)} MAD</td>
                         {tab === 'priority' && (
-                          <td className="text-xs">
-                            {m.scheduled_at
-                              ? new Date(m.scheduled_at).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })
-                              : '—'}
-                            {m.transfer_deadline && (
-                              <div className="text-red-400">
-                                ⏱️ {new Date(m.transfer_deadline).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
-                              </div>
-                            )}
-                          </td>
+                          <>
+                            <td className="text-xs">
+                              {m.scheduled_at
+                                ? new Date(m.scheduled_at).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })
+                                : '—'}
+                            </td>
+                            <td className="text-xs text-red-400">
+                              {m.transfer_deadline
+                                ? new Date(m.transfer_deadline).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })
+                                : '—'}
+                            </td>
+                          </>
                         )}
                         <td><StatusBadge status={m.status} /></td>
                       <td>
