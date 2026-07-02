@@ -2,7 +2,7 @@
 import AppLayout from '../../components/layout/AppLayout'
 import Topbar from '../../components/layout/Topbar'
 import { missionsAPI, adminAPI, usersAPI } from '../../api'
-import { StatusBadge, Spinner, EmptyState, toast } from '../../components/ui'
+import { StatusBadge, Spinner, EmptyState, toast, Pagination } from '../../components/ui'
 
 export default function AdminMissions() {
  const [missions, setMissions]       = useState([])
@@ -15,6 +15,9 @@ export default function AdminMissions() {
   const [selectedOeil, setSelectedOeil] = useState('')
   const [assigning, setAssigning]     = useState(false)
   const [oeilSearch, setOeilSearch]   = useState('')
+    // Pagination (Admin Missions, onglets "Toutes les missions" et "Priorité")
+    const [page, setPage] = useState(1)
+    const [totalPages, setTotalPages] = useState(1)
     // Tri par colonne cliquable (tableau Admin Missions)
     const [sortBy, setSortBy] = useState(null)   // 'title' | 'client_name' | 'oeil_name' | 'price' | 'status'
     const [sortDir, setSortDir] = useState('asc') // 'asc' | 'desc'
@@ -44,17 +47,22 @@ export default function AdminMissions() {
     })
 
   const load = () => {
-    setLoading(true)
-    const params = tab === 'priority'
-        ? { admin: true, is_priority: true, status: 'pending', sort: 'deadline_asc' } // PrioritÃ© : deadline de transfert la plus proche en premier
-        : { search, status, admin: true, sort: 'created_desc' } // Toutes missions : les plus rÃ©centes en premier
-    missionsAPI.list(params)
-      .then(({ data }) => setMissions(data.missions || []))
-      .catch(() => toast('Erreur', 'error'))
-      .finally(() => setLoading(false))
-  }
+      setLoading(true)
+      const params = tab === 'priority'
+        ? { admin: true, is_priority: true, status: 'pending', sort: 'deadline_asc', page, limit: 20 } // Priorité : deadline de transfert la plus proche en premier
+        : { search, status, admin: true, sort: 'created_desc', page, limit: 20 } // Toutes missions : les plus récentes en premier
+      missionsAPI.list(params)
+        .then(({ data }) => {
+          setMissions(data.missions || [])
+          setTotalPages(data.pages || 1)
+        })
+        .catch(() => toast('Erreur', 'error'))
+        .finally(() => setLoading(false))
+    }
 
-  useEffect(() => { load() }, [search, status, tab])
+    useEffect(() => { load() }, [search, status, tab, page])
+    // Revenir à la page 1 si on change de recherche, statut ou onglet (évite une page vide hors limites)
+    useEffect(() => { setPage(1) }, [search, status, tab])
 
   const openAssign = async (mission) => {
     setAssignModal(mission)
@@ -226,12 +234,12 @@ const doAssign = async () => {
                   ))}
                 </tbody>
               </table>
+              </div>
+              <Pagination page={page} pages={totalPages} onPageChange={setPage} />
             </div>
-          </div>
-        )}
-      </div>
-
-      {/* Modal affectation manuelle */}
+          )}
+        </div>
+        {/* Modal affectation manuelle */}
       {assignModal && (
         <div className="fixed inset-0 bg-black/80 z-[70] flex items-center justify-center p-4 backdrop-blur-sm">
           <div className="bg-[#181818] border border-white/10 rounded-2xl p-6 w-full max-w-md shadow-xl">
