@@ -141,9 +141,9 @@ const load = useCallback((t) => {
       // Tri fixe par date d'exécution la plus proche (missions urgentes en premier)
       params = { mode: 'available', sort: 'scheduled_asc', ...(quartier ? { quartier } : {}) }
   } else if (t === 'active') {
-    params = { mode: 'mine' }
+      params = { mode: 'mine', limit: 100 } // Aligné avec le compteur pour éviter la troncature par défaut (limit=20)
   } else {
-    params = { mode: 'mine', status: 'completed' }
+      params = { mode: 'mine', status: 'completed', limit: 100 } // Aligné avec le compteur pour éviter la troncature par défaut (limit=20)
   }
   return missionsAPI.list(params)
     .then(({ data }) => {
