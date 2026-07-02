@@ -95,6 +95,7 @@ export const reliabilityAPI = {
     decideRequest:  (id, data)   => api.post(`/api/reliability/admin/requests/${id}/decide`, data),
     adminSuspended: ()           => api.get('/api/reliability/admin/suspended'),
     adminAllScores: (params)     => api.get('/api/reliability/admin/all-scores', { params }),
+    adminReactivate: (oeilId, data) => api.post(`/api/reliability/admin/${oeilId}/reactivate`, data),
   }
 // MEDIA
 export const mediaAPI = {
