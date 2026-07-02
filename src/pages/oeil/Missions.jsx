@@ -142,7 +142,7 @@ const load = useCallback((t) => {
     params = { mode: 'available', is_priority: true }
   } else if (t === 'available') {
       // Tri fixe par date d'exécution la plus proche (missions urgentes en premier)
-      params = { mode: 'available', sort: 'scheduled_asc', page, limit: 20, ...(quartier ? { quartier } : {}) }
+      params = { mode: 'available', sort: 'scheduled_asc', page, limit: 5, ...(quartier ? { quartier } : {}) }
   } else if (t === 'active') {
       params = { mode: 'mine', limit: 100 } // Aligné avec le compteur pour éviter la troncature par défaut (limit=20)
   } else {
