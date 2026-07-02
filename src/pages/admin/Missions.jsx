@@ -169,6 +169,7 @@ const doAssign = async () => {
                     <th className="cursor-pointer select-none" onClick={() => handleSort('client_name')}>Client {sortBy === 'client_name' ? (sortDir === 'asc' ? '▲' : '▼') : ''}</th>
                     <th className="cursor-pointer select-none" onClick={() => handleSort('oeil_name')}>Œil {sortBy === 'oeil_name' ? (sortDir === 'asc' ? '▲' : '▼') : ''}</th>
                     <th className="cursor-pointer select-none" onClick={() => handleSort('price')}>Prix {sortBy === 'price' ? (sortDir === 'asc' ? '▲' : '▼') : ''}</th>
+                    {tab === 'priority' && <th>Exécution</th>}
                     <th className="cursor-pointer select-none" onClick={() => handleSort('status')}>Statut {sortBy === 'status' ? (sortDir === 'asc' ? '▲' : '▼') : ''}</th>
                     <th>Action</th>
                   </tr>
@@ -184,7 +185,19 @@ const doAssign = async () => {
                       <td className="text-[#AAA]">{m.client_name}</td>
                       <td>{m.oeil_name || '—'}</td>
                       <td className="text-green-400 font-semibold">{parseFloat(m.price).toFixed(0)} MAD</td>
-                      <td><StatusBadge status={m.status} /></td>
+                        {tab === 'priority' && (
+                          <td className="text-xs">
+                            {m.scheduled_at
+                              ? new Date(m.scheduled_at).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })
+                              : '—'}
+                            {m.transfer_deadline && (
+                              <div className="text-red-400">
+                                ⏱️ {new Date(m.transfer_deadline).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
+                              </div>
+                            )}
+                          </td>
+                        )}
+                        <td><StatusBadge status={m.status} /></td>
                       <td>
                         {m.status === 'pending' && (
                           <button
