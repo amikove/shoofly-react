@@ -46,7 +46,11 @@ export const usersAPI = {
     availability:     ()       => api.get('/api/users/oeil/availability'),
     oeilEarnings:     ()       => api.get('/api/users/oeil/earnings'),
     adminFinanceOeils: ()      => api.get('/api/users/admin/finance/oeils'),
-    wireTransfer:     (oeilId, data) => api.post(`/api/users/admin/finance/${oeilId}/wire-transfer`, data),
+   wireTransfer:     (oeilId, data) => api.post(`/api/users/admin/finance/${oeilId}/wire-transfer`, data),
+    uploadAvatar:     (formData) => api.post('/api/users/avatar', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+      transformRequest: (data) => data,
+    }),
   setAvailability:  (data)   => api.put('/api/users/oeil/availability', data),
   toggleAvailable:  ()       => api.put('/api/users/oeil/toggle-available'),
   favorites:        ()       => api.get('/api/users/favorites'),
