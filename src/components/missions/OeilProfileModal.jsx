@@ -36,7 +36,7 @@ export default function OeilProfileModal({ oeil, onClose, onCommander }) {
         <div>
           {/* En-tête */}
           <div className="flex items-center gap-4 mb-3">
-            <Avatar name={`${profile.first_name} ${profile.last_name}`} size={60} />
+            <Avatar name={`${profile.first_name} ${profile.last_name}`} size={60} src={profile.avatar_url} />
             <div className="flex-1">
               <div className="flex items-center gap-2 mb-1">
                 <Stars value={profile.rating_avg || 0} />
