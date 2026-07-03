@@ -6,6 +6,7 @@ import { StatusBadge, Spinner, EmptyState, Avatar, Stars, toast } from '../../co
 import { useAuth } from '../../context/AuthContext'
 import NewMissionModal from '../../components/missions/NewMissionModal'
 import InterestsModal from '../../components/missions/InterestsModal'
+import OeilProfileModal from '../../components/missions/OeilProfileModal'
 
 
 export default function ClientDashboard() {
@@ -15,7 +16,8 @@ export default function ClientDashboard() {
   const [stats, setStats]       = useState({ total:0, active:0, completed:0, budget:0 })
   const [loading, setLoading]   = useState(true)
   const [showNew, setShowNew]   = useState(false)
-  const [interestsMission, setInterestsMission] = useState(null)
+const [interestsMission, setInterestsMission] = useState(null)
+  const [profileOeil, setProfileOeil] = useState(null)
 
   useEffect(() => {
 
@@ -129,7 +131,9 @@ export default function ClientDashboard() {
               <EmptyState icon="👁️" title="Aucun Œil" description="Les Œils disponibles apparaîtront ici." />
             ) : oeils.map((o) => (
               <div key={o.id} className="flex items-center gap-3 py-3 border-b border-white/10 last:border-0">
-               <Avatar name={`${o.first_name} ${o.last_name}`} size={36} src={o.avatar_url} />
+                  <div className="cursor-pointer" onClick={() => setProfileOeil(o)}>
+                    <Avatar name={`${o.first_name} ${o.last_name}`} size={36} src={o.avatar_url} />
+                  </div>
                 <div className="flex-1 min-w-0">
                   <div className="font-semibold text-sm truncate">{o.first_name} {o.last_name}</div>
                   <div className="flex items-center gap-1 mt-0.5 flex-wrap">
@@ -166,8 +170,7 @@ export default function ClientDashboard() {
 }}
   />
 )}
-
-
+      <OeilProfileModal oeil={profileOeil} onClose={() => setProfileOeil(null)} />
     </AppLayout>
   )
 }
