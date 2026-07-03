@@ -129,7 +129,7 @@ export default function ClientDashboard() {
               <EmptyState icon="👁️" title="Aucun Œil" description="Les Œils disponibles apparaîtront ici." />
             ) : oeils.map((o) => (
               <div key={o.id} className="flex items-center gap-3 py-3 border-b border-white/10 last:border-0">
-                <Avatar name={`${o.first_name} ${o.last_name}`} size={36} />
+               <Avatar name={`${o.first_name} ${o.last_name}`} size={36} src={o.avatar_url} />
                 <div className="flex-1 min-w-0">
                   <div className="font-semibold text-sm truncate">{o.first_name} {o.last_name}</div>
                   <div className="flex items-center gap-1 mt-0.5 flex-wrap">
