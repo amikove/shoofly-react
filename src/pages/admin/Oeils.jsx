@@ -97,7 +97,7 @@ export default function AdminOeils() {
                       <tr key={o.id}>
                         <td>
                           <div className="flex items-center gap-2">
-                            <Avatar name={`${o.first_name} ${o.last_name}`} size={26} />
+                            <Avatar name={`${o.first_name} ${o.last_name}`} size={26} src={o.avatar_url} />
                             <span className="font-medium">{o.first_name} {o.last_name}</span>
                           </div>
                         </td>
@@ -139,7 +139,7 @@ export default function AdminOeils() {
                 <div key={r.id} className="card">
                   {/* En-tête */}
                   <div className="flex items-center gap-3 mb-4">
-                    <Avatar name={`${r.first_name} ${r.last_name}`} size={44} />
+                    <Avatar name={`${r.first_name} ${r.last_name}`} size={44} src={r.avatar_url} />
                     <div>
                       <p className="font-semibold">{r.first_name} {r.last_name}</p>
                       <p className="text-xs text-[#AAA]">📍 {r.city || '—'} · {r.email}</p>
