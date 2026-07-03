@@ -1,4 +1,6 @@
-// ── Badge ──────────────────────────────────────────────────
+import { createPortal } from 'react-dom'
+
+// ── Badge ────────────────────────────────────────────
 export function Badge({ children, variant = 'gray' }) {
   const variants = {
     green:  'badge-green',
@@ -67,7 +69,7 @@ export function EmptyState({ icon, title, description, action }) {
 export function Modal({ open, onClose, title, subtitle, children, size = 'md' }) {
   if (!open) return null
   const sizes = { sm: 'max-w-sm', md: 'max-w-lg', lg: 'max-w-2xl', xl: 'max-w-4xl' }
-  return (
+  return createPortal(
     <div className="overlay" onClick={(e) => e.target === e.currentTarget && onClose()}>
       <div className={`modal ${sizes[size]} w-full`}>
         <div className="flex items-start justify-between mb-5">
@@ -79,7 +81,8 @@ export function Modal({ open, onClose, title, subtitle, children, size = 'md' })
         </div>
         {children}
       </div>
-    </div>
+    </div>,
+    document.body
   )
 }
 
