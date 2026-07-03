@@ -15,7 +15,7 @@ export default function AdminMissions() {
   const [selectedOeil, setSelectedOeil] = useState('')
   const [assigning, setAssigning]     = useState(false)
   const [oeilSearch, setOeilSearch]   = useState('')
-    // Pagination (Admin Missions, onglets "Toutes les missions" et "Priorité")
+    // Pagination (Admin Missions, onglets "Toutes les missions" et "Priorit�")
     const [page, setPage] = useState(1)
     const [totalPages, setTotalPages] = useState(1)
     // Tri par colonne cliquable (tableau Admin Missions)
@@ -35,7 +35,7 @@ export default function AdminMissions() {
       if (sortBy === 'price') {
         va = parseFloat(va) || 0; vb = parseFloat(vb) || 0
       } else if (sortBy === 'scheduled_at' || sortBy === 'transfer_deadline') {
-        // Dates : valeurs absentes toujours relÃ©guÃ©es en fin de liste, quel que soit le sens du tri
+        // Dates : valeurs absentes toujours reléguées en fin de liste, quel que soit le sens du tri
         va = va ? new Date(va).getTime() : Infinity
         vb = vb ? new Date(vb).getTime() : Infinity
       } else {
@@ -49,8 +49,8 @@ export default function AdminMissions() {
   const load = () => {
       setLoading(true)
       const params = tab === 'priority'
-        ? { admin: true, is_priority: true, status: 'pending', sort: 'deadline_asc', page, limit: 20 } // Priorité : deadline de transfert la plus proche en premier
-        : { search, status, admin: true, sort: 'created_desc', page, limit: 20 } // Toutes missions : les plus récentes en premier
+        ? { admin: true, is_priority: true, status: 'pending', sort: 'deadline_asc', page, limit: 20 } // Priorit� : deadline de transfert la plus proche en premier
+        : { search, status, admin: true, sort: 'created_desc', page, limit: 20 } // Toutes missions : les plus r�centes en premier
       missionsAPI.list(params)
         .then(({ data }) => {
           setMissions(data.missions || [])
@@ -61,7 +61,7 @@ export default function AdminMissions() {
     }
 
     useEffect(() => { load() }, [search, status, tab, page])
-    // Revenir à la page 1 si on change de recherche, statut ou onglet (évite une page vide hors limites)
+    // Revenir � la page 1 si on change de recherche, statut ou onglet (�vite une page vide hors limites)
     useEffect(() => { setPage(1) }, [search, status, tab])
 
   const openAssign = async (mission) => {
@@ -71,16 +71,16 @@ export default function AdminMissions() {
     try {
       const { data } = await usersAPI.oeils({ verified: true, limit: 50 })
       setOeils(data.oeils || [])
-    } catch { toast('Erreur chargement Å’ils', 'error') }
+    } catch { toast('Erreur chargement �'ils', 'error') }
   }
 
 const doAssign = async () => {
     console.log('doAssign called', { selectedOeil, assignModal: assignModal?.id })
-    if (!selectedOeil) { toast('SÃ©lectionnez un Å’il', 'error'); return }
+    if (!selectedOeil) { toast('Sélectionnez un �'il', 'error'); return }
     setAssigning(true)
     try {
       await missionsAPI.assignAdmin(assignModal.id, { oeil_id: selectedOeil })
-      toast('Mission assignÃ©e âœ“', 'success')
+      toast('Mission assignée �o"', 'success')
       setAssignModal(null)
       load()
 } catch (err) {
@@ -107,7 +107,7 @@ const doAssign = async () => {
         {missions.filter(m => m.is_priority && m.status === 'pending').length > 0 && (
           <div className="rounded-xl border-2 border-red-500/40 bg-red-500/5 p-4 mb-5">
             <div className="flex items-center gap-2 mb-3">
-              <span className="text-lg">ðŸ”´</span>
+              <span className="text-lg">�Y"�</span>
               <h2 className="font-bold text-sm text-red-400 uppercase tracking-wider">Missions prioritaires</h2>
               <span className="bg-red-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">
                 {missions.filter(m => m.is_priority && m.status === 'pending').length}
@@ -118,10 +118,10 @@ const doAssign = async () => {
                 <div key={m.id} className="bg-red-500/10 border border-red-500/20 rounded-xl p-3 flex items-center justify-between gap-3">
                   <div>
                     <div className="font-semibold text-sm">{m.title}</div>
-                    <div className="text-xs text-[#AAA]">{m.client_name} Â· {m.city}</div>
+                    <div className="text-xs text-[#AAA]">{m.client_name} · {m.city}</div>
                     {m.transfer_deadline && (
                       <div className="text-xs text-red-400 mt-0.5">
-                        â±ï¸ Expire Ã  {new Date(m.transfer_deadline).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
+                        ⏱️ Expire à {new Date(m.transfer_deadline).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
                       </div>
                     )}
                   </div>
@@ -129,7 +129,7 @@ const doAssign = async () => {
                     onClick={() => openAssign(m)}
                     className="btn btn-sm bg-red-500 text-white hover:bg-red-600 flex-shrink-0"
                   >
-                    Affecter â†’
+                    Affecter �?'
                   </button>
                 </div>
               ))}
@@ -157,14 +157,14 @@ const doAssign = async () => {
 
         {tab === 'all' && (
           <div className="flex flex-wrap gap-3 mb-5">
-            <input className="input max-w-[220px]" placeholder="ðŸ” Rechercher..." value={search} onChange={(e) => setSearch(e.target.value)} />
+            <input className="input max-w-[220px]" placeholder="�Y"� Rechercher..." value={search} onChange={(e) => setSearch(e.target.value)} />
             <select className="input max-w-[160px]" value={status} onChange={(e) => setStatus(e.target.value)}>
               <option value="">Tous les statuts</option>
               <option value="active">Live</option>
-              <option value="assigned">AssignÃ©</option>
+              <option value="assigned">Assigné</option>
               <option value="pending">En attente</option>
-              <option value="completed">ComplÃ©tÃ©e</option>
-              <option value="cancelled">AnnulÃ©e</option>
+              <option value="completed">Complétée</option>
+              <option value="cancelled">Annulée</option>
             </select>
           </div>
         )}
@@ -172,25 +172,25 @@ const doAssign = async () => {
         {loading ? (
           <div className="flex justify-center py-20"><Spinner size="lg" /></div>
         ) : missions.length === 0 ? (
-          <EmptyState icon="ðŸ“‹" title="Aucune mission" description="Aucun rÃ©sultat." />
+          <EmptyState icon="�Y"<" title="Aucune mission" description="Aucun résultat." />
         ) : (
           <div className="card p-0">
             <div className="table-wrap">
               <table>
                 <thead>
                   <tr>
-                    <th>RÃ©f</th>
-                    <th className="cursor-pointer select-none" onClick={() => handleSort('title')}>Mission {sortBy === 'title' ? (sortDir === 'asc' ? 'â–²' : 'â–¼') : ''}</th>
-                    <th className="cursor-pointer select-none" onClick={() => handleSort('client_name')}>Client {sortBy === 'client_name' ? (sortDir === 'asc' ? 'â–²' : 'â–¼') : ''}</th>
-                    <th className="cursor-pointer select-none" onClick={() => handleSort('oeil_name')}>Å’il {sortBy === 'oeil_name' ? (sortDir === 'asc' ? 'â–²' : 'â–¼') : ''}</th>
-                    <th className="cursor-pointer select-none" onClick={() => handleSort('price')}>Prix {sortBy === 'price' ? (sortDir === 'asc' ? 'â–²' : 'â–¼') : ''}</th>
+                    <th>Réf</th>
+                    <th className="cursor-pointer select-none" onClick={() => handleSort('title')}>Mission {sortBy === 'title' ? (sortDir === 'asc' ? '�-�' : '�-�') : ''}</th>
+                    <th className="cursor-pointer select-none" onClick={() => handleSort('client_name')}>Client {sortBy === 'client_name' ? (sortDir === 'asc' ? '�-�' : '�-�') : ''}</th>
+                    <th className="cursor-pointer select-none" onClick={() => handleSort('oeil_name')}>�'il {sortBy === 'oeil_name' ? (sortDir === 'asc' ? '�-�' : '�-�') : ''}</th>
+                    <th className="cursor-pointer select-none" onClick={() => handleSort('price')}>Prix {sortBy === 'price' ? (sortDir === 'asc' ? '�-�' : '�-�') : ''}</th>
                     {tab === 'priority' && (
                         <>
-                          <th className="cursor-pointer select-none" onClick={() => handleSort('scheduled_at')}>ExÃ©cution {sortBy === 'scheduled_at' ? (sortDir === 'asc' ? 'â–²' : 'â–¼') : ''}</th>
-                          <th className="cursor-pointer select-none" onClick={() => handleSort('transfer_deadline')}>Deadline {sortBy === 'transfer_deadline' ? (sortDir === 'asc' ? 'â–²' : 'â–¼') : ''}</th>
+                          <th className="cursor-pointer select-none" onClick={() => handleSort('scheduled_at')}>Exécution {sortBy === 'scheduled_at' ? (sortDir === 'asc' ? '�-�' : '�-�') : ''}</th>
+                          <th className="cursor-pointer select-none" onClick={() => handleSort('transfer_deadline')}>Deadline {sortBy === 'transfer_deadline' ? (sortDir === 'asc' ? '�-�' : '�-�') : ''}</th>
                         </>
                       )}
-                    <th className="cursor-pointer select-none" onClick={() => handleSort('status')}>Statut {sortBy === 'status' ? (sortDir === 'asc' ? 'â–²' : 'â–¼') : ''}</th>
+                    <th className="cursor-pointer select-none" onClick={() => handleSort('status')}>Statut {sortBy === 'status' ? (sortDir === 'asc' ? '�-�' : '�-�') : ''}</th>
                     <th>Action</th>
                   </tr>
                 </thead>
@@ -199,23 +199,23 @@ const doAssign = async () => {
                     <tr key={m.id}>
                       <td className="text-[#AAA] text-xs">
                         #{String(m.id).slice(-6).toUpperCase()}
-                        {m.is_priority && <span className="ml-1 text-[9px] bg-red-500 text-white px-1 py-0.5 rounded font-bold">PRIORITÃ‰</span>}
+                        {m.is_priority && <span className="ml-1 text-[9px] bg-red-500 text-white px-1 py-0.5 rounded font-bold">PRIORIT�?</span>}
                       </td>
                       <td className="font-medium">{m.title}</td>
                       <td className="text-[#AAA]">{m.client_name}</td>
-                      <td>{m.oeil_name || 'â€”'}</td>
+                      <td>{m.oeil_name || '�?"'}</td>
                       <td className="text-green-400 font-semibold">{parseFloat(m.price).toFixed(0)} MAD</td>
                         {tab === 'priority' && (
                           <>
                             <td className="text-xs">
                               {m.scheduled_at
                                 ? new Date(m.scheduled_at).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })
-                                : 'â€”'}
+                                : '�?"'}
                             </td>
                             <td className="text-xs text-red-400">
                               {m.transfer_deadline
                                 ? new Date(m.transfer_deadline).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })
-                                : 'â€”'}
+                                : '�?"'}
                             </td>
                           </>
                         )}
@@ -244,7 +244,7 @@ const doAssign = async () => {
         <div className="fixed inset-0 bg-black/80 z-[70] flex items-center justify-center p-4 backdrop-blur-sm">
           <div className="bg-[#181818] border border-white/10 rounded-2xl p-6 w-full max-w-md shadow-xl">
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 rounded-xl bg-[#FF4D00]/10 flex items-center justify-center text-xl">ðŸ“‹</div>
+              <div className="w-10 h-10 rounded-xl bg-[#FF4D00]/10 flex items-center justify-center text-xl">�Y"<</div>
               <div>
                 <h2 className="font-bold text-base">Affectation manuelle</h2>
                 <p className="text-xs text-[#AAA]">{assignModal.title}</p>
@@ -252,19 +252,19 @@ const doAssign = async () => {
             </div>
 
             <div className="bg-[#222] rounded-xl p-3 mb-4">
-              <p className="text-xs text-[#AAA]">âš ï¸ Ã€ utiliser aprÃ¨s confirmation tÃ©lÃ©phonique avec l'Å’il. L'Å’il sera immÃ©diatement notifiÃ©.</p>
+              <p className="text-xs text-[#AAA]">�s�️ �? utiliser après confirmation téléphonique avec l'�'il. L'�'il sera immédiatement notifié.</p>
             </div>
 
             
             {/* Infos transfert si applicable */}
             {assignModal?.is_priority && assignModal?.transferred_from && (
               <div className="bg-red-500/5 border border-red-500/20 rounded-xl p-3 mb-4 space-y-1">
-                <p className="text-xs font-semibold text-red-400">Mission transfÃ©rÃ©e</p>
+                <p className="text-xs font-semibold text-red-400">Mission transférée</p>
                 {assignModal.transfer_reason && <p className="text-xs text-[#AAA]">Raison : {assignModal.transfer_reason}</p>}
-                {assignModal.transfer_type && <p className="text-xs text-[#AAA]">Type : {assignModal.transfer_type === 'during' ? 'Pendant mission (50/50)' : 'Avant dÃ©marrage'}</p>}
+                {assignModal.transfer_type && <p className="text-xs text-[#AAA]">Type : {assignModal.transfer_type === 'during' ? 'Pendant mission (50/50)' : 'Avant démarrage'}</p>}
                 {assignModal.transfer_deadline && (
                   <p className="text-xs text-red-400">
-                    â±ï¸ Expire Ã  {new Date(assignModal.transfer_deadline).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
+                    ⏱️ Expire à {new Date(assignModal.transfer_deadline).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
                   </p>
                 )}
               </div>
@@ -272,8 +272,8 @@ const doAssign = async () => {
 
             <div className="mb-4">
               <label className="label">
-                Å’ils disponibles
-                {assignModal?.city && <span className="ml-2 text-[#FF4D00] text-xs">ðŸ“ {assignModal.city} en prioritÃ©</span>}
+                �'ils disponibles
+                {assignModal?.city && <span className="ml-2 text-[#FF4D00] text-xs">�Y"� {assignModal.city} en priorité</span>}
               </label>
               <input
                 className="input mb-2"
@@ -282,9 +282,9 @@ const doAssign = async () => {
                 onChange={e => setOeilSearch(e.target.value)}
               />
               <div className="max-h-56 overflow-y-auto space-y-1">
-                {/* MÃªme ville en premier */}
+                {/* Même ville en premier */}
                 {sameCity.filter(o => `${o.first_name} ${o.last_name}`.toLowerCase().includes(oeilSearch.toLowerCase())).length > 0 && (
-                  <p className="text-[10px] text-[#555] uppercase tracking-wider px-1 mb-1">MÃªme ville â€” {assignModal?.city}</p>
+                  <p className="text-[10px] text-[#555] uppercase tracking-wider px-1 mb-1">Même ville �?" {assignModal?.city}</p>
                 )}
                 {sameCity
                   .filter(o => `${o.first_name} ${o.last_name}`.toLowerCase().includes(oeilSearch.toLowerCase()))
@@ -300,9 +300,9 @@ const doAssign = async () => {
                   >
                     <div>
                       <div className="text-sm font-medium">{o.first_name} {o.last_name}</div>
-                      <div className="text-xs text-[#AAA]">ðŸ“ {o.city} Â· â­ {o.rating_avg || 'â€”'} Â· {o.total_missions || 0} missions</div>
+                      <div className="text-xs text-[#AAA]">�Y"� {o.city} · ⭐ {o.rating_avg || '�?"'} · {o.total_missions || 0} missions</div>
                     </div>
-                    {selectedOeil === o.id && <span className="text-[#FF4D00] text-sm">âœ“</span>}
+                    {selectedOeil === o.id && <span className="text-[#FF4D00] text-sm">�o"</span>}
                   </div>
                 ))}
 
@@ -322,16 +322,16 @@ const doAssign = async () => {
                       >
                         <div>
                           <div className="text-sm font-medium">{o.first_name} {o.last_name}</div>
-                          <div className="text-xs text-[#AAA]">ðŸ“ {o.city} Â· â­ {o.rating_avg || 'â€”'} Â· {o.total_missions || 0} missions</div>
+                          <div className="text-xs text-[#AAA]">�Y"� {o.city} · ⭐ {o.rating_avg || '�?"'} · {o.total_missions || 0} missions</div>
                         </div>
-                        {selectedOeil === o.id && <span className="text-[#FF4D00] text-sm">âœ“</span>}
+                        {selectedOeil === o.id && <span className="text-[#FF4D00] text-sm">�o"</span>}
                       </div>
                     ))}
                   </>
                 )}
 
                 {filteredOeils.length === 0 && (
-                  <p className="text-xs text-[#555] text-center py-4">Aucun Å’il trouvÃ©</p>
+                  <p className="text-xs text-[#555] text-center py-4">Aucun �'il trouvé</p>
                 )}
               </div>
             </div>
@@ -343,7 +343,7 @@ const doAssign = async () => {
                 disabled={assigning || !selectedOeil}
                 className="btn btn-primary flex-1 justify-center disabled:opacity-50"
               >
-                {assigning ? '...' : 'Affecter cet Å’il â†’'}
+                {assigning ? '...' : 'Affecter cet �'il �?''}
               </button>
             </div>
           </div>
