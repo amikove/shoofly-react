@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import OeilProfileModal from '../../components/missions/OeilProfileModal'
 import AppLayout from '../../components/layout/AppLayout'
 import Topbar from '../../components/layout/Topbar'
 import { adminAPI } from '../../api'
@@ -13,6 +14,7 @@ export default function AdminOeils() {
   const [rejecting, setRejecting] = useState(null)
   const [rejectReason, setRejectReason] = useState('')
   const [acting, setActing]     = useState({})
+  const [profileOeil, setProfileOeil] = useState(null)
 
   const load = () => {
     setLoading(true)
@@ -96,11 +98,11 @@ export default function AdminOeils() {
                     {oeils.map((o) => (
                       <tr key={o.id}>
                         <td>
-                          <div className="flex items-center gap-2">
-                            <Avatar name={`${o.first_name} ${o.last_name}`} size={26} src={o.avatar_url} />
-                            <span className="font-medium">{o.first_name} {o.last_name}</span>
-                          </div>
-                        </td>
+                            <div className="flex items-center gap-2 cursor-pointer" onClick={() => setProfileOeil(o)}>
+                              <Avatar name={`${o.first_name} ${o.last_name}`} size={26} src={o.avatar_url} />
+                              <span className="font-medium">{o.first_name} {o.last_name}</span>
+                            </div>
+                          </td>
                         <td className="text-[#AAA]">{o.city || '—'}</td>
                         <td>
                           <span className={`badge ${o.is_verified ? 'badge-green' : 'badge-yellow'}`}>
@@ -138,8 +140,8 @@ export default function AdminOeils() {
               {requests.map((r) => (
                 <div key={r.id} className="card">
                   {/* En-tête */}
-                  <div className="flex items-center gap-3 mb-4">
-                    <Avatar name={`${r.first_name} ${r.last_name}`} size={44} src={r.avatar_url} />
+                  <div className="flex items-center gap-3 mb-4 cursor-pointer" onClick={() => setProfileOeil(r)}>
+                      <Avatar name={`${r.first_name} ${r.last_name}`} size={44} src={r.avatar_url} />
                     <div>
                       <p className="font-semibold">{r.first_name} {r.last_name}</p>
                       <p className="text-xs text-[#AAA]">📍 {r.city || '—'} · {r.email}</p>
@@ -223,6 +225,7 @@ export default function AdminOeils() {
           <button onClick={() => setLightbox(null)} className="absolute top-4 right-4 text-white text-2xl">✕</button>
         </div>
       )}
+      <OeilProfileModal oeil={profileOeil} onClose={() => setProfileOeil(null)} />
     </AppLayout>
   )
 }
