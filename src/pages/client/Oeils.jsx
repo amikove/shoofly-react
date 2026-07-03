@@ -134,10 +134,10 @@ export default function ClientOeils() {
           <div className="grid grid-cols-[repeat(auto-fill,minmax(270px,1fr))] gap-4">
             {oeils.map((o) => (
               <div key={o.id} className="card">
-                <div className="flex items-center gap-3 mb-4">
-                  <Avatar name={`${o.first_name} ${o.last_name}`} size={46} />
-                  <div className="flex-1">
-                    <div className="font-semibold">{o.first_name} {o.last_name}</div>
+                  <div className="flex items-center gap-3 mb-4 cursor-pointer" onClick={() => setProfileOeil(o)}>
+                   <Avatar name={`${o.first_name} ${o.last_name}`} size={46} src={o.avatar_url} />
+                    <div className="flex-1">
+                      <div className="font-semibold">{o.first_name} {o.last_name}</div>
                     <div className="flex items-center gap-1.5 mt-0.5">
                       <Stars value={o.rating_avg || 0} />
                       <span className="text-xs text-[#AAA]">
