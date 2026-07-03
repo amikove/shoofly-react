@@ -95,7 +95,17 @@ export function Stars({ value, max = 5 }) {
 }
 
 // ── Avatar ─────────────────────────────────────────────────
-export function Avatar({ name = '', size = 28, bgColor = 'bg-[#FF4D00]/10', textColor = 'text-[#FF4D00]' }) {
+export function Avatar({ name = '', size = 28, bgColor = 'bg-[#FF4D00]/10', textColor = 'text-[#FF4D00]', src = null }) {
+  if (src) {
+    return (
+      <img
+        src={src}
+        alt={name}
+        className="rounded-full object-cover flex-shrink-0"
+        style={{ width: size, height: size }}
+      />
+    )
+  }
   const initials = name.split(' ').map((x) => x[0]).join('').slice(0, 2).toUpperCase()
   return (
     <div
