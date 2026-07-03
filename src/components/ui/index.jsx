@@ -70,8 +70,11 @@ export function Modal({ open, onClose, title, subtitle, children, size = 'md' })
   if (!open) return null
   const sizes = { sm: 'max-w-sm', md: 'max-w-lg', lg: 'max-w-2xl', xl: 'max-w-4xl' }
   return createPortal(
-    <div className="overlay" onClick={(e) => e.target === e.currentTarget && onClose()}>
-      <div className={`modal ${sizes[size]} w-full`}>
+    <div
+      className="fixed inset-0 bg-black/80 z-[100] flex items-center justify-center p-4 backdrop-blur-sm"
+      onClick={(e) => e.target === e.currentTarget && onClose()}
+    >
+      <div className={`bg-[#181818] border border-white/10 rounded-2xl p-6 shadow-xl ${sizes[size]} w-full max-h-[85vh] overflow-y-auto`}>
         <div className="flex items-start justify-between mb-5">
           <div>
             <h2 className="text-base font-bold">{title}</h2>
