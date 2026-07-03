@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import OeilProfileModal from './OeilProfileModal'
 import { missionsAPI } from '../../api'
 import { Spinner, toast, Avatar } from '../ui'
 
@@ -7,6 +8,7 @@ export default function InterestsModal({ mission, onClose, onHired }) {
   const [loading, setLoading]     = useState(true)
   const [hiring, setHiring]       = useState(null)
   const [hired, setHired]         = useState(false)
+  const [profileOeil, setProfileOeil] = useState(null)
 
   useEffect(() => {
     missionsAPI.interests(mission.id)
@@ -53,7 +55,9 @@ export default function InterestsModal({ mission, onClose, onHired }) {
           <div className="space-y-3">
             {interests.map((o) => (
               <div key={o.id} className="bg-[#222] rounded-xl p-4 flex items-start gap-3">
-                  <Avatar name={`${o.first_name} ${o.last_name}`} size={40} src={o.avatar_url} />
+                  <div className="cursor-pointer" onClick={() => setProfileOeil(o)}>
+                    <Avatar name={`${o.first_name} ${o.last_name}`} size={40} src={o.avatar_url} />
+                  </div>
                 <div className="flex-1 min-w-0">
                   <div className="font-semibold text-sm">{o.first_name} {o.last_name}</div>
                   <div className="text-xs text-[#AAA] flex gap-3 mt-0.5 flex-wrap">
@@ -76,10 +80,11 @@ export default function InterestsModal({ mission, onClose, onHired }) {
                   {hiring === o.id ? '...' : hired ? '✓' : 'Embaucher'}
                 </button>
               </div>
-            ))}
+           ))}
           </div>
         )}
       </div>
+      <OeilProfileModal oeil={profileOeil} onClose={() => setProfileOeil(null)} />
     </div>
   )
 }
