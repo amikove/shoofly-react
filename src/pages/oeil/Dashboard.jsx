@@ -132,17 +132,34 @@ const refuse = async (id) => {
               </p>
             </div>
             {!user?.id_verified_at && (
+                <button
+                  onClick={() => navigate('/oeil/verification-identite')}
+                  className="btn btn-primary btn-sm flex-shrink-0"
+                >
+                  Vérifier →
+                </button>
+              )}
+            </div>
+          )}
+          {/* Bannière photo de profil manquante */}
+          {!user?.avatar_url && (
+            <div className="rounded-xl p-4 flex items-center gap-3 bg-[#FF4D00]/10 border border-[#FF4D00]/30">
+              <span className="text-2xl flex-shrink-0">📸</span>
+              <div className="flex-1">
+                <p className="text-sm font-semibold text-white">Ajoutez votre photo de profil</p>
+                <p className="text-xs text-[#AAA] mt-0.5">
+                  Un profil avec photo inspire plus confiance aux clients et vous aide à obtenir plus de missions.
+                </p>
+              </div>
               <button
-                onClick={() => navigate('/oeil/verification-identite')}
+                onClick={() => navigate('/oeil/compte')}
                 className="btn btn-primary btn-sm flex-shrink-0"
               >
-                Vérifier →
+                Ajouter →
               </button>
-            )}
-          </div>
-        )}
-
-        {/* Stats */}
+            </div>
+          )}
+          {/* Stats */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
           <div className="stat-card">
             <div className="text-xs text-[#AAA] mb-1">Missions complétées</div>
