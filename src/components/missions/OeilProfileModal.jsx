@@ -162,15 +162,18 @@ export default function OeilProfileModal({ oeil, onClose, onCommander }) {
           )}
 
           {/* Actions */}
+          {/* Actions */}
           <div className="flex gap-3 pt-5 mt-2 border-t border-white/10">
-            <button
-              onClick={() => { onCommander(profile); onClose() }}
-              disabled={!profile.is_available}
-              className="btn btn-primary btn-lg flex-1 justify-center disabled:opacity-40 disabled:cursor-not-allowed"
-            >
-              {profile.is_available ? 'Commander cet Œil →' : 'Indisponible'}
-            </button>
-            <button onClick={onClose} className="btn btn-ghost btn-lg">Fermer</button>
+            {onCommander && (
+              <button
+                onClick={() => { onCommander(profile); onClose() }}
+                disabled={!profile.is_available}
+                className="btn btn-primary btn-lg flex-1 justify-center disabled:opacity-40 disabled:cursor-not-allowed"
+              >
+                {profile.is_available ? 'Commander cet Œil →' : 'Indisponible'}
+              </button>
+            )}
+            <button onClick={onClose} className={`btn btn-ghost btn-lg ${!onCommander ? 'flex-1 justify-center' : ''}`}>Fermer</button>
           </div>
         </div>
       )}
