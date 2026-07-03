@@ -79,6 +79,7 @@ export default function OeilGains() {
                         {l.kind === 'transfer'
                           ? <span className="badge badge-blue">Viré</span>
                           : <span className="badge badge-green">Complétée</span>}
+                      </td>
                       <td className={`font-semibold ${(l.amount || 0) < 0 ? 'text-red-400' : 'text-green-400'}`}>
                         {(l.amount || 0) < 0 ? '' : '+'}{(l.amount || 0).toFixed(0)} MAD
                       </td>
