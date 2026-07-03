@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import AppLayout from '../../components/layout/AppLayout'
 import Topbar from '../../components/layout/Topbar'
 import { useAuth } from '../../context/AuthContext'
@@ -17,6 +17,26 @@ const defaultDispo = () => JOURS.map((j, i) => ({
 export default function OeilCompte() {
   const { user, updateUser } = useAuth()
   const [saving, setSaving]  = useState(false)
+  const [uploadingAvatar, setUploadingAvatar] = useState(false)
+  const avatarInputRef = useRef(null)
+
+  const handleAvatarChange = async (e) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    setUploadingAvatar(true)
+    try {
+      const formData = new FormData()
+      formData.append('avatar', file)
+      const { data } = await usersAPI.uploadAvatar(formData)
+      updateUser({ avatar_url: data.avatar_url })
+      toast('Photo de profil mise à jour ✓', 'success')
+    } catch (err) {
+      toast(err.response?.data?.error || 'Erreur lors de l\'envoi', 'error')
+    } finally {
+      setUploadingAvatar(false)
+      e.target.value = ''
+    }
+  }
   const [savingDispo, setSavingDispo] = useState(false)
   const [isAvailable, setIsAvailable] = useState(user?.is_available || false)
   const [togglingDispo, setTogglingDispo] = useState(false)
@@ -86,10 +106,27 @@ const [dispo, setDispo] = useState(() => parseDispo(user?.disponibilites))
 
           {/* Profil */}
           <div className="card">
-            <div className="flex items-center gap-3 mb-6 pb-6 border-b border-white/10">
-              <Avatar name={`${user?.first_name} ${user?.last_name}`} size={52} />
-              <div>
-                <div className="font-semibold text-base">{user?.first_name} {user?.last_name}</div>
+              <div className="flex items-center gap-3 mb-6 pb-6 border-b border-white/10">
+                <div className="relative">
+                  <Avatar name={`${user?.first_name} ${user?.last_name}`} size={52} src={user?.avatar_url} />
+                  <button
+                    onClick={() => avatarInputRef.current?.click()}
+                    disabled={uploadingAvatar}
+                    className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-[#FF4D00] flex items-center justify-center text-white text-xs disabled:opacity-50"
+                    title="Changer la photo"
+                  >
+                    {uploadingAvatar ? '...' : '📷'}
+                  </button>
+                  <input
+                    ref={avatarInputRef}
+                    type="file"
+                    accept="image/jpeg,image/png,image/webp"
+                    className="hidden"
+                    onChange={handleAvatarChange}
+                  />
+                </div>
+                <div>
+                  <div className="font-semibold text-base">{user?.first_name} {user?.last_name}</div>
                 <div className="flex items-center gap-1.5 mt-1">
                   <Stars value={user?.rating_avg || 0} />
                   <span className="text-xs text-[#AAA]">{user?.rating_avg || '—'} · {user?.total_missions || 0} missions</span>
