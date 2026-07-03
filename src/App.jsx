@@ -22,6 +22,7 @@ import ClientCompte     from './pages/client/Compte'
 import AirbnbReportView from './pages/client/AirbnbReportView'
 import AuditReportView from './pages/client/AuditReportView'
 import ClientMessagerie from './pages/shared/Messagerie'
+import ClientMesSignalements from './pages/shared/MesSignalements'
 
 // Oeil pages
 import OeilDashboard from './pages/oeil/Dashboard'
@@ -30,6 +31,7 @@ import OeilCompte    from './pages/oeil/Compte'
 import AirbnbReport  from './pages/oeil/AirbnbReport'
 import AuditReport from './pages/oeil/AuditReport'
 import OeilMessagerie from './pages/shared/Messagerie'
+import OeilMesSignalements from './pages/shared/MesSignalements'
 
 
 
@@ -98,6 +100,7 @@ export default function App() {
       <Route path="/client/oeils"    element={<RequireAuth allowedRoles={['client']}><ClientOeils /></RequireAuth>} />
       <Route path="/client/compte"    element={<RequireAuth allowedRoles={['client']}><ClientCompte /></RequireAuth>} />
       <Route path="/client/messages"  element={<RequireAuth allowedRoles={['client']}><ClientMessagerie /></RequireAuth>} />
+      <Route path="/client/mes-signalements" element={<RequireAuth allowedRoles={['client']}><ClientMesSignalements /></RequireAuth>} />
       <Route path="/client/missions/:missionId/rapport" element={<RequireAuth allowedRoles={['client']}><AirbnbReportView /></RequireAuth>} />
       <Route path="/client/missions/:missionId/audit" element={<RequireAuth allowedRoles={['client']}><AuditReportView /></RequireAuth>} />
 
@@ -106,6 +109,7 @@ export default function App() {
       <Route path="/oeil/missions"  element={<RequireAuth allowedRoles={['oeil']}><OeilMissions /></RequireAuth>} />
      <Route path="/oeil/compte"    element={<RequireAuth allowedRoles={['oeil']}><OeilCompte /></RequireAuth>} />
       <Route path="/oeil/messages"  element={<RequireAuth allowedRoles={['oeil']}><OeilMessagerie /></RequireAuth>} />
+      <Route path="/oeil/mes-signalements" element={<RequireAuth allowedRoles={['oeil']}><OeilMesSignalements /></RequireAuth>} />
       <Route path="/oeil/missions/:missionId/audit" element={<RequireAuth allowedRoles={['oeil']}><AuditReport /></RequireAuth>} />
       <Route path="/oeil/missions/:missionId/rapport" element={<RequireAuth allowedRoles={['oeil']}><AirbnbReport /></RequireAuth>} />
       <Route path="/oeil/verification-identite" element={<RequireAuth allowedRoles={['oeil']}><VerificationIdentite /></RequireAuth>} />
