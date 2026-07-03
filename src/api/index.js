@@ -31,6 +31,7 @@ export const missionsAPI = {
   transfer:     (id, data)   => api.post(`/api/missions/${id}/transfer`, data),
   assignAdmin:     (id, data)   => api.post(`/api/missions/${id}/assign-admin`, data),
   reportProblem:   (id, data)   => api.post(`/api/missions/${id}/report-problem`, data),
+    myReports:       ()           => api.get('/api/missions/my-reports'),
   adminProblems:   (status)     => api.get('/api/missions/admin/problems', { params: { status } }),
   resolveReport:   (id, data)   => api.put(`/api/missions/admin/problems/${id}`, data),
   history:  (id) => api.get(`/api/missions/${id}/history`),
