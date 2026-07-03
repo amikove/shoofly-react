@@ -39,11 +39,14 @@ export const missionsAPI = {
 
 // USERS
 export const usersAPI = {
-  oeils:            (params) => api.get('/api/users/oeils', { params }),
-  oeil:             (id)     => api.get(`/api/users/oeils/${id}`, { params: { _t: Date.now() } }),
-  notifications:    ()       => api.get('/api/users/notifications'),
-  markRead:         (data)   => api.put('/api/users/notifications/read', data),
-  availability:     ()       => api.get('/api/users/oeil/availability'),
+    oeils:            (params) => api.get('/api/users/oeils', { params }),
+    oeil:             (id)     => api.get(`/api/users/oeils/${id}`, { params: { _t: Date.now() } }),
+    notifications:    ()       => api.get('/api/users/notifications'),
+    markRead:         (data)   => api.put('/api/users/notifications/read', data),
+    availability:     ()       => api.get('/api/users/oeil/availability'),
+    oeilEarnings:     ()       => api.get('/api/users/oeil/earnings'),
+    adminFinanceOeils: ()      => api.get('/api/users/admin/finance/oeils'),
+    wireTransfer:     (oeilId, data) => api.post(`/api/users/admin/finance/${oeilId}/wire-transfer`, data),
   setAvailability:  (data)   => api.put('/api/users/oeil/availability', data),
   toggleAvailable:  ()       => api.put('/api/users/oeil/toggle-available'),
   favorites:        ()       => api.get('/api/users/favorites'),
