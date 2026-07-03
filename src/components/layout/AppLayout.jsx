@@ -22,6 +22,7 @@ const MENUS = {
       { to: '/oeil/missions',             icon: '🎯',  label: 'Missions'         },
       { to: '/oeil/messages',             icon: '💬',  label: 'Messages'         },
       { to: '/oeil/mes-signalements',     icon: '🚨',  label: 'Mes signalements' },
+      { to: '/oeil/gains',                icon: '💰',  label: 'Mes gains'        },
       { to: '/oeil/compte',               icon: '👤',  label: 'Profil'           },
     ],
 
