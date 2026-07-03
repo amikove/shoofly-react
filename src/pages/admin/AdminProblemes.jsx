@@ -140,50 +140,53 @@ export default function AdminProblemes() {
                 )}
 
                 {/* Actions */}
-                {tab === 'open' && (
-                  noteModal === r.id ? (
-                    <div className="space-y-3 border-t border-white/10 pt-3">
-                      <textarea
-                        className="input resize-none h-16 w-full text-sm"
-                        placeholder="Note interne (optionnel)..."
-                        value={adminNote}
-                        onChange={e => setAdminNote(e.target.value)}
-                      />
-                      <div className="flex gap-2">
-                        <button
-                          onClick={() => resolve(r.id, nextStatus, adminNote)}
-                          disabled={acting[r.id]}
-                          className="btn btn-primary btn-sm disabled:opacity-50"
-                        >
-                          {acting[r.id] ? '...' : nextStatus === 'resolved' ? '✅ Marquer résolu' : nextStatus === 'in_progress' ? '🔄 Confirmer' : '🙈 Ignorer'}
-                        </button>
-                        <button onClick={() => { setNoteModal(null); setAdminNote('') }} className="btn btn-ghost btn-sm">Annuler</button>
+                {(tab === 'open' || tab === 'in_progress') && (
+                    noteModal === r.id ? (
+                      <div className="space-y-3 border-t border-white/10 pt-3">
+                        <textarea
+                          className="input resize-none h-16 w-full text-sm"
+                          placeholder="Note interne (optionnel)..."
+                          value={adminNote}
+                          onChange={e => setAdminNote(e.target.value)}
+                        />
+                        <div className="flex gap-2">
+                          <button
+                            onClick={() => resolve(r.id, nextStatus, adminNote)}
+                            disabled={acting[r.id]}
+                            className="btn btn-primary btn-sm disabled:opacity-50"
+                          >
+                            {acting[r.id] ? '...' : nextStatus === 'resolved' ? '✅ Marquer résolu' : nextStatus === 'in_progress' ? '🔄 Confirmer' : '🙈 Ignorer'}
+                          </button>
+                          <button onClick={() => { setNoteModal(null); setAdminNote('') }} className="btn btn-ghost btn-sm">Annuler</button>
+                        </div>
                       </div>
-                    </div>
-                  ) : (
-                    <div className="flex gap-2 border-t border-white/10 pt-3">
-                      <button
-                        onClick={() => { setNoteModal(r.id); setNextStatus('in_progress') }}
-                        className="btn btn-ghost btn-sm text-amber-400"
-                      >
-                        🔄 En cours
-                      </button>
-                      <button
-                        onClick={() => { setNoteModal(r.id); setNextStatus('resolved') }}
-                        className="btn btn-primary btn-sm"
-                      >
-                        ✅ Résoudre
-                      </button>
-                     <button
-                        onClick={() => resolve(r.id, 'dismissed', null)}
-                        disabled={acting[r.id]}
-                        className="btn btn-ghost btn-sm text-[#555] disabled:opacity-50"
-                      >
-                        {acting[r.id] ? '...' : '🙈 Ignorer'}
-                      </button>
-                    </div>
-                  )
-                )}
+                    ) : (
+                      <div className="flex gap-2 border-t border-white/10 pt-3">
+                        {/* "En cours" uniquement utile depuis l'onglet Ouverts — inutile de re-proposer ce statut si le ticket y est déjà */}
+                        {tab === 'open' && (
+                          <button
+                            onClick={() => { setNoteModal(r.id); setNextStatus('in_progress') }}
+                            className="btn btn-ghost btn-sm text-amber-400"
+                          >
+                            🔄 En cours
+                          </button>
+                        )}
+                        <button
+                          onClick={() => { setNoteModal(r.id); setNextStatus('resolved') }}
+                          className="btn btn-primary btn-sm"
+                        >
+                          ✅ Résoudre
+                        </button>
+                       <button
+                          onClick={() => resolve(r.id, 'dismissed', null)}
+                          disabled={acting[r.id]}
+                          className="btn btn-ghost btn-sm text-[#555] disabled:opacity-50"
+                        >
+                          {acting[r.id] ? '...' : '🙈 Ignorer'}
+                        </button>
+                      </div>
+                    )
+                  )}
               </div>
             ))}
           </div>
