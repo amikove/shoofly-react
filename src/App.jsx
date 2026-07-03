@@ -51,6 +51,7 @@ import AdminGestion from './pages/admin/AdminGestion'
 import CompteSuspendu from './pages/oeil/CompteSuspendu'
 import AdminFiabilite from './pages/admin/AdminFiabilite'
 import AdminProblemes from './pages/admin/AdminProblemes'
+import AdminFinance from './pages/admin/AdminFinance'
 
 
 // Route guard
@@ -130,6 +131,7 @@ export default function App() {
       <Route path="/admin/admins" element={<RequireAuth allowedRoles={['admin']}><AdminGestion /></RequireAuth>} />
       <Route path="/admin/fiabilite" element={<RequireAuth allowedRoles={['admin']}><AdminFiabilite /></RequireAuth>} />
       <Route path="/admin/problemes" element={<RequireAuth allowedRoles={['admin']}><AdminProblemes /></RequireAuth>} />
+      <Route path="/admin/finance" element={<RequireAuth allowedRoles={['admin']}><AdminFinance /></RequireAuth>} />
 
 
       <Route path="*" element={<Navigate to="/" replace />} />

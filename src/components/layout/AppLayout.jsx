@@ -36,6 +36,7 @@ const MENUS = {
     { to: '/admin/fraude',       icon: '🛡️',  label: 'Fraude',       section: 'Gestion',     permission: 'moderation' },
     { to: '/admin/fiabilite',    icon: '📊',  label: 'Fiabilité',    section: 'Gestion',     permission: 'identity' },
     { to: '/admin/problemes',    icon: '🚨',  label: 'Problèmes',    section: 'Gestion',     permission: 'moderation', badge: 'problems' },
+      { to: '/admin/finance',      icon: '💰',  label: 'Finance',      section: 'Gestion',     permission: 'finance' },
     { to: '/admin/promos',       icon: '🎟️',  label: 'Codes Promo',  section: 'Système',     permission: 'finance'    },
     { to: '/admin/parametres',   icon: '⚙️',  label: 'Paramètres',   section: 'Système',     permission: 'settings'   },
     { to: '/admin/admins',       icon: '👑',  label: 'Admins',       section: 'Système',     superAdminOnly: true     },
