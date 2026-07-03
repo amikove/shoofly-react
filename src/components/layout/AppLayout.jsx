@@ -9,18 +9,21 @@ import { missionsAPI, adminAPI } from '../../api'
 
 const MENUS = {
   client: [
-    { to: '/client',           icon: '⊞',  label: 'Dashboard'   },
-    { to: '/client/missions',  icon: '📋',  label: 'Missions'    },
-    { to: '/client/messages',  icon: '💬',  label: 'Messages'    },
-    { to: '/client/oeils',     icon: '👁️',  label: 'Les Œils'    },
-    { to: '/client/compte',    icon: '👤',  label: 'Compte'      },
-  ],
+      { to: '/client',           icon: '⊞',  label: 'Dashboard'   },
+      { to: '/client/missions',  icon: '📋',  label: 'Missions'    },
+      { to: '/client/messages',  icon: '💬',  label: 'Messages'    },
+      { to: '/client/mes-signalements', icon: '🚨', label: 'Mes signalements' },
+      { to: '/client/oeils',     icon: '👁️',  label: 'Les Œils'    },
+      { to: '/client/compte',    icon: '👤',  label: 'Compte'      },
+    ],
+
   oeil: [
-    { to: '/oeil',                      icon: '⊞',  label: 'Dashboard'        },
-    { to: '/oeil/missions',             icon: '🎯',  label: 'Missions'         },
-    { to: '/oeil/messages',             icon: '💬',  label: 'Messages'         },
-    { to: '/oeil/compte',               icon: '👤',  label: 'Profil'           },
-  ],
+      { to: '/oeil',                      icon: '⊞',  label: 'Dashboard'        },
+      { to: '/oeil/missions',             icon: '🎯',  label: 'Missions'         },
+      { to: '/oeil/messages',             icon: '💬',  label: 'Messages'         },
+      { to: '/oeil/mes-signalements',     icon: '🚨',  label: 'Mes signalements' },
+      { to: '/oeil/compte',               icon: '👤',  label: 'Profil'           },
+    ],
 
   admin: [
     { to: '/admin',              icon: '⊞',  label: 'Dashboard',    section: 'Vue globale', permission: 'dash'       },
