@@ -21,7 +21,7 @@ const MAIN_TABS = [
   { id: 'claims',      label: '📋 Réclamations' },
 ]
 
-const COMING_SOON_TABS = ['geo', 'oeils', 'clients', 'fileattente', 'immobilier', 'financier']
+const COMING_SOON_TABS = ['oeils', 'clients', 'fileattente', 'immobilier', 'financier']
 
 const FUNNEL_STEPS = [
   { key: 'inscrits',  label: 'Inscrits' },
@@ -57,6 +57,10 @@ export default function AdminDashboard() {
   // ── Services ──
   const [servicesData, setServicesData] = useState(null)
   const [loadingServices, setLoadingServices] = useState(true)
+
+  // ── Géographique ──
+  const [geoData, setGeoData] = useState(null)
+  const [loadingGeo, setLoadingGeo] = useState(true)
 
   // ── Funnel (2 périodes indépendantes) ──
   const [funnelRangeA, setFunnelRangeA] = useState({ preset: 'month', ...getPresetRange('month') })
@@ -105,6 +109,20 @@ export default function AdminDashboard() {
       .then(({ data }) => setAlertData(data))
       .catch(() => toast('Erreur chargement alertes', 'error'))
       .finally(() => setLoadingAlert(false))
+  }, [tab, range, compareRange])
+
+  useEffect(() => {
+    if (tab !== 'geo' || !range?.from || !range?.to) return
+    setLoadingGeo(true)
+    const params = {
+      date_from: range.from.toISOString(),
+      date_to: range.to.toISOString(),
+      ...(compareRange ? { compare_from: compareRange.from.toISOString(), compare_to: compareRange.to.toISOString() } : {}),
+    }
+    adminAPI.dashboardGeo(params)
+      .then(({ data }) => setGeoData(data))
+      .catch(() => toast('Erreur chargement géo', 'error'))
+      .finally(() => setLoadingGeo(false))
   }, [tab, range, compareRange])
 
   useEffect(() => {
@@ -459,6 +477,55 @@ export default function AdminDashboard() {
                     </>
                   )
                 })}
+              </div>
+            )}
+          </>
+        )}
+
+        {tab === 'geo' && (
+          <>
+            <DateRangeFilter
+              range={range}
+              onChange={setRange}
+              compareRange={compareRange}
+              onCompareChange={setCompareRange}
+            />
+
+            {loadingGeo ? (
+              <div className="flex justify-center py-20"><Spinner size="lg" /></div>
+            ) : !geoData?.current?.length ? (
+              <div className="card text-center py-16 text-[#AAA]">Aucune mission sur cette période</div>
+            ) : (
+              <div className="card p-0">
+                <div className="table-wrap">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>Ville</th>
+                        <th>Missions</th>
+                        <th>Taux complétion</th>
+                        <th>CA</th>
+                        <th>Œils actifs</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {geoData.current.map((g) => {
+                        const cmp = geoData.comparison?.find(x => x.city === g.city)
+                        const completionRate = g.total_missions > 0 ? Math.round((g.completed_missions / g.total_missions) * 1000) / 10 : 0
+                        const cmpCompletionRate = cmp && cmp.total_missions > 0 ? Math.round((cmp.completed_missions / cmp.total_missions) * 1000) / 10 : undefined
+                        return (
+                          <tr key={g.city}>
+                            <td className="font-medium">📍 {g.city}</td>
+                            <td><ComparisonCell current={g.total_missions} compare={cmp?.total_missions} hasComparison={!!geoData.comparison} /></td>
+                            <td><ComparisonCell current={completionRate} compare={cmpCompletionRate} suffix="%" hasComparison={!!geoData.comparison} /></td>
+                            <td className="text-green-400"><ComparisonCell current={parseFloat(g.revenue).toFixed(0)} compare={cmp ? parseFloat(cmp.revenue).toFixed(0) : undefined} suffix=" MAD" hasComparison={!!geoData.comparison} /></td>
+                            <td><ComparisonCell current={g.active_oeils} compare={cmp?.active_oeils} hasComparison={!!geoData.comparison} /></td>
+                          </tr>
+                        )
+                      })}
+                    </tbody>
+                  </table>
+                </div>
               </div>
             )}
           </>
