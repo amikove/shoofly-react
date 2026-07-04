@@ -802,7 +802,7 @@ export default function AdminDashboard() {
 
                 {/* Top clients */}
                 <p className="text-sm font-semibold mb-3">🏆 Top clients</p>
-                <div className="card p-0">
+                <div className="card p-0 mb-6">
                   <div className="table-wrap">
                     <table>
                       <thead>
@@ -823,10 +823,50 @@ export default function AdminDashboard() {
                     </table>
                   </div>
                 </div>
+
+                {/* Segmentation par profil */}
+                <p className="text-sm font-semibold mb-3">🧩 Segmentation par profil</p>
+                <div className="card p-0">
+                  <div className="table-wrap">
+                    <table>
+                      <thead>
+                        <tr><th>Profil</th><th>Clients</th><th>% du total</th><th>Missions</th><th>CA</th></tr>
+                      </thead>
+                      <tbody>
+                        {clientsData.segmentation.length === 0 ? (
+                          <tr><td colSpan={5} className="text-center text-[#AAA] py-6">Aucune donnée sur cette période</td></tr>
+                        ) : (() => {
+                          const total = clientsData.segmentation.reduce((s, x) => s + x.clients, 0)
+                          return clientsData.segmentation.map((s) => {
+                            const pct = total > 0 ? Math.round((s.clients / total) * 100) : 0
+                            return (
+                              <tr key={s.profil}>
+                                <td className="font-medium">{s.profil}</td>
+                                <td>{s.clients}</td>
+                                <td>
+                                  <div className="flex items-center gap-2">
+                                    <div className="w-14 h-1.5 bg-[#222] rounded-full overflow-hidden">
+                                      <div className="h-full bg-[#FF4D00]" style={{ width: `${pct}%` }} />
+                                    </div>
+                                    <span className="text-[#AAA] text-xs">{pct}%</span>
+                                  </div>
+                                </td>
+                                <td>{s.total_missions}</td>
+                                <td className="text-green-400">{parseFloat(s.revenue).toFixed(0)} MAD</td>
+                              </tr>
+                            )
+                          })
+                        })()}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
               </>
             )}
           </>
         )}
+
+        
 
         {tab === 'fileattente' && (
           <>
