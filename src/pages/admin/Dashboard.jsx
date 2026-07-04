@@ -20,7 +20,14 @@ const MAIN_TABS = [
   { id: 'claims',      label: '📋 Réclamations' },
 ]
 
-const COMING_SOON_TABS = ['funnel', 'services', 'geo', 'oeils', 'clients', 'fileattente', 'immobilier', 'financier']
+const COMING_SOON_TABS = ['funnel', 'geo', 'oeils', 'clients', 'fileattente', 'immobilier', 'financier']
+
+const TYPE_LABELS = {
+  immobilier: '🏠 Immobilier',
+  file_attente: '⏳ File d\'attente',
+  audit: '🔎 Audit',
+  personnalisee: '🎯 Personnalisée',
+}
 
 // Calcule le delta % entre deux valeurs, gère le cas comparaison = 0
 function delta(current, compare) {
@@ -53,6 +60,10 @@ export default function AdminDashboard() {
   // ── Alertes ──
   const [alertData, setAlertData] = useState(null)
   const [loadingAlert, setLoadingAlert] = useState(true)
+
+  // ── Services ──
+  const [servicesData, setServicesData] = useState(null)
+  const [loadingServices, setLoadingServices] = useState(true)
 
   // ── Réclamations (inchangé) ──
   const [claims, setClaims] = useState([])
@@ -92,6 +103,20 @@ export default function AdminDashboard() {
       .then(({ data }) => setAlertData(data))
       .catch(() => toast('Erreur chargement alertes', 'error'))
       .finally(() => setLoadingAlert(false))
+  }, [tab, range, compareRange])
+
+  useEffect(() => {
+    if (tab !== 'services' || !range?.from || !range?.to) return
+    setLoadingServices(true)
+    const params = {
+      date_from: range.from.toISOString(),
+      date_to: range.to.toISOString(),
+      ...(compareRange ? { compare_from: compareRange.from.toISOString(), compare_to: compareRange.to.toISOString() } : {}),
+    }
+    adminAPI.dashboardServices(params)
+      .then(({ data }) => setServicesData(data))
+      .catch(() => toast('Erreur chargement services', 'error'))
+      .finally(() => setLoadingServices(false))
   }, [tab, range, compareRange])
 
   const resolve = async (claimId, missionId, decision) => {
@@ -274,6 +299,71 @@ export default function AdminDashboard() {
                   })}
                 </div>
               </>
+            )}
+          </>
+        )}
+
+        {tab === 'services' && (
+          <>
+            <DateRangeFilter
+              range={range}
+              onChange={setRange}
+              compareRange={compareRange}
+              onCompareChange={setCompareRange}
+            />
+
+            {loadingServices ? (
+              <div className="flex justify-center py-20"><Spinner size="lg" /></div>
+            ) : !servicesData?.current?.length ? (
+              <div className="card text-center py-16 text-[#AAA]">Aucune mission sur cette période</div>
+            ) : (
+              <div className="card p-0">
+                <div className="table-wrap">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>Service</th>
+                        <th>Missions</th>
+                        <th>Taux complétion</th>
+                        <th>CA</th>
+                        <th>Commission</th>
+                        <th>Note moyenne</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {servicesData.current.map((s) => {
+                        const cmp = servicesData.comparison?.find(x => x.type === s.type)
+                        const completionRate = s.total_missions > 0 ? Math.round((s.completed_missions / s.total_missions) * 1000) / 10 : 0
+                        const cmpCompletionRate = cmp && cmp.total_missions > 0 ? Math.round((cmp.completed_missions / cmp.total_missions) * 1000) / 10 : undefined
+                        return (
+                          <tr key={s.type}>
+                            <td className="font-medium">{TYPE_LABELS[s.type] || s.type}</td>
+                            <td>
+                              {s.total_missions}
+                              <DeltaBadge value={delta(s.total_missions, cmp?.total_missions)} />
+                            </td>
+                            <td>
+                              {completionRate}%
+                              <DeltaBadge value={delta(completionRate, cmpCompletionRate)} />
+                            </td>
+                            <td className="text-green-400">
+                              {parseFloat(s.revenue).toFixed(0)} MAD
+                              <DeltaBadge value={delta(parseFloat(s.revenue), cmp ? parseFloat(cmp.revenue) : undefined)} />
+                            </td>
+                            <td className="text-[#FF4D00]">
+                              {parseFloat(s.commission).toFixed(0)} MAD
+                              <DeltaBadge value={delta(parseFloat(s.commission), cmp ? parseFloat(cmp.commission) : undefined)} />
+                            </td>
+                            <td className="text-yellow-400">
+                              {s.avg_rating > 0 ? `${s.avg_rating} ★` : '—'}
+                            </td>
+                          </tr>
+                        )
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
             )}
           </>
         )}
