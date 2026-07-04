@@ -384,7 +384,7 @@ export default function AdminDashboard() {
                 <select
                   className="input mb-2"
                   value={funnelRangeA.preset}
-                  onChange={(e) => e.target.value !== 'custom' && setFunnelRangeA({ preset: e.target.value, ...getPresetRange(e.target.value) })}
+                  onChange={(e) => e.target.value === 'custom' ? setFunnelRangeA({ preset: 'custom' }) : setFunnelRangeA({ preset: e.target.value, ...getPresetRange(e.target.value) })}
                 >
                   <option value="today">Aujourd'hui</option>
                   <option value="yesterday">Hier</option>
@@ -408,7 +408,7 @@ export default function AdminDashboard() {
                 <select
                   className="input mb-2"
                   value={funnelRangeB.preset}
-                  onChange={(e) => e.target.value !== 'custom' && setFunnelRangeB({ preset: e.target.value, ...getPresetRange(e.target.value) })}
+                  onChange={(e) => e.target.value === 'custom' ? setFunnelRangeB({ preset: 'custom' }) : setFunnelRangeB({ preset: e.target.value, ...getPresetRange(e.target.value) })}
                 >
                   <option value="today">Aujourd'hui</option>
                   <option value="yesterday">Hier</option>
