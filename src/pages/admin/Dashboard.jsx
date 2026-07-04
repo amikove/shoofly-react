@@ -717,6 +717,47 @@ export default function AdminDashboard() {
                   </div>
                 </div>
 
+                {/* Segmentation */}
+                <p className="text-sm font-semibold mb-3">🧩 Segmentation</p>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                  <div className="card">
+                    <p className="text-xs text-[#AAA] uppercase tracking-wider font-semibold mb-3">Situation</p>
+                    {oeilsData.segmentation.situation.map((s) => {
+                      const total = oeilsData.segmentation.situation.reduce((sum, x) => sum + x.n, 0)
+                      const pct = total > 0 ? Math.round((s.n / total) * 100) : 0
+                      return (
+                        <div key={s.label} className="flex items-center justify-between text-xs py-1.5 border-b border-white/5 last:border-0">
+                          <span>{s.label}</span>
+                          <div className="flex items-center gap-2">
+                            <div className="w-14 h-1.5 bg-[#222] rounded-full overflow-hidden">
+                              <div className="h-full bg-blue-400" style={{ width: `${pct}%` }} />
+                            </div>
+                            <span className="text-[#AAA] w-10 text-right">{s.n} ({pct}%)</span>
+                          </div>
+                        </div>
+                      )
+                    })}
+                  </div>
+                  <div className="card">
+                    <p className="text-xs text-[#AAA] uppercase tracking-wider font-semibold mb-3">Motivation</p>
+                    {oeilsData.segmentation.motivation.map((s) => {
+                      const total = oeilsData.segmentation.motivation.reduce((sum, x) => sum + x.n, 0)
+                      const pct = total > 0 ? Math.round((s.n / total) * 100) : 0
+                      return (
+                        <div key={s.label} className="flex items-center justify-between text-xs py-1.5 border-b border-white/5 last:border-0">
+                          <span>{s.label}</span>
+                          <div className="flex items-center gap-2">
+                            <div className="w-14 h-1.5 bg-[#222] rounded-full overflow-hidden">
+                              <div className="h-full bg-[#FF4D00]" style={{ width: `${pct}%` }} />
+                            </div>
+                            <span className="text-[#AAA] w-10 text-right">{s.n} ({pct}%)</span>
+                          </div>
+                        </div>
+                      )
+                    })}
+                  </div>
+                </div>
+
                 {/* Alertes */}
                 <p className="text-sm font-semibold mb-3">🚨 Alertes</p>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
