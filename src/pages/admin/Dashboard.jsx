@@ -21,7 +21,15 @@ const MAIN_TABS = [
   { id: 'claims',      label: '📋 Réclamations' },
 ]
 
-const COMING_SOON_TABS = ['funnel', 'geo', 'oeils', 'clients', 'fileattente', 'immobilier', 'financier']
+const COMING_SOON_TABS = ['geo', 'oeils', 'clients', 'fileattente', 'immobilier', 'financier']
+
+const FUNNEL_STEPS = [
+  { key: 'inscrits',  label: 'Inscrits' },
+  { key: 'commande',  label: 'A créé une mission' },
+  { key: 'assignee',  label: 'Mission assignée' },
+  { key: 'completee', label: 'Mission complétée' },
+  { key: 'revient',   label: 'Client revenu' },
+]
 
 const TYPE_LABELS = {
   immobilier: '🏠 Immobilier',
@@ -49,6 +57,13 @@ export default function AdminDashboard() {
   // ── Services ──
   const [servicesData, setServicesData] = useState(null)
   const [loadingServices, setLoadingServices] = useState(true)
+
+  // ── Funnel (2 périodes indépendantes) ──
+  const [funnelRangeA, setFunnelRangeA] = useState({ preset: 'month', ...getPresetRange('month') })
+  const [funnelRangeB, setFunnelRangeB] = useState({ preset: 'week', ...getPresetRange('week') })
+  const [funnelDataA, setFunnelDataA] = useState(null)
+  const [funnelDataB, setFunnelDataB] = useState(null)
+  const [loadingFunnel, setLoadingFunnel] = useState(true)
 
   // ── Réclamations (inchangé) ──
   const [claims, setClaims] = useState([])
@@ -89,6 +104,21 @@ export default function AdminDashboard() {
       .catch(() => toast('Erreur chargement alertes', 'error'))
       .finally(() => setLoadingAlert(false))
   }, [tab, range, compareRange])
+
+  useEffect(() => {
+    if (tab !== 'funnel' || !funnelRangeA?.from || !funnelRangeA?.to || !funnelRangeB?.from || !funnelRangeB?.to) return
+    setLoadingFunnel(true)
+    Promise.all([
+      adminAPI.dashboardFunnel({ date_from: funnelRangeA.from.toISOString(), date_to: funnelRangeA.to.toISOString() }),
+      adminAPI.dashboardFunnel({ date_from: funnelRangeB.from.toISOString(), date_to: funnelRangeB.to.toISOString() }),
+    ])
+      .then(([resA, resB]) => {
+        setFunnelDataA(resA.data.steps)
+        setFunnelDataB(resB.data.steps)
+      })
+      .catch(() => toast('Erreur chargement funnel', 'error'))
+      .finally(() => setLoadingFunnel(false))
+  }, [tab, funnelRangeA, funnelRangeB])
 
   useEffect(() => {
     if (tab !== 'services' || !range?.from || !range?.to) return
@@ -337,6 +367,68 @@ export default function AdminDashboard() {
                     </tbody>
                   </table>
                 </div>
+              </div>
+            )}
+          </>
+        )}
+
+        {tab === 'funnel' && (
+          <>
+            <p className="text-sm font-semibold mb-3">Entonnoir de conversion</p>
+
+            <div className="grid gap-4 mb-3" style={{ gridTemplateColumns: '160px 1fr 1fr' }}>
+              <div />
+              <select
+                className="input"
+                value={funnelRangeA.preset}
+                onChange={(e) => setFunnelRangeA({ preset: e.target.value, ...getPresetRange(e.target.value) })}
+              >
+                <option value="today">Aujourd'hui</option>
+                <option value="yesterday">Hier</option>
+                <option value="week">Cette semaine</option>
+                <option value="month">Ce mois</option>
+              </select>
+              <select
+                className="input"
+                value={funnelRangeB.preset}
+                onChange={(e) => setFunnelRangeB({ preset: e.target.value, ...getPresetRange(e.target.value) })}
+              >
+                <option value="today">Aujourd'hui</option>
+                <option value="yesterday">Hier</option>
+                <option value="week">Cette semaine</option>
+                <option value="month">Ce mois</option>
+              </select>
+            </div>
+
+            {loadingFunnel ? (
+              <div className="flex justify-center py-20"><Spinner size="lg" /></div>
+            ) : funnelDataA && funnelDataB && (
+              <div className="grid gap-4" style={{ gridTemplateColumns: '160px 1fr 1fr' }}>
+                {FUNNEL_STEPS.map((step, i) => {
+                  const valA = funnelDataA.find(s => s.key === step.key)?.value || 0
+                  const valB = funnelDataB.find(s => s.key === step.key)?.value || 0
+                  const maxA = funnelDataA[0]?.value || 1
+                  const maxB = funnelDataB[0]?.value || 1
+                  const pctA = Math.round((valA / maxA) * 100)
+                  const pctB = Math.round((valB / maxB) * 100)
+                  return (
+                    <>
+                      <div key={`label-${step.key}`} className="text-xs text-[#AAA] text-right self-center">{step.label}</div>
+                      <div key={`bar-a-${step.key}`} className="flex items-center gap-2">
+                        <div className="flex-1 bg-[#222] rounded-lg overflow-hidden h-7">
+                          <div className="h-full bg-[#FF4D00] rounded-lg" style={{ width: `${pctA}%` }} />
+                        </div>
+                        <span className="text-sm font-semibold w-8 flex-shrink-0">{valA}</span>
+                      </div>
+                      <div key={`bar-b-${step.key}`} className="flex items-center gap-2">
+                        <div className="flex-1 bg-[#222] rounded-lg overflow-hidden h-7">
+                          <div className="h-full bg-blue-500 rounded-lg" style={{ width: `${pctB}%` }} />
+                        </div>
+                        <span className="text-sm font-semibold w-8 flex-shrink-0">{valB}</span>
+                      </div>
+                    </>
+                  )
+                })}
               </div>
             )}
           </>
