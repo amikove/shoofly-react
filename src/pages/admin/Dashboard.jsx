@@ -226,7 +226,7 @@ export default function AdminDashboard() {
               <>
                 {/* Section instantanée */}
                 <p className="text-xs text-[#AAA] uppercase tracking-wider font-semibold mb-2">🔴 État actuel — à traiter</p>
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-6">
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-6">
                   <div className={`stat-card ${alertData.instant.suspended_oeils > 0 ? 'border-red-500/30' : ''}`}>
                     <div className="text-xs text-[#AAA] mb-1">Œils suspendus</div>
                     <div className={`text-2xl font-bold ${alertData.instant.suspended_oeils > 0 ? 'text-red-400' : 'text-white'}`}>{alertData.instant.suspended_oeils}</div>
@@ -247,6 +247,10 @@ export default function AdminDashboard() {
                     <div className="text-xs text-[#AAA] mb-1">Œils sous 70%</div>
                     <div className={`text-2xl font-bold ${alertData.instant.low_reliability_oeils > 0 ? 'text-amber-400' : 'text-white'}`}>{alertData.instant.low_reliability_oeils}</div>
                   </div>
+                  <div className="stat-card">
+                    <div className="text-xs text-[#AAA] mb-1">Score fiabilité moyen</div>
+                    <div className="text-2xl font-bold text-white">{alertData.instant.avg_reliability_score}%</div>
+                  </div>
                 </div>
 
                 {/* Section période */}
@@ -254,7 +258,6 @@ export default function AdminDashboard() {
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                   {[
                     { label: 'Transferts sans remplaçant', value: alertData.current?.transfer_failures ?? 0, compare: alertData.comparison?.transfer_failures, invert: true },
-                    { label: 'Score fiabilité moyen', value: `${alertData.current?.avg_reliability_score ?? 0}%`, raw: alertData.current?.avg_reliability_score, compare: alertData.comparison?.avg_reliability_score },
                     { label: 'Taux d\'annulation', value: `${alertData.current?.cancellation_rate ?? 0}%`, raw: alertData.current?.cancellation_rate, compare: alertData.comparison?.cancellation_rate, invert: true },
                   ].map((k) => {
                     const d = delta(k.raw !== undefined ? k.raw : k.value, k.compare)
