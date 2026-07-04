@@ -566,37 +566,32 @@ export default function AdminDashboard() {
                 <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6">
                   <div className="stat-card">
                     <div className="text-xs text-[#AAA] mb-1">Total Œils</div>
-                    <div className="flex items-baseline">
-                      <span className="text-2xl font-bold text-white">{oeilsData.kpis.total_oeils}</span>
-                      <DeltaBadge value={delta(oeilsData.kpis.total_oeils, oeilsData.kpisCompare?.total_oeils)} />
+                    <div className="text-2xl font-bold text-white">
+                      <ComparisonCell current={oeilsData.kpis.total_oeils} compare={oeilsData.kpisCompare?.total_oeils} hasComparison={!!oeilsData.kpisCompare} />
                     </div>
                   </div>
                   <div className="stat-card">
                     <div className="text-xs text-[#AAA] mb-1">Actifs</div>
-                    <div className="flex items-baseline">
-                      <span className="text-2xl font-bold text-green-400">{oeilsData.kpis.actifs}</span>
-                      <DeltaBadge value={delta(oeilsData.kpis.actifs, oeilsData.kpisCompare?.actifs)} />
+                    <div className="text-2xl font-bold text-green-400">
+                      <ComparisonCell current={oeilsData.kpis.actifs} compare={oeilsData.kpisCompare?.actifs} hasComparison={!!oeilsData.kpisCompare} />
                     </div>
                   </div>
                   <div className="stat-card">
                     <div className="text-xs text-[#AAA] mb-1">Inactifs</div>
-                    <div className="flex items-baseline">
-                      <span className="text-2xl font-bold text-[#555]">{oeilsData.kpis.inactifs}</span>
-                      <DeltaBadge value={delta(oeilsData.kpis.inactifs, oeilsData.kpisCompare?.inactifs) !== null ? -delta(oeilsData.kpis.inactifs, oeilsData.kpisCompare?.inactifs) : null} />
+                    <div className="text-2xl font-bold text-[#555]">
+                      <ComparisonCell current={oeilsData.kpis.inactifs} compare={oeilsData.kpisCompare?.inactifs} invert hasComparison={!!oeilsData.kpisCompare} />
                     </div>
                   </div>
                   <div className="stat-card">
                     <div className="text-xs text-[#AAA] mb-1">Taux d'acceptation</div>
-                    <div className="flex items-baseline">
-                      <span className="text-2xl font-bold text-blue-400">{oeilsData.kpis.acceptance_rate}%</span>
-                      <DeltaBadge value={delta(oeilsData.kpis.acceptance_rate, oeilsData.kpisCompare?.acceptance_rate)} />
+                    <div className="text-2xl font-bold text-blue-400">
+                      <ComparisonCell current={oeilsData.kpis.acceptance_rate} compare={oeilsData.kpisCompare?.acceptance_rate} suffix="%" hasComparison={!!oeilsData.kpisCompare} />
                     </div>
                   </div>
                   <div className="stat-card">
                     <div className="text-xs text-[#AAA] mb-1">Délai moyen d'attribution</div>
-                    <div className="flex items-baseline">
-                      <span className="text-2xl font-bold text-white">{oeilsData.kpis.avg_assignment_hours}h</span>
-                      <DeltaBadge value={delta(oeilsData.kpis.avg_assignment_hours, oeilsData.kpisCompare?.avg_assignment_hours) !== null ? -delta(oeilsData.kpis.avg_assignment_hours, oeilsData.kpisCompare?.avg_assignment_hours) : null} />
+                    <div className="text-2xl font-bold text-white">
+                      <ComparisonCell current={oeilsData.kpis.avg_assignment_hours} compare={oeilsData.kpisCompare?.avg_assignment_hours} suffix="h" invert hasComparison={!!oeilsData.kpisCompare} />
                     </div>
                   </div>
                 </div>
