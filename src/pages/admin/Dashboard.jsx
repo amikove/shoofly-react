@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import AppLayout from '../../components/layout/AppLayout'
 import Topbar from '../../components/layout/Topbar'
 import { adminAPI } from '../../api'
-import { Spinner, toast } from '../../components/ui'
+import { Spinner, toast, Avatar } from '../../components/ui'
 import DateRangeFilter, { getPresetRange } from '../../components/dashboard/DateRangeFilter'
 import { ComparisonCell, DeltaBadge, delta } from '../../components/dashboard/ComparisonCell'
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
@@ -21,7 +21,7 @@ const MAIN_TABS = [
   { id: 'claims',      label: '📋 Réclamations' },
 ]
 
-const COMING_SOON_TABS = ['oeils', 'clients', 'fileattente', 'immobilier', 'financier']
+const COMING_SOON_TABS = ['clients', 'fileattente', 'immobilier', 'financier']
 
 const FUNNEL_STEPS = [
   { key: 'inscrits',  label: 'Inscrits' },
@@ -57,6 +57,10 @@ export default function AdminDashboard() {
   // ── Services ──
   const [servicesData, setServicesData] = useState(null)
   const [loadingServices, setLoadingServices] = useState(true)
+
+  // ── Œils ──
+  const [oeilsData, setOeilsData] = useState(null)
+  const [loadingOeils, setLoadingOeils] = useState(true)
 
   // ── Géographique ──
   const [geoData, setGeoData] = useState(null)
@@ -110,6 +114,15 @@ export default function AdminDashboard() {
       .catch(() => toast('Erreur chargement alertes', 'error'))
       .finally(() => setLoadingAlert(false))
   }, [tab, range, compareRange])
+
+  useEffect(() => {
+    if (tab !== 'oeils' || !range?.from || !range?.to) return
+    setLoadingOeils(true)
+    adminAPI.dashboardOeils({ date_from: range.from.toISOString(), date_to: range.to.toISOString() })
+      .then(({ data }) => setOeilsData(data))
+      .catch(() => toast('Erreur chargement Œils', 'error'))
+      .finally(() => setLoadingOeils(false))
+  }, [tab, range])
 
   useEffect(() => {
     if (tab !== 'geo' || !range?.from || !range?.to) return
@@ -527,6 +540,114 @@ export default function AdminDashboard() {
                   </table>
                 </div>
               </div>
+            )}
+          </>
+        )}
+
+        {tab === 'oeils' && (
+          <>
+            <DateRangeFilter
+              range={range}
+              onChange={setRange}
+              compareRange={compareRange}
+              onCompareChange={setCompareRange}
+            />
+
+            {loadingOeils ? (
+              <div className="flex justify-center py-20"><Spinner size="lg" /></div>
+            ) : oeilsData && (
+              <>
+                {/* KPIs */}
+                <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6">
+                  <div className="stat-card">
+                    <div className="text-xs text-[#AAA] mb-1">Total Œils</div>
+                    <div className="text-2xl font-bold text-white">{oeilsData.kpis.total_oeils}</div>
+                  </div>
+                  <div className="stat-card">
+                    <div className="text-xs text-[#AAA] mb-1">Actifs</div>
+                    <div className="text-2xl font-bold text-green-400">{oeilsData.kpis.actifs}</div>
+                  </div>
+                  <div className="stat-card">
+                    <div className="text-xs text-[#AAA] mb-1">Inactifs</div>
+                    <div className="text-2xl font-bold text-[#555]">{oeilsData.kpis.inactifs}</div>
+                  </div>
+                  <div className="stat-card">
+                    <div className="text-xs text-[#AAA] mb-1">Taux d'acceptation</div>
+                    <div className="text-2xl font-bold text-blue-400">{oeilsData.kpis.acceptance_rate}%</div>
+                  </div>
+                  <div className="stat-card">
+                    <div className="text-xs text-[#AAA] mb-1">Délai moyen d'attribution</div>
+                    <div className="text-2xl font-bold text-white">{oeilsData.kpis.avg_assignment_hours}h</div>
+                  </div>
+                </div>
+
+                {/* Classement */}
+                <p className="text-sm font-semibold mb-3">🏆 Classement (missions complétées)</p>
+                <div className="card p-0 mb-6">
+                  <div className="table-wrap">
+                    <table>
+                      <thead>
+                        <tr><th>Œil</th><th>Missions</th><th>Revenus</th><th>Note</th></tr>
+                      </thead>
+                      <tbody>
+                        {oeilsData.ranking.length === 0 ? (
+                          <tr><td colSpan={4} className="text-center text-[#AAA] py-6">Aucune mission complétée sur cette période</td></tr>
+                        ) : oeilsData.ranking.map((o) => (
+                          <tr key={o.id}>
+                            <td>
+                              <div className="flex items-center gap-2">
+                                <Avatar name={`${o.first_name} ${o.last_name}`} size={28} src={o.avatar_url} />
+                                <span className="font-medium">{o.first_name} {o.last_name}</span>
+                              </div>
+                            </td>
+                            <td>{o.missions_completed}</td>
+                            <td className="text-green-400">{parseFloat(o.revenue).toFixed(0)} MAD</td>
+                            <td className="text-yellow-400">{o.rating_avg > 0 ? `${o.rating_avg} ★` : '—'}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+
+                {/* Alertes */}
+                <p className="text-sm font-semibold mb-3">🚨 Alertes</p>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="card">
+                    <p className="text-xs text-[#AAA] uppercase tracking-wider font-semibold mb-2">Trop d'annulations</p>
+                    {oeilsData.alerts.too_many_cancellations.length === 0 ? (
+                      <p className="text-xs text-[#555]">Aucune</p>
+                    ) : oeilsData.alerts.too_many_cancellations.map((o) => (
+                      <div key={o.id} className="flex items-center justify-between text-xs py-1.5 border-b border-white/5 last:border-0">
+                        <span>{o.first_name} {o.last_name}</span>
+                        <span className="text-red-400 font-semibold">{o.n}</span>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="card">
+                    <p className="text-xs text-[#AAA] uppercase tracking-wider font-semibold mb-2">Mauvaises notes (&lt;3.5)</p>
+                    {oeilsData.alerts.low_rating.length === 0 ? (
+                      <p className="text-xs text-[#555]">Aucune</p>
+                    ) : oeilsData.alerts.low_rating.map((o) => (
+                      <div key={o.id} className="flex items-center justify-between text-xs py-1.5 border-b border-white/5 last:border-0">
+                        <span>{o.first_name} {o.last_name}</span>
+                        <span className="text-amber-400 font-semibold">{o.rating_avg} ★</span>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="card">
+                    <p className="text-xs text-[#AAA] uppercase tracking-wider font-semibold mb-2">Retards fréquents</p>
+                    {oeilsData.alerts.frequent_delays.length === 0 ? (
+                      <p className="text-xs text-[#555]">Aucun</p>
+                    ) : oeilsData.alerts.frequent_delays.map((o) => (
+                      <div key={o.id} className="flex items-center justify-between text-xs py-1.5 border-b border-white/5 last:border-0">
+                        <span>{o.first_name} {o.last_name}</span>
+                        <span className="text-orange-400 font-semibold">{o.n}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </>
             )}
           </>
         )}
