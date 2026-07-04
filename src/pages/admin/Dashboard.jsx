@@ -118,11 +118,16 @@ export default function AdminDashboard() {
   useEffect(() => {
     if (tab !== 'oeils' || !range?.from || !range?.to) return
     setLoadingOeils(true)
-    adminAPI.dashboardOeils({ date_from: range.from.toISOString(), date_to: range.to.toISOString() })
+    const params = {
+      date_from: range.from.toISOString(),
+      date_to: range.to.toISOString(),
+      ...(compareRange ? { compare_from: compareRange.from.toISOString(), compare_to: compareRange.to.toISOString() } : {}),
+    }
+    adminAPI.dashboardOeils(params)
       .then(({ data }) => setOeilsData(data))
       .catch(() => toast('Erreur chargement Œils', 'error'))
       .finally(() => setLoadingOeils(false))
-  }, [tab, range])
+  }, [tab, range, compareRange])
 
   useEffect(() => {
     if (tab !== 'geo' || !range?.from || !range?.to) return
@@ -561,23 +566,38 @@ export default function AdminDashboard() {
                 <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6">
                   <div className="stat-card">
                     <div className="text-xs text-[#AAA] mb-1">Total Œils</div>
-                    <div className="text-2xl font-bold text-white">{oeilsData.kpis.total_oeils}</div>
+                    <div className="flex items-baseline">
+                      <span className="text-2xl font-bold text-white">{oeilsData.kpis.total_oeils}</span>
+                      <DeltaBadge value={delta(oeilsData.kpis.total_oeils, oeilsData.kpisCompare?.total_oeils)} />
+                    </div>
                   </div>
                   <div className="stat-card">
                     <div className="text-xs text-[#AAA] mb-1">Actifs</div>
-                    <div className="text-2xl font-bold text-green-400">{oeilsData.kpis.actifs}</div>
+                    <div className="flex items-baseline">
+                      <span className="text-2xl font-bold text-green-400">{oeilsData.kpis.actifs}</span>
+                      <DeltaBadge value={delta(oeilsData.kpis.actifs, oeilsData.kpisCompare?.actifs)} />
+                    </div>
                   </div>
                   <div className="stat-card">
                     <div className="text-xs text-[#AAA] mb-1">Inactifs</div>
-                    <div className="text-2xl font-bold text-[#555]">{oeilsData.kpis.inactifs}</div>
+                    <div className="flex items-baseline">
+                      <span className="text-2xl font-bold text-[#555]">{oeilsData.kpis.inactifs}</span>
+                      <DeltaBadge value={delta(oeilsData.kpis.inactifs, oeilsData.kpisCompare?.inactifs) !== null ? -delta(oeilsData.kpis.inactifs, oeilsData.kpisCompare?.inactifs) : null} />
+                    </div>
                   </div>
                   <div className="stat-card">
                     <div className="text-xs text-[#AAA] mb-1">Taux d'acceptation</div>
-                    <div className="text-2xl font-bold text-blue-400">{oeilsData.kpis.acceptance_rate}%</div>
+                    <div className="flex items-baseline">
+                      <span className="text-2xl font-bold text-blue-400">{oeilsData.kpis.acceptance_rate}%</span>
+                      <DeltaBadge value={delta(oeilsData.kpis.acceptance_rate, oeilsData.kpisCompare?.acceptance_rate)} />
+                    </div>
                   </div>
                   <div className="stat-card">
                     <div className="text-xs text-[#AAA] mb-1">Délai moyen d'attribution</div>
-                    <div className="text-2xl font-bold text-white">{oeilsData.kpis.avg_assignment_hours}h</div>
+                    <div className="flex items-baseline">
+                      <span className="text-2xl font-bold text-white">{oeilsData.kpis.avg_assignment_hours}h</span>
+                      <DeltaBadge value={delta(oeilsData.kpis.avg_assignment_hours, oeilsData.kpisCompare?.avg_assignment_hours) !== null ? -delta(oeilsData.kpis.avg_assignment_hours, oeilsData.kpisCompare?.avg_assignment_hours) : null} />
+                    </div>
                   </div>
                 </div>
 
