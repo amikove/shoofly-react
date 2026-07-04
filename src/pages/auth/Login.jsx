@@ -1,6 +1,7 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
+import { captureAcquisitionParams } from '../../utils/acquisitionTracking'
 
 const ROLES = [
   { id: 'client', icon: '👤', label: 'Client' },
@@ -15,6 +16,7 @@ const DEMO = {
 }
 
 export default function Login() {
+  useEffect(() => { captureAcquisitionParams() }, [])
   const { login } = useAuth()
   const navigate   = useNavigate()
   const [role, setRole]     = useState('client')
