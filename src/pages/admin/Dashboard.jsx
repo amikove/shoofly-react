@@ -21,7 +21,7 @@ const MAIN_TABS = [
   { id: 'claims',      label: '📋 Réclamations' },
 ]
 
-const COMING_SOON_TABS = ['fileattente', 'immobilier', 'financier']
+const COMING_SOON_TABS = ['immobilier', 'financier']
 
 const FUNNEL_STEPS = [
   { key: 'inscrits',  label: 'Inscrits' },
@@ -57,6 +57,10 @@ export default function AdminDashboard() {
   // ── Services ──
   const [servicesData, setServicesData] = useState(null)
   const [loadingServices, setLoadingServices] = useState(true)
+
+  // ── File d'attente ──
+  const [fileAttenteData, setFileAttenteData] = useState(null)
+  const [loadingFileAttente, setLoadingFileAttente] = useState(true)
 
   // ── Clients ──
   const [clientsData, setClientsData] = useState(null)
@@ -117,6 +121,20 @@ export default function AdminDashboard() {
       .then(({ data }) => setAlertData(data))
       .catch(() => toast('Erreur chargement alertes', 'error'))
       .finally(() => setLoadingAlert(false))
+  }, [tab, range, compareRange])
+
+  useEffect(() => {
+    if (tab !== 'fileattente' || !range?.from || !range?.to) return
+    setLoadingFileAttente(true)
+    const params = {
+      date_from: range.from.toISOString(),
+      date_to: range.to.toISOString(),
+      ...(compareRange ? { compare_from: compareRange.from.toISOString(), compare_to: compareRange.to.toISOString() } : {}),
+    }
+    adminAPI.dashboardFileAttente(params)
+      .then(({ data }) => setFileAttenteData(data))
+      .catch(() => toast('Erreur chargement file d\'attente', 'error'))
+      .finally(() => setLoadingFileAttente(false))
   }, [tab, range, compareRange])
 
   useEffect(() => {
@@ -743,6 +761,73 @@ export default function AdminDashboard() {
                             <td className="text-[#AAA]">{c.city || '—'}</td>
                             <td>{c.total_missions}</td>
                             <td className="text-green-400">{parseFloat(c.total_spent).toFixed(0)} MAD</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </>
+            )}
+          </>
+        )}
+
+        {tab === 'fileattente' && (
+          <>
+            <DateRangeFilter
+              range={range}
+              onChange={setRange}
+              compareRange={compareRange}
+              onCompareChange={setCompareRange}
+            />
+
+            {loadingFileAttente ? (
+              <div className="flex justify-center py-20"><Spinner size="lg" /></div>
+            ) : fileAttenteData && (
+              <>
+                {/* KPIs */}
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                  <div className="stat-card">
+                    <div className="text-xs text-[#AAA] mb-1">Missions créées</div>
+                    <div className="text-2xl font-bold text-white">
+                      <ComparisonCell current={fileAttenteData.kpis.total_missions} compare={fileAttenteData.kpisCompare?.total_missions} hasComparison={!!fileAttenteData.kpisCompare} />
+                    </div>
+                  </div>
+                  <div className="stat-card">
+                    <div className="text-xs text-[#AAA] mb-1">Complétées</div>
+                    <div className="text-2xl font-bold text-green-400">
+                      <ComparisonCell current={fileAttenteData.kpis.completed_missions} compare={fileAttenteData.kpisCompare?.completed_missions} hasComparison={!!fileAttenteData.kpisCompare} />
+                    </div>
+                  </div>
+                  <div className="stat-card">
+                    <div className="text-xs text-[#AAA] mb-1">Temps d'attente moyen</div>
+                    <div className="text-2xl font-bold text-blue-400">
+                      <ComparisonCell current={fileAttenteData.kpis.avg_wait_minutes} compare={fileAttenteData.kpisCompare?.avg_wait_minutes} suffix=" min" invert hasComparison={!!fileAttenteData.kpisCompare} />
+                    </div>
+                  </div>
+                  <div className="stat-card border-[#FF4D00]/20">
+                    <div className="text-xs text-[#AAA] mb-1">⏱️ Temps économisé (estimé)</div>
+                    <div className="text-2xl font-bold text-[#FF4D00]">
+                      <ComparisonCell current={fileAttenteData.kpis.hours_saved} compare={fileAttenteData.kpisCompare?.hours_saved} suffix="h" hasComparison={!!fileAttenteData.kpisCompare} />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Organismes */}
+                <p className="text-sm font-semibold mb-3">🏛️ Organismes les plus demandés</p>
+                <div className="card p-0">
+                  <div className="table-wrap">
+                    <table>
+                      <thead>
+                        <tr><th>Organisme</th><th>Missions</th></tr>
+                      </thead>
+                      <tbody>
+                        {fileAttenteData.topOrganismes.length === 0 ? (
+                          <tr><td colSpan={2} className="text-center text-[#AAA] py-6">Aucune mission sur cette période</td></tr>
+                        ) : fileAttenteData.topOrganismes.map((o) => (
+                          <tr key={o.organisme}>
+                            <td className="font-medium">{o.organisme}</td>
+                            <td>{o.missions}</td>
                           </tr>
                         ))}
                       </tbody>
