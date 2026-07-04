@@ -7,9 +7,20 @@ import DateRangeFilter, { getPresetRange } from '../../components/dashboard/Date
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
 
 const MAIN_TABS = [
-  { id: 'executif', label: '📊 Exécutif' },
-  { id: 'claims',   label: '🚨 Réclamations' },
+  { id: 'executif',    label: '📊 Exécutif' },
+  { id: 'funnel',      label: '🔀 Funnel' },
+  { id: 'alertes',     label: '🚨 Alertes' },
+  { id: 'services',    label: '🛠️ Services' },
+  { id: 'geo',         label: '🗺️ Géographique' },
+  { id: 'oeils',       label: '👁️ Œils' },
+  { id: 'clients',     label: '👥 Clients' },
+  { id: 'fileattente', label: '⏳ File d\'attente' },
+  { id: 'immobilier',  label: '🏠 Immobilier' },
+  { id: 'financier',   label: '💰 Financier' },
+  { id: 'claims',      label: '📋 Réclamations' },
 ]
+
+const COMING_SOON_TABS = ['funnel', 'alertes', 'services', 'geo', 'oeils', 'clients', 'fileattente', 'immobilier', 'financier']
 
 // Calcule le delta % entre deux valeurs, gère le cas comparaison = 0
 function delta(current, compare) {
@@ -180,6 +191,16 @@ export default function AdminDashboard() {
               </>
             )}
           </>
+        )}
+
+        {COMING_SOON_TABS.includes(tab) && (
+          <div className="card text-center py-16">
+            <div className="text-4xl opacity-30 mb-3">🚧</div>
+            <h3 className="text-sm font-semibold text-white mb-1">Bientôt disponible</h3>
+            <p className="text-xs text-[#AAA] max-w-[280px] mx-auto leading-relaxed">
+              Cet onglet est en cours de construction et sera activé prochainement.
+            </p>
+          </div>
         )}
 
         {tab === 'claims' && (
