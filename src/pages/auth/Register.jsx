@@ -1,7 +1,8 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { authAPI } from '../../api'
 import { VILLES, VILLES_LIST } from '../../constants/villes'
+import { captureAcquisitionParams, getAcquisitionParams, clearAcquisitionParams } from '../../utils/acquisitionTracking'
 import { toast } from '../../components/ui'
 
 import { useRef, useEffect } from 'react'
@@ -53,6 +54,7 @@ function Autocomplete({ label, value, onChange, suggestions, placeholder, disabl
 
 export default function Register() {
   const navigate = useNavigate()
+  useEffect(() => { captureAcquisitionParams() }, [])
   const [step, setStep]     = useState(1)
   const [role, setRole]     = useState('client')
   const [loading, setLoading] = useState(false)
@@ -81,7 +83,9 @@ const [form, setForm] = useState({
   const submit = async () => {
     setLoading(true); setError('')
     try {
-      await authAPI.register({ ...form, role })
+      const acquisition = getAcquisitionParams()
+      await authAPI.register({ ...form, role, ...acquisition })
+      clearAcquisitionParams()
       toast('Compte créé ! Connectez-vous.', 'success')
       navigate('/login')
     } catch (err) {
