@@ -335,25 +335,28 @@ export default function AdminDashboard() {
                         const cmp = servicesData.comparison?.find(x => x.type === s.type)
                         const completionRate = s.total_missions > 0 ? Math.round((s.completed_missions / s.total_missions) * 1000) / 10 : 0
                         const cmpCompletionRate = cmp && cmp.total_missions > 0 ? Math.round((cmp.completed_missions / cmp.total_missions) * 1000) / 10 : undefined
+
+                        // Affiche "valeur1 → valeur2 (delta%)" si comparaison active, sinon juste la valeur
+                        const cell = (curVal, cmpVal, suffix = '') => {
+                          const d = delta(curVal, cmpVal)
+                          if (cmpVal === undefined || !servicesData.comparison) {
+                            return <span>{curVal}{suffix}</span>
+                          }
+                          return (
+                            <span className="whitespace-nowrap">
+                              {cmpVal}{suffix} → {curVal}{suffix}
+                              <DeltaBadge value={d} />
+                            </span>
+                          )
+                        }
+
                         return (
                           <tr key={s.type}>
                             <td className="font-medium">{TYPE_LABELS[s.type] || s.type}</td>
-                            <td>
-                              {s.total_missions}
-                              <DeltaBadge value={delta(s.total_missions, cmp?.total_missions)} />
-                            </td>
-                            <td>
-                              {completionRate}%
-                              <DeltaBadge value={delta(completionRate, cmpCompletionRate)} />
-                            </td>
-                            <td className="text-green-400">
-                              {parseFloat(s.revenue).toFixed(0)} MAD
-                              <DeltaBadge value={delta(parseFloat(s.revenue), cmp ? parseFloat(cmp.revenue) : undefined)} />
-                            </td>
-                            <td className="text-[#FF4D00]">
-                              {parseFloat(s.commission).toFixed(0)} MAD
-                              <DeltaBadge value={delta(parseFloat(s.commission), cmp ? parseFloat(cmp.commission) : undefined)} />
-                            </td>
+                            <td>{cell(s.total_missions, cmp?.total_missions)}</td>
+                            <td>{cell(completionRate, cmpCompletionRate, '%')}</td>
+                            <td className="text-green-400">{cell(parseFloat(s.revenue).toFixed(0), cmp ? parseFloat(cmp.revenue).toFixed(0) : undefined, ' MAD')}</td>
+                            <td className="text-[#FF4D00]">{cell(parseFloat(s.commission).toFixed(0), cmp ? parseFloat(cmp.commission).toFixed(0) : undefined, ' MAD')}</td>
                             <td className="text-yellow-400">
                               {s.avg_rating > 0 ? `${s.avg_rating} ★` : '—'}
                             </td>
