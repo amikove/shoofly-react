@@ -20,7 +20,7 @@ const MAIN_TABS = [
   { id: 'claims',      label: '📋 Réclamations' },
 ]
 
-const COMING_SOON_TABS = ['funnel', 'alertes', 'services', 'geo', 'oeils', 'clients', 'fileattente', 'immobilier', 'financier']
+const COMING_SOON_TABS = ['funnel', 'services', 'geo', 'oeils', 'clients', 'fileattente', 'immobilier', 'financier']
 
 // Calcule le delta % entre deux valeurs, gère le cas comparaison = 0
 function delta(current, compare) {
@@ -50,6 +50,10 @@ export default function AdminDashboard() {
   const [execData, setExecData] = useState(null)
   const [loadingExec, setLoadingExec] = useState(true)
 
+  // ── Alertes ──
+  const [alertData, setAlertData] = useState(null)
+  const [loadingAlert, setLoadingAlert] = useState(true)
+
   // ── Réclamations (inchangé) ──
   const [claims, setClaims] = useState([])
   const [loadingClaims, setLoadingClaims] = useState(true)
@@ -75,6 +79,20 @@ export default function AdminDashboard() {
       .catch(() => toast('Erreur de chargement', 'error'))
       .finally(() => setLoadingClaims(false))
   }, [])
+
+  useEffect(() => {
+    if (tab !== 'alertes' || !range?.from || !range?.to) return
+    setLoadingAlert(true)
+    const params = {
+      date_from: range.from.toISOString(),
+      date_to: range.to.toISOString(),
+      ...(compareRange ? { compare_from: compareRange.from.toISOString(), compare_to: compareRange.to.toISOString() } : {}),
+    }
+    adminAPI.dashboardAlertes(params)
+      .then(({ data }) => setAlertData(data))
+      .catch(() => toast('Erreur chargement alertes', 'error'))
+      .finally(() => setLoadingAlert(false))
+  }, [tab, range, compareRange])
 
   const resolve = async (claimId, missionId, decision) => {
     setResolving(claimId)
@@ -187,6 +205,70 @@ export default function AdminDashboard() {
                       </LineChart>
                     </ResponsiveContainer>
                   </div>
+                </div>
+              </>
+            )}
+          </>
+        )}
+
+        {tab === 'alertes' && (
+          <>
+            <DateRangeFilter
+              range={range}
+              onChange={setRange}
+              compareRange={compareRange}
+              onCompareChange={setCompareRange}
+            />
+
+            {loadingAlert ? (
+              <div className="flex justify-center py-20"><Spinner size="lg" /></div>
+            ) : alertData && (
+              <>
+                {/* Section instantanée */}
+                <p className="text-xs text-[#AAA] uppercase tracking-wider font-semibold mb-2">🔴 État actuel — à traiter</p>
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-6">
+                  <div className={`stat-card ${alertData.instant.suspended_oeils > 0 ? 'border-red-500/30' : ''}`}>
+                    <div className="text-xs text-[#AAA] mb-1">Œils suspendus</div>
+                    <div className={`text-2xl font-bold ${alertData.instant.suspended_oeils > 0 ? 'text-red-400' : 'text-white'}`}>{alertData.instant.suspended_oeils}</div>
+                  </div>
+                  <div className={`stat-card ${alertData.instant.missions_under_surveillance > 0 ? 'border-orange-500/30' : ''}`}>
+                    <div className="text-xs text-[#AAA] mb-1">Sous surveillance</div>
+                    <div className={`text-2xl font-bold ${alertData.instant.missions_under_surveillance > 0 ? 'text-orange-400' : 'text-white'}`}>{alertData.instant.missions_under_surveillance}</div>
+                  </div>
+                  <div className={`stat-card ${alertData.instant.missions_stuck_pending > 0 ? 'border-orange-500/30' : ''}`}>
+                    <div className="text-xs text-[#AAA] mb-1">Bloquées &gt;24h</div>
+                    <div className={`text-2xl font-bold ${alertData.instant.missions_stuck_pending > 0 ? 'text-orange-400' : 'text-white'}`}>{alertData.instant.missions_stuck_pending}</div>
+                  </div>
+                  <div className={`stat-card ${alertData.instant.missions_expired_deadline > 0 ? 'border-red-500/30' : ''}`}>
+                    <div className="text-xs text-[#AAA] mb-1">Deadlines dépassées</div>
+                    <div className={`text-2xl font-bold ${alertData.instant.missions_expired_deadline > 0 ? 'text-red-400' : 'text-white'}`}>{alertData.instant.missions_expired_deadline}</div>
+                  </div>
+                  <div className={`stat-card ${alertData.instant.low_reliability_oeils > 0 ? 'border-amber-500/30' : ''}`}>
+                    <div className="text-xs text-[#AAA] mb-1">Œils sous 70%</div>
+                    <div className={`text-2xl font-bold ${alertData.instant.low_reliability_oeils > 0 ? 'text-amber-400' : 'text-white'}`}>{alertData.instant.low_reliability_oeils}</div>
+                  </div>
+                </div>
+
+                {/* Section période */}
+                <p className="text-xs text-[#AAA] uppercase tracking-wider font-semibold mb-2">📈 Tendances sur la période</p>
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                  {[
+                    { label: 'Transferts sans remplaçant', value: alertData.current?.transfer_failures ?? 0, compare: alertData.comparison?.transfer_failures, invert: true },
+                    { label: 'Score fiabilité moyen', value: `${alertData.current?.avg_reliability_score ?? 0}%`, raw: alertData.current?.avg_reliability_score, compare: alertData.comparison?.avg_reliability_score },
+                    { label: 'Taux d\'annulation', value: `${alertData.current?.cancellation_rate ?? 0}%`, raw: alertData.current?.cancellation_rate, compare: alertData.comparison?.cancellation_rate, invert: true },
+                  ].map((k) => {
+                    const d = delta(k.raw !== undefined ? k.raw : k.value, k.compare)
+                    const displayDelta = k.invert && d !== null ? -d : d
+                    return (
+                      <div key={k.label} className="stat-card">
+                        <div className="text-xs text-[#AAA] mb-1">{k.label}</div>
+                        <div className="flex items-baseline">
+                          <span className="text-2xl font-bold text-white">{k.value}</span>
+                          <DeltaBadge value={displayDelta} />
+                        </div>
+                      </div>
+                    )
+                  })}
                 </div>
               </>
             )}
