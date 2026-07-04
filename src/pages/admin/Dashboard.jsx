@@ -21,7 +21,7 @@ const MAIN_TABS = [
   { id: 'claims',      label: '📋 Réclamations' },
 ]
 
-const COMING_SOON_TABS = ['clients', 'fileattente', 'immobilier', 'financier']
+const COMING_SOON_TABS = ['fileattente', 'immobilier', 'financier']
 
 const FUNNEL_STEPS = [
   { key: 'inscrits',  label: 'Inscrits' },
@@ -57,6 +57,10 @@ export default function AdminDashboard() {
   // ── Services ──
   const [servicesData, setServicesData] = useState(null)
   const [loadingServices, setLoadingServices] = useState(true)
+
+  // ── Clients ──
+  const [clientsData, setClientsData] = useState(null)
+  const [loadingClients, setLoadingClients] = useState(true)
 
   // ── Œils ──
   const [oeilsData, setOeilsData] = useState(null)
@@ -113,6 +117,20 @@ export default function AdminDashboard() {
       .then(({ data }) => setAlertData(data))
       .catch(() => toast('Erreur chargement alertes', 'error'))
       .finally(() => setLoadingAlert(false))
+  }, [tab, range, compareRange])
+
+  useEffect(() => {
+    if (tab !== 'clients' || !range?.from || !range?.to) return
+    setLoadingClients(true)
+    const params = {
+      date_from: range.from.toISOString(),
+      date_to: range.to.toISOString(),
+      ...(compareRange ? { compare_from: compareRange.from.toISOString(), compare_to: compareRange.to.toISOString() } : {}),
+    }
+    adminAPI.dashboardClients(params)
+      .then(({ data }) => setClientsData(data))
+      .catch(() => toast('Erreur chargement clients', 'error'))
+      .finally(() => setLoadingClients(false))
   }, [tab, range, compareRange])
 
   useEffect(() => {
@@ -660,6 +678,75 @@ export default function AdminDashboard() {
                         <span className="text-orange-400 font-semibold">{o.n}</span>
                       </div>
                     ))}
+                  </div>
+                </div>
+              </>
+            )}
+          </>
+        )}
+
+        {tab === 'clients' && (
+          <>
+            <DateRangeFilter
+              range={range}
+              onChange={setRange}
+              compareRange={compareRange}
+              onCompareChange={setCompareRange}
+            />
+
+            {loadingClients ? (
+              <div className="flex justify-center py-20"><Spinner size="lg" /></div>
+            ) : clientsData && (
+              <>
+                {/* KPIs */}
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                  <div className="stat-card">
+                    <div className="text-xs text-[#AAA] mb-1">Clients actifs</div>
+                    <div className="text-2xl font-bold text-white">
+                      <ComparisonCell current={clientsData.kpis.active_clients} compare={clientsData.kpisCompare?.active_clients} hasComparison={!!clientsData.kpisCompare} />
+                    </div>
+                  </div>
+                  <div className="stat-card">
+                    <div className="text-xs text-[#AAA] mb-1">Missions créées</div>
+                    <div className="text-2xl font-bold text-white">
+                      <ComparisonCell current={clientsData.kpis.total_missions} compare={clientsData.kpisCompare?.total_missions} hasComparison={!!clientsData.kpisCompare} />
+                    </div>
+                  </div>
+                  <div className="stat-card">
+                    <div className="text-xs text-[#AAA] mb-1">Panier moyen</div>
+                    <div className="text-2xl font-bold text-green-400">
+                      <ComparisonCell current={clientsData.kpis.avg_basket} compare={clientsData.kpisCompare?.avg_basket} suffix=" MAD" hasComparison={!!clientsData.kpisCompare} />
+                    </div>
+                  </div>
+                  <div className="stat-card">
+                    <div className="text-xs text-[#AAA] mb-1">Missions / client</div>
+                    <div className="text-2xl font-bold text-blue-400">
+                      <ComparisonCell current={clientsData.kpis.avg_missions_per_client} compare={clientsData.kpisCompare?.avg_missions_per_client} hasComparison={!!clientsData.kpisCompare} />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Top clients */}
+                <p className="text-sm font-semibold mb-3">🏆 Top clients</p>
+                <div className="card p-0">
+                  <div className="table-wrap">
+                    <table>
+                      <thead>
+                        <tr><th>Client</th><th>Ville</th><th>Missions</th><th>Dépenses</th></tr>
+                      </thead>
+                      <tbody>
+                        {clientsData.topClients.length === 0 ? (
+                          <tr><td colSpan={4} className="text-center text-[#AAA] py-6">Aucun client sur cette période</td></tr>
+                        ) : clientsData.topClients.map((c) => (
+                          <tr key={c.id}>
+                            <td className="font-medium">{c.first_name} {c.last_name}</td>
+                            <td className="text-[#AAA]">{c.city || '—'}</td>
+                            <td>{c.total_missions}</td>
+                            <td className="text-green-400">{parseFloat(c.total_spent).toFixed(0)} MAD</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
                   </div>
                 </div>
               </>
