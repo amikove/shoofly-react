@@ -3,10 +3,19 @@ import { missionsAPI } from '../../api'
 import { toast } from '../ui'
 
 export default function RateModal({ mission, onClose, onRated }) {
-  const [rating, setRating]   = useState(5)
-  const [comment, setComment] = useState('')
+  const [rating, setRating]   = useState(mission?.existing_rating?.score || 5)
+  const [comment, setComment] = useState(mission?.existing_rating?.comment || '')
   const [loading, setLoading] = useState(false)
   const [hover, setHover]     = useState(0)
+  const alreadyRated = !!mission?.existing_rating
+
+  // Notes plateforme (NPS) — distinctes de la note de l'Œil
+  const [npsFacilite, setNpsFacilite] = useState(0)
+  const [npsReactivite, setNpsReactivite] = useState(0)
+  const [npsUtilite, setNpsUtilite] = useState(0)
+  const [npsRecommandation, setNpsRecommandation] = useState(0)
+  const [platformComment, setPlatformComment] = useState('')
+  const [hoverNps, setHoverNps] = useState({ key: null, value: 0 })
 
   const labels = {
     1: 'Décevant',
@@ -19,7 +28,15 @@ export default function RateModal({ mission, onClose, onRated }) {
   const submit = async () => {
     setLoading(true)
     try {
-      await missionsAPI.rate(mission.id, { score: rating, comment })
+      await missionsAPI.rate(mission.id, {
+        score: rating,
+        comment,
+        nps_facilite: npsFacilite || undefined,
+        nps_reactivite: npsReactivite || undefined,
+        nps_utilite: npsUtilite || undefined,
+        nps_recommandation: npsRecommandation || undefined,
+        platform_comment: platformComment || undefined,
+      })
       toast(`Note ${rating}/5 envoyée ⭐ Merci !`, 'success')
       onRated?.()
       onClose()
@@ -80,6 +97,53 @@ export default function RateModal({ mission, onClose, onRated }) {
             value={comment}
             onChange={(e) => setComment(e.target.value)}
             placeholder="Décrivez votre expérience..."
+          />
+        </div>
+
+        {/* Séparation claire entre les 2 évaluations */}
+        <div className="flex items-center gap-3 mb-5">
+          <div className="flex-1 h-px bg-white/10" />
+          <p className="text-[11px] text-[#777] uppercase tracking-wider whitespace-nowrap">Et maintenant, votre avis sur Shoofly</p>
+          <div className="flex-1 h-px bg-white/10" />
+        </div>
+
+        {/* NPS plateforme */}
+        <div className="space-y-4 mb-5">
+          {[
+            { key: 'facilite', label: 'Facilité d\'utilisation', value: npsFacilite, setValue: setNpsFacilite },
+            { key: 'reactivite', label: 'Réactivité du service', value: npsReactivite, setValue: setNpsReactivite },
+            { key: 'utilite', label: 'Utilité du service', value: npsUtilite, setValue: setNpsUtilite },
+            { key: 'recommandation', label: 'Recommanderiez-vous Shoofly ?', value: npsRecommandation, setValue: setNpsRecommandation },
+          ].map((item) => (
+            <div key={item.key} className="flex items-center justify-between gap-3">
+              <p className="text-xs text-[#AAA]">{item.label}</p>
+              <div className="flex gap-1 flex-shrink-0">
+                {[1, 2, 3, 4, 5].map((n) => (
+                  <button
+                    key={n}
+                    onClick={() => item.setValue(n)}
+                    onMouseEnter={() => setHoverNps({ key: item.key, value: n })}
+                    onMouseLeave={() => setHoverNps({ key: null, value: 0 })}
+                    className={`text-lg transition-all duration-100 hover:scale-110 ${
+                      n <= (hoverNps.key === item.key ? hoverNps.value : item.value) ? 'text-yellow-400' : 'text-white/20'
+                    }`}
+                  >
+                    ★
+                  </button>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Commentaire plateforme (optionnel) */}
+        <div className="mb-5">
+          <label className="label">Un commentaire sur Shoofly ? (optionnel)</label>
+          <textarea
+            className="input resize-none h-16"
+            value={platformComment}
+            onChange={(e) => setPlatformComment(e.target.value)}
+            placeholder="Votre avis nous aide à nous améliorer..."
           />
         </div>
 
