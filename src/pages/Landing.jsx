@@ -1,4 +1,6 @@
+import { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { captureAcquisitionParams } from '../utils/acquisitionTracking'
 
 const MISSIONS = [
   { icon: '🏠', label: 'Immobilier',     desc: 'vérification d\'annonces, Visites de biens, état des lieux ' },
@@ -25,6 +27,7 @@ const WHY = [
            ]
 
 export default function Landing() {
+  useEffect(() => { captureAcquisitionParams() }, [])
   const navigate = useNavigate()
 
   return (
