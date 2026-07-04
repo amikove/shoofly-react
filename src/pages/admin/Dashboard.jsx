@@ -4,6 +4,7 @@ import Topbar from '../../components/layout/Topbar'
 import { adminAPI } from '../../api'
 import { Spinner, toast } from '../../components/ui'
 import DateRangeFilter, { getPresetRange } from '../../components/dashboard/DateRangeFilter'
+import { ComparisonCell, DeltaBadge, delta } from '../../components/dashboard/ComparisonCell'
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
 
 const MAIN_TABS = [
@@ -29,22 +30,6 @@ const TYPE_LABELS = {
   personnalisee: '🎯 Personnalisée',
 }
 
-// Calcule le delta % entre deux valeurs, gère le cas comparaison = 0
-function delta(current, compare) {
-  if (compare === undefined || compare === null) return null
-  if (compare === 0) return current > 0 ? 100 : 0
-  return Math.round(((current - compare) / compare) * 1000) / 10
-}
-
-function DeltaBadge({ value }) {
-  if (value === null) return null
-  const positive = value >= 0
-  return (
-    <span className={`text-[11px] font-semibold ml-2 ${positive ? 'text-green-400' : 'text-red-400'}`}>
-      {positive ? '▲' : '▼'} {Math.abs(value)}%
-    </span>
-  )
-}
 
 export default function AdminDashboard() {
   const [tab, setTab] = useState('executif')
@@ -336,27 +321,13 @@ export default function AdminDashboard() {
                         const completionRate = s.total_missions > 0 ? Math.round((s.completed_missions / s.total_missions) * 1000) / 10 : 0
                         const cmpCompletionRate = cmp && cmp.total_missions > 0 ? Math.round((cmp.completed_missions / cmp.total_missions) * 1000) / 10 : undefined
 
-                        // Affiche "valeur1 → valeur2 (delta%)" si comparaison active, sinon juste la valeur
-                        const cell = (curVal, cmpVal, suffix = '') => {
-                          const d = delta(curVal, cmpVal)
-                          if (cmpVal === undefined || !servicesData.comparison) {
-                            return <span>{curVal}{suffix}</span>
-                          }
-                          return (
-                            <span className="whitespace-nowrap">
-                              {cmpVal}{suffix} → {curVal}{suffix}
-                              <DeltaBadge value={d} />
-                            </span>
-                          )
-                        }
-
                         return (
                           <tr key={s.type}>
                             <td className="font-medium">{TYPE_LABELS[s.type] || s.type}</td>
-                            <td>{cell(s.total_missions, cmp?.total_missions)}</td>
-                            <td>{cell(completionRate, cmpCompletionRate, '%')}</td>
-                            <td className="text-green-400">{cell(parseFloat(s.revenue).toFixed(0), cmp ? parseFloat(cmp.revenue).toFixed(0) : undefined, ' MAD')}</td>
-                            <td className="text-[#FF4D00]">{cell(parseFloat(s.commission).toFixed(0), cmp ? parseFloat(cmp.commission).toFixed(0) : undefined, ' MAD')}</td>
+                            <td><ComparisonCell current={s.total_missions} compare={cmp?.total_missions} hasComparison={!!servicesData.comparison} /></td>
+                            <td><ComparisonCell current={completionRate} compare={cmpCompletionRate} suffix="%" hasComparison={!!servicesData.comparison} /></td>
+                            <td className="text-green-400"><ComparisonCell current={parseFloat(s.revenue).toFixed(0)} compare={cmp ? parseFloat(cmp.revenue).toFixed(0) : undefined} suffix=" MAD" hasComparison={!!servicesData.comparison} /></td>
+                            <td className="text-[#FF4D00]"><ComparisonCell current={parseFloat(s.commission).toFixed(0)} compare={cmp ? parseFloat(cmp.commission).toFixed(0) : undefined} suffix=" MAD" hasComparison={!!servicesData.comparison} /></td>
                             <td className="text-yellow-400">
                               {s.avg_rating > 0 ? `${s.avg_rating} ★` : '—'}
                             </td>
