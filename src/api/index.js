@@ -71,6 +71,7 @@ export const adminAPI = {
   dashboardExecutif: (params) => api.get('/api/users/admin/dashboard/executif', { params }),
   dashboardAlertes: (params) => api.get('/api/users/admin/dashboard/alertes', { params }),
   dashboardServices: (params) => api.get('/api/users/admin/dashboard/services', { params }),
+    dashboardFunnel: (params) => api.get('/api/users/admin/dashboard/funnel', { params }),
   users:          (params) => api.get('/api/users/admin/all', { params }),
   verifyOeil:     (id)     => api.put(`/api/users/admin/${id}/verify-oeil`),
   toggleActive:   (id)     => api.put(`/api/users/admin/${id}/toggle-active`),
