@@ -64,6 +64,8 @@ export default function AdminDashboard() {
   const [funnelDataA, setFunnelDataA] = useState(null)
   const [funnelDataB, setFunnelDataB] = useState(null)
   const [loadingFunnel, setLoadingFunnel] = useState(true)
+  const [customA, setCustomA] = useState({ from: '', to: '' })
+  const [customB, setCustomB] = useState({ from: '', to: '' })
 
   // ── Réclamations (inchangé) ──
   const [claims, setClaims] = useState([])
@@ -378,26 +380,54 @@ export default function AdminDashboard() {
 
             <div className="grid gap-4 mb-3" style={{ gridTemplateColumns: '160px 1fr 1fr' }}>
               <div />
-              <select
-                className="input"
-                value={funnelRangeA.preset}
-                onChange={(e) => setFunnelRangeA({ preset: e.target.value, ...getPresetRange(e.target.value) })}
-              >
-                <option value="today">Aujourd'hui</option>
-                <option value="yesterday">Hier</option>
-                <option value="week">Cette semaine</option>
-                <option value="month">Ce mois</option>
-              </select>
-              <select
-                className="input"
-                value={funnelRangeB.preset}
-                onChange={(e) => setFunnelRangeB({ preset: e.target.value, ...getPresetRange(e.target.value) })}
-              >
-                <option value="today">Aujourd'hui</option>
-                <option value="yesterday">Hier</option>
-                <option value="week">Cette semaine</option>
-                <option value="month">Ce mois</option>
-              </select>
+              <div>
+                <select
+                  className="input mb-2"
+                  value={funnelRangeA.preset}
+                  onChange={(e) => e.target.value !== 'custom' && setFunnelRangeA({ preset: e.target.value, ...getPresetRange(e.target.value) })}
+                >
+                  <option value="today">Aujourd'hui</option>
+                  <option value="yesterday">Hier</option>
+                  <option value="week">Cette semaine</option>
+                  <option value="month">Ce mois</option>
+                  <option value="custom">Personnalisé</option>
+                </select>
+                {funnelRangeA.preset === 'custom' && (
+                  <div className="flex items-center gap-2">
+                    <input type="date" className="input text-xs" value={customA.from} onChange={(e) => setCustomA(c => ({ ...c, from: e.target.value }))} />
+                    <span className="text-xs text-[#555]">→</span>
+                    <input type="date" className="input text-xs" value={customA.to} onChange={(e) => setCustomA(c => ({ ...c, to: e.target.value }))} />
+                    <button
+                      className="btn btn-primary btn-sm"
+                      onClick={() => customA.from && customA.to && setFunnelRangeA({ preset: 'custom', from: new Date(customA.from), to: new Date(customA.to) })}
+                    >OK</button>
+                  </div>
+                )}
+              </div>
+              <div>
+                <select
+                  className="input mb-2"
+                  value={funnelRangeB.preset}
+                  onChange={(e) => e.target.value !== 'custom' && setFunnelRangeB({ preset: e.target.value, ...getPresetRange(e.target.value) })}
+                >
+                  <option value="today">Aujourd'hui</option>
+                  <option value="yesterday">Hier</option>
+                  <option value="week">Cette semaine</option>
+                  <option value="month">Ce mois</option>
+                  <option value="custom">Personnalisé</option>
+                </select>
+                {funnelRangeB.preset === 'custom' && (
+                  <div className="flex items-center gap-2">
+                    <input type="date" className="input text-xs" value={customB.from} onChange={(e) => setCustomB(c => ({ ...c, from: e.target.value }))} />
+                    <span className="text-xs text-[#555]">→</span>
+                    <input type="date" className="input text-xs" value={customB.to} onChange={(e) => setCustomB(c => ({ ...c, to: e.target.value }))} />
+                    <button
+                      className="btn btn-primary btn-sm"
+                      onClick={() => customB.from && customB.to && setFunnelRangeB({ preset: 'custom', from: new Date(customB.from), to: new Date(customB.to) })}
+                    >OK</button>
+                  </div>
+                )}
+              </div>
             </div>
 
             {loadingFunnel ? (
