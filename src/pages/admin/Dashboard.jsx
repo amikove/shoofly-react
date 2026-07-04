@@ -1,30 +1,68 @@
 import { useState, useEffect } from 'react'
 import AppLayout from '../../components/layout/AppLayout'
 import Topbar from '../../components/layout/Topbar'
-import { adminAPI, missionsAPI } from '../../api'
-import { StatusBadge, Spinner, toast } from '../../components/ui'
+import { adminAPI } from '../../api'
+import { Spinner, toast } from '../../components/ui'
+import DateRangeFilter, { getPresetRange } from '../../components/dashboard/DateRangeFilter'
+import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
+
+const MAIN_TABS = [
+  { id: 'executif', label: '📊 Exécutif' },
+  { id: 'claims',   label: '🚨 Réclamations' },
+]
+
+// Calcule le delta % entre deux valeurs, gère le cas comparaison = 0
+function delta(current, compare) {
+  if (compare === undefined || compare === null) return null
+  if (compare === 0) return current > 0 ? 100 : 0
+  return Math.round(((current - compare) / compare) * 1000) / 10
+}
+
+function DeltaBadge({ value }) {
+  if (value === null) return null
+  const positive = value >= 0
+  return (
+    <span className={`text-[11px] font-semibold ml-2 ${positive ? 'text-green-400' : 'text-red-400'}`}>
+      {positive ? '▲' : '▼'} {Math.abs(value)}%
+    </span>
+  )
+}
 
 export default function AdminDashboard() {
-  const [stats, setStats]       = useState(null)
-  const [missions, setMissions] = useState([])
-  const [claims, setClaims]     = useState([])
-  const [tab, setTab]           = useState('overview')
-  const [loading, setLoading]   = useState(true)
+  const [tab, setTab] = useState('executif')
+
+  // ── État période (partagé, visible dans tous les onglets) ──
+  const [range, setRange] = useState({ preset: 'month', ...getPresetRange('month') })
+  const [compareRange, setCompareRange] = useState(null)
+
+  // ── Données exécutives ──
+  const [execData, setExecData] = useState(null)
+  const [loadingExec, setLoadingExec] = useState(true)
+
+  // ── Réclamations (inchangé) ──
+  const [claims, setClaims] = useState([])
+  const [loadingClaims, setLoadingClaims] = useState(true)
   const [resolving, setResolving] = useState(null)
 
   useEffect(() => {
-    Promise.all([
-      adminAPI.stats(),
-      missionsAPI.list({ status: 'active', limit: 5 }),
-      adminAPI.claims(),
-    ])
-      .then(([sRes, mRes, cRes]) => {
-        setStats(sRes.data)
-        setMissions(mRes.data.missions || [])
-        setClaims(cRes.data.claims || [])
-      })
+    if (!range?.from || !range?.to) return
+    setLoadingExec(true)
+    const params = {
+      date_from: range.from.toISOString(),
+      date_to: range.to.toISOString(),
+      ...(compareRange ? { compare_from: compareRange.from.toISOString(), compare_to: compareRange.to.toISOString() } : {}),
+    }
+    adminAPI.dashboardExecutif(params)
+      .then(({ data }) => setExecData(data))
+      .catch(() => toast('Erreur chargement dashboard', 'error'))
+      .finally(() => setLoadingExec(false))
+  }, [range, compareRange])
+
+  useEffect(() => {
+    adminAPI.claims()
+      .then(({ data }) => setClaims(data.claims || []))
       .catch(() => toast('Erreur de chargement', 'error'))
-      .finally(() => setLoading(false))
+      .finally(() => setLoadingClaims(false))
   }, [])
 
   const resolve = async (claimId, missionId, decision) => {
@@ -38,85 +76,117 @@ export default function AdminDashboard() {
     } finally { setResolving(null) }
   }
 
-  if (loading) return (
-    <AppLayout><Topbar title="Vue globale" />
-      <div className="flex-1 flex items-center justify-center"><Spinner size="lg" /></div>
-    </AppLayout>
-  )
+  const c = execData?.current
+  const cmp = execData?.comparison
 
-  const cards = [
-    { label: 'Total missions',    value: stats?.total_missions || 0,          color: 'text-white'     },
-    { label: 'Clients actifs',    value: stats?.total_clients  || 0,          color: 'text-blue-400'  },
-    { label: 'Œils actifs',       value: stats?.total_oeils    || 0,          color: 'text-[#FF4D00]' },
-    { label: 'Revenu plateforme', value: `${stats?.total_revenue || 0} MAD`,  color: 'text-green-400' },
-  ]
+  const kpis = c ? [
+    { label: 'Missions créées', value: c.total_missions, compare: cmp?.total_missions, color: 'text-white' },
+    { label: 'Missions complétées', value: c.completed_missions, compare: cmp?.completed_missions, color: 'text-green-400' },
+    { label: 'Missions annulées', value: c.cancelled_missions, compare: cmp?.cancelled_missions, color: 'text-red-400', invert: true },
+    { label: 'Chiffre d\'affaires', value: `${parseFloat(c.revenue).toFixed(0)} MAD`, raw: parseFloat(c.revenue), compare: cmp ? parseFloat(cmp.revenue) : undefined, color: 'text-green-400' },
+    { label: 'Commission Shoofly', value: `${parseFloat(c.commission).toFixed(0)} MAD`, raw: parseFloat(c.commission), compare: cmp ? parseFloat(cmp.commission) : undefined, color: 'text-[#FF4D00]' },
+    { label: 'Nouveaux clients', value: c.new_clients, compare: cmp?.new_clients, color: 'text-blue-400' },
+    { label: 'Nouveaux Œils', value: c.new_oeils, compare: cmp?.new_oeils, color: 'text-blue-400' },
+    { label: 'Œils actifs', value: c.active_oeils, compare: cmp?.active_oeils, color: 'text-white' },
+    { label: 'Clients actifs', value: c.active_clients, compare: cmp?.active_clients, color: 'text-white' },
+  ] : []
 
   return (
     <AppLayout>
       <Topbar title="Vue globale" />
-      <div className="p-4 md:p-6 space-y-6">
+      <div className="p-4 md:p-6 space-y-5">
 
-        {/* Stats */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {cards.map((c) => (
-            <div key={c.label} className="stat-card">
-              <div className="text-xs text-[#AAA] mb-1">{c.label}</div>
-              <div className={`text-2xl font-bold ${c.color}`}>{c.value}</div>
-            </div>
+        {/* Onglets principaux */}
+        <div className="flex gap-1 bg-[#222] rounded-xl p-1 w-fit">
+          {MAIN_TABS.map(t => (
+            <button key={t.id} onClick={() => setTab(t.id)}
+              className={`px-4 py-2 rounded-lg text-xs font-medium transition-all flex items-center gap-2 ${tab === t.id ? 'bg-[#2A2A2A] text-white' : 'text-[#AAA] hover:text-white'}`}>
+              {t.label}
+              {t.id === 'claims' && claims.length > 0 && (
+                <span className="bg-[#FF4D00] text-white text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center">
+                  {claims.length}
+                </span>
+              )}
+            </button>
           ))}
         </div>
 
-        {/* Onglets */}
-        <div className="flex gap-2 border-b border-white/10 pb-0">
-          <button
-            onClick={() => setTab('overview')}
-            className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${tab === 'overview' ? 'border-[#FF4D00] text-white' : 'border-transparent text-[#AAA] hover:text-white'}`}
-          >
-            Missions en cours
-          </button>
-          <button
-            onClick={() => setTab('claims')}
-            className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors flex items-center gap-2 ${tab === 'claims' ? 'border-[#FF4D00] text-white' : 'border-transparent text-[#AAA] hover:text-white'}`}
-          >
-            🚨 Réclamations
-            {claims.length > 0 && (
-              <span className="bg-[#FF4D00] text-white text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center">
-                {claims.length}
-              </span>
-            )}
-          </button>
-        </div>
+        {tab === 'executif' && (
+          <>
+            {/* Filtre de période — toujours visible sur cet onglet */}
+            <DateRangeFilter
+              range={range}
+              onChange={setRange}
+              compareRange={compareRange}
+              onCompareChange={setCompareRange}
+            />
 
-        {/* Missions en cours */}
-        {tab === 'overview' && (
-          <div className="card">
-            {missions.length === 0 ? (
-              <div className="text-center py-8 text-[#AAA] text-sm">Aucune mission active</div>
+            {loadingExec ? (
+              <div className="flex justify-center py-20"><Spinner size="lg" /></div>
             ) : (
-              <div className="table-wrap">
-                <table>
-                  <thead><tr><th>Mission</th><th>Client</th><th>Œil</th><th>Prix</th><th>Statut</th></tr></thead>
-                  <tbody>
-                    {missions.map((m) => (
-                      <tr key={m.id}>
-                        <td className="font-medium">{m.title}</td>
-                        <td className="text-[#AAA]">{m.client_name}</td>
-                        <td>{m.oeil_name || '—'}</td>
-                        <td className="text-green-400">{parseFloat(m.price).toFixed(0)} MAD</td>
-                        <td><StatusBadge status={m.status} /></td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+              <>
+                {/* KPIs */}
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                  {kpis.map((k) => {
+                    const d = delta(k.raw !== undefined ? k.raw : k.value, k.compare)
+                    const displayDelta = k.invert && d !== null ? -d : d
+                    return (
+                      <div key={k.label} className="stat-card">
+                        <div className="text-xs text-[#AAA] mb-1">{k.label}</div>
+                        <div className="flex items-baseline">
+                          <span className={`text-2xl font-bold ${k.color}`}>{k.value}</span>
+                          <DeltaBadge value={displayDelta} />
+                        </div>
+                      </div>
+                    )
+                  })}
+                </div>
+
+                {/* Graphiques */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                  <div className="card">
+                    <p className="text-sm font-semibold mb-4">Missions par jour</p>
+                    <ResponsiveContainer width="100%" height={220}>
+                      <BarChart data={execData.daily_series}>
+                        <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.08)" />
+                        <XAxis dataKey="day" tick={{ fill: '#777', fontSize: 11 }} tickFormatter={(d) => new Date(d).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })} />
+                        <YAxis tick={{ fill: '#777', fontSize: 11 }} />
+                        <Tooltip
+                          contentStyle={{ background: '#181818', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 8, fontSize: 12 }}
+                          labelFormatter={(d) => new Date(d).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' })}
+                        />
+                        <Bar dataKey="missions" fill="#FF4D00" radius={[4, 4, 0, 0]} />
+                      </BarChart>
+                    </ResponsiveContainer>
+                  </div>
+
+                  <div className="card">
+                    <p className="text-sm font-semibold mb-4">Chiffre d'affaires par jour</p>
+                    <ResponsiveContainer width="100%" height={220}>
+                      <LineChart data={execData.daily_series}>
+                        <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.08)" />
+                        <XAxis dataKey="day" tick={{ fill: '#777', fontSize: 11 }} tickFormatter={(d) => new Date(d).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })} />
+                        <YAxis tick={{ fill: '#777', fontSize: 11 }} />
+                        <Tooltip
+                          contentStyle={{ background: '#181818', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 8, fontSize: 12 }}
+                          labelFormatter={(d) => new Date(d).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' })}
+                          formatter={(value) => [`${value} MAD`, 'CA']}
+                        />
+                        <Line type="monotone" dataKey="revenue" stroke="#2ECC71" strokeWidth={2} dot={false} />
+                      </LineChart>
+                    </ResponsiveContainer>
+                  </div>
+                </div>
+              </>
             )}
-          </div>
+          </>
         )}
 
-        {/* Réclamations */}
         {tab === 'claims' && (
           <div className="space-y-3">
-            {claims.length === 0 ? (
+            {loadingClaims ? (
+              <div className="flex justify-center py-20"><Spinner size="lg" /></div>
+            ) : claims.length === 0 ? (
               <div className="card text-center py-8 text-[#AAA] text-sm">✅ Aucune réclamation en cours</div>
             ) : claims.map((c) => (
               <div key={c.id} className="card space-y-3">
