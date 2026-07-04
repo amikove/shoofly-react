@@ -16,12 +16,13 @@ const MAIN_TABS = [
   { id: 'oeils',       label: '👁️ Œils' },
   { id: 'clients',     label: '👥 Clients' },
   { id: 'fileattente', label: '⏳ File d\'attente' },
-  { id: 'immobilier',  label: '🏠 Immobilier' },
   { id: 'financier',   label: '💰 Financier' },
   { id: 'claims',      label: '📋 Réclamations' },
 ]
 
-const COMING_SOON_TABS = ['immobilier', 'financier']
+const COMING_SOON_TABS = []
+
+const EXPENSE_CATEGORIES = ['Marketing', 'Influenceurs', 'Serveurs', 'SMS/WhatsApp', 'Salaires', 'Autre']
 
 const FUNNEL_STEPS = [
   { key: 'inscrits',  label: 'Inscrits' },
@@ -57,6 +58,14 @@ export default function AdminDashboard() {
   // ── Services ──
   const [servicesData, setServicesData] = useState(null)
   const [loadingServices, setLoadingServices] = useState(true)
+
+  // ── Financier ──
+  const [financeData, setFinanceData] = useState(null)
+  const [loadingFinance, setLoadingFinance] = useState(true)
+  const [expenses, setExpenses] = useState([])
+  const [showExpenseForm, setShowExpenseForm] = useState(false)
+  const [newExpense, setNewExpense] = useState({ amount: '', category: EXPENSE_CATEGORIES[0], description: '', expense_date: new Date().toISOString().slice(0, 10) })
+  const [savingExpense, setSavingExpense] = useState(false)
 
   // ── File d'attente ──
   const [fileAttenteData, setFileAttenteData] = useState(null)
@@ -122,6 +131,53 @@ export default function AdminDashboard() {
       .catch(() => toast('Erreur chargement alertes', 'error'))
       .finally(() => setLoadingAlert(false))
   }, [tab, range, compareRange])
+
+  const loadFinance = () => {
+    if (!range?.from || !range?.to) return
+    setLoadingFinance(true)
+    const params = {
+      date_from: range.from.toISOString(),
+      date_to: range.to.toISOString(),
+      ...(compareRange ? { compare_from: compareRange.from.toISOString(), compare_to: compareRange.to.toISOString() } : {}),
+    }
+    Promise.all([
+      adminAPI.dashboardFinancier(params),
+      adminAPI.listExpenses({ date_from: range.from.toISOString().slice(0, 10), date_to: range.to.toISOString().slice(0, 10) }),
+    ])
+      .then(([finRes, expRes]) => {
+        setFinanceData(finRes.data)
+        setExpenses(expRes.data.expenses || [])
+      })
+      .catch(() => toast('Erreur chargement financier', 'error'))
+      .finally(() => setLoadingFinance(false))
+  }
+
+  useEffect(() => {
+    if (tab !== 'financier') return
+    loadFinance()
+  }, [tab, range, compareRange])
+
+  const addExpense = async () => {
+    if (!newExpense.amount || parseFloat(newExpense.amount) <= 0) { toast('Montant invalide', 'error'); return }
+    setSavingExpense(true)
+    try {
+      await adminAPI.addExpense({ ...newExpense, amount: parseFloat(newExpense.amount) })
+      toast('Dépense ajoutée ✓', 'success')
+      setShowExpenseForm(false)
+      setNewExpense({ amount: '', category: EXPENSE_CATEGORIES[0], description: '', expense_date: new Date().toISOString().slice(0, 10) })
+      loadFinance()
+    } catch (err) {
+      toast(err.response?.data?.error || 'Erreur', 'error')
+    } finally { setSavingExpense(false) }
+  }
+
+  const removeExpense = async (id) => {
+    try {
+      await adminAPI.deleteExpense(id)
+      toast('Dépense supprimée', 'info')
+      loadFinance()
+    } catch { toast('Erreur', 'error') }
+  }
 
   useEffect(() => {
     if (tab !== 'fileattente' || !range?.from || !range?.to) return
@@ -828,6 +884,139 @@ export default function AdminDashboard() {
                           <tr key={o.organisme}>
                             <td className="font-medium">{o.organisme}</td>
                             <td>{o.missions}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </>
+            )}
+          </>
+        )}
+
+        {tab === 'financier' && (
+          <>
+            <DateRangeFilter
+              range={range}
+              onChange={setRange}
+              compareRange={compareRange}
+              onCompareChange={setCompareRange}
+            />
+
+            {loadingFinance ? (
+              <div className="flex justify-center py-20"><Spinner size="lg" /></div>
+            ) : financeData && (
+              <>
+                {/* KPIs financiers */}
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-4">
+                  <div className="stat-card">
+                    <div className="text-xs text-[#AAA] mb-1">Chiffre d'affaires</div>
+                    <div className="text-2xl font-bold text-white">
+                      <ComparisonCell current={financeData.current.revenue.toFixed(0)} compare={financeData.comparison?.revenue.toFixed(0)} suffix=" MAD" hasComparison={!!financeData.comparison} />
+                    </div>
+                  </div>
+                  <div className="stat-card">
+                    <div className="text-xs text-[#AAA] mb-1">Commission Shoofly</div>
+                    <div className="text-2xl font-bold text-[#FF4D00]">
+                      <ComparisonCell current={financeData.current.commission.toFixed(0)} compare={financeData.comparison?.commission.toFixed(0)} suffix=" MAD" hasComparison={!!financeData.comparison} />
+                    </div>
+                  </div>
+                  <div className="stat-card">
+                    <div className="text-xs text-[#AAA] mb-1">Payé aux Œils</div>
+                    <div className="text-2xl font-bold text-blue-400">
+                      <ComparisonCell current={financeData.current.paid_to_oeils.toFixed(0)} compare={financeData.comparison?.paid_to_oeils.toFixed(0)} suffix=" MAD" hasComparison={!!financeData.comparison} />
+                    </div>
+                  </div>
+                  <div className="stat-card">
+                    <div className="text-xs text-[#AAA] mb-1">Remboursements</div>
+                    <div className="text-2xl font-bold text-red-400">
+                      <ComparisonCell current={financeData.current.refunds.toFixed(0)} compare={financeData.comparison?.refunds.toFixed(0)} suffix=" MAD" invert hasComparison={!!financeData.comparison} />
+                    </div>
+                  </div>
+                  <div className="stat-card">
+                    <div className="text-xs text-[#AAA] mb-1">Dépenses</div>
+                    <div className="text-2xl font-bold text-red-400">
+                      <ComparisonCell current={financeData.current.expenses.toFixed(0)} compare={financeData.comparison?.expenses.toFixed(0)} suffix=" MAD" invert hasComparison={!!financeData.comparison} />
+                    </div>
+                  </div>
+                  <div className="stat-card border-green-500/20">
+                    <div className="text-xs text-[#AAA] mb-1">Profit net</div>
+                    <div className={`text-2xl font-bold ${financeData.current.net_profit >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                      <ComparisonCell current={financeData.current.net_profit.toFixed(0)} compare={financeData.comparison?.net_profit.toFixed(0)} suffix=" MAD" hasComparison={!!financeData.comparison} />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Valorisation temps économisé */}
+                <div className="card mb-6 bg-[#FF4D00]/5 border-[#FF4D00]/20">
+                  <p className="text-xs text-[#AAA] mb-1">⏱️ Valeur estimée du temps économisé (file d'attente)</p>
+                  <p className="text-xl font-bold text-[#FF4D00]">
+                    {financeData.current.time_saved_value.toLocaleString('fr-FR')} MAD
+                  </p>
+                  <p className="text-[11px] text-[#555] mt-1">
+                    Basé sur un taux horaire estimé de {financeData.current.hourly_rate_file_attente} MAD/h (gain moyen réel des Œils sur ces missions)
+                  </p>
+                </div>
+
+                {/* Dépenses manuelles */}
+                <div className="flex items-center justify-between mb-3">
+                  <p className="text-sm font-semibold">💸 Dépenses de la période</p>
+                  <button onClick={() => setShowExpenseForm(v => !v)} className="btn btn-primary btn-sm">
+                    + Ajouter une dépense
+                  </button>
+                </div>
+
+                {showExpenseForm && (
+                  <div className="card mb-4 space-y-3">
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <label className="label">Montant (MAD)</label>
+                        <input type="number" className="input" value={newExpense.amount} onChange={(e) => setNewExpense(v => ({ ...v, amount: e.target.value }))} />
+                      </div>
+                      <div>
+                        <label className="label">Catégorie</label>
+                        <select className="input" value={newExpense.category} onChange={(e) => setNewExpense(v => ({ ...v, category: e.target.value }))}>
+                          {EXPENSE_CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
+                        </select>
+                      </div>
+                    </div>
+                    <div>
+                      <label className="label">Date</label>
+                      <input type="date" className="input" value={newExpense.expense_date} onChange={(e) => setNewExpense(v => ({ ...v, expense_date: e.target.value }))} />
+                    </div>
+                    <div>
+                      <label className="label">Description (optionnel)</label>
+                      <input className="input" value={newExpense.description} onChange={(e) => setNewExpense(v => ({ ...v, description: e.target.value }))} placeholder="Ex: Campagne Instagram influenceur X" />
+                    </div>
+                    <div className="flex gap-2">
+                      <button onClick={addExpense} disabled={savingExpense} className="btn btn-primary btn-sm disabled:opacity-50">
+                        {savingExpense ? '...' : 'Enregistrer'}
+                      </button>
+                      <button onClick={() => setShowExpenseForm(false)} className="btn btn-ghost btn-sm">Annuler</button>
+                    </div>
+                  </div>
+                )}
+
+                <div className="card p-0">
+                  <div className="table-wrap">
+                    <table>
+                      <thead>
+                        <tr><th>Date</th><th>Catégorie</th><th>Description</th><th>Montant</th><th>Ajouté par</th><th></th></tr>
+                      </thead>
+                      <tbody>
+                        {expenses.length === 0 ? (
+                          <tr><td colSpan={6} className="text-center text-[#AAA] py-6">Aucune dépense sur cette période</td></tr>
+                        ) : expenses.map((e) => (
+                          <tr key={e.id}>
+                            <td className="text-xs text-[#AAA]">{new Date(e.expense_date).toLocaleDateString('fr-FR')}</td>
+                            <td>{e.category}</td>
+                            <td className="text-[#AAA] text-xs">{e.description || '—'}</td>
+                            <td className="text-red-400 font-semibold">{parseFloat(e.amount).toFixed(0)} MAD</td>
+                            <td className="text-xs text-[#AAA]">{e.first_name ? `${e.first_name} ${e.last_name}` : '—'}</td>
+                            <td>
+                              <button onClick={() => removeExpense(e.id)} className="text-[#555] hover:text-red-400 text-xs">✕</button>
+                            </td>
                           </tr>
                         ))}
                       </tbody>
