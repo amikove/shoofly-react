@@ -68,6 +68,7 @@ export const usersAPI = {
 // ADMIN
 export const adminAPI = {
   stats:          ()       => api.get('/api/users/admin/stats'),
+    dashboardExecutif: (params) => api.get('/api/users/admin/dashboard/executif', { params }),
   users:          (params) => api.get('/api/users/admin/all', { params }),
   verifyOeil:     (id)     => api.put(`/api/users/admin/${id}/verify-oeil`),
   toggleActive:   (id)     => api.put(`/api/users/admin/${id}/toggle-active`),
