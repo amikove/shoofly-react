@@ -44,12 +44,69 @@ export default function Topbar({ title, actions }) {
 
 
   
+const markReadIfNeeded = (n) => {
+  if (n.is_read) return
+  usersAPI.markRead({ ids: [n.id] }).catch(() => {})
+  setNotifs((prev) => prev.map((x) => (x.id === n.id ? { ...x, is_read: true } : x)))
+  setUnread((prev) => Math.max(0, prev - 1))
+}
+
 const handleClick = (n) => {
-  if (n.mission_id) {
-    setShowNotifs(false)
-    const route = user?.role === 'oeil' ? '/oeil/missions' : '/client/missions'
-    window.dispatchEvent(new CustomEvent('shoofly-open-chat', { detail: n.mission_id }))
-    navigate(route)
+  const missionsRoute = user?.role === 'oeil' ? '/oeil/missions' : '/client/missions'
+
+  switch (n.action_type) {
+    case 'chat':
+      setShowNotifs(false)
+      window.dispatchEvent(new CustomEvent('shoofly-open-chat', { detail: n.mission_id }))
+      navigate(missionsRoute)
+      break
+    case 'interests_modal':
+      setShowNotifs(false)
+      navigate(missionsRoute)
+      window.dispatchEvent(new CustomEvent('shoofly-open-interests', { detail: n.mission_id }))
+      break
+    case 'mission_view':
+      setShowNotifs(false)
+      navigate(missionsRoute)
+      break
+    case 'admin_missions':
+      setShowNotifs(false)
+      navigate('/admin/missions')
+      break
+    case 'admin_problems':
+      setShowNotifs(false)
+      navigate('/admin/problemes')
+      break
+    case 'admin_messages_suspects':
+      setShowNotifs(false)
+      navigate('/admin/messages-suspects')
+      break
+    case 'admin_fiabilite':
+      setShowNotifs(false)
+      navigate('/admin/fiabilite')
+      break
+    case 'mes_signalements':
+      setShowNotifs(false)
+      navigate(user?.role === 'oeil' ? '/oeil/mes-signalements' : '/client/mes-signalements')
+      break
+    case 'reliability_page':
+      if (user?.role === 'oeil') {
+        setShowNotifs(false)
+        navigate('/oeil/compte')
+      }
+      break
+    case 'gains_page':
+      setShowNotifs(false)
+      navigate('/oeil/gains')
+      break
+    case 'verification_page':
+      setShowNotifs(false)
+      navigate('/oeil/verification-identite')
+      break
+    case 'none':
+    default:
+      markReadIfNeeded(n)
+      break
   }
 }
   
