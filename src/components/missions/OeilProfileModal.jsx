@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import { usersAPI } from '../../api'
 import { Modal, Avatar, Stars, Spinner, Badge } from '../ui'
 
 export default function OeilProfileModal({ oeil, onClose, onCommander }) {
+  const { t } = useTranslation()
   const [data, setData]       = useState(null)
   const [loading, setLoading] = useState(true)
   const [tab, setTab]         = useState('profil')
@@ -27,7 +29,7 @@ export default function OeilProfileModal({ oeil, onClose, onCommander }) {
       open={!!oeil}
       onClose={onClose}
       title={`${profile.first_name} ${profile.last_name}`}
-      subtitle={`📍 ${profile.city || '—'} · ${profile.total_missions || 0} missions`}
+      subtitle={t('oeilProfileModal.subtitle', { city: profile.city || '—', count: profile.total_missions || 0 })}
       size="md"
     >
       {loading ? (
@@ -41,11 +43,11 @@ export default function OeilProfileModal({ oeil, onClose, onCommander }) {
               <div className="flex items-center gap-2 mb-1">
                 <Stars value={profile.rating_avg || 0} />
                 <span className="text-sm font-semibold text-yellow-400">{profile.rating_avg || '—'}</span>
-                <span className="text-xs text-[#AAA]">({profile.rating_count || 0} avis)</span>
+                <span className="text-xs text-[#AAA]">{t('oeilProfileModal.reviewsCount', { count: profile.rating_count || 0 })}</span>
               </div>
               {profile.is_available
-                ? <Badge variant="green">Disponible</Badge>
-                : <Badge variant="gray">Indisponible</Badge>
+                ? <Badge variant="green">{t('oeilProfileModal.available')}</Badge>
+                : <Badge variant="gray">{t('oeilProfileModal.unavailable')}</Badge>
               }
             </div>
           </div>
@@ -66,12 +68,12 @@ export default function OeilProfileModal({ oeil, onClose, onCommander }) {
                  profile.reliability_score >= 70 ? '⭐⭐' : '⭐'}
               </span>
               <div>
-                <p className="text-xs font-semibold text-white">Score de fiabilité : {profile.reliability_score}%</p>
+                <p className="text-xs font-semibold text-white">{t('oeilProfileModal.reliabilityScore', { score: profile.reliability_score })}</p>
                 <p className="text-[10px] text-[#AAA]">
-                  {profile.reliability_score >= 95 ? 'Excellent — Œil prioritaire' :
-                   profile.reliability_score >= 90 ? 'Très bon prestataire' :
-                   profile.reliability_score >= 80 ? 'Bon prestataire' :
-                   profile.reliability_score >= 70 ? 'À surveiller' : 'Fiabilité critique'}
+                  {profile.reliability_score >= 95 ? t('oeilProfileModal.reliability.excellent') :
+                   profile.reliability_score >= 90 ? t('oeilProfileModal.reliability.veryGood') :
+                   profile.reliability_score >= 80 ? t('oeilProfileModal.reliability.good') :
+                   profile.reliability_score >= 70 ? t('oeilProfileModal.reliability.watch') : t('oeilProfileModal.reliability.critical')}
                 </p>
               </div>
             </div>
@@ -85,7 +87,7 @@ export default function OeilProfileModal({ oeil, onClose, onCommander }) {
                 tab === 'profil' ? 'bg-[#2A2A2A] text-white' : 'text-[#AAA] hover:text-white'
               }`}
             >
-              👤 Profil
+              {t('oeilProfileModal.tabs.profil')}
             </button>
             <button
               onClick={() => setTab('avis')}
@@ -93,7 +95,7 @@ export default function OeilProfileModal({ oeil, onClose, onCommander }) {
                 tab === 'avis' ? 'bg-[#2A2A2A] text-white' : 'text-[#AAA] hover:text-white'
               }`}
             >
-              ⭐ Avis {reviews.length > 0 && (
+              {t('oeilProfileModal.tabs.avis')} {reviews.length > 0 && (
                 <span className="ml-1 bg-[#FF4D00]/20 text-[#FF4D00] px-1.5 py-0.5 rounded-full text-[10px]">
                   {reviews.length}
                 </span>
@@ -106,22 +108,22 @@ export default function OeilProfileModal({ oeil, onClose, onCommander }) {
             <div className="space-y-4">
               {profile.bio && (
                 <div>
-                  <p className="text-xs text-[#AAA] uppercase tracking-wider font-semibold mb-1">Bio</p>
+                  <p className="text-xs text-[#AAA] uppercase tracking-wider font-semibold mb-1">{t('oeilProfileModal.bio')}</p>
                   <p className="text-sm text-white/80 leading-relaxed">{profile.bio}</p>
                 </div>
               )}
               <div className="grid grid-cols-2 gap-3">
                 <div className="bg-[#222] rounded-xl p-3 text-center">
                   <div className="text-xl font-bold text-white">{profile.total_missions || 0}</div>
-                  <div className="text-xs text-[#AAA] mt-0.5">Missions</div>
+                  <div className="text-xs text-[#AAA] mt-0.5">{t('oeilProfileModal.missions')}</div>
                 </div>
                 <div className="bg-[#222] rounded-xl p-3 text-center">
                   <div className="text-xl font-bold text-yellow-400">{profile.rating_avg || '—'}</div>
-                  <div className="text-xs text-[#AAA] mt-0.5">Note moyenne</div>
+                  <div className="text-xs text-[#AAA] mt-0.5">{t('oeilProfileModal.averageRating')}</div>
                 </div>
               </div>
               {!profile.bio && !profile.total_missions && (
-                <p className="text-xs text-[#555] text-center py-4">Aucune information disponible</p>
+                <p className="text-xs text-[#555] text-center py-4">{t('oeilProfileModal.noInfo')}</p>
               )}
             </div>
           )}
@@ -132,7 +134,7 @@ export default function OeilProfileModal({ oeil, onClose, onCommander }) {
               {reviews.length === 0 ? (
                 <div className="text-center py-8 text-[#AAA]">
                   <div className="text-3xl mb-2 opacity-30">⭐</div>
-                  <p className="text-sm">Aucun avis pour le moment</p>
+                  <p className="text-sm">{t('oeilProfileModal.noReviews')}</p>
                 </div>
               ) : (
                 <div className="space-y-3 max-h-64 overflow-y-auto pr-1">
@@ -151,7 +153,7 @@ export default function OeilProfileModal({ oeil, onClose, onCommander }) {
                       </div>
                       {r.comment
                         ? <p className="text-xs text-white/70 leading-relaxed">"{r.comment}"</p>
-                        : <p className="text-xs text-[#555] italic">Aucun commentaire</p>
+                        : <p className="text-xs text-[#555] italic">{t('oeilProfileModal.noComment')}</p>
                       }
                       <p className="text-[11px] text-[#AAA] mt-1.5">— {r.client_name}</p>
                     </div>
@@ -170,10 +172,10 @@ export default function OeilProfileModal({ oeil, onClose, onCommander }) {
                 disabled={!profile.is_available}
                 className="btn btn-primary btn-lg flex-1 justify-center disabled:opacity-40 disabled:cursor-not-allowed"
               >
-                {profile.is_available ? 'Commander cet Œil →' : 'Indisponible'}
+                {profile.is_available ? t('oeilProfileModal.orderThisOeil') : t('oeilProfileModal.unavailable')}
               </button>
             )}
-            <button onClick={onClose} className={`btn btn-ghost btn-lg ${!onCommander ? 'flex-1 justify-center' : ''}`}>Fermer</button>
+            <button onClick={onClose} className={`btn btn-ghost btn-lg ${!onCommander ? 'flex-1 justify-center' : ''}`}>{t('oeilProfileModal.close')}</button>
           </div>
         </div>
       )}

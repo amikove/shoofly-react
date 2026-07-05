@@ -1,1 +1,654 @@
-{}
+{
+  "landing": {
+    "nav": {
+      "login": "تسجيل الدخول",
+      "register": "إنشاء حساب"
+    },
+    "hero": {
+      "badge": "🇲🇦 متوفر في المغرب",
+      "tagline": "ننتظر نحن. تعيشون أنتم.",
+      "title1": "كونوا في كل مكان.",
+      "title2": "دون أن تتحركوا.",
+      "paragraph1": "لماذا تضيعون نصف يوم في طابور انتظار (الضمان الاجتماعي، عيادة، قنصلية...)، أو تقطعون مئات الكيلومترات لتُفاجَؤوا بشقة Airbnb لا تطابق الإعلان، أو تقاطعون يوم عطلتكم من أجل إجراء إداري بسيط؟",
+      "paragraph2": "وقتكم أثمن من ذلك.",
+      "paragraph3": "يربطكم بعينكم الميدانية: شخص موثّق ينتظر، يزور، يتحقق، يستلم أو ينجز أي مهمة حضور فعلي بدلاً عنكم، في جميع أنحاء المغرب.",
+      "ctaCreateMission": "أنشئ مهمة ←",
+      "ctaBecomeOeil": "كن عيناً ميدانية"
+    },
+    "missionsSection": {
+      "title": "ما هي المهام التي يمكن تكليفنا بها؟",
+      "subtitle": "أي وضعية تتطلب حضوراً فعلياً"
+    },
+    "missions": {
+      "immobilier": {
+        "label": "العقارات",
+        "desc": "التحقق من الإعلانات، زيارات العقارات، محاضر المعاينة "
+      },
+      "file": {
+        "label": "طوابير الانتظار",
+        "desc": "الضمان الاجتماعي، القنصليات، المستشفيات، البنوك، الإدارات"
+      },
+      "audit": {
+        "label": "تدقيق سري",
+        "desc": "تقييم مجهول للمطاعم والمحلات والخدمات"
+      },
+      "custom": {
+        "label": "مهمة مخصصة",
+        "desc": "أي مهمة حضور فعلي حسب الطلب"
+      }
+    },
+    "howItWorks": {
+      "title": "كيف يعمل الأمر؟",
+      "subtitle": "بسيط، سريع، موثوق"
+    },
+    "steps": {
+      "step1": {
+        "title": "أنشئ مهمتك",
+        "desc": "صف احتياجك، اختر المدينة والميزانية. تكفي دقيقة واحدة."
+      },
+      "step2": {
+        "title": "عين ميدانية توافق",
+        "desc": "عون ميداني موثّق بالقرب منك يتكفل بمهمتك."
+      },
+      "step3": {
+        "title": "المهمة أُنجزت",
+        "desc": "تستلم تقريراً مفصلاً وتصادق عليه عندما تكون راضياً."
+      }
+    },
+    "why": {
+      "title": "لماذا Shoofly؟",
+      "verifiedAgents": {
+        "label": "أعوان موثّقون ومحددو الهوية",
+        "desc": "كل عين ميدانية يتم التحقق منها وتحديد هويتها وتقييمها قبل الوصول إلى المنصة"
+      },
+      "realTimeTracking": {
+        "label": "تتبع في الوقت الفعلي",
+        "desc": "تابع تقدم مهمتك مباشرة، خطوة بخطوة"
+      },
+      "proofOfExecution": {
+        "label": "إثباتات الإنجاز",
+        "desc": "صور وفيديوهات تُرسل مع كل مهمة لتأكيد الإنجاز"
+      },
+      "ratingsReviews": {
+        "label": "تقييمات وآراء العملاء",
+        "desc": "اختر عينك الميدانية بكل ثقة بفضل آراء العملاء السابقين"
+      },
+      "fullReport": {
+        "label": "تقرير كامل",
+        "desc": "يُسلَّم لك تقرير مفصل في نهاية كل مهمة"
+      },
+      "paymentReleased": {
+        "label": "الدفع يُحرَّر بعد مصادقتك",
+        "desc": "لا يُدفع للعون إلا عندما تصادق أنت على المهمة — أبداً قبل ذلك"
+      },
+      "standardizedReports": {
+        "label": "تقارير موحدة وموضوعية",
+        "desc": "كل مهمة موثقة وفق شبكة مراقبة شاملة: صور إثبات، ملاحظات مفصلة وتقييم عام. تقرر بكل ثقة، دون أن تتحرك."
+      }
+    },
+    "finalCta": {
+      "title": "مستعد لتوفير وقتك؟",
+      "subtitle": "تسجيل مجاني. أول مهمة خلال دقائق.",
+      "button": "ابدأ الآن ←"
+    },
+    "footer": {
+      "copyright": "© 2026 Shoofly. جميع الحقوق محفوظة.",
+      "login": "تسجيل الدخول",
+      "register": "إنشاء حساب",
+      "cgv": "الشروط العامة للبيع",
+      "confidentiality": "الخصوصية",
+      "verification": "التحقق"
+    }
+  },
+  "login": {
+    "subtitle": "سجّل الدخول إلى مساحتك",
+    "roles": {
+      "client": "عميل",
+      "oeil": "عين ميدانية",
+      "admin": "مدير"
+    },
+    "emailLabel": "البريد الإلكتروني",
+    "emailPlaceholder": "بريدك@email.com",
+    "passwordLabel": "كلمة المرور",
+    "passwordPlaceholder": "••••••••",
+    "errorDefault": "البريد الإلكتروني أو كلمة المرور غير صحيحة.",
+    "submitLoading": "جارٍ تسجيل الدخول...",
+    "submitButton": "تسجيل الدخول ←",
+    "noAccount": "ليس لديك حساب بعد؟",
+    "registerLink": "إنشاء حساب",
+    "backHome": "← العودة إلى الصفحة الرئيسية",
+    "demo": {
+      "title": "حسابات تجريبية:",
+      "client": "عميل ← {{email}} / {{pw}}",
+      "oeil": "عين ميدانية ← {{email}} / {{pw}}",
+      "admin": "مدير ← {{email}} / {{pw}}"
+    }
+  },
+  "register": {
+    "subtitle": "أنشئ حسابك",
+    "step1": {
+      "question": "أنا:",
+      "roles": {
+        "client": {
+          "label": "عميل",
+          "desc": "أطلب مهام"
+        },
+        "oeil": {
+          "label": "عين ميدانية",
+          "desc": "أنجز مهاماً"
+        }
+      },
+      "continue": "متابعة ←"
+    },
+    "step2": {
+      "firstName": "الاسم الشخصي",
+      "firstNamePlaceholder": "كريم",
+      "lastName": "الاسم العائلي",
+      "lastNamePlaceholder": "بنعلي",
+      "email": "البريد الإلكتروني",
+      "emailPlaceholder": "بريدك@email.com",
+      "phone": "الهاتف",
+      "phonePlaceholder": "+212 6xx xxx xxx",
+      "city": "المدينة",
+      "cityPlaceholder": "مثال: الرباط",
+      "quartier": "الحي",
+      "quartierPlaceholder": "مثال: أكدال",
+      "quartierPlaceholderDisabled": "اختر المدينة أولاً",
+      "password": "كلمة المرور",
+      "passwordPlaceholder": "6 أحرف على الأقل",
+      "confirm": "تأكيد كلمة المرور",
+      "confirmPlaceholder": "••••••••",
+      "back": "← رجوع",
+      "continue": "متابعة ←"
+    },
+    "step3": {
+      "selectPlaceholder": "اختر...",
+      "oeil": {
+        "situationLabel": "وضعيتك الحالية *",
+        "situationOptions": {
+          "etudiant": "طالب",
+          "salarie": "موظف",
+          "freelance": "مستقل",
+          "autoEntrepreneur": "منظم ذاتي",
+          "enRechercheEmploi": "باحث عن عمل",
+          "retraite": "متقاعد",
+          "autre": "آخر"
+        },
+        "disponibiliteLabel": "التوفر",
+        "disponibiliteOptions": {
+          "enSemaine": "أيام الأسبوع",
+          "soirs": "المساء",
+          "weekEnds": "عطلة نهاية الأسبوع",
+          "tempsPlein": "دوام كامل"
+        },
+        "motivationLabel": "الدافع الرئيسي",
+        "motivationOptions": {
+          "revenuComplementaire": "دخل إضافي",
+          "revenuPrincipal": "دخل رئيسي",
+          "experienceProfessionnelle": "خبرة مهنية",
+          "flexibilite": "مرونة",
+          "autre": "آخر"
+        },
+        "birthDateLabel": "تاريخ الميلاد *",
+        "bioLabel": "نبذة",
+        "bioPlaceholder": "صف خبرتك...",
+        "verificationNotice": "⚠️ سيتم التحقق من ملفك كعين ميدانية خلال 24 ساعة."
+      },
+      "client": {
+        "profilLabel": "ما هو الملف الذي يناسبك أكثر؟",
+        "profilOptions": {
+          "particulier": "فرد",
+          "entrepreneur": "منظم مشاريع / رئيس مقاولة",
+          "professionnel": "محترف / موظف",
+          "expatrie": "مغترب / غير مقيم",
+          "etudiant": "طالب",
+          "investisseurImmobilier": "مستثمر عقاري",
+          "professionLiberale": "مهنة حرة (محام، طبيب، مهندس معماري...)",
+          "autre": "آخر"
+        },
+        "usageReasonLabel": "لماذا تستخدم Shoofly؟",
+        "usageReasonOptions": {
+          "gagnerDuTemps": "لكسب الوقت",
+          "eviterDeplacement": "لتجنب التنقل",
+          "verifierAvantAchat": "للتحقق قبل الشراء",
+          "gererDemarcheAdmin": "لإنجاز إجراء إداري",
+          "superviserActivite": "لمراقبة نشاط عن بعد",
+          "autre": "آخر"
+        },
+        "usageFrequencyLabel": "التكرار المتوقع",
+        "usageFrequencyOptions": {
+          "uneSeuleFois": "مرة واحدة فقط",
+          "quelquesFoisParAn": "بضع مرات في السنة",
+          "uneFoisParMois": "مرة في الشهر",
+          "plusieursFoisParMois": "عدة مرات في الشهر",
+          "chaqueSemaine": "كل أسبوع"
+        },
+        "birthDateLabel": "تاريخ الميلاد"
+      },
+      "recap": {
+        "title": "ملخص",
+        "role": "الدور:",
+        "roleClient": "👤 عميل",
+        "roleOeil": "👁️ عين ميدانية",
+        "name": "الاسم:",
+        "email": "البريد الإلكتروني:",
+        "city": "المدينة:",
+        "quartier": "الحي:"
+      },
+      "terms": {
+        "prefix": "أوافق على",
+        "cgu": "شروط الاستخدام",
+        "and": " و ",
+        "privacy": "سياسة الخصوصية",
+        "suffix": "."
+      },
+      "back": "← رجوع",
+      "submitLoading": "جارٍ الإنشاء...",
+      "submitButton": "إنشاء حسابي ←"
+    },
+    "errors": {
+      "allFieldsRequired": "جميع الحقول مطلوبة.",
+      "cityRequiredOeil": "المدينة إلزامية بالنسبة لعين ميدانية.",
+      "quartierRequiredOeil": "الحي إلزامي بالنسبة لعين ميدانية.",
+      "passwordMinLength": "كلمة المرور: 6 أحرف على الأقل.",
+      "passwordMismatch": "كلمتا المرور غير متطابقتين.",
+      "accountCreationError": "خطأ أثناء إنشاء الحساب."
+    },
+    "toastAccountCreated": "تم إنشاء الحساب! سجّل الدخول.",
+    "alreadyAccount": "لديك حساب بالفعل؟",
+    "loginLink": "تسجيل الدخول"
+  },
+  "clientDashboard": {
+    "title": "لوحة التحكم",
+    "newMissionButton": "+ مهمة جديدة",
+    "newMissionButtonShort": "+",
+    "errorLoading": "خطأ في التحميل",
+    "stats": {
+      "total": "إجمالي المهام",
+      "active": "قيد الإنجاز",
+      "completed": "منجزة",
+      "totalSpent": "إجمالي الإنفاق",
+      "wallet": "المحفظة",
+      "madValue": "{{value}} درهم"
+    },
+    "activeMissions": {
+      "title": "المهام الجارية",
+      "viewAll": "عرض الكل",
+      "emptyTitle": "لا توجد مهمة نشطة",
+      "emptyDesc": "أنشئ أول مهمة لك.",
+      "notAssigned": "غير مُسندة",
+      "cityOeil": "📍 {{city}} · {{oeil}}",
+      "viewInterested": "👁️ عرض العيون المهتمة",
+      "viewButton": "عرض ←"
+    },
+    "availableOeils": {
+      "title": "العيون المتاحة",
+      "viewAll": "عرض الكل",
+      "emptyTitle": "لا توجد عين ميدانية",
+      "emptyDesc": "ستظهر هنا العيون الميدانية المتاحة.",
+      "ratingMissions": "{{rating}} · {{count}} مهمة",
+      "available": "متاح",
+      "busy": "مشغول"
+    },
+    "missionCreatedToast": "تم إنشاء المهمة! 🎉"
+  },
+  "clientMissions": {
+    "title": "مهامي",
+    "newMissionButton": "+ مهمة جديدة",
+    "searchPlaceholder": "🔍 بحث...",
+    "emptyTitle": "لم يتم العثور على أي مهمة",
+    "emptyDesc": "أنشئ أول مهمة لك.",
+    "missionCreatedToast": "تم إنشاء المهمة! 🎉",
+    "problemReportedToast": "تم الإبلاغ عن المشكلة — تم تنبيه فريق Shoofly ✓",
+    "cancelledToast": "تم إلغاء المهمة",
+    "validatedToast": "تم التصديق على المهمة ✅ تم تحويل الدفع إلى العين الميدانية",
+    "validateConfirm": "هل تؤكد أن المهمة أُنجزت بشكل جيد؟ سيتم تحويل الدفع إلى العين الميدانية.",
+    "ratingDisplay": "⭐ {{score}}/5",
+    "ratingDisplayWithComment": "⭐ {{score}}/5 · \"{{comment}}\"",
+    "filters": {
+      "allStatuses": "جميع الحالات",
+      "pending": "قيد الانتظار",
+      "assigned": "مُسندة",
+      "enRoute": "في الطريق",
+      "active": "قيد الإنجاز",
+      "completed": "منجزة",
+      "cancelled": "ملغاة",
+      "allTypes": "جميع الأنواع",
+      "immobilier": "العقارات",
+      "fileAttente": "طوابير الانتظار",
+      "audit": "تدقيق",
+      "personnalisee": "مخصصة"
+    },
+    "cancelConfirm": {
+      "default": "هل تؤكد الإلغاء؟",
+      "assignedRefund50": "⚠️ هذه المهمة مُسندة بالفعل إلى عين ميدانية.\n\nوفقاً للشروط العامة للبيع، سيكون الاسترجاع في محفظتك بنسبة 50% من المبلغ المدفوع.\n\nهل تؤكد الإلغاء؟",
+      "assignedNoRefund": "⚠️ تبدأ هذه المهمة خلال أقل من ساعتين.\n\nوفقاً للشروط العامة للبيع، لن يتم أي استرجاع في حال الإلغاء خلال هذه المدة.\n\nهل تؤكد الإلغاء؟"
+    },
+    "errors": {
+      "selectProblemType": "اختر نوع المشكلة",
+      "loadingMission": "خطأ في تحميل المهمة",
+      "loading": "خطأ في التحميل",
+      "generic": "خطأ"
+    },
+    "table": {
+      "mission": "المهمة",
+      "type": "النوع",
+      "oeil": "العين الميدانية",
+      "date": "التاريخ",
+      "price": "السعر",
+      "status": "الحالة",
+      "actions": "الإجراءات"
+    },
+    "actions": {
+      "viewInterested": "عرض العيون المهتمة",
+      "chatWithOeil": "محادثة مع العين الميدانية",
+      "reportProblem": "الإبلاغ عن مشكلة",
+      "surveillance": "⚠️ مراقبة",
+      "visitReport": "تقرير الزيارة",
+      "auditReport": "تقرير التدقيق",
+      "airbnbVisitReport": "تقرير زيارة Airbnb",
+      "history": "السجل",
+      "rateOeil": "تقييم العين الميدانية",
+      "rate": "⭐ تقييم",
+      "validate": "تصديق",
+      "claim": "مطالبة",
+      "cancel": "إلغاء"
+    },
+    "mobile": {
+      "interested": "👁️ المهتمون",
+      "chat": "💬 محادثة",
+      "report": "📄 تقرير",
+      "audit": "📋 تدقيق",
+      "visite": "📋 زيارة",
+      "history": "🕐 السجل",
+      "rate": "⭐ تقييم",
+      "validate": "✅ تصديق",
+      "claim": "🚨 مطالبة",
+      "notAssigned": "غير مُسندة"
+    },
+    "reportViewer": {
+      "title": "تقرير المهمة",
+      "errorLoading": "خطأ في تحميل التقرير",
+      "noReport": "لا يوجد تقرير متاح لهذه المهمة.",
+      "globalScore": "التقييم العام",
+      "summary": "الملخص",
+      "riskPoints": "نقاط اليقظة"
+    },
+    "claimModal": {
+      "title": "🚨 المطالبة بهذه المهمة",
+      "subtitle": "\"{{title}}\" — اشرح سبب اعتراضك على التصديق.",
+      "placeholder": "صف المشكلة بالتفصيل...",
+      "cancel": "إلغاء",
+      "sending": "جارٍ الإرسال...",
+      "submit": "إرسال المطالبة",
+      "commentRequired": "التعليق إلزامي",
+      "sentToast": "تم إرسال المطالبة 🚨",
+      "genericError": "خطأ"
+    },
+    "problemModal": {
+      "title": "الإبلاغ عن مشكلة",
+      "typeLabel": "نوع المشكلة *",
+      "selectPlaceholder": "اختر...",
+      "types": {
+        "oeilNoResponse": "العين الميدانية لا تجيب",
+        "oeilNotOnSite": "العين الميدانية ليست في المكان",
+        "workInsufficient": "عمل غير كافٍ / غير مطابق",
+        "disrespectfulBehavior": "سلوك غير لائق",
+        "other": "مشكلة أخرى"
+      },
+      "descLabel": "الوصف (اختياري)",
+      "descPlaceholder": "صف الوضعية...",
+      "cancel": "إلغاء",
+      "sending": "...",
+      "submit": "إبلاغ ←"
+    }
+  },
+  "clientOeils": {
+    "title": "العيون الميدانية",
+    "searchPlaceholder": "🔍 اسم، مدينة...",
+    "allCities": "جميع المدن",
+    "emptyTitle": "لم يتم العثور على أي عين ميدانية",
+    "emptyDesc": "عدّل عوامل التصفية.",
+    "errorLoading": "خطأ في التحميل",
+    "ratingMissions": "{{rating}} · {{count}} مهمة",
+    "available": "متاح",
+    "busy": "مشغول",
+    "order": "طلب",
+    "unavailable": "غير متاح",
+    "unavailableTitle": "هذه العين الميدانية مشغولة حالياً",
+    "viewReviews": "عرض التقييمات",
+    "reviewsButton": "★ التقييمات",
+    "favoriteToast": "أُضيف إلى المفضلة ❤️",
+    "missionAssignedToast": "تم إسناد المهمة مباشرة إلى {{name}} 🎉",
+    "missionCreatedToast": "تم إنشاء المهمة! 🎉",
+    "avisPopup": {
+      "reviewsCount": "({{count}} تقييم)",
+      "noReviews": "لا توجد تقييمات حالياً",
+      "noComment": "لا يوجد تعليق",
+      "close": "إغلاق"
+    }
+  },
+  "clientCompte": {
+    "title": "حسابي",
+    "personalInfo": "المعلومات الشخصية",
+    "firstName": "الاسم الشخصي",
+    "lastName": "الاسم العائلي",
+    "email": "البريد الإلكتروني",
+    "phone": "الهاتف",
+    "city": "المدينة",
+    "saving": "جارٍ الحفظ...",
+    "save": "حفظ",
+    "security": "الأمان",
+    "currentPassword": "كلمة المرور الحالية",
+    "newPassword": "كلمة المرور الجديدة",
+    "newPasswordPlaceholder": "6 أحرف على الأقل",
+    "confirmPassword": "تأكيد كلمة المرور",
+    "changePassword": "تغيير كلمة المرور",
+    "profileUpdatedToast": "تم تحديث الملف الشخصي ✓",
+    "passwordUpdatedToast": "تم تغيير كلمة المرور ✓",
+    "passwordMismatch": "كلمتا المرور غير متطابقتين",
+    "genericError": "خطأ"
+  },
+  "messagerie": {
+    "title": "المراسلة",
+    "titleWithUnread": "المراسلة ({{count}})",
+    "errorLoading": "خطأ في التحميل",
+    "emptyTitle": "لا توجد محادثة",
+    "emptyDesc": "ستظهر هنا محادثاتك مع العيون الميدانية.",
+    "noMessage": "لا توجد رسالة",
+    "status": {
+      "pending": "قيد الانتظار",
+      "assigned": "مُسندة",
+      "enRoute": "في الطريق",
+      "completed": "منتهية",
+      "cancelled": "ملغاة"
+    },
+    "timeAgo": {
+      "now": "الآن",
+      "minutes": "منذ {{count}} د",
+      "hours": "منذ {{count}} س",
+      "yesterday": "أمس",
+      "days": "منذ {{count}} ي"
+    }
+  },
+  "mesSignalements": {
+    "title": "📋 بلاغاتي",
+    "emptyTitle": "لا يوجد بلاغ",
+    "emptyDesc": "لم تقدم أي بلاغ حتى الآن.",
+    "yourMessage": "رسالتك:",
+    "teamResponse": "رد فريق Shoofly:",
+    "reportedOn": "تم الإبلاغ في {{date}}",
+    "processedOn": " · تمت المعالجة في {{date}}",
+    "status": {
+      "open": "🟠 مفتوح",
+      "inProgress": "🔄 قيد المعالجة",
+      "resolved": "✅ تم الحل",
+      "dismissed": "🙈 تم الإغلاق دون متابعة"
+    }
+  },
+  "newMissionModal": {
+    "title": "مهمة جديدة",
+    "subtitleDirect": "مهمة مباشرة لـ {{name}}",
+    "subtitleVisible": "مرئية لجميع العيون الميدانية المتاحة",
+    "directAssignment": "إسناد مباشر • {{city}}",
+    "directBadge": "مباشر",
+    "categories": {
+      "immobilier": "العقارات",
+      "fileAttente": "طوابير الانتظار",
+      "audit": "تدقيق وتسوق سري",
+      "personnalisee": "مخصصة"
+    },
+    "subcategoryLabel": "الفئة الفرعية",
+    "subcategoryLabelRequired": "الفئة الفرعية *",
+    "selectPlaceholder": "اختر...",
+    "titleLabel": "عنوان المهمة *",
+    "titlePlaceholderDefault": "صف مهمتك",
+    "placeholders": {
+      "immobilier": "مثال: زيارة شقة أكدال — Airbnb",
+      "fileAttente": "مثال: طابور الضمان الاجتماعي — إيداع ملف التقاعد",
+      "audit": "مثال: تسوق سري — مطعم حسان",
+      "personnalisee": "صف احتياجك في جملة واحدة"
+    },
+    "cityLabel": "المدينة *",
+    "cityPlaceholder": "مثال: الرباط",
+    "quartierLabel": "الحي *",
+    "quartierPlaceholder": "مثال: أكدال",
+    "quartierPlaceholderDisabled": "اختر المدينة أولاً",
+    "addressLabel": "العنوان الدقيق",
+    "addressPlaceholder": "الشارع، الرقم، العمارة...",
+    "instructionsLabel": "تعليمات خاصة",
+    "instructionsPlaceholder": {
+      "immobilier": "مثال: تحقق من المطبخ، الحمام، ضغط الماء...",
+      "fileAttente": "مثال: الشباك 3، إيداع ملف التقاعد...",
+      "audit": "مثال: شبكة تقييم محددة...",
+      "default": "صف بدقة ما تنتظره..."
+    },
+    "dateLabel": "تاريخ المهمة *",
+    "timeLabel": "وقت المهمة *",
+    "budgetLabel": "الميزانية (درهم) *",
+    "budgetPlaceholder": "الحد الأدنى {{min}} درهم",
+    "budgetMinNotice": "الميزانية الدنيا لهذه المهمة:",
+    "budgetMinValue": "{{min}} درهم",
+    "promoLabel": "رمز ترويجي",
+    "promoDiscount": "− {{amount}} درهم",
+    "promoRemove": "✕ إزالة",
+    "promoFreeNotice": "🎁 مهمة مجانية — 0 درهم بالنسبة لك",
+    "promoShooflyPays": "💸 Shoofly يتكفل بأجرة العين الميدانية",
+    "promoPlaceholder": "مثال: WELCOME20",
+    "promoApplying": "...",
+    "promoApply": "تطبيق",
+    "promoAppliedToast": "تم تطبيق الرمز \"{{code}}\" — خصم {{discount}} درهم ✓",
+    "submitLoading": "جارٍ الإرسال...",
+    "submitAssign": "إسناد إلى {{name}} ←",
+    "submitSend": "إرسال المهمة ←",
+    "cancel": "إلغاء",
+    "errors": {
+      "enterBudgetBeforePromo": "أدخل الميزانية قبل تطبيق رمز",
+      "invalidPromo": "رمز غير صالح",
+      "titleCityBudgetRequired": "العنوان والمدينة والميزانية مطلوبة",
+      "titleTooShort": "يجب أن يحتوي عنوان المهمة على 6 أحرف على الأقل",
+      "budgetBelowMin": "الميزانية الدنيا لهذه المهمة هي {{min}} درهم",
+      "quartierRequired": "الحي إلزامي",
+      "dateTimeRequired": "تاريخ ووقت المهمة إلزاميان",
+      "subcategoryRequired": "يرجى اختيار فئة فرعية",
+      "creationError": "خطأ أثناء الإنشاء"
+    }
+  },
+  "oeilProfileModal": {
+    "subtitle": "📍 {{city}} · {{count}} مهمة",
+    "reviewsCount": "({{count}} تقييم)",
+    "available": "متاح",
+    "unavailable": "غير متاح",
+    "reliabilityScore": "درجة الموثوقية: {{score}}%",
+    "reliability": {
+      "excellent": "ممتاز — عين ميدانية ذات أولوية",
+      "veryGood": "مزوّد خدمة جيد جداً",
+      "good": "مزوّد خدمة جيد",
+      "watch": "يستدعي المراقبة",
+      "critical": "موثوقية حرجة"
+    },
+    "tabs": {
+      "profil": "👤 الملف الشخصي",
+      "avis": "⭐ التقييمات"
+    },
+    "bio": "نبذة",
+    "missions": "المهام",
+    "averageRating": "متوسط التقييم",
+    "noInfo": "لا توجد معلومات متاحة",
+    "noReviews": "لا توجد تقييمات حالياً",
+    "noComment": "لا يوجد تعليق",
+    "orderThisOeil": "طلب هذه العين الميدانية ←",
+    "close": "إغلاق"
+  },
+  "interestsModal": {
+    "title": "العيون المهتمة",
+    "errorLoading": "خطأ في التحميل",
+    "emptyTitle": "لا توجد عين ميدانية مهتمة حالياً.",
+    "emptyDesc": "عد خلال بضع دقائق.",
+    "ratingReviews": "⭐ {{rating}}/5 ({{count}} تقييم)",
+    "missionsCount": "✅ {{count}} مهمة",
+    "hiring": "...",
+    "hire": "توظيف",
+    "hiredToast": "تم توظيف العين الميدانية! 🎉",
+    "genericError": "خطأ"
+  },
+  "rateModal": {
+    "title": "قيّم عينك الميدانية",
+    "subtitle": "{{title}} — العين الميدانية: {{oeilName}}",
+    "howWasIt": "كيف سارت مهمتك؟",
+    "labels": {
+      "1": "مخيب للآمال",
+      "2": "مقبول",
+      "3": "جيد",
+      "4": "جيد جداً",
+      "5": "ممتاز!"
+    },
+    "ratingDisplay": "{{rating}} — {{label}}",
+    "commentLabel": "تعليق (اختياري)",
+    "commentPlaceholder": "صف تجربتك...",
+    "platformSeparator": "والآن، رأيك في Shoofly",
+    "nps": {
+      "facilite": "سهولة الاستخدام",
+      "reactivite": "سرعة استجابة الخدمة",
+      "utilite": "فائدة الخدمة",
+      "recommandation": "هل توصي بـ Shoofly؟"
+    },
+    "platformCommentLabel": "تعليق حول Shoofly؟ (اختياري)",
+    "platformCommentPlaceholder": "رأيك يساعدنا على التحسن...",
+    "sending": "جارٍ الإرسال...",
+    "submit": "إرسال تقييمي ←",
+    "cancel": "إلغاء",
+    "sentToast": "تم إرسال التقييم {{rating}}/5 ⭐ شكراً!",
+    "errorRating": "خطأ أثناء التقييم"
+  },
+  "reportModal": {
+    "title": "إرسال التقرير",
+    "summaryLabel": "ملخص المهمة *",
+    "summaryPlaceholder": "صف ما لاحظته، الحالة العامة للمكان، النقاط المهمة...",
+    "criteriaLabel": "تقييم المعايير",
+    "criteria": {
+      "accessibility": "سهولة الوصول",
+      "conformity": "المطابقة مع التوجيهات",
+      "condition": "الحالة العامة",
+      "cleanliness": "النظافة",
+      "security": "الأمان"
+    },
+    "risksLabel": "نقاط اليقظة / المخاطر",
+    "risksPlaceholder": "مثال: رطوبة في الحمام&#10;مخزون محدود&#10;جوار صاخب",
+    "risksHint": "نقطة واحدة لكل سطر",
+    "globalScoreLabel": "التقييم العام —",
+    "scoreScale": {
+      "veryBad": "0 — سيء جداً",
+      "average": "50 — متوسط",
+      "excellent": "100 — ممتاز"
+    },
+    "sending": "جارٍ الإرسال...",
+    "submit": "إرسال التقرير ←",
+    "cancel": "إلغاء",
+    "errors": {
+      "summaryRequired": "الملخص إلزامي",
+      "generic": "خطأ"
+    },
+    "submittedToast": "تم إرسال التقرير بنجاح 📄"
+  }
+}

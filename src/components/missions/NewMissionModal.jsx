@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import ComplianceModal from './ComplianceModalClient'
 import { missionsAPI, usersAPI } from '../../api'
 import { VILLES, VILLES_LIST } from '../../constants/villes'
@@ -114,14 +115,16 @@ function getMinPrice(type, sub) {
 }
 
 // ── Catégories et sous-catégories ─────────────────────────
+// Note : les libellés de sous-catégories servent aussi de valeurs de données
+// (clé de lookup MIN_PRICES + valeur envoyée au backend) : ils ne sont pas traduits.
 const CATEGORIES = {
   immobilier: {
-    icon: '🏠', label: 'Immobilier',
+    icon: '🏠', labelKey: 'immobilier',
     subcategories: ['Airbnb','Booking','Avito','Mubawab','Agence immobilière','Particulier','Autre'],
-    placeholder: 'Ex: Visite appartement Agdal — Airbnb',
+    placeholderKey: 'immobilier',
   },
   file_attente: {
-    icon: '⏳', label: "File d'attente",
+    icon: '⏳', labelKey: 'fileAttente',
     subcategories: null,
     groups: [
       { label: 'Centres de santé', items: ['Hôpital & clinique','Cabinet de spécialiste','Laboratoire','Autre'] },
@@ -132,10 +135,10 @@ const CATEGORIES = {
       { label: 'Éducation', items: ['Inscription universitaire','École privée','Bourse & dossier étudiant','Autre'] },
       { label: 'Autre', items: ['À préciser'] },
     ],
-    placeholder: 'Ex: File CNSS — Dépôt dossier retraite',
+    placeholderKey: 'fileAttente',
   },
   audit: {
-    icon: '🔎', label: 'Audit & Mystery Shop',
+    icon: '🔎', labelKey: 'audit',
     subcategories: [
       'Restaurant (Temps d\'attente, Propreté, Qualité du service)',
       'Café (Accueil, Rapidité, Propreté)',
@@ -145,24 +148,24 @@ const CATEGORIES = {
       'Agence immobilière (Qualité accueil, Réactivité, Compétence commerciale)',
     ],
     groups: null,
-    placeholder: 'Ex: Audit mystery shop — Restaurant Hassan',
+    placeholderKey: 'audit',
   },
   personnalisee: {
-    icon: '🎯', label: 'Personnalisée',
+    icon: '🎯', labelKey: 'personnalisee',
     subcategories: ['Présence physique','Accompagnement','Vérification','Livraison','Autre'],
-    placeholder: 'Décrivez en une phrase votre besoin',
+    placeholderKey: 'personnalisee',
   },
 }
 
-function SubcategorySelector({ type, value, onChange }) {
+function SubcategorySelector({ type, value, onChange, t }) {
   const cat = CATEGORIES[type]
   if (!cat) return null
   if (cat.subcategories) {
     return (
       <div>
-        <label className="label">Sous-catégorie</label>
+        <label className="label">{t('newMissionModal.subcategoryLabel')}</label>
         <select className="input" value={value} onChange={(e) => onChange(e.target.value)}>
-          <option value="">Sélectionnez...</option>
+          <option value="">{t('newMissionModal.selectPlaceholder')}</option>
           {cat.subcategories.map((s) => <option key={s} value={s}>{s}</option>)}
         </select>
       </div>
@@ -171,9 +174,9 @@ function SubcategorySelector({ type, value, onChange }) {
   if (cat.groups) {
     return (
       <div>
-        <label className="label">Sous-catégorie *</label>
+        <label className="label">{t('newMissionModal.subcategoryLabelRequired')}</label>
         <select className="input" value={value} onChange={(e) => onChange(e.target.value)} required>
-          <option value="">Sélectionnez...</option>
+          <option value="">{t('newMissionModal.selectPlaceholder')}</option>
           {cat.groups.map((g) => (
             <optgroup key={g.label} label={g.label}>
               {g.items.map((item) => (
@@ -189,6 +192,7 @@ function SubcategorySelector({ type, value, onChange }) {
 }
 
 export default function NewMissionModal({ open, onClose, onCreated, preselectedOeil }) {
+  const { t }             = useTranslation()
   const { user }          = useAuth()
   const [type, setType]   = useState('immobilier')
   const [subcategory, setSub] = useState('')
@@ -204,21 +208,21 @@ export default function NewMissionModal({ open, onClose, onCreated, preselectedO
 
   const validatePromo = async () => {
     if (!promoCode.trim()) return
-    if (!form.price) { toast('Entrez un budget avant d\'appliquer un code', 'error'); return }
+    if (!form.price) { toast(t('newMissionModal.errors.enterBudgetBeforePromo'), 'error'); return }
     setPromoLoading(true)
     try {
       const { data } = await usersAPI.validatePromo({ code: promoCode, price: parseFloat(form.price) })
       setPromoResult(data)
-      toast(`Code "${data.code}" appliqué — ${data.discount} MAD de réduction ✓`, 'success')
+      toast(t('newMissionModal.promoAppliedToast', { code: data.code, discount: data.discount }), 'success')
     } catch (err) {
       setPromoResult(null)
-      toast(err.response?.data?.error || 'Code invalide', 'error')
+      toast(err.response?.data?.error || t('newMissionModal.errors.invalidPromo'), 'error')
     } finally { setPromoLoading(false) }
   }
 
   const removePromo = () => { setPromoCode(''); setPromoResult(null) }
 
-  const changeType = (t) => { setType(t); setSub('') }
+  const changeType = (newType) => { setType(newType); setSub('') }
 
   // Quartiers disponibles selon la ville sélectionnée
   const quartiersDispos = VILLES[form.city] || VILLES_LIST
@@ -230,31 +234,31 @@ console.log('bypassed:', e._bypassed, 'showCompliance:', showCompliance)
     console.log('form:', form.title, form.city, form.price, form.quartier, form.scheduled_date, form.scheduled_time)
 
 if (!form.title || !form.city || !form.price) {
-      toast('Titre, ville et budget sont requis', 'error')
+      toast(t('newMissionModal.errors.titleCityBudgetRequired'), 'error')
       return
     }
     if (form.title.trim().length < 6) {
-      toast('Le titre de la mission doit contenir au moins 6 caractères', 'error')
+      toast(t('newMissionModal.errors.titleTooShort'), 'error')
       return
     }
 
 const minPrice = getMinPrice(type, subcategory)
 if (parseFloat(form.price) < minPrice) {
-  toast(`Le budget minimum pour cette mission est de ${minPrice} MAD`, 'error')
+  toast(t('newMissionModal.errors.budgetBelowMin', { min: minPrice }), 'error')
   return
 }
 
 
     if (!form.quartier) {
-      toast('Quartier obligatoire', 'error')
+      toast(t('newMissionModal.errors.quartierRequired'), 'error')
       return
     }
     if (!form.scheduled_date || !form.scheduled_time) {
-      toast('Date et heure de la mission obligatoires', 'error')
+      toast(t('newMissionModal.errors.dateTimeRequired'), 'error')
       return
     }
     if ((type === 'file_attente' || type === 'audit') && !subcategory) {
-      toast('Veuillez sélectionner une sous-catégorie', 'error')
+      toast(t('newMissionModal.errors.subcategoryRequired'), 'error')
       return
     }
 
@@ -295,7 +299,7 @@ if (parseFloat(form.price) < minPrice) {
           setPromoCode('')
           setPromoResult(null)
     } catch (err) {
-      toast(err.response?.data?.error || 'Erreur lors de la création', 'error')
+      toast(err.response?.data?.error || t('newMissionModal.errors.creationError'), 'error')
     } finally {
       setLoading(false)
     }
@@ -303,6 +307,10 @@ if (parseFloat(form.price) < minPrice) {
 
   if (!open) return null
   const cat = CATEGORIES[type]
+  const instructionsPlaceholder = type === 'immobilier'   ? t('newMissionModal.instructionsPlaceholder.immobilier') :
+              type === 'file_attente' ? t('newMissionModal.instructionsPlaceholder.fileAttente') :
+              type === 'audit'        ? t('newMissionModal.instructionsPlaceholder.audit') :
+              t('newMissionModal.instructionsPlaceholder.default')
 
   return (
     <div
@@ -314,11 +322,11 @@ if (parseFloat(form.price) < minPrice) {
         {/* Header */}
         <div className="flex items-start justify-between mb-5">
           <div>
-            <h2 className="font-display font-bold text-base">Nouvelle mission</h2>
+            <h2 className="font-display font-bold text-base">{t('newMissionModal.title')}</h2>
             <p className="text-xs text-[#AAA] mt-0.5">
               {preselectedOeil
-                ? `Mission directe pour ${preselectedOeil.first_name} ${preselectedOeil.last_name}`
-                : 'Visible par tous les Œils disponibles'}
+                ? t('newMissionModal.subtitleDirect', { name: `${preselectedOeil.first_name} ${preselectedOeil.last_name}` })
+                : t('newMissionModal.subtitleVisible')}
             </p>
           </div>
           <button onClick={onClose} className="text-[#AAA] hover:text-white text-lg">✕</button>
@@ -332,9 +340,9 @@ if (parseFloat(form.price) < minPrice) {
             </div>
             <div>
               <div className="text-sm font-semibold">👁️ {preselectedOeil.first_name} {preselectedOeil.last_name}</div>
-              <div className="text-xs text-[#AAA]">Attribution directe • {preselectedOeil.city}</div>
+              <div className="text-xs text-[#AAA]">{t('newMissionModal.directAssignment', { city: preselectedOeil.city })}</div>
             </div>
-            <span className="ml-auto badge badge-orange text-[10px]">Direct</span>
+            <span className="ml-auto badge badge-orange text-[10px]">{t('newMissionModal.directBadge')}</span>
           </div>
         )}
 
@@ -348,7 +356,7 @@ if (parseFloat(form.price) < minPrice) {
                   : 'border-white/12 bg-[#222] text-[#AAA] hover:border-white/22'
               }`}>
               <span className="text-xl">{c.icon}</span>
-              <span className="text-center leading-tight">{c.label}</span>
+              <span className="text-center leading-tight">{t(`newMissionModal.categories.${c.labelKey}`)}</span>
             </button>
           ))}
         </div>
@@ -356,51 +364,46 @@ if (parseFloat(form.price) < minPrice) {
         {/* Formulaire */}
         <form onSubmit={submit} className="space-y-3">
 
-          <SubcategorySelector type={type} value={subcategory} onChange={setSub} />
+          <SubcategorySelector type={type} value={subcategory} onChange={setSub} t={t} />
 
           {/* Titre */}
           <div>
-            <label className="label">Titre de la mission *</label>
+            <label className="label">{t('newMissionModal.titleLabel')}</label>
             <input className="input" value={form.title} onChange={set('title')}
-              placeholder={cat?.placeholder || 'Décrivez votre mission'} required />
+              placeholder={cat ? t(`newMissionModal.placeholders.${cat.placeholderKey}`) : t('newMissionModal.titlePlaceholderDefault')} required />
           </div>
 
           {/* Ville + Quartier */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <Autocomplete
-              label="Ville *"
+              label={t('newMissionModal.cityLabel')}
               value={form.city}
               onChange={(v) => { setVal('city')(v); setVal('quartier')('') }}
               suggestions={VILLES_LIST}
-              placeholder="Ex: Rabat"
+              placeholder={t('newMissionModal.cityPlaceholder')}
             />
             <Autocomplete
-              label="Quartier *"
+              label={t('newMissionModal.quartierLabel')}
               value={form.quartier}
               onChange={setVal('quartier')}
               suggestions={VILLES[form.city] || []}
-              placeholder={form.city ? 'Ex: Agdal' : 'Choisir ville d\'abord'}
+              placeholder={form.city ? t('newMissionModal.quartierPlaceholder') : t('newMissionModal.quartierPlaceholderDisabled')}
               disabled={!form.city}
             />
           </div>
 
           {/* Adresse complète */}
           <div>
-            <label className="label">Adresse précise</label>
+            <label className="label">{t('newMissionModal.addressLabel')}</label>
             <input className="input" value={form.address} onChange={set('address')}
-              placeholder="Rue, numéro, bâtiment..." />
+              placeholder={t('newMissionModal.addressPlaceholder')} />
           </div>
 
           {/* Description */}
           <div>
-            <label className="label">Instructions particulières</label>
+            <label className="label">{t('newMissionModal.instructionsLabel')}</label>
             <textarea className="input resize-none h-20" value={form.description} onChange={set('description')}
-              placeholder={
-                type === 'immobilier'   ? 'Ex: Vérifier cuisine, salle de bain, pression eau...' :
-                type === 'file_attente' ? 'Ex: Guichet 3, dépôt dossier retraite...' :
-                type === 'audit'        ? 'Ex: Grille d\'évaluation spécifique...' :
-                'Décrivez précisément ce que vous attendez...'
-              }
+              placeholder={instructionsPlaceholder}
             />
           </div>
 
@@ -413,7 +416,7 @@ if (parseFloat(form.price) < minPrice) {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
-              <label className="label">Date de la mission *</label>
+              <label className="label">{t('newMissionModal.dateLabel')}</label>
               <input
                 type="date"
                 className="input"
@@ -425,7 +428,7 @@ if (parseFloat(form.price) < minPrice) {
               />
             </div>
             <div>
-              <label className="label">Heure de la mission *</label>
+              <label className="label">{t('newMissionModal.timeLabel')}</label>
               <input
                 type="time"
                 className="input"
@@ -441,13 +444,13 @@ if (parseFloat(form.price) < minPrice) {
 
           {/* Budget */}
           <div>
-            <label className="label">Budget (MAD) *</label>
+            <label className="label">{t('newMissionModal.budgetLabel')}</label>
             <input type="number" className="input" value={form.price} onChange={set('price')}
-              placeholder={`Min. ${getMinPrice(type, subcategory)} MAD`}
+              placeholder={t('newMissionModal.budgetPlaceholder', { min: getMinPrice(type, subcategory) })}
               min={getMinPrice(type, subcategory)} required />
             {subcategory && (
               <p className="text-[11px] text-[#AAA] mt-1">
-                Budget minimum pour cette mission : <span className="text-[#FF4D00] font-semibold">{getMinPrice(type, subcategory)} MAD</span>
+                {t('newMissionModal.budgetMinNotice')} <span className="text-[#FF4D00] font-semibold">{t('newMissionModal.budgetMinValue', { min: getMinPrice(type, subcategory) })}</span>
               </p>
             )}
 
@@ -455,23 +458,23 @@ if (parseFloat(form.price) < minPrice) {
 
           {/* Code promo */}
           <div>
-            <label className="label">Code promo</label>
+            <label className="label">{t('newMissionModal.promoLabel')}</label>
             {promoResult ? (
               <div className="bg-green-500/10 border border-green-500/30 rounded-xl px-4 py-3 space-y-2">
                 <div className="flex items-center justify-between">
                   <div>
                     <span className="text-sm font-semibold text-green-400">{promoResult.code}</span>
-                    <span className="text-xs text-[#AAA] ml-2">− {promoResult.discount} MAD</span>
+                    <span className="text-xs text-[#AAA] ml-2">{t('newMissionModal.promoDiscount', { amount: promoResult.discount })}</span>
                   </div>
                   <div className="flex items-center gap-3">
                     <span className="text-sm font-bold text-white">{promoResult.final_price} MAD</span>
-                    <button onClick={removePromo} className="text-xs text-red-400 hover:text-red-300">✕ Retirer</button>
+                    <button onClick={removePromo} className="text-xs text-red-400 hover:text-red-300">{t('newMissionModal.promoRemove')}</button>
                   </div>
                 </div>
                 {promoResult.type === 'free' && (
                   <div className="border-t border-green-500/20 pt-2 space-y-1">
-                    <p className="text-xs text-green-400">🎁 Mission offerte — 0 MAD pour vous</p>
-                    <p className="text-xs text-[#AAA]">💸 Shoofly prend en charge la rémunération de l'Œil</p>
+                    <p className="text-xs text-green-400">{t('newMissionModal.promoFreeNotice')}</p>
+                    <p className="text-xs text-[#AAA]">{t('newMissionModal.promoShooflyPays')}</p>
                   </div>
                 )}
               </div>
@@ -481,7 +484,7 @@ if (parseFloat(form.price) < minPrice) {
                   className="input flex-1"
                   value={promoCode}
                   onChange={(e) => setPromoCode(e.target.value.toUpperCase())}
-                  placeholder="Ex: WELCOME20"
+                  placeholder={t('newMissionModal.promoPlaceholder')}
                 />
                 <button
                   type="button"
@@ -489,7 +492,7 @@ if (parseFloat(form.price) < minPrice) {
                   disabled={promoLoading || !promoCode.trim()}
                   className="btn btn-ghost btn-sm px-4 disabled:opacity-50"
                 >
-                  {promoLoading ? '...' : 'Appliquer'}
+                  {promoLoading ? t('newMissionModal.promoApplying') : t('newMissionModal.promoApply')}
                 </button>
               </div>
             )}
@@ -499,9 +502,9 @@ if (parseFloat(form.price) < minPrice) {
           <div className="flex gap-3 pt-2">
             <button type="submit" disabled={loading}
               className="btn btn-primary btn-lg flex-1 justify-center disabled:opacity-60">
-              {loading ? 'Envoi en cours...' : (preselectedOeil ? `Assigner à ${preselectedOeil.first_name} →` : 'Envoyer la mission →')}
+              {loading ? t('newMissionModal.submitLoading') : (preselectedOeil ? t('newMissionModal.submitAssign', { name: preselectedOeil.first_name }) : t('newMissionModal.submitSend'))}
             </button>
-            <button type="button" onClick={onClose} className="btn btn-ghost btn-lg">Annuler</button>
+            <button type="button" onClick={onClose} className="btn btn-ghost btn-lg">{t('newMissionModal.cancel')}</button>
           </div>
 
           {showCompliance && (

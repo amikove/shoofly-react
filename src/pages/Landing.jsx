@@ -1,32 +1,33 @@
 import { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import { captureAcquisitionParams } from '../utils/acquisitionTracking'
 
 const MISSIONS = [
-  { icon: '🏠', label: 'Immobilier',     desc: 'vérification d\'annonces, Visites de biens, état des lieux ' },
-  { icon: '⏳', label: 'File d\'attente', desc: 'CNSS, consulats, hôpitaux, banques, administrations'        },
-  { icon: '🔍', label: 'Audit mystère',  desc: 'Évaluation anonyme de restaurants, commerces et services'                },
-  { icon: '🎯', label: 'Personnalisée',  desc: 'Toute mission de présence physique sur mesure'              },
+  { icon: '🏠', key: 'immobilier' },
+  { icon: '⏳', key: 'file' },
+  { icon: '🔍', key: 'audit' },
+  { icon: '🎯', key: 'custom' },
 ]
 
 const STEPS = [
-  { n: '01', title: 'Créez votre mission', desc: 'Décrivez votre besoin, choisissez la ville et le budget. 1 minute suffit.' },
-  { n: '02', title: 'Un Œil accepte',      desc: 'Un agent de terrain vérifié près de chez vous prend en charge votre mission.'  },
-  { n: '03', title: 'Mission accomplie',   desc: 'Vous recevez un rapport détaillé et validez quand vous êtes satisfait.'        },
+  { n: '01', key: 'step1' },
+  { n: '02', key: 'step2' },
+  { n: '03', key: 'step3' },
 ]
 
-
 const WHY = [
-  { icon: '✅', label: 'Agents vérifiés et identifiés',        desc: 'Chaque Œil est vérifié, identifié et évalué avant d\'accéder à la plateforme'         },
-  { icon: '📡', label: 'Suivi en temps réel',                   desc: 'Suivez l\'avancement de votre mission en direct, étape par étape'                      },
-  { icon: '📸', label: 'Preuves d\'exécution',                  desc: 'Photos et vidéos transmises à chaque mission pour confirmer l\'accomplissement'        },
-  { icon: '⭐', label: 'Notes et avis clients',                  desc: 'Choisissez votre Œil en toute confiance grâce aux avis des précédents clients'        },
-  { icon: '📊', label: 'Rapport complet',                       desc: 'Un rapport détaillé vous est remis à la fin de chaque mission'                        },
-  { icon: '🔐', label: 'Paiement libéré après votre validation',               desc: 'L\'agent est payé uniquement lorsque vous validez la mission — jamais avant'           },
-  { icon: '📋', label: 'Rapports standardisés et objectifs',    desc: 'Chaque mission est documentée selon une grille de contrôle complète : photos de preuves, observations détaillées et note globale. Vous décidez en toute confiance, sans vous déplacer.' },
-           ]
+  { icon: '✅', key: 'verifiedAgents' },
+  { icon: '📡', key: 'realTimeTracking' },
+  { icon: '📸', key: 'proofOfExecution' },
+  { icon: '⭐', key: 'ratingsReviews' },
+  { icon: '📊', key: 'fullReport' },
+  { icon: '🔐', key: 'paymentReleased' },
+  { icon: '📋', key: 'standardizedReports' },
+]
 
 export default function Landing() {
+  const { t } = useTranslation()
   useEffect(() => { captureAcquisitionParams() }, [])
   const navigate = useNavigate()
 
@@ -43,11 +44,11 @@ export default function Landing() {
         <div className="flex items-center gap-3">
           <button onClick={() => navigate('/login')}
             className="text-sm text-[#AAA] hover:text-white transition-colors">
-            Connexion
+            {t('landing.nav.login')}
           </button>
           <button onClick={() => navigate('/register')}
             className="bg-[#FF4D00] hover:bg-[#e04400] text-white text-sm font-semibold px-4 py-2 rounded-xl transition-colors">
-            S'inscrire
+            {t('landing.nav.register')}
           </button>
         </div>
       </nav>
@@ -55,34 +56,34 @@ export default function Landing() {
       {/* HERO */}
       <section className="px-6 md:px-16 py-24 md:py-36 max-w-4xl mx-auto text-center">
         <div className="inline-block bg-[#FF4D00]/10 border border-[#FF4D00]/20 text-[#FF4D00] text-xs font-semibold px-4 py-1.5 rounded-full mb-6">
-          🇲🇦 Disponible au Maroc
+          {t('landing.hero.badge')}
         </div>
 
             <div className="text-[#AAA] text-sm font-medium tracking-widest uppercase mb-4">
-            Nous attendons. Vous vivez.
+            {t('landing.hero.tagline')}
             </div>
             <h1 className="font-display font-bold text-4xl md:text-5xl leading-tight mb-6">
-            Soyez partout.<br />
-            <span className="text-[#FF4D00]">Sans bouger.</span>
+            {t('landing.hero.title1')}<br />
+            <span className="text-[#FF4D00]">{t('landing.hero.title2')}</span>
             </h1>
             <p className="text-white/80 text-base md:text-lg max-w-2xl mx-auto mb-4 leading-relaxed">
-            Pourquoi perdre une demi-journée dans une file d'attente (CNSS, cabinet, consulat...), parcourir des centaines de kilomètres pour être choqué d'un Airbnb qui ne correspond pas à l'annonce, ou interrompre votre journée de congé pour une simple démarche administrative ?
+            {t('landing.hero.paragraph1')}
             </p>
             <p className="text-[#FF4D00] font-semibold text-base md:text-lg mb-4">
-            Votre temps a plus de valeur que cela.
+            {t('landing.hero.paragraph2')}
             </p>
             <p className="text-[#AAA] text-base md:text-lg max-w-2xl mx-auto mb-10 leading-relaxed">
-            <strong className="font-display font-bold text-white">SHOOF<span className="text-[#FF4D00]">LY</span></strong> vous met en relation avec votre Œil sur le terrain : une personne vérifiée qui attend, visite, vérifie, récupère ou accomplit toute mission physique à votre place, partout au Maroc.
+            <strong className="font-display font-bold text-white">SHOOF<span className="text-[#FF4D00]">LY</span></strong> {t('landing.hero.paragraph3')}
             </p>
 
         <div className="flex flex-col sm:flex-row gap-3 justify-center">
           <button onClick={() => navigate('/register')}
             className="bg-[#FF4D00] hover:bg-[#e04400] text-white font-semibold px-8 py-4 rounded-2xl text-base transition-colors">
-            Créer une mission →
+            {t('landing.hero.ctaCreateMission')}
           </button>
           <button onClick={() => navigate('/register')}
             className="border border-white/20 hover:border-white/40 text-white font-semibold px-8 py-4 rounded-2xl text-base transition-colors">
-            Devenir un Œil
+            {t('landing.hero.ctaBecomeOeil')}
           </button>
         </div>
       </section>
@@ -91,15 +92,15 @@ export default function Landing() {
       <section className="px-6 md:px-16 py-20 bg-[#141414]">
         <div className="max-w-5xl mx-auto">
           <h2 className="font-display font-bold text-2xl md:text-3xl text-center mb-3">
-            Quelles missions peut-on confier ?
+            {t('landing.missionsSection.title')}
           </h2>
-          <p className="text-[#AAA] text-center mb-12">Toute situation nécessitant une présence physique</p>
+          <p className="text-[#AAA] text-center mb-12">{t('landing.missionsSection.subtitle')}</p>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
             {MISSIONS.map((m) => (
-              <div key={m.label} className="bg-[#1A1A1A] border border-white/10 rounded-2xl p-6 hover:border-[#FF4D00]/30 transition-colors">
+              <div key={m.key} className="bg-[#1A1A1A] border border-white/10 rounded-2xl p-6 hover:border-[#FF4D00]/30 transition-colors">
                 <div className="text-4xl mb-4">{m.icon}</div>
-                <div className="font-semibold mb-2">{m.label}</div>
-                <div className="text-xs text-[#AAA] leading-relaxed">{m.desc}</div>
+                <div className="font-semibold mb-2">{t(`landing.missions.${m.key}.label`)}</div>
+                <div className="text-xs text-[#AAA] leading-relaxed">{t(`landing.missions.${m.key}.desc`)}</div>
               </div>
             ))}
           </div>
@@ -110,17 +111,17 @@ export default function Landing() {
       <section className="px-6 md:px-16 py-20">
         <div className="max-w-4xl mx-auto">
           <h2 className="font-display font-bold text-2xl md:text-3xl text-center mb-3">
-            Comment ça marche ?
+            {t('landing.howItWorks.title')}
           </h2>
-          <p className="text-[#AAA] text-center mb-12">Simple, rapide, fiable</p>
+          <p className="text-[#AAA] text-center mb-12">{t('landing.howItWorks.subtitle')}</p>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {STEPS.map((s) => (
               <div key={s.n} className="text-center">
                 <div className="w-14 h-14 rounded-2xl bg-[#FF4D00]/10 border border-[#FF4D00]/20 flex items-center justify-center mx-auto mb-4">
                   <span className="font-display font-bold text-[#FF4D00] text-lg">{s.n}</span>
                 </div>
-                <div className="font-semibold mb-2">{s.title}</div>
-                <div className="text-sm text-[#AAA] leading-relaxed">{s.desc}</div>
+                <div className="font-semibold mb-2">{t(`landing.steps.${s.key}.title`)}</div>
+                <div className="text-sm text-[#AAA] leading-relaxed">{t(`landing.steps.${s.key}.desc`)}</div>
               </div>
             ))}
           </div>
@@ -131,17 +132,17 @@ export default function Landing() {
       <section className="px-6 md:px-16 py-20 bg-[#141414]">
         <div className="max-w-4xl mx-auto">
           <h2 className="font-display font-bold text-2xl md:text-3xl text-center mb-12">
-            Pourquoi Shoofly ?
+            {t('landing.why.title')}
           </h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 {WHY.map((w) => (
-                    <div key={w.label} className="flex items-start gap-4 bg-[#1A1A1A] border border-white/10 rounded-2xl p-5 hover:border-[#FF4D00]/30 transition-colors">
+                    <div key={w.key} className="flex items-start gap-4 bg-[#1A1A1A] border border-white/10 rounded-2xl p-5 hover:border-[#FF4D00]/30 transition-colors">
                     <div className="w-12 h-12 rounded-xl bg-[#FF4D00]/10 flex items-center justify-center text-2xl flex-shrink-0">
                         {w.icon}
                     </div>
                     <div>
-                        <div className="font-semibold text-sm mb-1">{w.label}</div>
-                        <div className="text-xs text-[#AAA] leading-relaxed">{w.desc}</div>
+                        <div className="font-semibold text-sm mb-1">{t(`landing.why.${w.key}.label`)}</div>
+                        <div className="text-xs text-[#AAA] leading-relaxed">{t(`landing.why.${w.key}.desc`)}</div>
                     </div>
                     </div>
                 ))}
@@ -153,12 +154,12 @@ export default function Landing() {
       <section className="px-6 md:px-16 py-24 text-center">
         <div className="max-w-2xl mx-auto">
           <h2 className="font-display font-bold text-3xl md:text-4xl mb-4">
-            Prêt à gagner du temps ?
+            {t('landing.finalCta.title')}
           </h2>
-          <p className="text-[#AAA] mb-8">Inscription gratuite. Première mission en quelques minutes.</p>
+          <p className="text-[#AAA] mb-8">{t('landing.finalCta.subtitle')}</p>
           <button onClick={() => navigate('/register')}
             className="bg-[#FF4D00] hover:bg-[#e04400] text-white font-semibold px-10 py-4 rounded-2xl text-base transition-colors">
-            Commencer maintenant →
+            {t('landing.finalCta.button')}
           </button>
         </div>
       </section>
@@ -168,13 +169,13 @@ export default function Landing() {
         <div className="font-display font-bold text-lg">
           SHOOF<span className="text-[#FF4D00]">LY</span>
         </div>
-        <div className="text-xs text-[#555]">© 2026 Shoofly. Tous droits réservés.</div>
+        <div className="text-xs text-[#555]">{t('landing.footer.copyright')}</div>
         <div className="flex gap-4 text-xs text-[#555]">
-          <button onClick={() => navigate('/login')} className="hover:text-white transition-colors">Connexion</button>
-          <button onClick={() => navigate('/register')} className="hover:text-white transition-colors">Inscription</button>
-          <button onClick={() => navigate('/cgv')} className="hover:text-white transition-colors">CGV</button>
-          <button onClick={() => navigate('/confidentialite')} className="hover:text-white transition-colors">Confidentialité</button>
-          <button onClick={() => navigate('/verification')} className="hover:text-white transition-colors">Vérification</button>
+          <button onClick={() => navigate('/login')} className="hover:text-white transition-colors">{t('landing.footer.login')}</button>
+          <button onClick={() => navigate('/register')} className="hover:text-white transition-colors">{t('landing.footer.register')}</button>
+          <button onClick={() => navigate('/cgv')} className="hover:text-white transition-colors">{t('landing.footer.cgv')}</button>
+          <button onClick={() => navigate('/confidentialite')} className="hover:text-white transition-colors">{t('landing.footer.confidentiality')}</button>
+          <button onClick={() => navigate('/verification')} className="hover:text-white transition-colors">{t('landing.footer.verification')}</button>
         </div>
       </footer>
 

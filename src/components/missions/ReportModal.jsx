@@ -1,16 +1,18 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { missionsAPI } from '../../api'
 import { toast } from '../ui'
 
 const CRITERIA = [
-  { key: 'accessibility', label: 'Accessibilité'       },
-  { key: 'conformity',    label: 'Conformité au brief'  },
-  { key: 'condition',     label: 'État général'         },
-  { key: 'cleanliness',   label: 'Propreté'             },
-  { key: 'security',      label: 'Sécurité'             },
+  { key: 'accessibility', labelKey: 'accessibility' },
+  { key: 'conformity',    labelKey: 'conformity'    },
+  { key: 'condition',     labelKey: 'condition'      },
+  { key: 'cleanliness',   labelKey: 'cleanliness'    },
+  { key: 'security',      labelKey: 'security'       },
 ]
 
 export default function ReportModal({ mission, onClose, onSubmitted }) {
+  const { t } = useTranslation()
   const [summary, setSummary]   = useState('')
   const [risks, setRisks]       = useState('')
   const [score, setScore]       = useState(75)
@@ -18,7 +20,7 @@ export default function ReportModal({ mission, onClose, onSubmitted }) {
   const [loading, setLoading]   = useState(false)
 
   const submit = async () => {
-    if (!summary.trim()) { toast('Le résumé est obligatoire', 'error'); return }
+    if (!summary.trim()) { toast(t('reportModal.errors.summaryRequired'), 'error'); return }
     setLoading(true)
     try {
       await missionsAPI.report(mission.id, {
@@ -27,11 +29,11 @@ export default function ReportModal({ mission, onClose, onSubmitted }) {
         score: parseInt(score),
         criteria_scores: crits,
       })
-      toast('Rapport soumis avec succès 📄', 'success')
+      toast(t('reportModal.submittedToast'), 'success')
       onSubmitted?.()
       onClose()
     } catch (err) {
-      toast(err.response?.data?.error || 'Erreur', 'error')
+      toast(err.response?.data?.error || t('reportModal.errors.generic'), 'error')
     } finally { setLoading(false) }
   }
 
@@ -44,7 +46,7 @@ export default function ReportModal({ mission, onClose, onSubmitted }) {
 
         <div className="flex items-start justify-between mb-5">
           <div>
-            <h2 className="font-display font-bold text-base">Soumettre le rapport</h2>
+            <h2 className="font-display font-bold text-base">{t('reportModal.title')}</h2>
             <p className="text-xs text-[#AAA] mt-0.5">{mission.title}</p>
           </div>
           <button onClick={onClose} className="text-[#AAA] hover:text-white text-lg">✕</button>
@@ -52,21 +54,21 @@ export default function ReportModal({ mission, onClose, onSubmitted }) {
 
         {/* Résumé */}
         <div className="mb-4">
-          <label className="label">Résumé de la mission *</label>
+          <label className="label">{t('reportModal.summaryLabel')}</label>
           <textarea
             className="input resize-none h-28"
             value={summary}
             onChange={(e) => setSummary(e.target.value)}
-            placeholder="Décrivez ce que vous avez observé, l'état général du lieu, les points importants..."
+            placeholder={t('reportModal.summaryPlaceholder')}
           />
         </div>
 
         {/* Critères */}
         <div className="mb-4">
-          <label className="label mb-3">Évaluation des critères</label>
+          <label className="label mb-3">{t('reportModal.criteriaLabel')}</label>
           {CRITERIA.map((c) => (
             <div key={c.key} className="flex items-center justify-between py-2.5 px-3 bg-[#222] rounded-xl mb-2">
-              <span className="text-sm font-medium">{c.label}</span>
+              <span className="text-sm font-medium">{t(`reportModal.criteria.${c.labelKey}`)}</span>
               <div className="flex gap-1.5">
                 {[1,2,3,4,5].map((n) => (
                   <button
@@ -87,20 +89,20 @@ export default function ReportModal({ mission, onClose, onSubmitted }) {
 
         {/* Risques */}
         <div className="mb-4">
-          <label className="label">Points de vigilance / risques</label>
+          <label className="label">{t('reportModal.risksLabel')}</label>
           <textarea
             className="input resize-none h-20"
             value={risks}
             onChange={(e) => setRisks(e.target.value)}
-            placeholder="Ex: Humidité salle de bain&#10;Stock limité&#10;Voisinage bruyant"
+            placeholder={t('reportModal.risksPlaceholder')}
           />
-          <p className="text-[11px] text-[#AAA] mt-1">Un point par ligne</p>
+          <p className="text-[11px] text-[#AAA] mt-1">{t('reportModal.risksHint')}</p>
         </div>
 
         {/* Score global */}
         <div className="mb-6">
           <label className="label">
-            Score global — <span className="text-white font-bold">{score}/100</span>
+            {t('reportModal.globalScoreLabel')} <span className="text-white font-bold">{score}/100</span>
           </label>
           <input
             type="range"
@@ -110,18 +112,18 @@ export default function ReportModal({ mission, onClose, onSubmitted }) {
             className="w-full accent-[#FF4D00]"
           />
           <div className="flex justify-between text-xs text-[#AAA] mt-1">
-            <span>0 — Très mauvais</span>
-            <span>50 — Moyen</span>
-            <span>100 — Excellent</span>
+            <span>{t('reportModal.scoreScale.veryBad')}</span>
+            <span>{t('reportModal.scoreScale.average')}</span>
+            <span>{t('reportModal.scoreScale.excellent')}</span>
           </div>
         </div>
 
         <div className="flex gap-3">
           <button onClick={submit} disabled={loading}
             className="btn btn-primary btn-lg flex-1 justify-center disabled:opacity-60">
-            {loading ? 'Envoi...' : 'Soumettre le rapport →'}
+            {loading ? t('reportModal.sending') : t('reportModal.submit')}
           </button>
-          <button onClick={onClose} className="btn btn-ghost btn-lg">Annuler</button>
+          <button onClick={onClose} className="btn btn-ghost btn-lg">{t('reportModal.cancel')}</button>
         </div>
       </div>
     </div>

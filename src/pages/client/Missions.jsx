@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react'
+import { useTranslation } from 'react-i18next'
 import AppLayout from '../../components/layout/AppLayout'
 import Topbar from '../../components/layout/Topbar'
 import { missionsAPI } from '../../api'
@@ -14,16 +15,42 @@ import InterestsModal from '../../components/missions/InterestsModal'
 
 const TYPE_ICONS = { immobilier:'🏠', file_attente:'⏳', audit:'🔎', personnalisee:'🎯' }
 
+const STATUS_OPTIONS = [
+  { value: '', key: 'allStatuses' },
+  { value: 'pending', key: 'pending' },
+  { value: 'assigned', key: 'assigned' },
+  { value: 'en_route', key: 'enRoute' },
+  { value: 'active', key: 'active' },
+  { value: 'completed', key: 'completed' },
+  { value: 'cancelled', key: 'cancelled' },
+]
+
+const TYPE_OPTIONS = [
+  { value: '', key: 'allTypes' },
+  { value: 'immobilier', key: 'immobilier' },
+  { value: 'file_attente', key: 'fileAttente' },
+  { value: 'audit', key: 'audit' },
+  { value: 'personnalisee', key: 'personnalisee' },
+]
+
+const PROBLEM_TYPE_OPTIONS = [
+  { value: 'Œil ne répond plus', key: 'oeilNoResponse' },
+  { value: "Œil n'est pas sur place", key: 'oeilNotOnSite' },
+  { value: 'Travail insuffisant / non conforme', key: 'workInsufficient' },
+  { value: 'Comportement irrespectueux', key: 'disrespectfulBehavior' },
+  { value: 'Autre problème', key: 'other' },
+]
 
 
 function ReportViewer({ mission, onClose }) {
+  const { t } = useTranslation()
   const [report, setReport] = useState(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     missionsAPI.get(mission.id)
       .then(({ data }) => setReport(data.report || null))
-      .catch(() => toast('Erreur chargement rapport', 'error'))
+      .catch(() => toast(t('clientMissions.reportViewer.errorLoading'), 'error'))
       .finally(() => setLoading(false))
   }, [mission.id])
 
@@ -33,7 +60,7 @@ function ReportViewer({ mission, onClose }) {
       <div className="bg-[#181818] border border-white/20 rounded-2xl p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
         <div className="flex items-start justify-between mb-5">
           <div>
-            <h2 className="font-display font-bold text-base">Rapport de mission</h2>
+            <h2 className="font-display font-bold text-base">{t('clientMissions.reportViewer.title')}</h2>
             <p className="text-xs text-[#AAA] mt-0.5">{mission.title}</p>
           </div>
           <button onClick={onClose} className="text-[#AAA] hover:text-white text-lg">✕</button>
@@ -43,12 +70,12 @@ function ReportViewer({ mission, onClose }) {
         ) : !report ? (
           <div className="text-center py-12 text-[#AAA]">
             <div className="text-4xl mb-3 opacity-30">📄</div>
-            <p>Aucun rapport disponible pour cette mission.</p>
+            <p>{t('clientMissions.reportViewer.noReport')}</p>
           </div>
         ) : (
           <div className="space-y-4">
             <div className="flex items-center justify-between p-4 bg-[#222] rounded-xl">
-              <span className="text-sm font-semibold">Score global</span>
+              <span className="text-sm font-semibold">{t('clientMissions.reportViewer.globalScore')}</span>
               <div className="flex items-center gap-2">
                 <div className="w-32 h-2 bg-[#333] rounded-full overflow-hidden">
                   <div className="h-full bg-[#FF4D00] rounded-full" style={{ width: `${report.score}%` }} />
@@ -57,12 +84,12 @@ function ReportViewer({ mission, onClose }) {
               </div>
             </div>
             <div>
-              <label className="label">Résumé</label>
+              <label className="label">{t('clientMissions.reportViewer.summary')}</label>
               <div className="bg-[#222] rounded-xl p-4 text-sm text-[#AAA] leading-relaxed">{report.summary}</div>
             </div>
             {report.risk_points?.length > 0 && (
               <div>
-                <label className="label">Points de vigilance</label>
+                <label className="label">{t('clientMissions.reportViewer.riskPoints')}</label>
                 <div className="space-y-1">
                   {report.risk_points.map((r, i) => (
                     <div key={i} className="flex items-start gap-2 text-sm text-[#AAA] bg-[#222] rounded-lg px-3 py-2">
@@ -82,18 +109,19 @@ function ReportViewer({ mission, onClose }) {
 
 
 function ClaimModal({ mission, onClose, onClaimed }) {
+  const { t } = useTranslation()
   const [comment, setComment] = useState('')
   const [saving, setSaving]   = useState(false)
 
   const submit = async () => {
-    if (!comment.trim()) { toast('Commentaire obligatoire', 'error'); return }
+    if (!comment.trim()) { toast(t('clientMissions.claimModal.commentRequired'), 'error'); return }
     setSaving(true)
     try {
       await missionsAPI.claim(mission.id, comment)
-      toast('Réclamation envoyée 🚨', 'info')
+      toast(t('clientMissions.claimModal.sentToast'), 'info')
       onClaimed()
     } catch (err) {
-      toast(err.response?.data?.error || 'Erreur', 'error')
+      toast(err.response?.data?.error || t('clientMissions.claimModal.genericError'), 'error')
     } finally { setSaving(false) }
   }
 
@@ -101,18 +129,18 @@ function ClaimModal({ mission, onClose, onClaimed }) {
     <div className="fixed inset-0 bg-black/75 z-[60] flex items-center justify-center p-4 backdrop-blur-sm"
          onClick={(e) => e.target === e.currentTarget && onClose()}>
       <div className="bg-[#181818] border border-white/20 rounded-2xl p-5 w-full max-w-sm shadow-xl">
-        <h2 className="font-semibold mb-1">🚨 Réclamer cette mission</h2>
-        <p className="text-xs text-[#AAA] mb-4">"{mission.title}" — Expliquez pourquoi vous contestez la validation.</p>
+        <h2 className="font-semibold mb-1">{t('clientMissions.claimModal.title')}</h2>
+        <p className="text-xs text-[#AAA] mb-4">{t('clientMissions.claimModal.subtitle', { title: mission.title })}</p>
         <textarea
           className="input resize-none h-28 w-full"
-          placeholder="Décrivez le problème en détail..."
+          placeholder={t('clientMissions.claimModal.placeholder')}
           value={comment}
           onChange={(e) => setComment(e.target.value)}
         />
         <div className="flex gap-2 mt-4">
-          <button onClick={onClose} className="btn btn-ghost flex-1 justify-center">Annuler</button>
+          <button onClick={onClose} className="btn btn-ghost flex-1 justify-center">{t('clientMissions.claimModal.cancel')}</button>
           <button onClick={submit} disabled={saving || !comment.trim()} className="btn btn-primary flex-1 justify-center disabled:opacity-60">
-            {saving ? 'Envoi...' : 'Envoyer la réclamation'}
+            {saving ? t('clientMissions.claimModal.sending') : t('clientMissions.claimModal.submit')}
           </button>
         </div>
       </div>
@@ -123,6 +151,7 @@ function ClaimModal({ mission, onClose, onClaimed }) {
 
 export default function ClientMissions() {
 
+  const { t } = useTranslation()
   const navigate = useNavigate()
   const [missions, setMissions]           = useState([])
   const [loading, setLoading]             = useState(true)
@@ -136,17 +165,17 @@ export default function ClientMissions() {
   const [reporting, setReporting] = useState(false)
 
   const doReportProblem = async () => {
-    if (!problemType) { toast('Sélectionnez un type de problème', 'error'); return }
+    if (!problemType) { toast(t('clientMissions.errors.selectProblemType'), 'error'); return }
     setReporting(true)
     try {
       await missionsAPI.reportProblem(problemMission.id, { type: problemType, description: problemDesc })
-      toast('Problème signalé — l\'équipe Shoofly a été alertée ✓', 'success')
+      toast(t('clientMissions.problemReportedToast'), 'success')
       setProblemMission(null)
       setProblemType('')
       setProblemDesc('')
       load()
     } catch (err) {
-      toast(err.response?.data?.error || 'Erreur', 'error')
+      toast(err.response?.data?.error || t('clientMissions.errors.generic'), 'error')
     } finally { setReporting(false) }
   }
   const [interestsMission, setInterestsMission] = useState(null)
@@ -175,7 +204,7 @@ useEffect(() => {
   } else {
     missionsAPI.get(missionId)
       .then(({ data }) => openWith(data.mission || data))
-      .catch(() => toast('Erreur chargement mission', 'error'))
+      .catch(() => toast(t('clientMissions.errors.loadingMission'), 'error'))
       .finally(() => clearPending())
   }
 }, [pendingAction, missions])
@@ -185,7 +214,7 @@ useEffect(() => {
     setLoading(true)
     return missionsAPI.list({ search, status: statusFilter, type: typeFilter })
       .then(({ data }) => setMissions(data.missions || []))
-      .catch(() => toast('Erreur de chargement', 'error'))
+      .catch(() => toast(t('clientMissions.errors.loading'), 'error'))
       .finally(() => setLoading(false))
   }, [search, statusFilter, typeFilter])
 
@@ -200,31 +229,31 @@ const cancel = async (id) => {
       ? (new Date(mission.scheduled_at).getTime() - Date.now()) / 3600000
       : 999
 
-    let confirmMsg = 'Confirmer l\'annulation ?'
+    let confirmMsg = t('clientMissions.cancelConfirm.default')
     if (isAssigned && hoursBeforeMission > 2) {
-      confirmMsg = '⚠️ Cette mission est déjà assignée à un Œil.\n\nConformément aux CGV, le remboursement dans votre wallet sera de 50% du montant payé.\n\nConfirmer l\'annulation ?'
+      confirmMsg = t('clientMissions.cancelConfirm.assignedRefund50')
     } else if (isAssigned && hoursBeforeMission <= 2) {
-      confirmMsg = '⚠️ Cette mission débute dans moins de 2 heures.\n\nConformément aux CGV, aucun remboursement ne sera effectué en cas d\'annulation dans ce délai.\n\nConfirmer l\'annulation ?'
+      confirmMsg = t('clientMissions.cancelConfirm.assignedNoRefund')
     }
 
     if (!window.confirm(confirmMsg)) return
     try {
       await missionsAPI.status(id, { status: 'cancelled' })
       setMissions(prev => prev.map(m => m.id === id ? { ...m, status: 'cancelled' } : m))
-      toast('Mission annulée', 'info')
+      toast(t('clientMissions.cancelledToast'), 'info')
     } catch (err) {
-      toast(err.response?.data?.error || 'Erreur', 'error')
+      toast(err.response?.data?.error || t('clientMissions.errors.generic'), 'error')
     }
   }
 
   const validateMission = async (id) => {
-  if (!window.confirm('Confirmer que la mission a été bien réalisée ? Le paiement sera transféré à l\'Œil.')) return
+  if (!window.confirm(t('clientMissions.validateConfirm'))) return
   try {
     await missionsAPI.validate(id)
     setMissions(prev => prev.map(m => m.id === id ? { ...m, validated_at: new Date().toISOString() } : m))
-    toast('Mission validée ✅ Paiement transféré à l\'Œil', 'success')
+    toast(t('clientMissions.validatedToast'), 'success')
   } catch (err) {
-    toast(err.response?.data?.error || 'Erreur', 'error')
+    toast(err.response?.data?.error || t('clientMissions.errors.generic'), 'error')
   }
 }
 
@@ -232,40 +261,30 @@ const cancel = async (id) => {
   return (
     <AppLayout>
       <Topbar
-        title="Mes missions"
+        title={t('clientMissions.title')}
         actions={
           <button onClick={() => setShowNew(true)} className="btn btn-primary btn-sm">
-            + Nouvelle mission
+            {t('clientMissions.newMissionButton')}
           </button>
         }
       />
       <div className="p-6">
         <div className="flex flex-wrap gap-3 mb-5">
-          <input className="input max-w-[220px]" placeholder="🔍 Rechercher..."
+          <input className="input max-w-[220px]" placeholder={t('clientMissions.searchPlaceholder')}
             value={search} onChange={(e) => setSearch(e.target.value)} />
           <select className="input max-w-[160px]" value={statusFilter} onChange={(e) => setStatus(e.target.value)}>
-            <option value="">Tous les statuts</option>
-            <option value="pending">En attente</option>
-            <option value="assigned">Assigné</option>
-            <option value="en_route">En route</option>
-            <option value="active">En cours</option>
-            <option value="completed">Complétée</option>
-            <option value="cancelled">Annulée</option>
+            {STATUS_OPTIONS.map(o => <option key={o.key} value={o.value}>{t(`clientMissions.filters.${o.key}`)}</option>)}
           </select>
           <select className="input max-w-[160px]" value={typeFilter} onChange={(e) => setType(e.target.value)}>
-            <option value="">Tous les types</option>
-            <option value="immobilier">Immobilier</option>
-            <option value="file_attente">File d'attente</option>
-            <option value="audit">Audit</option>
-            <option value="personnalisee">Personnalisée</option>
+            {TYPE_OPTIONS.map(o => <option key={o.key} value={o.value}>{t(`clientMissions.filters.${o.key}`)}</option>)}
           </select>
         </div>
 
         {loading ? (
           <div className="flex justify-center py-20"><Spinner size="lg" /></div>
         ) : missions.length === 0 ? (
-          <EmptyState icon="📋" title="Aucune mission trouvée" description="Créez votre première mission."
-            action={<button onClick={() => setShowNew(true)} className="btn btn-primary">+ Nouvelle mission</button>} />
+          <EmptyState icon="📋" title={t('clientMissions.emptyTitle')} description={t('clientMissions.emptyDesc')}
+            action={<button onClick={() => setShowNew(true)} className="btn btn-primary">{t('clientMissions.newMissionButton')}</button>} />
         ) : (
           <>
 
@@ -275,8 +294,8 @@ const cancel = async (id) => {
     <table>
       <thead>
         <tr>
-          <th>Mission</th><th>Type</th><th>Œil</th>
-          <th>Date</th><th>Prix</th><th>Statut</th><th>Actions</th>
+          <th>{t('clientMissions.table.mission')}</th><th>{t('clientMissions.table.type')}</th><th>{t('clientMissions.table.oeil')}</th>
+          <th>{t('clientMissions.table.date')}</th><th>{t('clientMissions.table.price')}</th><th>{t('clientMissions.table.status')}</th><th>{t('clientMissions.table.actions')}</th>
         </tr>
       </thead>
       <tbody>
@@ -295,28 +314,28 @@ const cancel = async (id) => {
               <div className="flex gap-1 flex-wrap">
                 {m.status === 'pending' && (
                   <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); setInterestsMission(m); }}
-                    className="btn btn-ghost btn-sm" title="Voir les Œils intéressés">👁️</button>
+                    className="btn btn-ghost btn-sm" title={t('clientMissions.actions.viewInterested')}>👁️</button>
                 )}
                 {['assigned','en_route','active'].includes(m.status) && (
                   <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); setChatMission(m); }}
-                    className="btn btn-ghost btn-sm" title="Chat avec l'Œil">💬</button>
+                    className="btn btn-ghost btn-sm" title={t('clientMissions.actions.chatWithOeil')}>💬</button>
                 )}
                 {['assigned','en_route','active'].includes(m.status) && (
                   <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); setProblemMission(m); setProblemType(''); setProblemDesc('') }}
-                    className="btn btn-ghost btn-sm text-orange-400" title="Signaler un problème">⚠️</button>
+                    className="btn btn-ghost btn-sm text-orange-400" title={t('clientMissions.actions.reportProblem')}>⚠️</button>
                 )}
                 {m.under_surveillance && (
-                  <span className="badge badge-red text-[10px]">⚠️ Surveillance</span>
+                  <span className="badge badge-red text-[10px]">{t('clientMissions.actions.surveillance')}</span>
                 )}
                     {m.status === 'completed' && (
                       <>
                         {['airbnb','booking'].some(s => m.subcategory?.toLowerCase().includes(s.toLowerCase())) && (
                           <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); navigate(`/client/missions/${m.id}/rapport`) }}
-                            className="btn btn-ghost btn-sm" title="Rapport de visite">📄</button>
+                            className="btn btn-ghost btn-sm" title={t('clientMissions.actions.visitReport')}>📄</button>
                         )}
                         {m.type === 'audit' && (
                           <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); navigate(`/client/missions/${m.id}/audit`) }}
-                            className="btn btn-ghost btn-sm" title="Rapport d'audit">📋</button>
+                            className="btn btn-ghost btn-sm" title={t('clientMissions.actions.auditReport')}>📋</button>
                         )}
                       </>
                     )}
@@ -325,20 +344,20 @@ const cancel = async (id) => {
                 <button
                   onClick={(e) => { e.preventDefault(); e.stopPropagation(); navigate(`/client/missions/${m.id}/rapport`); }}
                   className="btn btn-ghost btn-sm"
-                  title="Rapport de visite Airbnb"
+                  title={t('clientMissions.actions.airbnbVisitReport')}
                 >📋</button>
               )}
 
                     <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); setHistoryMission(m); }}
-                      className="btn btn-ghost btn-sm" title="Historique">🕐</button>
+                      className="btn btn-ghost btn-sm" title={t('clientMissions.actions.history')}>🕐</button>
 
 
                         {m.status === 'completed' && m.validated_at && (
                           m.rating_score ? (
-                            <span className="text-xs text-yellow-400 font-semibold">⭐ {m.rating_score}/5</span>
+                            <span className="text-xs text-yellow-400 font-semibold">{t('clientMissions.ratingDisplay', { score: m.rating_score })}</span>
                           ) : (
                             <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); setRatingMission(m); }}
-                              className="btn btn-ghost btn-sm" title="Noter l'Œil">⭐ Noter</button>
+                              className="btn btn-ghost btn-sm" title={t('clientMissions.actions.rateOeil')}>{t('clientMissions.actions.rate')}</button>
                           )
                         )}
 
@@ -348,9 +367,9 @@ const cancel = async (id) => {
                         return hours < 12 ? (
                           <>
                             <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); validateMission(m.id); }}
-                              className="btn btn-ghost btn-sm text-green-400" title="Valider">✅</button>
+                              className="btn btn-ghost btn-sm text-green-400" title={t('clientMissions.actions.validate')}>✅</button>
                             <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); setClaimMission(m); }}
-                              className="btn btn-ghost btn-sm text-orange-400" title="Réclamer">🚨</button>
+                              className="btn btn-ghost btn-sm text-orange-400" title={t('clientMissions.actions.claim')}>🚨</button>
                           </>
                         ) : null;
                       })()
@@ -358,10 +377,10 @@ const cancel = async (id) => {
 
                     {['pending','assigned'].includes(m.status) && (
                       <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); cancel(m.id); }}
-                        className="btn btn-ghost btn-sm text-red-400">Annuler</button>
+                        className="btn btn-ghost btn-sm text-red-400">{t('clientMissions.actions.cancel')}</button>
                     )}
-                
-                
+
+
               </div>
             </td>
           </tr>
@@ -379,7 +398,7 @@ const cancel = async (id) => {
         <div className="flex-1 min-w-0">
           <div className="font-semibold text-sm truncate">{m.title}</div>
           <div className="text-[11px] text-[#AAA] mt-0.5">
-            {TYPE_ICONS[m.type]} · {m.oeil_name || 'Non assigné'} · {new Date(m.created_at).toLocaleDateString('fr-MA')}
+            {TYPE_ICONS[m.type]} · {m.oeil_name || t('clientMissions.mobile.notAssigned')} · {new Date(m.created_at).toLocaleDateString('fr-MA')}
           </div>
         </div>
         <div className="flex-shrink-0 flex flex-col items-end gap-1">
@@ -389,18 +408,18 @@ const cancel = async (id) => {
       </div>
       <div className="flex gap-2 flex-wrap pt-2 border-t border-white/10">
         {m.status === 'pending' && (
-          <button onClick={() => setInterestsMission(m)} className="btn btn-ghost btn-sm">👁️ Intéressés</button>
+          <button onClick={() => setInterestsMission(m)} className="btn btn-ghost btn-sm">{t('clientMissions.mobile.interested')}</button>
         )}
         {['assigned','en_route','active'].includes(m.status) && (
-          <button onClick={() => setChatMission(m)} className="btn btn-ghost btn-sm">💬 Chat</button>
+          <button onClick={() => setChatMission(m)} className="btn btn-ghost btn-sm">{t('clientMissions.mobile.chat')}</button>
         )}
           {m.status === 'completed' && (
             <>
               {['airbnb','booking'].some(s => m.subcategory?.toLowerCase().includes(s.toLowerCase())) && (
-                <button onClick={() => navigate(`/client/missions/${m.id}/rapport`)} className="btn btn-ghost btn-sm">📄 Rapport</button>
+                <button onClick={() => navigate(`/client/missions/${m.id}/rapport`)} className="btn btn-ghost btn-sm">{t('clientMissions.mobile.report')}</button>
               )}
               {m.type === 'audit' && (
-                <button onClick={() => navigate(`/client/missions/${m.id}/audit`)} className="btn btn-ghost btn-sm">📋 Audit</button>
+                <button onClick={() => navigate(`/client/missions/${m.id}/audit`)} className="btn btn-ghost btn-sm">{t('clientMissions.mobile.audit')}</button>
               )}
             </>
           )}
@@ -409,15 +428,19 @@ const cancel = async (id) => {
             <button
               onClick={() => navigate(`/client/missions/${m.id}/rapport`)}
               className="btn btn-ghost btn-sm"
-            >📋 Visite</button>
+            >{t('clientMissions.mobile.visite')}</button>
           )}
-          <button onClick={() => setHistoryMission(m)} className="btn btn-ghost btn-sm">🕐 Historique</button>
+          <button onClick={() => setHistoryMission(m)} className="btn btn-ghost btn-sm">{t('clientMissions.mobile.history')}</button>
 
           {m.status === 'completed' && m.validated_at && (
             m.rating_score ? (
-              <span className="text-xs text-yellow-400 font-semibold">⭐ {m.rating_score}/5{m.rating_comment ? ` · "${m.rating_comment.slice(0,30)}${m.rating_comment.length > 30 ? '...' : ''}"` : ''}</span>
+              <span className="text-xs text-yellow-400 font-semibold">
+                {m.rating_comment
+                  ? t('clientMissions.ratingDisplayWithComment', { score: m.rating_score, comment: `${m.rating_comment.slice(0,30)}${m.rating_comment.length > 30 ? '...' : ''}` })
+                  : t('clientMissions.ratingDisplay', { score: m.rating_score })}
+              </span>
             ) : (
-              <button onClick={() => setRatingMission(m)} className="btn btn-ghost btn-sm">⭐ Noter</button>
+              <button onClick={() => setRatingMission(m)} className="btn btn-ghost btn-sm">{t('clientMissions.mobile.rate')}</button>
             )
           )}
 
@@ -426,20 +449,20 @@ const cancel = async (id) => {
     const hours = (Date.now() - new Date(m.completed_by_oeil_at).getTime()) / 3600000;
     return hours < 12 ? (
       <>
-        <button onClick={() => validateMission(m.id)} className="btn btn-ghost btn-sm text-green-400">✅ Valider</button>
-        <button onClick={() => setClaimMission(m)} className="btn btn-ghost btn-sm text-orange-400">🚨 Réclamer</button>
+        <button onClick={() => validateMission(m.id)} className="btn btn-ghost btn-sm text-green-400">{t('clientMissions.mobile.validate')}</button>
+        <button onClick={() => setClaimMission(m)} className="btn btn-ghost btn-sm text-orange-400">{t('clientMissions.mobile.claim')}</button>
       </>
     ) : null;
   })()
 )}
-        
-        
+
+
       </div>
     </div>
-    
+
   )
 
-  
+
 )}
 </div>
           </>
@@ -449,7 +472,7 @@ const cancel = async (id) => {
       <NewMissionModal
         open={showNew}
         onClose={() => setShowNew(false)}
-        onCreated={() => { load(); toast('Mission créée ! 🎉', 'success') }}
+        onCreated={() => { load(); toast(t('clientMissions.missionCreatedToast'), 'success') }}
       />
 
       {ratingMission && (
@@ -494,38 +517,34 @@ const cancel = async (id) => {
             <div className="flex items-center gap-3 mb-4">
               <div className="w-10 h-10 rounded-xl bg-orange-500/10 flex items-center justify-center text-xl">⚠️</div>
               <div>
-                <h2 className="font-bold text-base">Signaler un problème</h2>
+                <h2 className="font-bold text-base">{t('clientMissions.problemModal.title')}</h2>
                 <p className="text-xs text-[#AAA]">{problemMission.title}</p>
               </div>
             </div>
             <div className="mb-4">
-              <label className="label">Type de problème *</label>
+              <label className="label">{t('clientMissions.problemModal.typeLabel')}</label>
               <select className="input" value={problemType} onChange={e => setProblemType(e.target.value)}>
-                <option value="">Sélectionner...</option>
-                <option value="Œil ne répond plus">Œil ne répond plus</option>
-                <option value="Œil n'est pas sur place">Œil n'est pas sur place</option>
-                <option value="Travail insuffisant / non conforme">Travail insuffisant / non conforme</option>
-                <option value="Comportement irrespectueux">Comportement irrespectueux</option>
-                <option value="Autre problème">Autre problème</option>
+                <option value="">{t('clientMissions.problemModal.selectPlaceholder')}</option>
+                {PROBLEM_TYPE_OPTIONS.map(o => <option key={o.key} value={o.value}>{t(`clientMissions.problemModal.types.${o.key}`)}</option>)}
               </select>
             </div>
             <div className="mb-5">
-              <label className="label">Description (optionnel)</label>
+              <label className="label">{t('clientMissions.problemModal.descLabel')}</label>
               <textarea
                 className="input resize-none h-20 w-full text-sm"
-                placeholder="Décrivez la situation..."
+                placeholder={t('clientMissions.problemModal.descPlaceholder')}
                 value={problemDesc}
                 onChange={e => setProblemDesc(e.target.value)}
               />
             </div>
             <div className="flex gap-3">
-              <button onClick={() => setProblemMission(null)} className="btn btn-ghost flex-1 justify-center">Annuler</button>
+              <button onClick={() => setProblemMission(null)} className="btn btn-ghost flex-1 justify-center">{t('clientMissions.problemModal.cancel')}</button>
               <button
                 onClick={doReportProblem}
                 disabled={reporting || !problemType}
                 className="btn btn-sm flex-1 justify-center bg-orange-500 text-white hover:bg-orange-600 disabled:opacity-50"
               >
-                {reporting ? '...' : 'Signaler →'}
+                {reporting ? t('clientMissions.problemModal.sending') : t('clientMissions.problemModal.submit')}
               </button>
             </div>
           </div>

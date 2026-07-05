@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import AppLayout from '../../components/layout/AppLayout'
 import Topbar from '../../components/layout/Topbar'
 import { missionsAPI } from '../../api'
@@ -6,12 +7,12 @@ import { Spinner, EmptyState, toast } from '../../components/ui'
 import ChatModal from '../../components/missions/ChatModal'
 import { useAuth } from '../../context/AuthContext'
 
-const STATUS_LABEL = {
-  pending:   { label: 'En attente', color: 'text-yellow-400' },
-  assigned:  { label: 'Assignée',   color: 'text-blue-400'   },
-  en_route:  { label: 'En route',   color: 'text-purple-400' },
-  completed: { label: 'Terminée',   color: 'text-green-400'  },
-  cancelled: { label: 'Annulée',    color: 'text-red-400'    },
+const STATUS_LABEL_KEY = {
+  pending:   { key: 'pending',   color: 'text-yellow-400' },
+  assigned:  { key: 'assigned',  color: 'text-blue-400'   },
+  en_route:  { key: 'enRoute',   color: 'text-purple-400' },
+  completed: { key: 'completed', color: 'text-green-400'  },
+  cancelled: { key: 'cancelled', color: 'text-red-400'    },
 }
 
 const TYPE_ICON = {
@@ -20,20 +21,21 @@ const TYPE_ICON = {
   audit:      '🔍',
 }
 
-function timeAgo(dateStr) {
+function timeAgo(dateStr, t) {
   if (!dateStr) return ''
   const diff = Date.now() - new Date(dateStr).getTime()
   const mins  = Math.floor(diff / 60000)
   const hours = Math.floor(diff / 3600000)
   const days  = Math.floor(diff / 86400000)
-  if (mins < 1)   return 'à l\'instant'
-  if (mins < 60)  return `il y a ${mins} min`
-  if (hours < 24) return `il y a ${hours}h`
-  if (days === 1) return 'hier'
-  return `il y a ${days}j`
+  if (mins < 1)   return t('messagerie.timeAgo.now')
+  if (mins < 60)  return t('messagerie.timeAgo.minutes', { count: mins })
+  if (hours < 24) return t('messagerie.timeAgo.hours', { count: hours })
+  if (days === 1) return t('messagerie.timeAgo.yesterday')
+  return t('messagerie.timeAgo.days', { count: days })
 }
 
 export default function Messagerie() {
+  const { t } = useTranslation()
   const { user } = useAuth()
   const [inbox, setInbox]       = useState([])
   const [loading, setLoading]   = useState(true)
@@ -43,7 +45,7 @@ export default function Messagerie() {
     setLoading(true)
     missionsAPI.inbox()
       .then(({ data }) => setInbox(data.inbox || []))
-      .catch(() => toast('Erreur de chargement', 'error'))
+      .catch(() => toast(t('messagerie.errorLoading'), 'error'))
       .finally(() => setLoading(false))
   }
 
@@ -59,16 +61,17 @@ export default function Messagerie() {
 
   return (
     <AppLayout>
-      <Topbar title={`Messagerie${totalUnread > 0 ? ` (${totalUnread})` : ''}`} />
+      <Topbar title={totalUnread > 0 ? t('messagerie.titleWithUnread', { count: totalUnread }) : t('messagerie.title')} />
       <div className="p-4 md:p-6 max-w-2xl mx-auto">
         {loading ? (
           <div className="flex justify-center py-20"><Spinner size="lg" /></div>
         ) : inbox.length === 0 ? (
-          <EmptyState icon="💬" title="Aucune conversation" description="Vos échanges avec les Œils apparaîtront ici." />
+          <EmptyState icon="💬" title={t('messagerie.emptyTitle')} description={t('messagerie.emptyDesc')} />
         ) : (
           <div className="card p-0 overflow-hidden">
             {inbox.map((m, i) => {
-              const st = STATUS_LABEL[m.status] || { label: m.status, color: 'text-[#AAA]' }
+              const st = STATUS_LABEL_KEY[m.status] || { key: null, color: 'text-[#AAA]' }
+              const statusLabel = st.key ? t(`messagerie.status.${st.key}`) : m.status
               const otherName = user?.role === 'client' ? m.oeil_name : m.client_name
               return (
                 <button
@@ -83,17 +86,17 @@ export default function Messagerie() {
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
                       <span className="font-semibold text-sm truncate">{m.title}</span>
-                      <span className={`text-[11px] shrink-0 ${st.color}`}>{st.label}</span>
+                      <span className={`text-[11px] shrink-0 ${st.color}`}>{statusLabel}</span>
                     </div>
                     <div className="text-xs text-[#AAA] truncate mt-0.5">
                       {otherName && <span className="text-white/60">{otherName} · </span>}
-                      {m.last_message || 'Aucun message'}
+                      {m.last_message || t('messagerie.noMessage')}
                     </div>
                   </div>
 
                   {/* Droite */}
                   <div className="flex flex-col items-end gap-1 shrink-0">
-                    <span className="text-[11px] text-[#555]">{timeAgo(m.last_message_at)}</span>
+                    <span className="text-[11px] text-[#555]">{timeAgo(m.last_message_at, t)}</span>
                     {m.unread_count > 0 && (
                       <span className="bg-[#FF4D00] text-white text-[11px] font-bold rounded-full w-5 h-5 flex items-center justify-center">
                         {m.unread_count > 9 ? '9+' : m.unread_count}

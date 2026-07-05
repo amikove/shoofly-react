@@ -1,1 +1,654 @@
-{}
+{
+  "landing": {
+    "nav": {
+      "login": "Connexion",
+      "register": "S'inscrire"
+    },
+    "hero": {
+      "badge": "🇲🇦 Disponible au Maroc",
+      "tagline": "Nous attendons. Vous vivez.",
+      "title1": "Soyez partout.",
+      "title2": "Sans bouger.",
+      "paragraph1": "Pourquoi perdre une demi-journée dans une file d'attente (CNSS, cabinet, consulat...), parcourir des centaines de kilomètres pour être choqué d'un Airbnb qui ne correspond pas à l'annonce, ou interrompre votre journée de congé pour une simple démarche administrative ?",
+      "paragraph2": "Votre temps a plus de valeur que cela.",
+      "paragraph3": "vous met en relation avec votre Œil sur le terrain : une personne vérifiée qui attend, visite, vérifie, récupère ou accomplit toute mission physique à votre place, partout au Maroc.",
+      "ctaCreateMission": "Créer une mission →",
+      "ctaBecomeOeil": "Devenir un Œil"
+    },
+    "missionsSection": {
+      "title": "Quelles missions peut-on confier ?",
+      "subtitle": "Toute situation nécessitant une présence physique"
+    },
+    "missions": {
+      "immobilier": {
+        "label": "Immobilier",
+        "desc": "vérification d'annonces, Visites de biens, état des lieux "
+      },
+      "file": {
+        "label": "File d'attente",
+        "desc": "CNSS, consulats, hôpitaux, banques, administrations"
+      },
+      "audit": {
+        "label": "Audit mystère",
+        "desc": "Évaluation anonyme de restaurants, commerces et services"
+      },
+      "custom": {
+        "label": "Personnalisée",
+        "desc": "Toute mission de présence physique sur mesure"
+      }
+    },
+    "howItWorks": {
+      "title": "Comment ça marche ?",
+      "subtitle": "Simple, rapide, fiable"
+    },
+    "steps": {
+      "step1": {
+        "title": "Créez votre mission",
+        "desc": "Décrivez votre besoin, choisissez la ville et le budget. 1 minute suffit."
+      },
+      "step2": {
+        "title": "Un Œil accepte",
+        "desc": "Un agent de terrain vérifié près de chez vous prend en charge votre mission."
+      },
+      "step3": {
+        "title": "Mission accomplie",
+        "desc": "Vous recevez un rapport détaillé et validez quand vous êtes satisfait."
+      }
+    },
+    "why": {
+      "title": "Pourquoi Shoofly ?",
+      "verifiedAgents": {
+        "label": "Agents vérifiés et identifiés",
+        "desc": "Chaque Œil est vérifié, identifié et évalué avant d'accéder à la plateforme"
+      },
+      "realTimeTracking": {
+        "label": "Suivi en temps réel",
+        "desc": "Suivez l'avancement de votre mission en direct, étape par étape"
+      },
+      "proofOfExecution": {
+        "label": "Preuves d'exécution",
+        "desc": "Photos et vidéos transmises à chaque mission pour confirmer l'accomplissement"
+      },
+      "ratingsReviews": {
+        "label": "Notes et avis clients",
+        "desc": "Choisissez votre Œil en toute confiance grâce aux avis des précédents clients"
+      },
+      "fullReport": {
+        "label": "Rapport complet",
+        "desc": "Un rapport détaillé vous est remis à la fin de chaque mission"
+      },
+      "paymentReleased": {
+        "label": "Paiement libéré après votre validation",
+        "desc": "L'agent est payé uniquement lorsque vous validez la mission — jamais avant"
+      },
+      "standardizedReports": {
+        "label": "Rapports standardisés et objectifs",
+        "desc": "Chaque mission est documentée selon une grille de contrôle complète : photos de preuves, observations détaillées et note globale. Vous décidez en toute confiance, sans vous déplacer."
+      }
+    },
+    "finalCta": {
+      "title": "Prêt à gagner du temps ?",
+      "subtitle": "Inscription gratuite. Première mission en quelques minutes.",
+      "button": "Commencer maintenant →"
+    },
+    "footer": {
+      "copyright": "© 2026 Shoofly. Tous droits réservés.",
+      "login": "Connexion",
+      "register": "Inscription",
+      "cgv": "CGV",
+      "confidentiality": "Confidentialité",
+      "verification": "Vérification"
+    }
+  },
+  "login": {
+    "subtitle": "Connectez-vous à votre espace",
+    "roles": {
+      "client": "Client",
+      "oeil": "Œil",
+      "admin": "Admin"
+    },
+    "emailLabel": "Email",
+    "emailPlaceholder": "vous@email.com",
+    "passwordLabel": "Mot de passe",
+    "passwordPlaceholder": "••••••••",
+    "errorDefault": "Email ou mot de passe incorrect.",
+    "submitLoading": "Connexion...",
+    "submitButton": "Se connecter →",
+    "noAccount": "Pas encore de compte ?",
+    "registerLink": "S'inscrire",
+    "backHome": "← Retour à l'accueil",
+    "demo": {
+      "title": "Comptes démo :",
+      "client": "Client → {{email}} / {{pw}}",
+      "oeil": "Œil → {{email}} / {{pw}}",
+      "admin": "Admin → {{email}} / {{pw}}"
+    }
+  },
+  "register": {
+    "subtitle": "Créer votre compte",
+    "step1": {
+      "question": "Je suis :",
+      "roles": {
+        "client": {
+          "label": "Client",
+          "desc": "Je commande des missions"
+        },
+        "oeil": {
+          "label": "Œil",
+          "desc": "J'effectue des missions"
+        }
+      },
+      "continue": "Continuer →"
+    },
+    "step2": {
+      "firstName": "Prénom",
+      "firstNamePlaceholder": "Karim",
+      "lastName": "Nom",
+      "lastNamePlaceholder": "Benali",
+      "email": "Email",
+      "emailPlaceholder": "vous@email.com",
+      "phone": "Téléphone",
+      "phonePlaceholder": "+212 6xx xxx xxx",
+      "city": "Ville",
+      "cityPlaceholder": "Ex: Rabat",
+      "quartier": "Quartier",
+      "quartierPlaceholder": "Ex: Agdal",
+      "quartierPlaceholderDisabled": "Choisir ville d'abord",
+      "password": "Mot de passe",
+      "passwordPlaceholder": "Min. 6 caractères",
+      "confirm": "Confirmer",
+      "confirmPlaceholder": "••••••••",
+      "back": "← Retour",
+      "continue": "Continuer →"
+    },
+    "step3": {
+      "selectPlaceholder": "Sélectionnez...",
+      "oeil": {
+        "situationLabel": "Votre situation actuelle *",
+        "situationOptions": {
+          "etudiant": "Étudiant",
+          "salarie": "Salarié",
+          "freelance": "Freelance",
+          "autoEntrepreneur": "Auto-entrepreneur",
+          "enRechercheEmploi": "En recherche d'emploi",
+          "retraite": "Retraité",
+          "autre": "Autre"
+        },
+        "disponibiliteLabel": "Disponibilité",
+        "disponibiliteOptions": {
+          "enSemaine": "En semaine",
+          "soirs": "Soirs",
+          "weekEnds": "Week-ends",
+          "tempsPlein": "Temps plein"
+        },
+        "motivationLabel": "Motivation principale",
+        "motivationOptions": {
+          "revenuComplementaire": "Revenu complémentaire",
+          "revenuPrincipal": "Revenu principal",
+          "experienceProfessionnelle": "Expérience professionnelle",
+          "flexibilite": "Flexibilité",
+          "autre": "Autre"
+        },
+        "birthDateLabel": "Date de naissance *",
+        "bioLabel": "Bio",
+        "bioPlaceholder": "Décrivez votre expérience...",
+        "verificationNotice": "⚠️ Votre profil Œil sera vérifié sous 24h."
+      },
+      "client": {
+        "profilLabel": "Quel profil vous correspond le mieux ?",
+        "profilOptions": {
+          "particulier": "Particulier",
+          "entrepreneur": "Entrepreneur / Chef d'entreprise",
+          "professionnel": "Professionnel / Salarié",
+          "expatrie": "Expatrié / Non-résident (MRE)",
+          "etudiant": "Étudiant",
+          "investisseurImmobilier": "Investisseur immobilier",
+          "professionLiberale": "Profession libérale (avocat, médecin, architecte...)",
+          "autre": "Autre"
+        },
+        "usageReasonLabel": "Pourquoi utilisez-vous Shoofly ?",
+        "usageReasonOptions": {
+          "gagnerDuTemps": "Gagner du temps",
+          "eviterDeplacement": "Éviter un déplacement",
+          "verifierAvantAchat": "Vérifier avant un achat",
+          "gererDemarcheAdmin": "Gérer une démarche administrative",
+          "superviserActivite": "Superviser une activité à distance",
+          "autre": "Autre"
+        },
+        "usageFrequencyLabel": "Fréquence estimée",
+        "usageFrequencyOptions": {
+          "uneSeuleFois": "Une seule fois",
+          "quelquesFoisParAn": "Quelques fois par an",
+          "uneFoisParMois": "Une fois par mois",
+          "plusieursFoisParMois": "Plusieurs fois par mois",
+          "chaqueSemaine": "Chaque semaine"
+        },
+        "birthDateLabel": "Date de naissance"
+      },
+      "recap": {
+        "title": "Récapitulatif",
+        "role": "Rôle :",
+        "roleClient": "👤 Client",
+        "roleOeil": "👁️ Œil",
+        "name": "Nom :",
+        "email": "Email :",
+        "city": "Ville :",
+        "quartier": "Quartier :"
+      },
+      "terms": {
+        "prefix": "J'accepte les",
+        "cgu": "conditions d'utilisation",
+        "and": " et la ",
+        "privacy": "politique de confidentialité",
+        "suffix": "."
+      },
+      "back": "← Retour",
+      "submitLoading": "Création...",
+      "submitButton": "Créer mon compte →"
+    },
+    "errors": {
+      "allFieldsRequired": "Tous les champs sont requis.",
+      "cityRequiredOeil": "La ville est obligatoire pour un Œil.",
+      "quartierRequiredOeil": "Le quartier est obligatoire pour un Œil.",
+      "passwordMinLength": "Mot de passe : minimum 6 caractères.",
+      "passwordMismatch": "Les mots de passe ne correspondent pas.",
+      "accountCreationError": "Erreur lors de la création du compte."
+    },
+    "toastAccountCreated": "Compte créé ! Connectez-vous.",
+    "alreadyAccount": "Déjà un compte ?",
+    "loginLink": "Se connecter"
+  },
+  "clientDashboard": {
+    "title": "Tableau de bord",
+    "newMissionButton": "+ Nouvelle mission",
+    "newMissionButtonShort": "+",
+    "errorLoading": "Erreur de chargement",
+    "stats": {
+      "total": "Missions totales",
+      "active": "En cours",
+      "completed": "Complétées",
+      "totalSpent": "Total dépensé",
+      "wallet": "Portefeuille",
+      "madValue": "{{value}} MAD"
+    },
+    "activeMissions": {
+      "title": "Missions en cours",
+      "viewAll": "Voir tout",
+      "emptyTitle": "Aucune mission active",
+      "emptyDesc": "Créez votre première mission.",
+      "notAssigned": "Non assigné",
+      "cityOeil": "📍 {{city}} · {{oeil}}",
+      "viewInterested": "👁️ Voir les Œils intéressés",
+      "viewButton": "Voir →"
+    },
+    "availableOeils": {
+      "title": "Œils disponibles",
+      "viewAll": "Voir tous",
+      "emptyTitle": "Aucun Œil",
+      "emptyDesc": "Les Œils disponibles apparaîtront ici.",
+      "ratingMissions": "{{rating}} · {{count}} missions",
+      "available": "Dispo",
+      "busy": "Occupé"
+    },
+    "missionCreatedToast": "Mission créée ! 🎉"
+  },
+  "clientMissions": {
+    "title": "Mes missions",
+    "newMissionButton": "+ Nouvelle mission",
+    "searchPlaceholder": "🔍 Rechercher...",
+    "emptyTitle": "Aucune mission trouvée",
+    "emptyDesc": "Créez votre première mission.",
+    "missionCreatedToast": "Mission créée ! 🎉",
+    "problemReportedToast": "Problème signalé — l'équipe Shoofly a été alertée ✓",
+    "cancelledToast": "Mission annulée",
+    "validatedToast": "Mission validée ✅ Paiement transféré à l'Œil",
+    "validateConfirm": "Confirmer que la mission a été bien réalisée ? Le paiement sera transféré à l'Œil.",
+    "ratingDisplay": "⭐ {{score}}/5",
+    "ratingDisplayWithComment": "⭐ {{score}}/5 · \"{{comment}}\"",
+    "filters": {
+      "allStatuses": "Tous les statuts",
+      "pending": "En attente",
+      "assigned": "Assigné",
+      "enRoute": "En route",
+      "active": "En cours",
+      "completed": "Complétée",
+      "cancelled": "Annulée",
+      "allTypes": "Tous les types",
+      "immobilier": "Immobilier",
+      "fileAttente": "File d'attente",
+      "audit": "Audit",
+      "personnalisee": "Personnalisée"
+    },
+    "cancelConfirm": {
+      "default": "Confirmer l'annulation ?",
+      "assignedRefund50": "⚠️ Cette mission est déjà assignée à un Œil.\n\nConformément aux CGV, le remboursement dans votre wallet sera de 50% du montant payé.\n\nConfirmer l'annulation ?",
+      "assignedNoRefund": "⚠️ Cette mission débute dans moins de 2 heures.\n\nConformément aux CGV, aucun remboursement ne sera effectué en cas d'annulation dans ce délai.\n\nConfirmer l'annulation ?"
+    },
+    "errors": {
+      "selectProblemType": "Sélectionnez un type de problème",
+      "loadingMission": "Erreur chargement mission",
+      "loading": "Erreur de chargement",
+      "generic": "Erreur"
+    },
+    "table": {
+      "mission": "Mission",
+      "type": "Type",
+      "oeil": "Œil",
+      "date": "Date",
+      "price": "Prix",
+      "status": "Statut",
+      "actions": "Actions"
+    },
+    "actions": {
+      "viewInterested": "Voir les Œils intéressés",
+      "chatWithOeil": "Chat avec l'Œil",
+      "reportProblem": "Signaler un problème",
+      "surveillance": "⚠️ Surveillance",
+      "visitReport": "Rapport de visite",
+      "auditReport": "Rapport d'audit",
+      "airbnbVisitReport": "Rapport de visite Airbnb",
+      "history": "Historique",
+      "rateOeil": "Noter l'Œil",
+      "rate": "⭐ Noter",
+      "validate": "Valider",
+      "claim": "Réclamer",
+      "cancel": "Annuler"
+    },
+    "mobile": {
+      "interested": "👁️ Intéressés",
+      "chat": "💬 Chat",
+      "report": "📄 Rapport",
+      "audit": "📋 Audit",
+      "visite": "📋 Visite",
+      "history": "🕐 Historique",
+      "rate": "⭐ Noter",
+      "validate": "✅ Valider",
+      "claim": "🚨 Réclamer",
+      "notAssigned": "Non assigné"
+    },
+    "reportViewer": {
+      "title": "Rapport de mission",
+      "errorLoading": "Erreur chargement rapport",
+      "noReport": "Aucun rapport disponible pour cette mission.",
+      "globalScore": "Score global",
+      "summary": "Résumé",
+      "riskPoints": "Points de vigilance"
+    },
+    "claimModal": {
+      "title": "🚨 Réclamer cette mission",
+      "subtitle": "\"{{title}}\" — Expliquez pourquoi vous contestez la validation.",
+      "placeholder": "Décrivez le problème en détail...",
+      "cancel": "Annuler",
+      "sending": "Envoi...",
+      "submit": "Envoyer la réclamation",
+      "commentRequired": "Commentaire obligatoire",
+      "sentToast": "Réclamation envoyée 🚨",
+      "genericError": "Erreur"
+    },
+    "problemModal": {
+      "title": "Signaler un problème",
+      "typeLabel": "Type de problème *",
+      "selectPlaceholder": "Sélectionner...",
+      "types": {
+        "oeilNoResponse": "Œil ne répond plus",
+        "oeilNotOnSite": "Œil n'est pas sur place",
+        "workInsufficient": "Travail insuffisant / non conforme",
+        "disrespectfulBehavior": "Comportement irrespectueux",
+        "other": "Autre problème"
+      },
+      "descLabel": "Description (optionnel)",
+      "descPlaceholder": "Décrivez la situation...",
+      "cancel": "Annuler",
+      "sending": "...",
+      "submit": "Signaler →"
+    }
+  },
+  "clientOeils": {
+    "title": "Les Œils",
+    "searchPlaceholder": "🔍 Nom, ville...",
+    "allCities": "Toutes les villes",
+    "emptyTitle": "Aucun Œil trouvé",
+    "emptyDesc": "Modifiez vos filtres.",
+    "errorLoading": "Erreur de chargement",
+    "ratingMissions": "{{rating}} · {{count}} missions",
+    "available": "Dispo",
+    "busy": "Occupé",
+    "order": "Commander",
+    "unavailable": "Indisponible",
+    "unavailableTitle": "Cet Œil est actuellement occupé",
+    "viewReviews": "Voir les avis",
+    "reviewsButton": "★ Avis",
+    "favoriteToast": "Ajouté aux favoris ❤️",
+    "missionAssignedToast": "Mission assignée directement à {{name}} 🎉",
+    "missionCreatedToast": "Mission créée ! 🎉",
+    "avisPopup": {
+      "reviewsCount": "({{count}} avis)",
+      "noReviews": "Aucun avis pour le moment",
+      "noComment": "Aucun commentaire",
+      "close": "Fermer"
+    }
+  },
+  "clientCompte": {
+    "title": "Mon compte",
+    "personalInfo": "Informations personnelles",
+    "firstName": "Prénom",
+    "lastName": "Nom",
+    "email": "Email",
+    "phone": "Téléphone",
+    "city": "Ville",
+    "saving": "Sauvegarde...",
+    "save": "Enregistrer",
+    "security": "Sécurité",
+    "currentPassword": "Mot de passe actuel",
+    "newPassword": "Nouveau mot de passe",
+    "newPasswordPlaceholder": "Min. 6 caractères",
+    "confirmPassword": "Confirmer",
+    "changePassword": "Changer le mot de passe",
+    "profileUpdatedToast": "Profil mis à jour ✓",
+    "passwordUpdatedToast": "Mot de passe modifié ✓",
+    "passwordMismatch": "Les mots de passe ne correspondent pas",
+    "genericError": "Erreur"
+  },
+  "messagerie": {
+    "title": "Messagerie",
+    "titleWithUnread": "Messagerie ({{count}})",
+    "errorLoading": "Erreur de chargement",
+    "emptyTitle": "Aucune conversation",
+    "emptyDesc": "Vos échanges avec les Œils apparaîtront ici.",
+    "noMessage": "Aucun message",
+    "status": {
+      "pending": "En attente",
+      "assigned": "Assignée",
+      "enRoute": "En route",
+      "completed": "Terminée",
+      "cancelled": "Annulée"
+    },
+    "timeAgo": {
+      "now": "à l'instant",
+      "minutes": "il y a {{count}} min",
+      "hours": "il y a {{count}}h",
+      "yesterday": "hier",
+      "days": "il y a {{count}}j"
+    }
+  },
+  "mesSignalements": {
+    "title": "📋 Mes signalements",
+    "emptyTitle": "Aucun signalement",
+    "emptyDesc": "Vous n'avez fait aucun signalement pour le moment.",
+    "yourMessage": "Votre message :",
+    "teamResponse": "Réponse de l'équipe Shoofly :",
+    "reportedOn": "Signalé le {{date}}",
+    "processedOn": " · Traité le {{date}}",
+    "status": {
+      "open": "🟠 Ouvert",
+      "inProgress": "🔄 En cours",
+      "resolved": "✅ Résolu",
+      "dismissed": "🙈 Classé sans suite"
+    }
+  },
+  "newMissionModal": {
+    "title": "Nouvelle mission",
+    "subtitleDirect": "Mission directe pour {{name}}",
+    "subtitleVisible": "Visible par tous les Œils disponibles",
+    "directAssignment": "Attribution directe • {{city}}",
+    "directBadge": "Direct",
+    "categories": {
+      "immobilier": "Immobilier",
+      "fileAttente": "File d'attente",
+      "audit": "Audit & Mystery Shop",
+      "personnalisee": "Personnalisée"
+    },
+    "subcategoryLabel": "Sous-catégorie",
+    "subcategoryLabelRequired": "Sous-catégorie *",
+    "selectPlaceholder": "Sélectionnez...",
+    "titleLabel": "Titre de la mission *",
+    "titlePlaceholderDefault": "Décrivez votre mission",
+    "placeholders": {
+      "immobilier": "Ex: Visite appartement Agdal — Airbnb",
+      "fileAttente": "Ex: File CNSS — Dépôt dossier retraite",
+      "audit": "Ex: Audit mystery shop — Restaurant Hassan",
+      "personnalisee": "Décrivez en une phrase votre besoin"
+    },
+    "cityLabel": "Ville *",
+    "cityPlaceholder": "Ex: Rabat",
+    "quartierLabel": "Quartier *",
+    "quartierPlaceholder": "Ex: Agdal",
+    "quartierPlaceholderDisabled": "Choisir ville d'abord",
+    "addressLabel": "Adresse précise",
+    "addressPlaceholder": "Rue, numéro, bâtiment...",
+    "instructionsLabel": "Instructions particulières",
+    "instructionsPlaceholder": {
+      "immobilier": "Ex: Vérifier cuisine, salle de bain, pression eau...",
+      "fileAttente": "Ex: Guichet 3, dépôt dossier retraite...",
+      "audit": "Ex: Grille d'évaluation spécifique...",
+      "default": "Décrivez précisément ce que vous attendez..."
+    },
+    "dateLabel": "Date de la mission *",
+    "timeLabel": "Heure de la mission *",
+    "budgetLabel": "Budget (MAD) *",
+    "budgetPlaceholder": "Min. {{min}} MAD",
+    "budgetMinNotice": "Budget minimum pour cette mission :",
+    "budgetMinValue": "{{min}} MAD",
+    "promoLabel": "Code promo",
+    "promoDiscount": "− {{amount}} MAD",
+    "promoRemove": "✕ Retirer",
+    "promoFreeNotice": "🎁 Mission offerte — 0 MAD pour vous",
+    "promoShooflyPays": "💸 Shoofly prend en charge la rémunération de l'Œil",
+    "promoPlaceholder": "Ex: WELCOME20",
+    "promoApplying": "...",
+    "promoApply": "Appliquer",
+    "promoAppliedToast": "Code \"{{code}}\" appliqué — {{discount}} MAD de réduction ✓",
+    "submitLoading": "Envoi en cours...",
+    "submitAssign": "Assigner à {{name}} →",
+    "submitSend": "Envoyer la mission →",
+    "cancel": "Annuler",
+    "errors": {
+      "enterBudgetBeforePromo": "Entrez un budget avant d'appliquer un code",
+      "invalidPromo": "Code invalide",
+      "titleCityBudgetRequired": "Titre, ville et budget sont requis",
+      "titleTooShort": "Le titre de la mission doit contenir au moins 6 caractères",
+      "budgetBelowMin": "Le budget minimum pour cette mission est de {{min}} MAD",
+      "quartierRequired": "Quartier obligatoire",
+      "dateTimeRequired": "Date et heure de la mission obligatoires",
+      "subcategoryRequired": "Veuillez sélectionner une sous-catégorie",
+      "creationError": "Erreur lors de la création"
+    }
+  },
+  "oeilProfileModal": {
+    "subtitle": "📍 {{city}} · {{count}} missions",
+    "reviewsCount": "({{count}} avis)",
+    "available": "Disponible",
+    "unavailable": "Indisponible",
+    "reliabilityScore": "Score de fiabilité : {{score}}%",
+    "reliability": {
+      "excellent": "Excellent — Œil prioritaire",
+      "veryGood": "Très bon prestataire",
+      "good": "Bon prestataire",
+      "watch": "À surveiller",
+      "critical": "Fiabilité critique"
+    },
+    "tabs": {
+      "profil": "👤 Profil",
+      "avis": "⭐ Avis"
+    },
+    "bio": "Bio",
+    "missions": "Missions",
+    "averageRating": "Note moyenne",
+    "noInfo": "Aucune information disponible",
+    "noReviews": "Aucun avis pour le moment",
+    "noComment": "Aucun commentaire",
+    "orderThisOeil": "Commander cet Œil →",
+    "close": "Fermer"
+  },
+  "interestsModal": {
+    "title": "Œils intéressés",
+    "errorLoading": "Erreur chargement",
+    "emptyTitle": "Aucun Œil intéressé pour le moment.",
+    "emptyDesc": "Revenez dans quelques minutes.",
+    "ratingReviews": "⭐ {{rating}}/5 ({{count}} avis)",
+    "missionsCount": "✅ {{count}} missions",
+    "hiring": "...",
+    "hire": "Embaucher",
+    "hiredToast": "Œil embauché ! 🎉",
+    "genericError": "Erreur"
+  },
+  "rateModal": {
+    "title": "Noter votre Œil",
+    "subtitle": "{{title}} — Œil : {{oeilName}}",
+    "howWasIt": "Comment s'est passée votre mission ?",
+    "labels": {
+      "1": "Décevant",
+      "2": "Passable",
+      "3": "Correct",
+      "4": "Bien",
+      "5": "Excellent !"
+    },
+    "ratingDisplay": "{{rating}} — {{label}}",
+    "commentLabel": "Commentaire (optionnel)",
+    "commentPlaceholder": "Décrivez votre expérience...",
+    "platformSeparator": "Et maintenant, votre avis sur Shoofly",
+    "nps": {
+      "facilite": "Facilité d'utilisation",
+      "reactivite": "Réactivité du service",
+      "utilite": "Utilité du service",
+      "recommandation": "Recommanderiez-vous Shoofly ?"
+    },
+    "platformCommentLabel": "Un commentaire sur Shoofly ? (optionnel)",
+    "platformCommentPlaceholder": "Votre avis nous aide à nous améliorer...",
+    "sending": "Envoi...",
+    "submit": "Envoyer ma note →",
+    "cancel": "Annuler",
+    "sentToast": "Note {{rating}}/5 envoyée ⭐ Merci !",
+    "errorRating": "Erreur lors de la notation"
+  },
+  "reportModal": {
+    "title": "Soumettre le rapport",
+    "summaryLabel": "Résumé de la mission *",
+    "summaryPlaceholder": "Décrivez ce que vous avez observé, l'état général du lieu, les points importants...",
+    "criteriaLabel": "Évaluation des critères",
+    "criteria": {
+      "accessibility": "Accessibilité",
+      "conformity": "Conformité au brief",
+      "condition": "État général",
+      "cleanliness": "Propreté",
+      "security": "Sécurité"
+    },
+    "risksLabel": "Points de vigilance / risques",
+    "risksPlaceholder": "Ex: Humidité salle de bain&#10;Stock limité&#10;Voisinage bruyant",
+    "risksHint": "Un point par ligne",
+    "globalScoreLabel": "Score global —",
+    "scoreScale": {
+      "veryBad": "0 — Très mauvais",
+      "average": "50 — Moyen",
+      "excellent": "100 — Excellent"
+    },
+    "sending": "Envoi...",
+    "submit": "Soumettre le rapport →",
+    "cancel": "Annuler",
+    "errors": {
+      "summaryRequired": "Le résumé est obligatoire",
+      "generic": "Erreur"
+    },
+    "submittedToast": "Rapport soumis avec succès 📄"
+  }
+}

@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import OeilProfileModal from './OeilProfileModal'
 import { missionsAPI } from '../../api'
 import { Spinner, toast, Avatar } from '../ui'
 
 export default function InterestsModal({ mission, onClose, onHired }) {
+  const { t } = useTranslation()
   const [interests, setInterests] = useState([])
   const [loading, setLoading]     = useState(true)
   const [hiring, setHiring]       = useState(null)
@@ -13,7 +15,7 @@ export default function InterestsModal({ mission, onClose, onHired }) {
   useEffect(() => {
     missionsAPI.interests(mission.id)
       .then(({ data }) => setInterests(data.interests || []))
-      .catch(() => toast('Erreur chargement', 'error'))
+      .catch(() => toast(t('interestsModal.errorLoading'), 'error'))
       .finally(() => setLoading(false))
   }, [mission.id])
 
@@ -23,11 +25,11 @@ export default function InterestsModal({ mission, onClose, onHired }) {
     try {
       await missionsAPI.hire(mission.id, oeilId)
       setHired(true)
-      toast('Œil embauché ! 🎉', 'success')
+      toast(t('interestsModal.hiredToast'), 'success')
       onClose()
       setTimeout(() => onHired(), 300)
     } catch (err) {
-      toast(err.response?.data?.error || 'Erreur', 'error')
+      toast(err.response?.data?.error || t('interestsModal.genericError'), 'error')
     } finally { setHiring(null) }
   }
 
@@ -37,7 +39,7 @@ export default function InterestsModal({ mission, onClose, onHired }) {
       <div className="bg-[#181818] border border-white/20 rounded-2xl p-6 w-full max-w-lg max-h-[90vh] overflow-y-auto">
         <div className="flex items-start justify-between mb-5">
           <div>
-            <h2 className="font-bold text-base">Œils intéressés</h2>
+            <h2 className="font-bold text-base">{t('interestsModal.title')}</h2>
             <p className="text-xs text-[#AAA] mt-0.5">{mission.title}</p>
           </div>
           <button onClick={onClose} className="text-[#AAA] hover:text-white text-lg">✕</button>
@@ -48,8 +50,8 @@ export default function InterestsModal({ mission, onClose, onHired }) {
         ) : interests.length === 0 ? (
           <div className="text-center py-10 text-[#AAA]">
             <div className="text-4xl mb-3 opacity-30">👁️</div>
-            <p className="text-sm">Aucun Œil intéressé pour le moment.</p>
-            <p className="text-xs mt-1">Revenez dans quelques minutes.</p>
+            <p className="text-sm">{t('interestsModal.emptyTitle')}</p>
+            <p className="text-xs mt-1">{t('interestsModal.emptyDesc')}</p>
           </div>
         ) : (
           <div className="space-y-3">
@@ -62,8 +64,8 @@ export default function InterestsModal({ mission, onClose, onHired }) {
                   <div className="font-semibold text-sm">{o.first_name} {o.last_name}</div>
                   <div className="text-xs text-[#AAA] flex gap-3 mt-0.5 flex-wrap">
                     <span>📍 {o.city || '—'}</span>
-                    <span>⭐ {o.rating_avg || '0'}/5 ({o.rating_count || 0} avis)</span>
-                    <span>✅ {o.total_missions || 0} missions</span>
+                    <span>{t('interestsModal.ratingReviews', { rating: o.rating_avg || '0', count: o.rating_count || 0 })}</span>
+                    <span>{t('interestsModal.missionsCount', { count: o.total_missions || 0 })}</span>
                   </div>
                   {o.bio && <p className="text-xs text-[#777] mt-1 line-clamp-2">{o.bio}</p>}
                   {o.message && (
@@ -77,7 +79,7 @@ export default function InterestsModal({ mission, onClose, onHired }) {
                   disabled={hiring === o.id || hired}
                   className="btn btn-primary btn-sm flex-shrink-0 disabled:opacity-50"
                 >
-                  {hiring === o.id ? '...' : hired ? '✓' : 'Embaucher'}
+                  {hiring === o.id ? t('interestsModal.hiring') : hired ? '✓' : t('interestsModal.hire')}
                 </button>
               </div>
            ))}

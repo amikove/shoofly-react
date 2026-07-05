@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import AppLayout from '../../components/layout/AppLayout'
 import Topbar from '../../components/layout/Topbar'
 import { missionsAPI, usersAPI } from '../../api'
@@ -10,6 +11,7 @@ import OeilProfileModal from '../../components/missions/OeilProfileModal'
 
 
 export default function ClientDashboard() {
+  const { t } = useTranslation()
   const { user } = useAuth()
   const [missions, setMissions] = useState([])
   const [oeils, setOeils]       = useState([])
@@ -39,14 +41,14 @@ const [interestsMission, setInterestsMission] = useState(null)
           wallet:    parseFloat(s.wallet_balance || 0),
         })
       })
-      .catch(() => toast('Erreur de chargement', 'error'))
+      .catch(() => toast(t('clientDashboard.errorLoading'), 'error'))
       .finally(() => setLoading(false))
 
   }, [])
 
   if (loading) return (
     <AppLayout>
-      <Topbar title="Tableau de bord" />
+      <Topbar title={t('clientDashboard.title')} />
       <div className="flex-1 flex items-center justify-center"><Spinner size="lg" /></div>
     </AppLayout>
   )
@@ -56,11 +58,11 @@ const [interestsMission, setInterestsMission] = useState(null)
   return (
     <AppLayout>
       <Topbar
-        title="Tableau de bord"
+        title={t('clientDashboard.title')}
         actions={
           <button onClick={() => setShowNew(true)} className="btn btn-primary btn-sm">
-            <span className="hidden sm:inline">+ Nouvelle mission</span>
-            <span className="sm:hidden">+</span>
+            <span className="hidden sm:inline">{t('clientDashboard.newMissionButton')}</span>
+            <span className="sm:hidden">{t('clientDashboard.newMissionButtonShort')}</span>
           </button>
         }
       />
@@ -70,11 +72,11 @@ const [interestsMission, setInterestsMission] = useState(null)
         {/* Stats — 2 colonnes mobile, 4 desktop */}
         <div className="grid grid-cols-2 md:grid-cols-5 gap-3 md:gap-4">
           {[
-            { label: 'Missions totales', value: stats.total,           color: 'text-white'     },
-            { label: 'En cours',         value: stats.active,          color: 'text-[#FF4D00]' },
-            { label: 'Complétées',       value: stats.completed,       color: 'text-green-400' },
-            { label: 'Total dépensé',  value: `${Math.round(stats.budget || 0)} MAD`, color: 'text-green-400' },
-            { label: 'Portefeuille',   value: `${Math.round(stats.wallet || 0)} MAD`, color: 'text-[#FF4D00]'  },
+            { label: t('clientDashboard.stats.total'), value: stats.total,           color: 'text-white'     },
+            { label: t('clientDashboard.stats.active'), value: stats.active,          color: 'text-[#FF4D00]' },
+            { label: t('clientDashboard.stats.completed'), value: stats.completed,       color: 'text-green-400' },
+            { label: t('clientDashboard.stats.totalSpent'), value: t('clientDashboard.stats.madValue', { value: Math.round(stats.budget || 0) }), color: 'text-green-400' },
+            { label: t('clientDashboard.stats.wallet'), value: t('clientDashboard.stats.madValue', { value: Math.round(stats.wallet || 0) }), color: 'text-[#FF4D00]'  },
           ].map((s) => (
             <div key={s.label} className="stat-card">
               <div className="text-[11px] text-[#AAA] mb-1 leading-tight">{s.label}</div>
@@ -89,18 +91,18 @@ const [interestsMission, setInterestsMission] = useState(null)
           {/* Missions en cours */}
           <div className="card">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="font-semibold text-sm">Missions en cours</h2>
-              <a href="/client/missions" className="text-xs text-[#FF4D00]">Voir tout</a>
+              <h2 className="font-semibold text-sm">{t('clientDashboard.activeMissions.title')}</h2>
+              <a href="/client/missions" className="text-xs text-[#FF4D00]">{t('clientDashboard.activeMissions.viewAll')}</a>
             </div>
             {activeMissions.length === 0 ? (
-              <EmptyState icon="📋" title="Aucune mission active" description="Créez votre première mission." />
+              <EmptyState icon="📋" title={t('clientDashboard.activeMissions.emptyTitle')} description={t('clientDashboard.activeMissions.emptyDesc')} />
             ) : activeMissions.map((m) => (
               <div key={m.id} className="bg-[#222] rounded-xl p-3 mb-3 last:mb-0">
                 <div className="flex items-start justify-between gap-2 mb-2">
                   <div className="min-w-0 flex-1">
                     <div className="font-semibold text-sm truncate">{m.title}</div>
                     <div className="text-xs text-[#AAA] mt-0.5 truncate">
-                      📍 {m.city} · {m.oeil_name || 'Non assigné'}
+                      {t('clientDashboard.activeMissions.cityOeil', { city: m.city, oeil: m.oeil_name || t('clientDashboard.activeMissions.notAssigned') })}
                     </div>
                   </div>
                   <div className="flex-shrink-0">
@@ -110,11 +112,11 @@ const [interestsMission, setInterestsMission] = useState(null)
                   {m.status === 'pending' ? (
                     <button onClick={() => setInterestsMission(m)}
                       className="btn btn-primary btn-sm w-full justify-center">
-                      👁️ Voir les Œils intéressés
+                      {t('clientDashboard.activeMissions.viewInterested')}
                     </button>
                   ) : (
                     <a href="/client/missions" className="btn btn-primary btn-sm w-full justify-center">
-                      Voir →
+                      {t('clientDashboard.activeMissions.viewButton')}
                     </a>
                   )}
               </div>
@@ -124,11 +126,11 @@ const [interestsMission, setInterestsMission] = useState(null)
           {/* Œils disponibles */}
           <div className="card">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="font-semibold text-sm">Œils disponibles</h2>
-              <a href="/client/oeils" className="text-xs text-[#FF4D00]">Voir tous</a>
+              <h2 className="font-semibold text-sm">{t('clientDashboard.availableOeils.title')}</h2>
+              <a href="/client/oeils" className="text-xs text-[#FF4D00]">{t('clientDashboard.availableOeils.viewAll')}</a>
             </div>
             {oeils.length === 0 ? (
-              <EmptyState icon="👁️" title="Aucun Œil" description="Les Œils disponibles apparaîtront ici." />
+              <EmptyState icon="👁️" title={t('clientDashboard.availableOeils.emptyTitle')} description={t('clientDashboard.availableOeils.emptyDesc')} />
             ) : oeils.map((o) => (
               <div key={o.id} className="flex items-center gap-3 py-3 border-b border-white/10 last:border-0">
                   <div className="cursor-pointer" onClick={() => setProfileOeil(o)}>
@@ -139,12 +141,12 @@ const [interestsMission, setInterestsMission] = useState(null)
                   <div className="flex items-center gap-1 mt-0.5 flex-wrap">
                     <Stars value={o.rating_avg || 0} />
                     <span className="text-[11px] text-[#AAA]">
-                      {o.rating_avg || '—'} · {o.total_missions || 0} missions
+                      {t('clientDashboard.availableOeils.ratingMissions', { rating: o.rating_avg || '—', count: o.total_missions || 0 })}
                     </span>
                   </div>
                 </div>
                 <span className={`badge flex-shrink-0 ${o.is_available ? 'badge-green' : 'badge-gray'}`}>
-                  {o.is_available ? 'Dispo' : 'Occupé'}
+                  {o.is_available ? t('clientDashboard.availableOeils.available') : t('clientDashboard.availableOeils.busy')}
                 </span>
               </div>
             ))}
@@ -156,7 +158,7 @@ const [interestsMission, setInterestsMission] = useState(null)
       <NewMissionModal open={showNew} onClose={() => setShowNew(false)} onCreated={(m) => {
         setMissions((ms) => [m, ...ms])
         setStats((s) => ({ ...s, total: s.total + 1 }))
-        toast('Mission créée ! 🎉', 'success')
+        toast(t('clientDashboard.missionCreatedToast'), 'success')
       }} />
 
 

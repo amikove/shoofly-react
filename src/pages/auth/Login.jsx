@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import { useAuth } from '../../context/AuthContext'
 import { captureAcquisitionParams } from '../../utils/acquisitionTracking'
 
 const ROLES = [
-  { id: 'client', icon: '👤', label: 'Client' },
-  { id: 'oeil',   icon: '👁️', label: 'Œil'    },
-  { id: 'admin',  icon: '⚙️', label: 'Admin'  },
+  { id: 'client', icon: '👤', labelKey: 'login.roles.client' },
+  { id: 'oeil',   icon: '👁️', labelKey: 'login.roles.oeil'    },
+  { id: 'admin',  icon: '⚙️', labelKey: 'login.roles.admin'  },
 ]
 
 const DEMO = {
@@ -16,6 +17,7 @@ const DEMO = {
 }
 
 export default function Login() {
+  const { t } = useTranslation()
   useEffect(() => { captureAcquisitionParams() }, [])
   const { login } = useAuth()
   const navigate   = useNavigate()
@@ -41,7 +43,7 @@ export default function Login() {
       const routes = { client: '/client', oeil: '/oeil', admin: '/admin' }
       navigate(routes[user.role] || '/client')
     } catch (err) {
-      setError(err.response?.data?.error || 'Email ou mot de passe incorrect.')
+      setError(err.response?.data?.error || t('login.errorDefault'))
     } finally {
       setLoading(false)
     }
@@ -58,7 +60,7 @@ export default function Login() {
           <div className="font-display font-bold text-2xl tracking-tight mb-0.5">
             SHOOF<span className="text-[#FF4D00]">LY</span>
           </div>
-          <p className="text-sm text-[#AAA] mb-7">Connectez-vous à votre espace</p>
+          <p className="text-sm text-[#AAA] mb-7">{t('login.subtitle')}</p>
 
           {/* Role selector */}
           <div className="grid grid-cols-3 gap-2 mb-6">
@@ -73,7 +75,7 @@ export default function Login() {
                 }`}
               >
                 <span className="text-xl">{r.icon}</span>
-                <span>{r.label}</span>
+                <span>{t(r.labelKey)}</span>
               </button>
             ))}
           </div>
@@ -81,24 +83,24 @@ export default function Login() {
           {/* Form */}
           <form onSubmit={handleSubmit} className="space-y-3">
             <div>
-              <label className="label">Email</label>
+              <label className="label">{t('login.emailLabel')}</label>
               <input
                 type="email"
                 className="input"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="vous@email.com"
+                placeholder={t('login.emailPlaceholder')}
                 required
               />
             </div>
             <div>
-              <label className="label">Mot de passe</label>
+              <label className="label">{t('login.passwordLabel')}</label>
               <input
                 type="password"
                 className="input"
                 value={pwd}
                 onChange={(e) => setPwd(e.target.value)}
-                placeholder="••••••••"
+                placeholder={t('login.passwordPlaceholder')}
                 required
               />
             </div>
@@ -114,25 +116,25 @@ export default function Login() {
               disabled={loading}
               className="btn btn-primary btn-lg w-full justify-center mt-2 disabled:opacity-60"
             >
-              {loading ? 'Connexion...' : 'Se connecter →'}
+              {loading ? t('login.submitLoading') : t('login.submitButton')}
             </button>
           </form>
 
           <div className="border-t border-white/10 mt-6 pt-4 flex flex-col gap-2">
             <Link to="/register" className="text-xs text-center text-[#AAA]">
-              Pas encore de compte ? <span className="text-[#FF4D00]">S'inscrire</span>
+              {t('login.noAccount')} <span className="text-[#FF4D00]">{t('login.registerLink')}</span>
             </Link>
             <Link to="/" className="text-xs text-center text-[#555] hover:text-[#AAA]">
-              ← Retour à l'accueil
+              {t('login.backHome')}
             </Link>
           </div>
 
           {/* Demo hint */}
           <div className="mt-4 p-3 bg-[#222] rounded-lg text-[11px] text-[#AAA] leading-relaxed">
-            <strong className="text-white block mb-1">Comptes démo :</strong>
-            Client → karim@gmail.com / client123<br/>
-            Œil → yassine@gmail.com / oeil123<br/>
-            Admin → admin@shoofly.ma / admin123
+            <strong className="text-white block mb-1">{t('login.demo.title')}</strong>
+            {t('login.demo.client', { email: DEMO.client.email, pw: DEMO.client.pw })}<br/>
+            {t('login.demo.oeil', { email: DEMO.oeil.email, pw: DEMO.oeil.pw })}<br/>
+            {t('login.demo.admin', { email: DEMO.admin.email, pw: DEMO.admin.pw })}
           </div>
         </div>
       </div>

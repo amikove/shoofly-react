@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import AppLayout from '../../components/layout/AppLayout'
 import Topbar from '../../components/layout/Topbar'
 import { usersAPI } from '../../api'
@@ -7,6 +8,7 @@ import NewMissionModal from '../../components/missions/NewMissionModal'
 import OeilProfileModal from '../../components/missions/OeilProfileModal'
 
 function AvisPopup({ oeil, onClose }) {
+  const { t } = useTranslation()
   const [reviews, setReviews] = useState([])
   const [loading, setLoading] = useState(true)
 
@@ -22,7 +24,7 @@ function AvisPopup({ oeil, onClose }) {
     <div className="fixed inset-0 bg-black/75 z-[60] flex items-center justify-center p-4 backdrop-blur-sm"
          onClick={(e) => e.target === e.currentTarget && onClose()}>
       <div className="bg-[#181818] border border-white/20 rounded-2xl p-5 w-full max-w-sm max-h-[80vh] flex flex-col shadow-[0_24px_60px_rgba(0,0,0,0.6)]">
-        
+
         {/* Header */}
         <div className="flex items-center justify-between mb-4 flex-shrink-0">
           <div>
@@ -30,7 +32,7 @@ function AvisPopup({ oeil, onClose }) {
             <div className="flex items-center gap-1.5 mt-0.5">
               <Stars value={oeil.rating_avg || 0} />
               <span className="text-xs text-yellow-400 font-semibold">{oeil.rating_avg || '—'}</span>
-              <span className="text-xs text-[#AAA]">({oeil.rating_count || 0} avis)</span>
+              <span className="text-xs text-[#AAA]">{t('clientOeils.avisPopup.reviewsCount', { count: oeil.rating_count || 0 })}</span>
             </div>
           </div>
           <button onClick={onClose} className="text-[#AAA] hover:text-white text-lg">✕</button>
@@ -43,7 +45,7 @@ function AvisPopup({ oeil, onClose }) {
           ) : reviews.length === 0 ? (
             <div className="text-center py-8 text-[#AAA]">
               <div className="text-3xl mb-2 opacity-30">⭐</div>
-              <p className="text-sm">Aucun avis pour le moment</p>
+              <p className="text-sm">{t('clientOeils.avisPopup.noReviews')}</p>
             </div>
           ) : reviews.map((r, i) => (
             <div key={i} className="bg-[#222] rounded-xl p-3">
@@ -58,7 +60,7 @@ function AvisPopup({ oeil, onClose }) {
               </div>
               {r.comment
                 ? <p className="text-xs text-white/70 leading-relaxed">"{r.comment}"</p>
-                : <p className="text-xs text-[#555] italic">Aucun commentaire</p>
+                : <p className="text-xs text-[#555] italic">{t('clientOeils.avisPopup.noComment')}</p>
               }
               <p className="text-[11px] text-[#AAA] mt-1.5">— {r.client_name}</p>
             </div>
@@ -66,7 +68,7 @@ function AvisPopup({ oeil, onClose }) {
         </div>
 
         <button onClick={onClose} className="btn btn-ghost btn-sm mt-4 flex-shrink-0 w-full justify-center">
-          Fermer
+          {t('clientOeils.avisPopup.close')}
         </button>
       </div>
     </div>
@@ -74,6 +76,7 @@ function AvisPopup({ oeil, onClose }) {
 }
 
 export default function ClientOeils() {
+  const { t } = useTranslation()
   const [oeils, setOeils]               = useState([])
   const [loading, setLoading]           = useState(true)
   const [search, setSearch]             = useState('')
@@ -87,7 +90,7 @@ export default function ClientOeils() {
     setLoading(true)
     usersAPI.oeils({ search, city })
       .then(({ data }) => setOeils(data.oeils || []))
-      .catch(() => toast('Erreur de chargement', 'error'))
+      .catch(() => toast(t('clientOeils.errorLoading'), 'error'))
       .finally(() => setLoading(false))
   }, [search, city])
 
@@ -103,14 +106,14 @@ export default function ClientOeils() {
 
   return (
     <AppLayout>
-      <Topbar title="Les Œils" />
+      <Topbar title={t('clientOeils.title')} />
       <div className="p-6">
 
         {/* Filtres */}
         <div className="flex flex-wrap gap-3 mb-5">
           <input
             className="input max-w-[220px]"
-            placeholder="🔍 Nom, ville..."
+            placeholder={t('clientOeils.searchPlaceholder')}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
@@ -119,7 +122,7 @@ export default function ClientOeils() {
             value={city}
             onChange={(e) => setCity(e.target.value)}
           >
-            <option value="">Toutes les villes</option>
+            <option value="">{t('clientOeils.allCities')}</option>
             {['Rabat','Casablanca','Salé','Témara'].map((c) => (
               <option key={c}>{c}</option>
             ))}
@@ -129,7 +132,7 @@ export default function ClientOeils() {
         {loading ? (
           <div className="flex justify-center py-20"><Spinner size="lg" /></div>
         ) : oeils.length === 0 ? (
-          <EmptyState icon="👁️" title="Aucun Œil trouvé" description="Modifiez vos filtres." />
+          <EmptyState icon="👁️" title={t('clientOeils.emptyTitle')} description={t('clientOeils.emptyDesc')} />
         ) : (
           <div className="grid grid-cols-[repeat(auto-fill,minmax(270px,1fr))] gap-4">
             {oeils.map((o) => (
@@ -141,14 +144,14 @@ export default function ClientOeils() {
                     <div className="flex items-center gap-1.5 mt-0.5">
                       <Stars value={o.rating_avg || 0} />
                       <span className="text-xs text-[#AAA]">
-                        {o.rating_avg || '—'} · {o.total_missions || 0} missions
+                        {t('clientOeils.ratingMissions', { rating: o.rating_avg || '—', count: o.total_missions || 0 })}
                       </span>
                     </div>
                     <div className="text-xs text-[#AAA] mt-0.5">📍 {o.city}</div>
                   </div>
                   {o.is_available
-                    ? <span className="badge badge-green">Dispo</span>
-                    : <span className="badge badge-gray">Occupé</span>
+                    ? <span className="badge badge-green">{t('clientOeils.available')}</span>
+                    : <span className="badge badge-gray">{t('clientOeils.busy')}</span>
                   }
                 </div>
 
@@ -170,20 +173,20 @@ export default function ClientOeils() {
                     disabled={!o.is_available}
                     onClick={() => handleCommander(o)}
                     className="btn btn-primary btn-sm flex-1 justify-center disabled:opacity-40 disabled:cursor-not-allowed"
-                    title={!o.is_available ? 'Cet Œil est actuellement occupé' : ''}
+                    title={!o.is_available ? t('clientOeils.unavailableTitle') : ''}
                   >
-                    {o.is_available ? 'Commander' : 'Indisponible'}
+                    {o.is_available ? t('clientOeils.order') : t('clientOeils.unavailable')}
                   </button>
 
                   <button
                     onClick={() => setAvisOeil(o)}
                     className="btn btn-ghost btn-sm"
-                    title="Voir les avis"
+                    title={t('clientOeils.viewReviews')}
                   >
-                    ★ Avis
+                    {t('clientOeils.reviewsButton')}
                   </button>
                   <button
-                    onClick={() => toast('Ajouté aux favoris ❤️', 'success')}
+                    onClick={() => toast(t('clientOeils.favoriteToast'), 'success')}
                     className="btn btn-ghost btn-sm"
                   >
                     ❤️
@@ -211,8 +214,8 @@ export default function ClientOeils() {
           handleClose()
           toast(
             selectedOeil
-              ? `Mission assignée directement à ${selectedOeil.first_name} 🎉`
-              : 'Mission créée ! 🎉',
+              ? t('clientOeils.missionAssignedToast', { name: selectedOeil.first_name })
+              : t('clientOeils.missionCreatedToast'),
             'success'
           )
         }}

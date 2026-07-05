@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import AppLayout from '../../components/layout/AppLayout'
 import Topbar from '../../components/layout/Topbar'
 import { authAPI } from '../../api'
@@ -6,6 +7,7 @@ import { useAuth } from '../../context/AuthContext'
 import { toast, Avatar } from '../../components/ui'
 
 export default function ClientCompte() {
+  const { t } = useTranslation()
   const { user, updateUser } = useAuth()
   const [saving, setSaving]  = useState(false)
   const [form, setForm]      = useState({
@@ -24,25 +26,25 @@ export default function ClientCompte() {
     try {
       const { data } = await authAPI.update(form)
       updateUser(data.user)
-      toast('Profil mis à jour ✓', 'success')
-    } catch { toast('Erreur', 'error') }
+      toast(t('clientCompte.profileUpdatedToast'), 'success')
+    } catch { toast(t('clientCompte.genericError'), 'error') }
     finally { setSaving(false) }
   }
 
   const savePassword = async () => {
-    if (pwd.next !== pwd.confirm) { toast('Les mots de passe ne correspondent pas', 'error'); return }
+    if (pwd.next !== pwd.confirm) { toast(t('clientCompte.passwordMismatch'), 'error'); return }
     setSaving(true)
     try {
       await authAPI.password({ current_password: pwd.current, new_password: pwd.next })
       setPwd({ current: '', next: '', confirm: '' })
-      toast('Mot de passe modifié ✓', 'success')
-    } catch (err) { toast(err.response?.data?.error || 'Erreur', 'error') }
+      toast(t('clientCompte.passwordUpdatedToast'), 'success')
+    } catch (err) { toast(err.response?.data?.error || t('clientCompte.genericError'), 'error') }
     finally { setSaving(false) }
   }
 
   return (
     <AppLayout>
-      <Topbar title="Mon compte" />
+      <Topbar title={t('clientCompte.title')} />
       <div className="p-4 md:p-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
 
@@ -56,15 +58,15 @@ export default function ClientCompte() {
               </div>
             </div>
 
-            <h2 className="font-semibold text-sm mb-4">Informations personnelles</h2>
+            <h2 className="font-semibold text-sm mb-4">{t('clientCompte.personalInfo')}</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <div><label className="label">Prénom</label><input className="input" value={form.first_name} onChange={set('first_name')} /></div>
-              <div><label className="label">Nom</label><input className="input" value={form.last_name} onChange={set('last_name')} /></div>
+              <div><label className="label">{t('clientCompte.firstName')}</label><input className="input" value={form.first_name} onChange={set('first_name')} /></div>
+              <div><label className="label">{t('clientCompte.lastName')}</label><input className="input" value={form.last_name} onChange={set('last_name')} /></div>
             </div>
-            <div className="mt-3"><label className="label">Email</label><input className="input" value={user?.email || ''} disabled /></div>
-            <div className="mt-3"><label className="label">Téléphone</label><input className="input" value={form.phone} onChange={set('phone')} placeholder="+212 6xx xxx xxx" /></div>
+            <div className="mt-3"><label className="label">{t('clientCompte.email')}</label><input className="input" value={user?.email || ''} disabled /></div>
+            <div className="mt-3"><label className="label">{t('clientCompte.phone')}</label><input className="input" value={form.phone} onChange={set('phone')} placeholder="+212 6xx xxx xxx" /></div>
             <div className="mt-3">
-              <label className="label">Ville</label>
+              <label className="label">{t('clientCompte.city')}</label>
               <select className="input" value={form.city} onChange={set('city')}>
                 {['Rabat','Casablanca','Salé','Témara','Marrakech','Fès','Tanger','Agadir'].map((c) => (
                   <option key={c}>{c}</option>
@@ -72,27 +74,27 @@ export default function ClientCompte() {
               </select>
             </div>
             <button onClick={saveProfile} disabled={saving} className="btn btn-primary w-full justify-center mt-5 disabled:opacity-60">
-              {saving ? 'Sauvegarde...' : 'Enregistrer'}
+              {saving ? t('clientCompte.saving') : t('clientCompte.save')}
             </button>
           </div>
 
           {/* Sécurité */}
           <div className="card h-fit">
-            <h2 className="font-semibold text-sm mb-4">Sécurité</h2>
+            <h2 className="font-semibold text-sm mb-4">{t('clientCompte.security')}</h2>
             <div>
-              <label className="label">Mot de passe actuel</label>
+              <label className="label">{t('clientCompte.currentPassword')}</label>
               <input type="password" className="input" value={pwd.current} onChange={setPw('current')} placeholder="••••••••" />
             </div>
             <div className="mt-3">
-              <label className="label">Nouveau mot de passe</label>
-              <input type="password" className="input" value={pwd.next} onChange={setPw('next')} placeholder="Min. 6 caractères" />
+              <label className="label">{t('clientCompte.newPassword')}</label>
+              <input type="password" className="input" value={pwd.next} onChange={setPw('next')} placeholder={t('clientCompte.newPasswordPlaceholder')} />
             </div>
             <div className="mt-3">
-              <label className="label">Confirmer</label>
+              <label className="label">{t('clientCompte.confirmPassword')}</label>
               <input type="password" className="input" value={pwd.confirm} onChange={setPw('confirm')} placeholder="••••••••" />
             </div>
             <button onClick={savePassword} disabled={saving} className="btn btn-ghost w-full justify-center mt-5 disabled:opacity-60">
-              Changer le mot de passe
+              {t('clientCompte.changePassword')}
             </button>
           </div>
 
