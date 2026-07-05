@@ -12,7 +12,7 @@ export default function Topbar({ title, actions }) {
   const [notifs, setNotifs]       = useState([])
   const [unread, setUnread]       = useState(0)
   const [showNotifs, setShowNotifs] = useState(false)
-  const { openChat } = useNotif()
+  const { setPending } = useNotif()
 
   const loadNotifs = useCallback(() => {
     usersAPI.notifications()
@@ -57,13 +57,13 @@ const handleClick = (n) => {
   switch (n.action_type) {
     case 'chat':
       setShowNotifs(false)
-      window.dispatchEvent(new CustomEvent('shoofly-open-chat', { detail: n.mission_id }))
+      setPending('chat', n.mission_id)
       navigate(missionsRoute)
       break
     case 'interests_modal':
       setShowNotifs(false)
+      setPending('interests_modal', n.mission_id)
       navigate(missionsRoute)
-      window.dispatchEvent(new CustomEvent('shoofly-open-interests', { detail: n.mission_id }))
       break
     case 'mission_view':
       setShowNotifs(false)

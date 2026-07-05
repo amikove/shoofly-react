@@ -35,7 +35,7 @@ export default function OeilMissions() {
   // Pagination (uniquement sur l'onglet "Disponibles")
   const [page, setPage] = useState(1)
   const [totalPages, setTotalPages] = useState(1)
-  const { pendingChatMissionId, clearPendingChat, getPending } = useNotif()
+  const { pendingAction, clearPending } = useNotif()
   const { user } = useAuth()
   const [historyMission, setHistoryMission] = useState(null)
   const [transferMission, setTransferMission] = useState(null)
@@ -84,18 +84,22 @@ export default function OeilMissions() {
   // Ouvrir le chat depuis une notification
 
 useEffect(() => {
-  const handler = (e) => {
-    const id = e.detail
-    if (id) {
-      setTab('active')
-      missionsAPI.get(id)
-        .then(({ data }) => setChatMission(data.mission || data))
-        .catch(() => {})
-    }
+  if (!pendingAction || pendingAction.type !== 'chat') return
+  const id = pendingAction.missionId
+  if (!id) { clearPending(); return }
+
+  setTab('active')
+  const found = missions.find((m) => m.id === id) || priorityMissions.find((m) => m.id === id)
+  if (found) {
+    setChatMission(found)
+    clearPending()
+  } else {
+    missionsAPI.get(id)
+      .then(({ data }) => setChatMission(data.mission || data))
+      .catch(() => {})
+      .finally(() => clearPending())
   }
-  window.addEventListener('shoofly-open-chat', handler)
-  return () => window.removeEventListener('shoofly-open-chat', handler)
-}, [])
+}, [pendingAction, missions, priorityMissions])
 
 const load = useCallback((t) => {
   setLoading(true)

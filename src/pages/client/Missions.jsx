@@ -155,43 +155,30 @@ export default function ClientMissions() {
   const [search, setSearch]               = useState('')
   const [statusFilter, setStatus]         = useState('')
   const [typeFilter, setType]             = useState('')
-  const { pendingChatMissionId, clearPendingChat, getPending } = useNotif()
+  const { pendingAction, clearPending } = useNotif()
 
-
-
-
-// Ouvrir le chat depuis une notification
+// Traiter l'action en attente depuis une notification (chat ou intéressés)
 useEffect(() => {
-  const handler = (e) => {
-    const id = e.detail
-    if (id) {
-      missionsAPI.get(id)
-        .then(({ data }) => setChatMission(data.mission || data))
-        .catch(() => {})
-    }
-  }
-  window.addEventListener('shoofly-open-chat', handler)
-  return () => window.removeEventListener('shoofly-open-chat', handler)
-}, [])
+  if (!pendingAction) return
+  const { type, missionId } = pendingAction
+  if (!missionId) { clearPending(); return }
 
-
-// Ouvrir la modal des intéressés depuis une notification
-useEffect(() => {
-  const handler = (e) => {
-    const id = e.detail
-    if (!id) return
-    const found = missions.find((m) => m.id === id)
-    if (found) {
-      setInterestsMission(found)
-    } else {
-      missionsAPI.get(id)
-        .then(({ data }) => setInterestsMission(data.mission || data))
-        .catch(() => toast('Erreur chargement mission', 'error'))
-    }
+  const found = missions.find((m) => m.id === missionId)
+  const openWith = (mission) => {
+    if (type === 'chat') setChatMission(mission)
+    else if (type === 'interests_modal') setInterestsMission(mission)
   }
-  window.addEventListener('shoofly-open-interests', handler)
-  return () => window.removeEventListener('shoofly-open-interests', handler)
-}, [missions])
+
+  if (found) {
+    openWith(found)
+    clearPending()
+  } else {
+    missionsAPI.get(missionId)
+      .then(({ data }) => openWith(data.mission || data))
+      .catch(() => toast('Erreur chargement mission', 'error'))
+      .finally(() => clearPending())
+  }
+}, [pendingAction, missions])
 
 
   const load = useCallback(() => {
