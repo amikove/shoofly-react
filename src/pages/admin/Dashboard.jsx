@@ -17,6 +17,7 @@ const MAIN_TABS = [
   { id: 'clients',     label: '👥 Clients' },
   { id: 'fileattente', label: '⏳ File d\'attente' },
   { id: 'financier',   label: '💰 Financier' },
+  { id: 'campagnes',   label: '🔗 Campagnes' },
   { id: 'claims',      label: '📋 Réclamations' },
 ]
 
@@ -58,6 +59,12 @@ export default function AdminDashboard() {
   // ── Services ──
   const [servicesData, setServicesData] = useState(null)
   const [loadingServices, setLoadingServices] = useState(true)
+
+  // ── Campagnes ──
+  const [campagnesData, setCampagnesData] = useState(null)
+  const [loadingCampagnes, setLoadingCampagnes] = useState(true)
+  const [urlGen, setUrlGen] = useState({ source: '', medium: '', campaign: '' })
+  const [generatedUrl, setGeneratedUrl] = useState('')
 
   // ── Financier ──
   const [financeData, setFinanceData] = useState(null)
@@ -177,6 +184,34 @@ export default function AdminDashboard() {
       toast('Dépense supprimée', 'info')
       loadFinance()
     } catch { toast('Erreur', 'error') }
+  }
+
+  useEffect(() => {
+    if (tab !== 'campagnes' || !range?.from || !range?.to) return
+    setLoadingCampagnes(true)
+    adminAPI.dashboardCampagnes({ date_from: range.from.toISOString(), date_to: range.to.toISOString() })
+      .then(({ data }) => setCampagnesData(data))
+      .catch(() => toast('Erreur chargement campagnes', 'error'))
+      .finally(() => setLoadingCampagnes(false))
+  }, [tab, range])
+
+  const generateUrl = () => {
+    if (!urlGen.source || !urlGen.medium || !urlGen.campaign) {
+      toast('Remplissez source, medium et campagne', 'error')
+      return
+    }
+    const base = 'https://shoofly.ma'
+    const params = new URLSearchParams({
+      utm_source: urlGen.source,
+      utm_medium: urlGen.medium,
+      utm_campaign: urlGen.campaign,
+    })
+    setGeneratedUrl(`${base}/?${params.toString()}`)
+  }
+
+  const copyUrl = () => {
+    navigator.clipboard.writeText(generatedUrl)
+    toast('URL copiée ✓', 'success')
   }
 
   useEffect(() => {
@@ -1098,6 +1133,70 @@ export default function AdminDashboard() {
                             <td>
                               <button onClick={() => removeExpense(e.id)} className="text-[#555] hover:text-red-400 text-xs">✕</button>
                             </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </>
+            )}
+          </>
+        )}
+
+        {tab === 'campagnes' && (
+          <>
+            {/* Générateur d'URL */}
+            <div className="card mb-6">
+              <p className="text-sm font-semibold mb-4">🔗 Générateur d'URL de campagne</p>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-3">
+                <div>
+                  <label className="label">Source</label>
+                  <input className="input" placeholder="facebook, instagram, tiktok..." value={urlGen.source} onChange={(e) => setUrlGen(v => ({ ...v, source: e.target.value }))} />
+                </div>
+                <div>
+                  <label className="label">Medium</label>
+                  <input className="input" placeholder="paid, social, influencer..." value={urlGen.medium} onChange={(e) => setUrlGen(v => ({ ...v, medium: e.target.value }))} />
+                </div>
+                <div>
+                  <label className="label">Campagne</label>
+                  <input className="input" placeholder="lancement_rabat, influenceur_x..." value={urlGen.campaign} onChange={(e) => setUrlGen(v => ({ ...v, campaign: e.target.value }))} />
+                </div>
+              </div>
+              <button onClick={generateUrl} className="btn btn-primary btn-sm mb-3">Générer l'URL</button>
+
+              {generatedUrl && (
+                <div className="flex items-center gap-2 bg-[#222] rounded-lg p-3">
+                  <code className="text-xs text-[#FF4D00] flex-1 break-all">{generatedUrl}</code>
+                  <button onClick={copyUrl} className="btn btn-ghost btn-sm flex-shrink-0">📋 Copier</button>
+                </div>
+              )}
+            </div>
+
+            <DateRangeFilter range={range} onChange={setRange} compareRange={compareRange} onCompareChange={setCompareRange} />
+
+            {loadingCampagnes ? (
+              <div className="flex justify-center py-20"><Spinner size="lg" /></div>
+            ) : campagnesData && (
+              <>
+                <p className="text-sm font-semibold mb-3">📊 Performance par campagne</p>
+                <div className="card p-0">
+                  <div className="table-wrap">
+                    <table>
+                      <thead>
+                        <tr><th>Source</th><th>Medium</th><th>Campagne</th><th>Inscriptions</th><th>Missions</th><th>CA</th></tr>
+                      </thead>
+                      <tbody>
+                        {campagnesData.campaigns.length === 0 ? (
+                          <tr><td colSpan={6} className="text-center text-[#AAA] py-6">Aucune donnée sur cette période</td></tr>
+                        ) : campagnesData.campaigns.map((c, i) => (
+                          <tr key={i}>
+                            <td className="font-medium">{c.source}</td>
+                            <td className="text-[#AAA]">{c.medium}</td>
+                            <td className="text-[#AAA]">{c.campaign}</td>
+                            <td>{c.inscriptions}</td>
+                            <td>{c.missions}</td>
+                            <td className="text-green-400">{parseFloat(c.revenue).toFixed(0)} MAD</td>
                           </tr>
                         ))}
                       </tbody>
