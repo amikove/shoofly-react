@@ -175,6 +175,24 @@ useEffect(() => {
 }, [])
 
 
+// Ouvrir la modal des intéressés depuis une notification
+useEffect(() => {
+  const handler = (e) => {
+    const id = e.detail
+    if (!id) return
+    const found = missions.find((m) => m.id === id)
+    if (found) {
+      setInterestsMission(found)
+    } else {
+      missionsAPI.get(id)
+        .then(({ data }) => setInterestsMission(data.mission || data))
+        .catch(() => toast('Erreur chargement mission', 'error'))
+    }
+  }
+  window.addEventListener('shoofly-open-interests', handler)
+  return () => window.removeEventListener('shoofly-open-interests', handler)
+}, [missions])
+
 
   const load = useCallback(() => {
     setLoading(true)
