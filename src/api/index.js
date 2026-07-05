@@ -32,7 +32,7 @@ export const missionsAPI = {
   assignAdmin:     (id, data)   => api.post(`/api/missions/${id}/assign-admin`, data),
   reportProblem:   (id, data)   => api.post(`/api/missions/${id}/report-problem`, data),
     myReports:       ()           => api.get('/api/missions/my-reports'),
-  adminProblems:   (status)     => api.get('/api/missions/admin/problems', { params: { status } }),
+  adminProblems: (status, page = 1, filters = {}) => api.get('/api/missions/admin/problems', { params: { status, page, limit: 20, ...filters } }),
   resolveReport:   (id, data)   => api.put(`/api/missions/admin/problems/${id}`, data),
   history:  (id) => api.get(`/api/missions/${id}/history`),
 }
