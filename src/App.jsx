@@ -1,5 +1,7 @@
-import { Routes, Route, Navigate } from 'react-router-dom'
+import { useEffect } from 'react'
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import { useAuth } from './context/AuthContext'
+import { trackPageView } from './utils/googleAnalytics'
 import { Spinner } from './components/ui'
 import VerificationIdentite from './pages/oeil/VerificationIdentite'
 
@@ -70,6 +72,14 @@ function RequireAuth({ children, allowedRoles }) {
   return children
 }
 
+function RouteTracker() {
+  const location = useLocation()
+  useEffect(() => {
+    trackPageView(location.pathname)
+  }, [location.pathname])
+  return null
+}
+
 export default function App() {
   const { user, loading } = useAuth()
 
@@ -85,7 +95,9 @@ export default function App() {
   )
 
   return (
-    <Routes>
+    <>
+      <RouteTracker />
+      <Routes>
       {/* Public */}
 
       <Route path="/confidentialite" element={<Confidentialite />} />
@@ -135,6 +147,7 @@ export default function App() {
 
 
       <Route path="*" element={<Navigate to="/" replace />} />
-    </Routes>
+</Routes>
+    </>
   )
 }
