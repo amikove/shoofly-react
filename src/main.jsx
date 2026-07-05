@@ -6,6 +6,7 @@ import { AuthProvider } from './context/AuthContext'
 import { SocketProvider } from './context/SocketContext'
 import { NotifProvider } from './context/NotifContext'
 import ToastContainer from './components/ui/ToastContainer'
+import './i18n/config'
 import './index.css'
 // v2
 

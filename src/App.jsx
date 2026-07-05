@@ -1,4 +1,5 @@
 import { useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import { useAuth } from './context/AuthContext'
 import { trackPageView } from './utils/googleAnalytics'
@@ -82,6 +83,12 @@ function RouteTracker() {
 
 export default function App() {
   const { user, loading } = useAuth()
+  const { i18n } = useTranslation()
+
+  useEffect(() => {
+    document.documentElement.dir = i18n.language === 'ar' ? 'rtl' : 'ltr'
+    document.documentElement.lang = i18n.language
+  }, [i18n.language])
 
   if (loading) return (
     <div className="min-h-screen flex items-center justify-center bg-[#0F0F0F]">

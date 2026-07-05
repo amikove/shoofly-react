@@ -1,4 +1,5 @@
 import { NavLink, useNavigate } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 
 import { useAuth } from '../../context/AuthContext'
 import { Avatar } from '../ui'
@@ -36,7 +37,7 @@ const MENUS = {
     { to: '/admin/fraude',       icon: '🛡️',  label: 'Fraude',       section: 'Gestion',     permission: 'moderation' },
     { to: '/admin/fiabilite',    icon: '📊',  label: 'Fiabilité',    section: 'Gestion',     permission: 'identity' },
     { to: '/admin/problemes',    icon: '🚨',  label: 'Problèmes',    section: 'Gestion',     permission: 'moderation', badge: 'problems' },
-      { to: '/admin/finance',      icon: '💰',  label: 'Finance',      section: 'Gestion',     permission: 'finance' },
+    { to: '/admin/finance',      icon: '💰',  label: 'Finance',      section: 'Gestion',     permission: 'finance' },
     { to: '/admin/promos',       icon: '🎟️',  label: 'Codes Promo',  section: 'Système',     permission: 'finance'    },
     { to: '/admin/parametres',   icon: '⚙️',  label: 'Paramètres',   section: 'Système',     permission: 'settings'   },
     { to: '/admin/admins',       icon: '👑',  label: 'Admins',       section: 'Système',     superAdminOnly: true     },
@@ -51,8 +52,11 @@ const LABELS = {
 
 export default function AppLayout({ children }) {
   const { user, logout, hasPermission, isSuperAdmin } = useAuth()
+  const { i18n } = useTranslation()
   const navigate               = useNavigate()
   const location = window.location.pathname
+
+  const toggleLang = () => i18n.changeLanguage(i18n.language === 'ar' ? 'fr' : 'ar')
 
   if (user?.role === 'oeil' && user?.is_suspended && location !== '/oeil/suspendu') {
     navigate('/oeil/suspendu')
@@ -132,13 +136,22 @@ useEffect(() => {
       {/* SIDEBAR — desktop uniquement */}
       <aside className="hidden md:flex w-[220px] flex-shrink-0 bg-[#181818] border-r border-white/20 flex-col fixed top-0 left-0 h-screen z-50">
         {/* Logo */}
-        <div className="px-5 py-4 border-b border-white/20 bg-[#222]">
-          <div className="font-display font-bold text-xl tracking-tight">
-            SHOOF<span className="text-[#FF4D00]">LY</span>
+        <div className="px-5 py-4 border-b border-white/20 bg-[#222] flex items-start justify-between gap-2">
+          <div>
+            <div className="font-display font-bold text-xl tracking-tight">
+              SHOOF<span className="text-[#FF4D00]">LY</span>
+            </div>
+            <div className="text-[11px] uppercase tracking-widest text-[#AAA] mt-0.5">
+              {LABELS[role]}
+            </div>
           </div>
-          <div className="text-[11px] uppercase tracking-widest text-[#AAA] mt-0.5">
-            {LABELS[role]}
-          </div>
+          <button
+            onClick={toggleLang}
+            className="text-[#AAA] hover:text-white text-xs font-semibold px-2 py-1 rounded border border-white/12 hover:border-white/22 transition-all"
+            title={i18n.language === 'ar' ? 'Français' : 'العربية'}
+          >
+            {i18n.language === 'ar' ? 'FR' : 'AR'}
+          </button>
         </div>
 
         {/* Nav */}
@@ -225,6 +238,13 @@ useEffect(() => {
           </div>
           <div className="flex items-center gap-2">
             <span className="text-xs text-[#AAA]">{user?.first_name}</span>
+            <button
+              onClick={toggleLang}
+              className="text-[#AAA] hover:text-white text-xs font-semibold px-2 py-1 rounded border border-white/12 hover:border-white/22 transition-all"
+              title={i18n.language === 'ar' ? 'Français' : 'العربية'}
+            >
+              {i18n.language === 'ar' ? 'FR' : 'AR'}
+            </button>
             <button onClick={handleLogout} className="text-[#AAA] text-xs px-2 py-1 rounded border border-white/12">✕</button>
           </div>
         </div>
