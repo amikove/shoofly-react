@@ -3,6 +3,7 @@ import { useState, useEffect, useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 import AppLayout from '../../components/layout/AppLayout'
 import { VILLES } from '../../constants/villes'
+import { translateLocation } from '../../constants/villesTranslations'
 import Topbar from '../../components/layout/Topbar'
 import { missionsAPI, reportsAPI } from '../../api'
 import { StatusBadge, Spinner, EmptyState, toast, Pagination } from '../../components/ui'
@@ -18,7 +19,7 @@ const TYPE_ICONS = { immobilier:'🏠', file_attente:'⏳', audit:'🔎', person
 
 
 export default function OeilMissions() {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   const [complianceMission, setComplianceMission] = useState(null)
   const [tab, setTab]             = useState('available')
   const [missions, setMissions]   = useState([])
@@ -317,7 +318,7 @@ try {
                 <span className="font-semibold text-sm truncate">{m.title}</span>
               </div>
               <div className="text-xs text-[#AAA] space-y-0.5">
-                <div>📍 {m.city} {m.quartier ? `· ${m.quartier}` : ''}</div>
+                <div>📍 {translateLocation(m.city, i18n.language)} {m.quartier ? `· ${translateLocation(m.quartier, i18n.language)}` : ''}</div>
                 {m.scheduled_at && (
                   <div>📅 {new Date(m.scheduled_at).toLocaleDateString('fr-FR', { day:'numeric', month:'short' })} à {new Date(m.scheduled_at).toLocaleTimeString('fr-FR', { hour:'2-digit', minute:'2-digit' })}</div>
                 )}
@@ -350,7 +351,7 @@ try {
         >
           <option value="">{t('oeilMissions.filters.allQuartiers')}</option>
           {(VILLES[user?.city] || []).map((q) => (
-            <option key={q} value={q}>{q}</option>
+            <option key={q} value={q}>{translateLocation(q, i18n.language)}</option>
           ))}
         </select>
       </div>
@@ -386,7 +387,7 @@ try {
                       
                         <div className="text-xs text-[#AAA] mt-1 space-y-0.5">
                         <div className="flex flex-wrap gap-3">
-                          <span>📍 {m.city}{m.quartier ? ` · ${m.quartier}` : ''}</span>
+                          <span>📍 {translateLocation(m.city, i18n.language)}{m.quartier ? ` · ${translateLocation(m.quartier, i18n.language)}` : ''}</span>
                           <span>📅 {m.scheduled_at ? `${new Date(m.scheduled_at).toLocaleDateString('fr-FR', { day:'numeric', month:'short', year:'numeric' })} à ${new Date(m.scheduled_at).toLocaleTimeString('fr-FR', { hour:'2-digit', minute:'2-digit' })}` : '—'}</span>
                           {m.client_name && <span>👤 {m.client_name}</span>}
                           {tab !== 'available' && <StatusBadge status={m.status} validated={!!m.validated_at} role="oeil" />}

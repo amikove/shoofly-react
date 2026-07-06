@@ -8,10 +8,11 @@ import { useAuth } from '../../context/AuthContext'
 import NewMissionModal from '../../components/missions/NewMissionModal'
 import InterestsModal from '../../components/missions/InterestsModal'
 import OeilProfileModal from '../../components/missions/OeilProfileModal'
+import { translateLocation } from '../../constants/villesTranslations'
 
 
 export default function ClientDashboard() {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   const { user } = useAuth()
   const [missions, setMissions] = useState([])
   const [oeils, setOeils]       = useState([])
@@ -102,7 +103,7 @@ const [interestsMission, setInterestsMission] = useState(null)
                   <div className="min-w-0 flex-1">
                     <div className="font-semibold text-sm truncate">{m.title}</div>
                     <div className="text-xs text-[#AAA] mt-0.5 truncate">
-                      {t('clientDashboard.activeMissions.cityOeil', { city: m.city, oeil: m.oeil_name || t('clientDashboard.activeMissions.notAssigned') })}
+                      {t('clientDashboard.activeMissions.cityOeil', { city: translateLocation(m.city, i18n.language), oeil: m.oeil_name || t('clientDashboard.activeMissions.notAssigned') })}
                     </div>
                   </div>
                   <div className="flex-shrink-0">

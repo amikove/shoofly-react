@@ -2,9 +2,10 @@ import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { usersAPI } from '../../api'
 import { Modal, Avatar, Stars, Spinner, Badge } from '../ui'
+import { translateLocation } from '../../constants/villesTranslations'
 
 export default function OeilProfileModal({ oeil, onClose, onCommander }) {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   const [data, setData]       = useState(null)
   const [loading, setLoading] = useState(true)
   const [tab, setTab]         = useState('profil')
@@ -29,7 +30,7 @@ export default function OeilProfileModal({ oeil, onClose, onCommander }) {
       open={!!oeil}
       onClose={onClose}
       title={`${profile.first_name} ${profile.last_name}`}
-      subtitle={t('oeilProfileModal.subtitle', { city: profile.city || '—', count: profile.total_missions || 0 })}
+      subtitle={t('oeilProfileModal.subtitle', { city: profile.city ? translateLocation(profile.city, i18n.language) : '—', count: profile.total_missions || 0 })}
       size="md"
     >
       {loading ? (

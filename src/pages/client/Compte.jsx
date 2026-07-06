@@ -5,9 +5,10 @@ import Topbar from '../../components/layout/Topbar'
 import { authAPI } from '../../api'
 import { useAuth } from '../../context/AuthContext'
 import { toast, Avatar } from '../../components/ui'
+import { translateLocation } from '../../constants/villesTranslations'
 
 export default function ClientCompte() {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   const { user, updateUser } = useAuth()
   const [saving, setSaving]  = useState(false)
   const [form, setForm]      = useState({
@@ -69,7 +70,7 @@ export default function ClientCompte() {
               <label className="label">{t('clientCompte.city')}</label>
               <select className="input" value={form.city} onChange={set('city')}>
                 {['Rabat','Casablanca','Salé','Témara','Marrakech','Fès','Tanger','Agadir'].map((c) => (
-                  <option key={c}>{c}</option>
+                  <option key={c} value={c}>{translateLocation(c, i18n.language)}</option>
                 ))}
               </select>
             </div>

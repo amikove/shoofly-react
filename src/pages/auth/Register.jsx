@@ -3,6 +3,7 @@ import { useNavigate, Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { authAPI } from '../../api'
 import { VILLES, VILLES_LIST } from '../../constants/villes'
+import { translateLocation } from '../../constants/villesTranslations'
 import { captureAcquisitionParams, getAcquisitionParams, clearAcquisitionParams } from '../../utils/acquisitionTracking'
 import { toast } from '../../components/ui'
 import LanguageToggle from '../../components/ui/LanguageToggle'
@@ -63,6 +64,7 @@ const CLIENT_USAGE_FREQ_OPTIONS = [
 ]
 
 function Autocomplete({ label, value, onChange, suggestions, placeholder, disabled = false, required = false }) {
+  const { i18n } = useTranslation()
   const [open, setOpen] = useState(false)
   const [query, setQuery] = useState(value || '')
   const ref = useRef(null)
@@ -96,7 +98,7 @@ function Autocomplete({ label, value, onChange, suggestions, placeholder, disabl
           {filtered.map((s) => (
             <div key={s} onMouseDown={() => select(s)}
               className="px-4 py-2.5 text-sm cursor-pointer hover:bg-[#FF4D00]/10 hover:text-white text-[#CCC] transition-colors">
-              {s}
+              {translateLocation(s, i18n.language)}
             </div>
           ))}
         </div>
@@ -106,7 +108,7 @@ function Autocomplete({ label, value, onChange, suggestions, placeholder, disabl
 }
 
 export default function Register() {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   const navigate = useNavigate()
   useEffect(() => { captureAcquisitionParams() }, [])
   const [step, setStep]     = useState(1)
@@ -304,8 +306,8 @@ const [form, setForm] = useState({
                 <div>{t('register.step3.recap.role')} <span className="text-white">{role === 'client' ? t('register.step3.recap.roleClient') : t('register.step3.recap.roleOeil')}</span></div>
                 <div>{t('register.step3.recap.name')} <span className="text-white">{form.first_name} {form.last_name}</span></div>
                 <div>{t('register.step3.recap.email')} <span className="text-white">{form.email}</span></div>
-                {form.city && <div>{t('register.step3.recap.city')} <span className="text-white">{form.city}</span></div>}
-                {form.quartier && <div>{t('register.step3.recap.quartier')} <span className="text-white">{form.quartier}</span></div>}
+                {form.city && <div>{t('register.step3.recap.city')} <span className="text-white">{translateLocation(form.city, i18n.language)}</span></div>}
+                {form.quartier && <div>{t('register.step3.recap.quartier')} <span className="text-white">{translateLocation(form.quartier, i18n.language)}</span></div>}
               </div>
               <label className="flex items-start gap-2 mb-5 cursor-pointer">
                 <input type="checkbox" id="cgu" className="mt-0.5 accent-[#FF4D00]" />

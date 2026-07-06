@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import { missionsAPI, reportsAPI } from '../../api'
 import { Spinner, Stars } from '../ui'
 import { useNavigate } from 'react-router-dom'
+import { translateLocation } from '../../constants/villesTranslations'
 
 const STATUS_CONFIG = {
   pending:          { icon: '📋', label: 'En attente',               color: 'text-yellow-400' },
@@ -23,6 +25,7 @@ function formatDate(dateStr) {
 }
 
 export default function MissionSummaryModal({ mission, onClose }) {
+  const { i18n } = useTranslation()
   const navigate = useNavigate()
   const [history, setHistory]   = useState([])
   const [rating, setRating]     = useState(null)
@@ -60,7 +63,7 @@ export default function MissionSummaryModal({ mission, onClose }) {
         <div className="flex items-center justify-between mb-4 flex-shrink-0">
           <div>
             <h2 className="font-semibold text-sm">{mission.title}</h2>
-            <p className="text-xs text-[#AAA] mt-0.5">📍 {mission.city} {mission.quartier ? `· ${mission.quartier}` : ''}</p>
+            <p className="text-xs text-[#AAA] mt-0.5">📍 {translateLocation(mission.city, i18n.language)} {mission.quartier ? `· ${translateLocation(mission.quartier, i18n.language)}` : ''}</p>
           </div>
           <button onClick={onClose} className="text-[#AAA] hover:text-white text-lg">✕</button>
         </div>

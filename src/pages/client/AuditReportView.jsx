@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useParams, useNavigate } from 'react-router-dom'
 import AppLayout from '../../components/layout/AppLayout'
 import Topbar from '../../components/layout/Topbar'
 import { missionsAPI, reportsAPI } from '../../api'
 import { Spinner, Stars } from '../../components/ui'
+import { translateLocation } from '../../constants/villesTranslations'
 
 function ScoreBar({ label, value, max }) {
   const pct = Math.round((value / max) * 100)
@@ -56,6 +58,7 @@ function scoreLabel(s) {
 }
 
 export default function AuditReportView() {
+  const { i18n } = useTranslation()
   const { missionId } = useParams()
   const navigate = useNavigate()
   const [mission, setMission] = useState(null)
@@ -103,7 +106,7 @@ export default function AuditReportView() {
           <div className="flex items-start justify-between">
             <div>
               <div className="font-semibold">{mission?.title}</div>
-              <div className="text-xs text-[#AAA] mt-0.5">📍 {mission?.city}</div>
+              <div className="text-xs text-[#AAA] mt-0.5">📍 {translateLocation(mission?.city, i18n.language)}</div>
               {d.date_visite && <div className="text-xs text-[#AAA] mt-0.5">📅 {d.date_visite} {d.heure_visite && `à ${d.heure_visite}`}</div>}
               {d.duree_visite && <div className="text-xs text-[#AAA] mt-0.5">⏱ Durée : {d.duree_visite} min</div>}
             </div>

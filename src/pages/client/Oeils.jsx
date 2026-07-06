@@ -6,6 +6,7 @@ import { usersAPI } from '../../api'
 import { Spinner, EmptyState, Avatar, Stars, toast } from '../../components/ui'
 import NewMissionModal from '../../components/missions/NewMissionModal'
 import OeilProfileModal from '../../components/missions/OeilProfileModal'
+import { translateLocation } from '../../constants/villesTranslations'
 
 function AvisPopup({ oeil, onClose }) {
   const { t } = useTranslation()
@@ -76,7 +77,7 @@ function AvisPopup({ oeil, onClose }) {
 }
 
 export default function ClientOeils() {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   const [oeils, setOeils]               = useState([])
   const [loading, setLoading]           = useState(true)
   const [search, setSearch]             = useState('')
@@ -124,7 +125,7 @@ export default function ClientOeils() {
           >
             <option value="">{t('clientOeils.allCities')}</option>
             {['Rabat','Casablanca','Salé','Témara'].map((c) => (
-              <option key={c}>{c}</option>
+              <option key={c} value={c}>{translateLocation(c, i18n.language)}</option>
             ))}
           </select>
         </div>
@@ -147,7 +148,7 @@ export default function ClientOeils() {
                         {t('clientOeils.ratingMissions', { rating: o.rating_avg || '—', count: o.total_missions || 0 })}
                       </span>
                     </div>
-                    <div className="text-xs text-[#AAA] mt-0.5">📍 {o.city}</div>
+                    <div className="text-xs text-[#AAA] mt-0.5">📍 {translateLocation(o.city, i18n.language)}</div>
                   </div>
                   {o.is_available
                     ? <span className="badge badge-green">{t('clientOeils.available')}</span>

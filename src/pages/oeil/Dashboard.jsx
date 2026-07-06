@@ -7,9 +7,10 @@ import { StatusBadge, Spinner, EmptyState, toast } from '../../components/ui'
 import { useAuth } from '../../context/AuthContext'
 import { useNavigate } from 'react-router-dom'
 import ChatModal from '../../components/missions/ChatModal'
+import { translateLocation } from '../../constants/villesTranslations'
 
 export default function OeilDashboard() {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   const { user } = useAuth()
   const navigate = useNavigate()
   const [pending, setPending]         = useState([])
@@ -212,7 +213,7 @@ const refuse = async (id) => {
                       <span className="font-semibold text-sm truncate">{m.title}</span>
                     </div>
                     <div className="text-xs text-[#AAA] mt-1 space-y-0.5">
-                      <div>📍 {m.city} {m.quartier ? `· ${m.quartier}` : ''}</div>
+                      <div>📍 {translateLocation(m.city, i18n.language)} {m.quartier ? `· ${translateLocation(m.quartier, i18n.language)}` : ''}</div>
                       {m.scheduled_at && <div>📅 {new Date(m.scheduled_at).toLocaleDateString('fr-FR', { day:'numeric', month:'short' })} à {new Date(m.scheduled_at).toLocaleTimeString('fr-FR', { hour:'2-digit', minute:'2-digit' })}</div>}
                       {m.transfer_deadline && <div className="text-red-400">⏱️ Expire à {new Date(m.transfer_deadline).toLocaleTimeString('fr-FR', { hour:'2-digit', minute:'2-digit' })}</div>}
                     </div>
@@ -254,7 +255,7 @@ const refuse = async (id) => {
                   <div className="min-w-0">
                     <div className="font-semibold text-sm truncate">{m.title}</div>
                     <div className="text-xs text-[#AAA] mt-0.5 space-y-0.5">
-                      <div>📍 {m.city} {m.quartier ? `· ${m.quartier}` : ''}</div>
+                      <div>📍 {translateLocation(m.city, i18n.language)} {m.quartier ? `· ${translateLocation(m.quartier, i18n.language)}` : ''}</div>
                       {m.address && <div>🏠 {m.address}</div>}
                       {m.scheduled_at && <div>📅 {new Date(m.scheduled_at).toLocaleDateString('fr-FR', { day:'numeric', month:'short', year:'numeric' })} à {new Date(m.scheduled_at).toLocaleTimeString('fr-FR', { hour:'2-digit', minute:'2-digit' })}</div>}
                       {m.description && <div className="text-[#666] line-clamp-2">💬 {m.description}</div>}
@@ -309,7 +310,7 @@ const refuse = async (id) => {
                     <div className="font-semibold text-sm">{m.title}</div>
                     <div className="text-xs text-[#AAA] mt-0.5 space-y-0.5">
                       <div>👤 {m.client_name}</div>
-                      <div>📍 {m.city} {m.quartier ? `· ${m.quartier}` : ''}</div>
+                      <div>📍 {translateLocation(m.city, i18n.language)} {m.quartier ? `· ${translateLocation(m.quartier, i18n.language)}` : ''}</div>
                       {m.address && <div>🏠 {m.address}</div>}
                       {m.scheduled_at && <div>📅 {new Date(m.scheduled_at).toLocaleDateString('fr-FR', { day:'numeric', month:'short', year:'numeric' })} à {new Date(m.scheduled_at).toLocaleTimeString('fr-FR', { hour:'2-digit', minute:'2-digit' })}</div>}
                       {m.description && <div className="text-[#666] line-clamp-2">💬 {m.description}</div>}

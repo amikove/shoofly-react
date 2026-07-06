@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import AppLayout from '../../components/layout/AppLayout'
 import Topbar from '../../components/layout/Topbar'
 import { reliabilityAPI } from '../../api'
 import { Spinner, Avatar, toast, Pagination } from '../../components/ui'
 import { VILLES, VILLES_LIST } from '../../constants/villes'
+import { translateLocation } from '../../constants/villesTranslations'
 
 const MAIN_TABS = [
   { id: 'suspended', label: '🔴 Suspendus' },
@@ -40,6 +42,7 @@ export default function AdminFiabilite() {
 // ONGLET 1 — Œils suspendus, avec réactivation directe possible
 // ═══════════════════════════════════════════════════════════
 function SuspendedTab() {
+  const { i18n } = useTranslation()
   const [oeils, setOeils] = useState([])
   const [loading, setLoading] = useState(true)
   const [reactivating, setReactivating] = useState(null) // id de l'Œil en cours de réactivation (affiche le mini-formulaire)
@@ -83,7 +86,7 @@ function SuspendedTab() {
             <div className="flex-1">
               <p className="font-semibold">{o.first_name} {o.last_name}</p>
               <p className="text-xs text-[#AAA]">{o.email}</p>
-              <p className="text-xs text-[#666] mt-0.5">📍 {o.city}{o.quartier ? ` · ${o.quartier}` : ''}</p>
+              <p className="text-xs text-[#666] mt-0.5">📍 {translateLocation(o.city, i18n.language)}{o.quartier ? ` · ${translateLocation(o.quartier, i18n.language)}` : ''}</p>
             </div>
             <div className="text-right">
               <span className="badge badge-red">Score : {o.reliability_score}%</span>
@@ -139,6 +142,7 @@ function SuspendedTab() {
 // ONGLET 2 — Demandes d'examen en attente (contenu existant, inchangé)
 // ═══════════════════════════════════════════════════════════
 function RequestsTab() {
+  const { i18n } = useTranslation()
   const [requests, setRequests] = useState([])
   const [loading, setLoading]   = useState(true)
   const [history, setHistory]   = useState({})
@@ -232,7 +236,7 @@ function RequestsTab() {
                       <div>📋 {e.mission_title}</div>
                       {e.client_first_name && <div>👤 {e.client_first_name} {e.client_last_name}</div>}
                       {e.mission_scheduled_at && <div>📅 {new Date(e.mission_scheduled_at).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' })} à {new Date(e.mission_scheduled_at).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}</div>}
-                      {e.mission_city && <div>📍 {e.mission_city}{e.mission_quartier ? ` · ${e.mission_quartier}` : ''}</div>}
+                      {e.mission_city && <div>📍 {translateLocation(e.mission_city, i18n.language)}{e.mission_quartier ? ` · ${translateLocation(e.mission_quartier, i18n.language)}` : ''}</div>}
                       {e.mission_status && <div>🔄 Statut : {e.mission_status}</div>}
                       {e.media_count !== null && <div>📸 {e.media_count} média(s)</div>}
                     </div>
@@ -295,6 +299,7 @@ function RequestsTab() {
 // ONGLET 3 — Toutes les notes, filtrable par ville/quartier, triable par score, paginé
 // ═══════════════════════════════════════════════════════════
 function ScoresTab() {
+  const { i18n } = useTranslation()
   const [oeils, setOeils] = useState([])
   const [loading, setLoading] = useState(true)
   const [city, setCity] = useState('')
@@ -333,7 +338,7 @@ function ScoresTab() {
         <select className="input max-w-[180px]" value={city} onChange={(e) => setCity(e.target.value)}>
           <option value="">Toutes les villes</option>
           {VILLES_LIST.map((v) => (
-            <option key={v} value={v}>{v}</option>
+            <option key={v} value={v}>{translateLocation(v, i18n.language)}</option>
           ))}
         </select>
 
@@ -345,7 +350,7 @@ function ScoresTab() {
         >
           <option value="">Tous les quartiers</option>
           {(VILLES[city] || []).map((q) => (
-            <option key={q} value={q}>{q}</option>
+            <option key={q} value={q}>{translateLocation(q, i18n.language)}</option>
           ))}
         </select>
 
@@ -380,8 +385,8 @@ function ScoresTab() {
                   <tr key={o.id}>
                     <td className="font-medium">{o.first_name} {o.last_name}</td>
                     <td className="text-[#AAA]">{o.email}</td>
-                    <td className="text-[#AAA]">{o.city || '—'}</td>
-                    <td className="text-[#AAA]">{o.quartier || '—'}</td>
+                    <td className="text-[#AAA]">{o.city ? translateLocation(o.city, i18n.language) : '—'}</td>
+                    <td className="text-[#AAA]">{o.quartier ? translateLocation(o.quartier, i18n.language) : '—'}</td>
                     <td>
                       <span className={`badge ${o.reliability_score >= 70 ? 'badge-green' : o.reliability_score >= 50 ? 'badge-yellow' : 'badge-red'}`}>
                         {o.reliability_score}%
