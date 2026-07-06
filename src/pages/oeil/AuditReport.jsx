@@ -5,6 +5,7 @@ import AppLayout from '../../components/layout/AppLayout'
 import Topbar from '../../components/layout/Topbar'
 import { missionsAPI, reportsAPI } from '../../api'
 import { Spinner, toast } from '../../components/ui'
+import { translateLocation } from '../../constants/villesTranslations'
 
 // ── Composant Note étoiles ─────────────────────────────────
 function StarRating({ value, onChange, label, disabled }) {
@@ -181,7 +182,7 @@ function scoreLabel(s, t) {
 
 // ── Page principale ────────────────────────────────────────
 export default function AuditReport() {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   const { missionId } = useParams()
   const navigate = useNavigate()
   const [mission, setMission]     = useState(null)
@@ -320,7 +321,7 @@ export default function AuditReport() {
           <div className="text-right">
             <div className="text-xs text-[#AAA] mb-1">{t('oeilAuditReport.scoreCard.missionLabel')}</div>
             <div className="font-semibold text-sm">{mission?.title}</div>
-            <div className="text-xs text-[#AAA] mt-0.5">📍 {mission?.city}</div>
+            <div className="text-xs text-[#AAA] mt-0.5">📍 {translateLocation(mission?.city, i18n.language)}</div>
           </div>
         </div>
 

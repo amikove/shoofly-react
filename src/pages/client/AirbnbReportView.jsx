@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useParams, useNavigate } from 'react-router-dom'
 import AppLayout from '../../components/layout/AppLayout'
 import Topbar from '../../components/layout/Topbar'
 import { missionsAPI, reportsAPI } from '../../api'
 import { Spinner, Stars } from '../../components/ui'
+import { translateLocation } from '../../constants/villesTranslations'
 
 
 
@@ -57,6 +59,7 @@ function scoreLabel(s) {
 }
 
 export default function AirbnbReportView() {
+  const { t, i18n } = useTranslation()
   const { missionId } = useParams()
   const navigate = useNavigate()
   const [mission, setMission] = useState(null)
@@ -135,7 +138,7 @@ export default function AirbnbReportView() {
           <div className="flex items-start justify-between">
             <div>
               <div className="font-semibold">{mission?.title}</div>
-              <div className="text-xs text-[#AAA]">📍 {mission?.city} · {mission?.subcategory}</div>
+              <div className="text-xs text-[#AAA]">📍 {translateLocation(mission?.city, i18n.language)} · {mission?.subcategory ? t(`newMissionModal.subcategories.${mission.subcategory}`, mission.subcategory) : ''}</div>
             </div>
             {report.submitted
               ? <span className="badge badge-green">✓ Rapport soumis</span>

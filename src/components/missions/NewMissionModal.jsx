@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import ComplianceModal from './ComplianceModalClient'
 import { missionsAPI, usersAPI } from '../../api'
 import { VILLES, VILLES_LIST } from '../../constants/villes'
+import { translateLocation } from '../../constants/villesTranslations'
 import { toast } from '../ui'
 import { useAuth } from '../../context/AuthContext'
 
@@ -10,6 +11,7 @@ import { useAuth } from '../../context/AuthContext'
 
 // ── Composant Autocomplete générique ──────────────────────
 function Autocomplete({ label, value, onChange, suggestions, placeholder, disabled = false }) {
+  const { i18n } = useTranslation()
   const [open, setOpen]     = useState(false)
   const [query, setQuery]   = useState(value || '')
   const ref                  = useRef(null)
@@ -51,7 +53,7 @@ function Autocomplete({ label, value, onChange, suggestions, placeholder, disabl
               onMouseDown={() => select(s)}
               className="px-4 py-2.5 text-sm cursor-pointer hover:bg-[#FF4D00]/10 hover:text-white text-[#CCC] transition-colors"
             >
-              {s}
+              {translateLocation(s, i18n.language)}
             </div>
           ))}
         </div>
@@ -116,7 +118,8 @@ function getMinPrice(type, sub) {
 
 // ── Catégories et sous-catégories ─────────────────────────
 // Note : les libellés de sous-catégories servent aussi de valeurs de données
-// (clé de lookup MIN_PRICES + valeur envoyée au backend) : ils ne sont pas traduits.
+// (clé de lookup MIN_PRICES + valeur envoyée au backend) : la value ne change jamais,
+// seul le texte affiché est traduit via newMissionModal.subcategories/groupLabels.
 const CATEGORIES = {
   immobilier: {
     icon: '🏠', labelKey: 'immobilier',
@@ -166,7 +169,7 @@ function SubcategorySelector({ type, value, onChange, t }) {
         <label className="label">{t('newMissionModal.subcategoryLabel')}</label>
         <select className="input" value={value} onChange={(e) => onChange(e.target.value)}>
           <option value="">{t('newMissionModal.selectPlaceholder')}</option>
-          {cat.subcategories.map((s) => <option key={s} value={s}>{s}</option>)}
+          {cat.subcategories.map((s) => <option key={s} value={s}>{t(`newMissionModal.subcategories.${s}`, s)}</option>)}
         </select>
       </div>
     )
@@ -178,9 +181,9 @@ function SubcategorySelector({ type, value, onChange, t }) {
         <select className="input" value={value} onChange={(e) => onChange(e.target.value)} required>
           <option value="">{t('newMissionModal.selectPlaceholder')}</option>
           {cat.groups.map((g) => (
-            <optgroup key={g.label} label={g.label}>
+            <optgroup key={g.label} label={t(`newMissionModal.groupLabels.${g.label}`, g.label)}>
               {g.items.map((item) => (
-                <option key={item} value={`${g.label} — ${item}`}>{item}</option>
+                <option key={item} value={`${g.label} — ${item}`}>{t(`newMissionModal.subcategories.${item}`, item)}</option>
               ))}
             </optgroup>
           ))}

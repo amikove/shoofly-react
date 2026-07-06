@@ -5,6 +5,7 @@ import AppLayout from '../../components/layout/AppLayout'
 import Topbar from '../../components/layout/Topbar'
 import { missionsAPI, reportsAPI } from '../../api'
 import { Spinner, toast } from '../../components/ui'
+import { translateLocation } from '../../constants/villesTranslations'
 
 // ── Composant Note étoiles ─────────────────────────────────
 function StarRating({ value, onChange, label }) {
@@ -115,7 +116,7 @@ function scoreLabel(s, t) {
 
 // ── Page principale ────────────────────────────────────────
 export default function AirbnbReport() {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   const { missionId } = useParams()
   const navigate = useNavigate()
   const [mission, setMission] = useState(null)
@@ -239,7 +240,7 @@ const validateAirbnb = () => {
         <div className="card mb-4 flex items-center justify-between">
           <div>
             <div className="font-semibold text-sm">{mission?.title}</div>
-            <div className="text-xs text-[#AAA]">📍 {mission?.city} · {mission?.subcategory}</div>
+            <div className="text-xs text-[#AAA]">📍 {translateLocation(mission?.city, i18n.language)} · {mission?.subcategory ? t(`newMissionModal.subcategories.${mission.subcategory}`, mission.subcategory) : ''}</div>
           </div>
           {submitted && <span className="badge badge-green">{t('oeilAirbnbReport.submittedBadge')}</span>}
         </div>

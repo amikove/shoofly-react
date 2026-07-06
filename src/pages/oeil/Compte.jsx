@@ -5,6 +5,7 @@ import Topbar from '../../components/layout/Topbar'
 import { useAuth } from '../../context/AuthContext'
 import { toast, Avatar, Stars } from '../../components/ui'
 import { authAPI, usersAPI } from '../../api'
+import { translateLocation } from '../../constants/villesTranslations'
 
 const JOURS = ['Lun','Mar','Mer','Jeu','Ven','Sam','Dim']
 
@@ -16,7 +17,7 @@ const defaultDispo = () => JOURS.map((j, i) => ({
 }))
 
 export default function OeilCompte() {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   const { user, updateUser } = useAuth()
   const [saving, setSaving]  = useState(false)
   const [uploadingAvatar, setUploadingAvatar] = useState(false)
@@ -147,7 +148,7 @@ const [dispo, setDispo] = useState(() => parseDispo(user?.disponibilites))
               <label className="label">{t('oeilCompte.cityLabel')}</label>
               <select className="input" value={form.city} onChange={set('city')}>
                 {['Rabat','Casablanca','Salé','Témara','Marrakech','Fès','Tanger','Agadir'].map((c) => (
-                  <option key={c}>{c}</option>
+                  <option key={c} value={c}>{translateLocation(c, i18n.language)}</option>
                 ))}
               </select>
             </div>
@@ -191,7 +192,7 @@ const [dispo, setDispo] = useState(() => parseDispo(user?.disponibilites))
 
               {dispo.map((d, i) => (
                 <div key={d.jour} className={`flex items-center gap-2 py-2 border-b border-white/10 last:border-0 transition-opacity ${!d.actif ? 'opacity-40' : ''}`}>
-                  <span className="text-sm font-medium w-9 shrink-0">{d.jour}</span>
+                  <span className="text-sm font-medium w-9 shrink-0">{t(`joursSemaine.${d.jour}`)}</span>
                   <input
                     type="time"
                     disabled={!d.actif}
