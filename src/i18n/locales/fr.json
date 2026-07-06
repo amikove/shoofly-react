@@ -650,5 +650,581 @@
       "generic": "Erreur"
     },
     "submittedToast": "Rapport soumis avec succès 📄"
+  },
+  "oeilDashboard": {
+    "title": "Tableau de bord",
+    "selectReasonError": "Veuillez sélectionner une raison",
+    "transferReportedToast": "Empêchement signalé — mission remise en priorité",
+    "genericError": "Erreur",
+    "loadingError": "Erreur de chargement",
+    "interestExpressedToast": "Intérêt exprimé 👁️ Le client va vous contacter.",
+    "missionIgnoredToast": "Mission ignorée",
+    "missionCompletedToast": "Mission terminée ! 🎉",
+    "statusUpdatedToast": "Statut mis à jour ✓",
+    "advance": {
+      "enRoute": "🚗 En route",
+      "start": "▶️ Démarrer",
+      "finish": "✓ Terminer"
+    },
+    "verifBanner": {
+      "pendingTitle": "Vérification en cours",
+      "notVerifiedTitle": "Identité non vérifiée",
+      "pendingDesc": "Notre équipe examine vos documents. Vous serez notifié dès validation.",
+      "notVerifiedDesc": "Vérifiez votre identité pour pouvoir postuler aux missions.",
+      "verifyButton": "Vérifier →"
+    },
+    "avatarBanner": {
+      "title": "Ajoutez votre photo de profil",
+      "desc": "Un profil avec photo inspire plus confiance aux clients et vous aide à obtenir plus de missions.",
+      "addButton": "Ajouter →"
+    },
+    "stats": {
+      "completed": "Missions complétées",
+      "avgRating": "Note moyenne",
+      "reviewsCount": "{{count}} avis",
+      "earnings": "Revenus (missions)",
+      "balance": "Solde disponible",
+      "madUnit": "MAD"
+    },
+    "priority": {
+      "title": "Missions prioritaires",
+      "badge": "PRIORITÉ",
+      "desc": "Ces missions nécessitent un Œil de toute urgence — l'Œil précédent a signalé un empêchement.",
+      "requestSent": "✅ Demande envoyée",
+      "takeButton": "⚡ Je prends cette mission →"
+    },
+    "available": {
+      "title": "Missions disponibles",
+      "emptyTitle": "Aucune mission disponible",
+      "emptyDesc": "Revenez bientôt !",
+      "requestSent": "✅ Demande envoyée",
+      "interested": "👁️ Je suis intéressé",
+      "verificationRequired": "🛡️ Vérification requise",
+      "ignore": "✕ Ignorer"
+    },
+    "active": {
+      "title": "Mes missions en cours",
+      "emptyTitle": "Aucune mission en cours",
+      "emptyDesc": "Acceptez une mission pour commencer.",
+      "chat": "💬 Chat",
+      "reportImpediment": "Signaler un empêchement majeur"
+    },
+    "transferModal": {
+      "title": "Empêchement en cours de mission",
+      "warning": "Cette action est irréversible et réservée aux situations d'urgence réelle. Le client a planifié ce rendez-vous — votre départ impacte directement sa mission.",
+      "consequencesLabel": "Conséquences :",
+      "consequenceNoPay": "• Vous ne recevrez aucune rémunération pour cette mission",
+      "consequenceHalfPay": "• Vous recevrez 50% de la rémunération si un remplaçant est trouvé",
+      "consequenceNoApply": "• Vous ne pourrez pas postuler pendant 4 heures",
+      "consequenceNoted": "• Cet incident sera noté sur votre profil",
+      "reasonLabel": "Raison (obligatoire)",
+      "reasonPlaceholder": "Sélectionner une raison",
+      "reasons": {
+        "medical": "Urgence médicale",
+        "accident": "Accident / incident sur place",
+        "security": "Problème de sécurité",
+        "family": "Empêchement familial grave",
+        "other": "Autre cas de force majeure"
+      },
+      "back": "Retour",
+      "confirmButton": "Confirmer l'empêchement →",
+      "confirming": "..."
+    }
+  },
+  "oeilMissions": {
+    "title": "Missions",
+    "tabs": {
+      "priority": "Prioritaires",
+      "available": "Disponibles",
+      "active": "En cours",
+      "done": "Terminées"
+    },
+    "toasts": {
+      "selectProblemTypeFull": "Sélectionnez un type de problème",
+      "selectProblemType": "Sélectionnez un type",
+      "problemReportedAlert": "Problème signalé — l'équipe Shoofly a été alertée",
+      "problemReportedShort": "Problème signalé — Shoofly a été alerté ✓",
+      "genericError": "Erreur",
+      "selectReasonRequired": "Veuillez sélectionner une raison",
+      "selectReasonShort": "Sélectionnez une raison",
+      "transferReported": "Empêchement signalé — mission remise en priorité",
+      "loadingError": "Erreur de chargement",
+      "missionIgnored": "Mission ignorée",
+      "missionRefused": "Mission refusée",
+      "interestExpressed": "Intérêt exprimé 👁️ Le client va vous contacter.",
+      "interestExpressedShort": "Intérêt exprimé ✓",
+      "invalidStatus": "Statut invalide",
+      "reportRequiredBeforeComplete": "Vous devez soumettre le rapport avant de terminer la mission 📋",
+      "cannotVerifyReport": "Impossible de vérifier le rapport"
+    },
+    "advanceStatusLabels": {
+      "enRoute": "En route vers la mission ✓",
+      "active": "Mission démarrée ✓",
+      "completed": "Mission terminée ! Bien joué 🎉"
+    },
+    "empty": {
+      "priority":  { "title": "Aucune mission prioritaire", "desc": "Toutes les missions sont couvertes." },
+      "available": { "title": "Aucune mission disponible",  "desc": "Toutes les missions ont été assignées. Revenez bientôt !" },
+      "active":    { "title": "Aucune mission en cours",    "desc": "Acceptez une mission pour commencer." },
+      "done":      { "title": "Aucune mission terminée",    "desc": "Vos missions complétées apparaîtront ici." }
+    },
+    "advanceLabel": {
+      "assigned": "🚗 Je suis en route",
+      "enRoute": "▶️ Démarrer la mission",
+      "active": "✓ Terminer la mission"
+    },
+    "priorityBanner": {
+      "text": "🔴 Ces missions nécessitent un Œil de toute urgence",
+      "subtext": "L'Œil précédent a signalé un empêchement — postulez rapidement.",
+      "badge": "PRIORITÉ",
+      "interestButton": "⚡ Je prends cette mission →"
+    },
+    "filters": {
+      "allQuartiers": "Tous les quartiers"
+    },
+    "card": {
+      "yourEarning": "votre gain",
+      "urgentBadge": "🚨 Urgent",
+      "underSurveillanceBadge": "⚠️ Sous surveillance",
+      "requestSent": "✅ Demande envoyée",
+      "interested": "👁️ Je suis intéressé",
+      "ignore": "✕ Ignorer",
+      "chat": "💬 Chat",
+      "reportButton": "📋 Rapport",
+      "auditButton": "📋 Audit",
+      "photosButton": "📸 Photos",
+      "refuse": "✕ Refuser",
+      "askAssistance": "🆘 Demander assistance",
+      "summaryButton": "📄 Résumé"
+    },
+    "assistanceModal": {
+      "title": "Demander assistance",
+      "reportProblem": {
+        "label": "⚠️ Signaler un problème",
+        "desc": "Client irrespectueux, lieu dangereux, demande illégale..."
+      },
+      "majorImpediment": {
+        "label": "🚨 Empêchement majeur",
+        "desc": "Je ne peux pas effectuer cette mission"
+      },
+      "cancel": "Annuler",
+      "problemView": {
+        "title": "Signaler un problème",
+        "typeLabel": "Type de problème *",
+        "selectPlaceholder": "Sélectionner...",
+        "types": {
+          "disrespectful": "Client irrespectueux / insultant",
+          "unreachable": "Client injoignable",
+          "dangerous": "Lieu dangereux",
+          "illegal": "Demande illégale",
+          "other": "Autre problème"
+        },
+        "descLabel": "Description (optionnel)",
+        "descPlaceholder": "Décrivez la situation...",
+        "back": "Retour",
+        "submit": "Signaler →",
+        "submitting": "..."
+      },
+      "transferView": {
+        "title": "Empêchement en cours de mission",
+        "warning": "Cette action est irréversible et réservée aux situations d'urgence réelle.",
+        "consequencesLabel": "Conséquences :",
+        "noPay": "• Vous ne recevrez aucune rémunération",
+        "halfPay": "• Vous recevrez 50% si un remplaçant est trouvé",
+        "cooldown": "• Cooldown 4 heures",
+        "noted": "• Cet incident sera noté sur votre profil",
+        "reasonLabel": "Raison (obligatoire)",
+        "reasonPlaceholder": "Sélectionner une raison",
+        "reasons": {
+          "medical": "Urgence médicale",
+          "accident": "Accident / incident sur place",
+          "security": "Problème de sécurité",
+          "family": "Empêchement familial grave",
+          "other": "Autre cas de force majeure"
+        },
+        "back": "Retour",
+        "confirm": "Confirmer →",
+        "confirming": "..."
+      }
+    }
+  },
+  "oeilCompte": {
+    "title": "Mon profil",
+    "avatarUpdatedToast": "Photo de profil mise à jour ✓",
+    "uploadErrorToast": "Erreur lors de l'envoi",
+    "profileUpdatedToast": "Profil mis à jour ✓",
+    "genericError": "Erreur",
+    "availabilitySavedToast": "Disponibilités enregistrées ✓",
+    "nowAvailableToast": "🟢 Vous êtes maintenant disponible",
+    "nowOfflineToast": "🔴 Vous êtes maintenant hors ligne",
+    "withdrawComingSoonToast": "Fonctionnalité virement disponible bientôt",
+    "changePhotoTitle": "Changer la photo",
+    "ratingMissions": "{{rating}} · {{count}} missions",
+    "verifiedBadge": "✓ Vérifié",
+    "firstNameLabel": "Prénom",
+    "lastNameLabel": "Nom",
+    "emailLabel": "Email",
+    "phoneLabel": "Téléphone",
+    "cityLabel": "Ville",
+    "bioLabel": "Bio",
+    "bioPlaceholder": "Décrivez votre expérience...",
+    "saving": "Sauvegarde...",
+    "save": "Enregistrer",
+    "payments": {
+      "title": "Paiements",
+      "balanceLabel": "Solde disponible",
+      "readyToTransfer": "Prêt à virer",
+      "zeroBalance": "0 MAD",
+      "withdrawButton": "Demander un virement →"
+    },
+    "availability": {
+      "title": "Disponibilités",
+      "available": "Disponible",
+      "offline": "Hors ligne",
+      "saveButton": "Enregistrer les disponibilités"
+    }
+  },
+  "oeilGains": {
+    "title": "💰 Mes gains",
+    "currentBalanceLabel": "Solde actuel",
+    "totalEarningsLabel": "Gains totaux",
+    "emptyTitle": "Aucun gain pour le moment",
+    "emptyDesc": "Vos missions terminées et virements apparaîtront ici.",
+    "bankTransferLabel": "🏦 Virement bancaire",
+    "transferredBadge": "Viré",
+    "completedBadge": "Complétée",
+    "typeLabels": {
+      "immobilier": "🏠 Immobilier",
+      "fileAttente": "⏳ File d'attente",
+      "audit": "🔎 Audit",
+      "personnalisee": "🎯 Personnalisée"
+    },
+    "table": {
+      "date": "Date",
+      "type": "Type",
+      "executionDate": "Date exécution",
+      "status": "Statut",
+      "earnings": "Gains"
+    }
+  },
+  "verificationIdentite": {
+    "title": "Vérification identité",
+    "missingDocsError": "Veuillez fournir les 3 documents",
+    "submittedToast": "Documents soumis avec succès ✓",
+    "uploadErrorToast": "Erreur lors de l'envoi",
+    "successTitle": "Documents soumis !",
+    "successDesc": "Votre demande est en cours d'examen. Vous recevrez une notification dès que votre identité sera vérifiée.",
+    "backToDashboard": "Retour au tableau de bord",
+    "requiredTitle": "Vérification requise",
+    "requiredDesc": "Pour accepter des missions, votre identité doit être vérifiée.",
+    "securityNotice": "Vos documents sont stockés de manière sécurisée et ne sont accessibles qu'à l'équipe Shoofly.",
+    "readyBadge": "✓ Prêt",
+    "changeButton": "Changer",
+    "clickToChoose": "Cliquer pour choisir",
+    "uploading": "Envoi en cours...",
+    "submitButton": "Soumettre mes documents →",
+    "docs": {
+      "cinRecto": { "label": "CIN Recto", "hint": "Face avant de votre carte d'identité nationale" },
+      "cinVerso": { "label": "CIN Verso", "hint": "Face arrière de votre carte d'identité nationale" },
+      "selfie":   { "label": "Selfie",    "hint": "Photo de vous tenant votre CIN visible" }
+    }
+  },
+  "compteSuspendu": {
+    "title": "Compte suspendu",
+    "loadingError": "Erreur de chargement",
+    "messageTooShortError": "Détaillez votre situation (min. 10 caractères)",
+    "requestSentToast": "Demande envoyée ✓",
+    "genericError": "Erreur",
+    "heading": "Compte suspendu",
+    "reliabilityScore": "Score de fiabilité : {{score}}%",
+    "scoreBelowThreshold": "Votre score de fiabilité est descendu en dessous du seuil minimum requis pour accepter des missions.",
+    "suspendedSince": "Suspendu depuis le {{date}}.",
+    "historySummary": "Résumé de votre historique",
+    "noEvents": "Aucun événement enregistré",
+    "pointsValue": "{{value}} pts",
+    "previousRequests": "Vos demandes précédentes",
+    "status": {
+      "approved": "✅ Approuvée",
+      "rejected": "❌ Refusée",
+      "pending": "⏳ En attente"
+    },
+    "yourMessage": "Votre message : {{message}}",
+    "teamResponseLabel": "Réponse de l'équipe Shoofly :",
+    "reviewInProgressTitle": "Demande en cours d'examen",
+    "reviewInProgressDesc": "Notre équipe examine votre dossier. Vous serez notifié de la décision.",
+    "requestReviewTitle": "Demander un examen de votre dossier",
+    "requestReviewDesc": "Expliquez votre situation — notre équipe étudiera votre demande individuellement.",
+    "messagePlaceholder": "Expliquez les circonstances de votre situation...",
+    "sending": "Envoi...",
+    "submitButton": "Envoyer ma demande →"
+  },
+  "oeilAuditReport": {
+    "topbar": {
+      "loadingTitle": "Rapport d'audit",
+      "title": "Audit Mystère"
+    },
+    "toasts": {
+      "loadError": "Erreur chargement",
+      "saved": "Sauvegardé ✓",
+      "saveError": "Erreur sauvegarde",
+      "missingFields": "⚠️ Champs manquants ({{count}}) — faites défiler pour tout compléter",
+      "submitted": "Rapport soumis ✅",
+      "submitError": "Erreur soumission"
+    },
+    "confirmSubmit": "Soumettre le rapport ? Le client sera notifié.",
+    "submittedBanner": "✅ Rapport soumis — lecture seule",
+    "scoreCard": {
+      "scoreLabel": "Score Shoofly",
+      "missionLabel": "Mission"
+    },
+    "visitInfo": {
+      "title": "Informations de visite",
+      "dateLabel": "Date de visite",
+      "timeLabel": "Heure de visite",
+      "durationLabel": "Durée de visite (min)",
+      "durationPlaceholder": "Ex: 25",
+      "clientsLabel": "Clients présents",
+      "clientsPlaceholder": "Environ"
+    },
+    "remarquePlaceholder": "Remarque...",
+    "photosRequiredNotice": "📸 Photos obligatoires pour cette section",
+    "scoreLabels": {
+      "excellent": "🟢 Excellent",
+      "veryGood": "🟢 Très bon",
+      "correct": "🟡 Correct",
+      "toImprove": "🟠 À améliorer",
+      "critical": "🔴 Critique"
+    },
+    "sections": {
+      "s1": {
+        "title": "Première impression",
+        "criteria": {
+          "premiereImpression": "Facilité à trouver l'établissement",
+          "aspectExterieur": "Aspect extérieur",
+          "visibiliteEnseigne": "Visibilité de l'enseigne",
+          "attractivite": "Attractivité générale",
+          "impressionGlobale": "Première impression globale"
+        }
+      },
+      "s2": {
+        "title": "Accueil",
+        "criteria": {
+          "tempsPriseCharge": "Temps avant prise en charge",
+          "politesse": "Politesse",
+          "sourire": "Sourire",
+          "disponibilite": "Disponibilité",
+          "professionnalisme": "Professionnalisme",
+          "envieRester": "L'accueil vous a-t-il donné envie de rester ?"
+        }
+      },
+      "s3": {
+        "title": "Propreté et environnement",
+        "criteria": {
+          "proprete": "Propreté générale",
+          "organisation": "Organisation des lieux",
+          "etatMobilier": "État du mobilier",
+          "ambiance": "Ambiance générale",
+          "confort": "Confort"
+        }
+      },
+      "s4": {
+        "title": "Qualité du service",
+        "criteria": {
+          "rapidite": "Rapidité du service",
+          "comprehensionBesoin": "Compréhension de votre besoin",
+          "pertinenceReponses": "Pertinence des réponses",
+          "qualiteConseils": "Qualité des conseils",
+          "niveauPro": "Niveau de professionnalisme",
+          "connaissanceProduit": "Connaissance du produit/service"
+        }
+      },
+      "s5": {
+        "title": "Compétence commerciale",
+        "intro": "Le personnel :"
+      },
+      "s6": {
+        "title": "Expérience client",
+        "criteria": {
+          "clartePrix": "Clarté des prix",
+          "transparence": "Transparence",
+          "simpliciteParcours": "Simplicité du parcours",
+          "confianceInspiree": "Confiance inspirée",
+          "satisfactionGenerale": "Satisfaction générale"
+        }
+      },
+      "s7": {
+        "title": "Observations importantes",
+        "positiveIntro": "✅ Points positifs observés :",
+        "negativeIntro": "❌ Points négatifs observés :"
+      },
+      "s8": {
+        "title": "Incidents majeurs",
+        "commentLabel": "Commentaire incidents",
+        "commentPlaceholder": "Détaillez si nécessaire..."
+      },
+      "s9": {
+        "title": "Question clé Shoofly",
+        "question": "Si vous étiez un vrai client, achèteriez-vous ce produit/service ?",
+        "choices": {
+          "ouiSans": "👍 Oui sans hésitation",
+          "probablementOui": "👌 Probablement oui",
+          "peutEtre": "😐 Peut-être",
+          "probablementNon": "👎 Probablement non",
+          "certainementNon": "🚫 Certainement non"
+        },
+        "recommendationLabel": "Recommanderiez-vous cet établissement ?"
+      },
+      "s10": {
+        "title": "Commentaire libre",
+        "placeholder": "Observations détaillées, contexte, éléments importants non couverts par le formulaire..."
+      }
+    },
+    "recap": {
+      "title": "Score Shoofly automatique",
+      "globalScore": "Score global",
+      "pointsValue": "{{value}} pts",
+      "rows": {
+        "premiereImpression": "Première impression",
+        "accueil": "Accueil",
+        "proprete": "Propreté",
+        "service": "Service",
+        "compCommerciale": "Comp. commerciale",
+        "experienceClient": "Expérience client",
+        "recommandation": "Recommandation"
+      }
+    },
+    "saveButton": "💾 Sauvegarder",
+    "submitButton": "✅ Soumettre"
+  },
+  "oeilAirbnbReport": {
+    "title": "Rapport de visite",
+    "ouiNon": {
+      "oui": "✓ Oui",
+      "non": "✗ Non"
+    },
+    "scoreLabels": {
+      "excellent": "Excellent",
+      "veryGood": "Très bon",
+      "correct": "Correct",
+      "average": "Moyen",
+      "disappointing": "Décevant"
+    },
+    "toasts": {
+      "loadError": "Erreur chargement",
+      "saved": "Sauvegardé ✓",
+      "saveError": "Erreur sauvegarde",
+      "missingFields": "⚠️ Champs manquants ({{count}}) — faites défiler pour tout compléter",
+      "submitted": "Rapport soumis ! 🎉",
+      "submitError": "Erreur soumission"
+    },
+    "confirmSubmit": "Soumettre le rapport ? Le client sera notifié.",
+    "submittedBadge": "✓ Soumis",
+    "scoreLabel": "Score Shoofly",
+    "submittedBanner": "✅ Rapport soumis — le client a été notifié",
+    "commentLabel": "Commentaire",
+    "photosRequiredNotice": "📸 Photos obligatoires pour cette section",
+    "sections": {
+      "s1": {
+        "title": "Première impression",
+        "question": "L'annonce correspond-elle à la réalité ?",
+        "choices": {
+          "oui": "✓ Oui totalement",
+          "partiellement": "~ Partiellement",
+          "non": "✗ Non"
+        },
+        "generalNoteLabel": "Note générale",
+        "commentPlaceholder": "Première impression générale..."
+      },
+      "s2": {
+        "title": "Propreté",
+        "cleanlinessNoteLabel": "État de propreté général",
+        "solsPropresLabel": "Sols propres",
+        "sdbPropreLabel": "Salle de bain propre",
+        "literiePropreLabel": "Literie propre",
+        "odeursLabel": "Odeurs désagréables"
+      },
+      "s3": {
+        "title": "Confort",
+        "confortLitLabel": "Confort du lit",
+        "confortCanapeLabel": "Confort du canapé",
+        "confortGlobalLabel": "Niveau de confort global",
+        "commentPlaceholder": "Confort général..."
+      },
+      "s4": {
+        "title": "Bruit",
+        "bruitExterieurLabel": "Bruit extérieur (1=très bruyant, 5=très calme)",
+        "isolationPhoniqueLabel": "Isolation phonique entre appartements",
+        "fenetresIsoleesLabel": "Fenêtres bien isolées",
+        "videoNotice": "🎥 Vidéo 30 secondes obligatoire (fenêtre ouverte puis fermée)"
+      },
+      "s5": {
+        "title": "Équipements",
+        "equip": {
+          "wifi": "Wifi",
+          "clim": "Climatisation",
+          "eauChaude": "Eau chaude",
+          "tv": "Télévision",
+          "machineLaver": "Machine à laver",
+          "secheLinge": "Sèche-linge",
+          "ferRepasser": "Fer à repasser",
+          "produitsNettoyage": "Produits de nettoyage fournis"
+        },
+        "wifiQualityLabel": "Qualité Wifi",
+        "kitchenLabel": "Cuisine — équipements disponibles"
+      },
+      "s6": {
+        "title": "Luminosité",
+        "luminositeLabel": "Luminosité naturelle",
+        "expositionLabel": "Exposition"
+      },
+      "s7": {
+        "title": "Sécurité",
+        "securiteNoteLabel": "Sentiment de sécurité",
+        "porteSecuriseeLabel": "Porte sécurisée",
+        "quartierRassurantLabel": "Quartier rassurant",
+        "eclairageExterieurLabel": "Éclairage extérieur"
+      },
+      "s8": {
+        "title": "Accessibilité",
+        "accesFaciliteLabel": "Facilité d'accès",
+        "ascenseurLabel": "Ascenseur",
+        "escaliersDifficilesLabel": "Escaliers difficiles",
+        "parkingLabel": "Parking disponible"
+      },
+      "s9": {
+        "title": "Environnement",
+        "restaurantsLabel": "Restaurants à proximité",
+        "commercesLabel": "Commerces à proximité",
+        "transportsLabel": "Transports à proximité",
+        "interetTouristiqueLabel": "Intérêt touristique du quartier",
+        "photosNotice": "📸 Photos du quartier obligatoires"
+      },
+      "s10": {
+        "title": "Vérification des photos de l'annonce",
+        "choices": {
+          "conformes": "✓ Exactement conformes",
+          "legerement": "~ Légèrement embellies",
+          "tres": "⚠️ Très embellies",
+          "trompeuses": "✗ Trompeuses"
+        }
+      },
+      "s11": {
+        "title": "Points forts & faibles",
+        "strengthsLabel": "✅ Points forts",
+        "weaknessesLabel": "❌ Points faibles"
+      },
+      "s12": {
+        "title": "Recommandation finale",
+        "choices": {
+          "ouiSans": "👍 Oui sans hésitation",
+          "ouiReserves": "👌 Oui avec réserves",
+          "moyennement": "😐 Moyennement",
+          "non": "👎 Non",
+          "eviter": "🚫 À éviter"
+        }
+      }
+    },
+    "saveButton": "💾 Sauvegarder",
+    "submitButton": "✅ Soumettre le rapport"
   }
 }

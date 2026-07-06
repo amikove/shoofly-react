@@ -1,4 +1,5 @@
 import { useState, useRef } from 'react'
+import { useTranslation } from 'react-i18next'
 import AppLayout from '../../components/layout/AppLayout'
 import Topbar from '../../components/layout/Topbar'
 import { useAuth } from '../../context/AuthContext'
@@ -15,6 +16,7 @@ const defaultDispo = () => JOURS.map((j, i) => ({
 }))
 
 export default function OeilCompte() {
+  const { t } = useTranslation()
   const { user, updateUser } = useAuth()
   const [saving, setSaving]  = useState(false)
   const [uploadingAvatar, setUploadingAvatar] = useState(false)
@@ -29,9 +31,9 @@ export default function OeilCompte() {
       formData.append('avatar', file)
       const { data } = await usersAPI.uploadAvatar(formData)
       updateUser({ avatar_url: data.avatar_url })
-      toast('Photo de profil mise à jour ✓', 'success')
+      toast(t('oeilCompte.avatarUpdatedToast'), 'success')
     } catch (err) {
-      toast(err.response?.data?.error || 'Erreur lors de l\'envoi', 'error')
+      toast(err.response?.data?.error || t('oeilCompte.uploadErrorToast'), 'error')
     } finally {
       setUploadingAvatar(false)
       e.target.value = ''
@@ -70,8 +72,8 @@ const [dispo, setDispo] = useState(() => parseDispo(user?.disponibilites))
     try {
       const { data } = await authAPI.update(form)
       updateUser(data.user)
-      toast('Profil mis à jour ✓', 'success')
-    } catch { toast('Erreur', 'error') }
+      toast(t('oeilCompte.profileUpdatedToast'), 'success')
+    } catch { toast(t('oeilCompte.genericError'), 'error') }
     finally { setSaving(false) }
   }
 
@@ -80,8 +82,8 @@ const [dispo, setDispo] = useState(() => parseDispo(user?.disponibilites))
     try {
       const { data } = await authAPI.update({ disponibilites: dispo })
       updateUser(data.user)
-      toast('Disponibilités enregistrées ✓', 'success')
-    } catch { toast('Erreur', 'error') }
+      toast(t('oeilCompte.availabilitySavedToast'), 'success')
+    } catch { toast(t('oeilCompte.genericError'), 'error') }
     finally { setSavingDispo(false) }
   }
 
@@ -91,16 +93,16 @@ const [dispo, setDispo] = useState(() => parseDispo(user?.disponibilites))
     const { data } = await usersAPI.toggleAvailable()
     setIsAvailable(data.is_available)
     updateUser({ is_available: data.is_available })
-    toast(data.is_available ? '🟢 Vous êtes maintenant disponible' : '🔴 Vous êtes maintenant hors ligne', 'info')
-  } catch { toast('Erreur', 'error') }
+    toast(data.is_available ? t('oeilCompte.nowAvailableToast') : t('oeilCompte.nowOfflineToast'), 'info')
+  } catch { toast(t('oeilCompte.genericError'), 'error') }
   finally { setTogglingDispo(false) }
 }
 
-  const requestWithdraw = () => toast('Fonctionnalité virement disponible bientôt', 'info')
+  const requestWithdraw = () => toast(t('oeilCompte.withdrawComingSoonToast'), 'info')
 
   return (
     <AppLayout>
-      <Topbar title="Mon profil" />
+      <Topbar title={t('oeilCompte.title')} />
       <div className="p-4 md:p-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
 
@@ -113,7 +115,7 @@ const [dispo, setDispo] = useState(() => parseDispo(user?.disponibilites))
                     onClick={() => avatarInputRef.current?.click()}
                     disabled={uploadingAvatar}
                     className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-[#FF4D00] flex items-center justify-center text-white text-xs disabled:opacity-50"
-                    title="Changer la photo"
+                    title={t('oeilCompte.changePhotoTitle')}
                   >
                     {uploadingAvatar ? '...' : '📷'}
                   </button>
@@ -129,29 +131,29 @@ const [dispo, setDispo] = useState(() => parseDispo(user?.disponibilites))
                   <div className="font-semibold text-base">{user?.first_name} {user?.last_name}</div>
                 <div className="flex items-center gap-1.5 mt-1">
                   <Stars value={user?.rating_avg || 0} />
-                  <span className="text-xs text-[#AAA]">{user?.rating_avg || '—'} · {user?.total_missions || 0} missions</span>
+                  <span className="text-xs text-[#AAA]">{t('oeilCompte.ratingMissions', { rating: user?.rating_avg || '—', count: user?.total_missions || 0 })}</span>
                 </div>
-                {user?.is_verified && <span className="badge badge-green mt-1">✓ Vérifié</span>}
+                {user?.is_verified && <span className="badge badge-green mt-1">{t('oeilCompte.verifiedBadge')}</span>}
               </div>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <div><label className="label">Prénom</label><input className="input" value={form.first_name} onChange={set('first_name')} /></div>
-              <div><label className="label">Nom</label><input className="input" value={form.last_name} onChange={set('last_name')} /></div>
+              <div><label className="label">{t('oeilCompte.firstNameLabel')}</label><input className="input" value={form.first_name} onChange={set('first_name')} /></div>
+              <div><label className="label">{t('oeilCompte.lastNameLabel')}</label><input className="input" value={form.last_name} onChange={set('last_name')} /></div>
             </div>
-            <div className="mt-3"><label className="label">Email</label><input className="input" value={user?.email || ''} disabled /></div>
-            <div className="mt-3"><label className="label">Téléphone</label><input className="input" value={form.phone} onChange={set('phone')} /></div>
+            <div className="mt-3"><label className="label">{t('oeilCompte.emailLabel')}</label><input className="input" value={user?.email || ''} disabled /></div>
+            <div className="mt-3"><label className="label">{t('oeilCompte.phoneLabel')}</label><input className="input" value={form.phone} onChange={set('phone')} /></div>
             <div className="mt-3">
-              <label className="label">Ville</label>
+              <label className="label">{t('oeilCompte.cityLabel')}</label>
               <select className="input" value={form.city} onChange={set('city')}>
                 {['Rabat','Casablanca','Salé','Témara','Marrakech','Fès','Tanger','Agadir'].map((c) => (
                   <option key={c}>{c}</option>
                 ))}
               </select>
             </div>
-            <div className="mt-3"><label className="label">Bio</label><textarea className="input resize-none h-20" value={form.bio} onChange={set('bio')} placeholder="Décrivez votre expérience..." /></div>
+            <div className="mt-3"><label className="label">{t('oeilCompte.bioLabel')}</label><textarea className="input resize-none h-20" value={form.bio} onChange={set('bio')} placeholder={t('oeilCompte.bioPlaceholder')} /></div>
             <button onClick={save} disabled={saving} className="btn btn-primary w-full justify-center mt-5 disabled:opacity-60">
-              {saving ? 'Sauvegarde...' : 'Enregistrer'}
+              {saving ? t('oeilCompte.saving') : t('oeilCompte.save')}
             </button>
           </div>
 
@@ -159,22 +161,22 @@ const [dispo, setDispo] = useState(() => parseDispo(user?.disponibilites))
           <div className="space-y-4">
             {/* Paiements */}
             <div className="card">
-              <h2 className="font-semibold text-sm mb-4">Paiements</h2>
+              <h2 className="font-semibold text-sm mb-4">{t('oeilCompte.payments.title')}</h2>
               <div className="flex items-center justify-between bg-[#222] rounded-xl p-4 mb-4">
                 <div>
-                  <div className="text-sm font-semibold">Solde disponible</div>
-                  <div className="text-xs text-[#AAA]">Prêt à virer</div>
+                  <div className="text-sm font-semibold">{t('oeilCompte.payments.balanceLabel')}</div>
+                  <div className="text-xs text-[#AAA]">{t('oeilCompte.payments.readyToTransfer')}</div>
                 </div>
-                <div className="text-xl font-bold text-green-400">0 MAD</div>
+                <div className="text-xl font-bold text-green-400">{t('oeilCompte.payments.zeroBalance')}</div>
               </div>
-              <button onClick={requestWithdraw} className="btn btn-primary w-full justify-center">Demander un virement →</button>
+              <button onClick={requestWithdraw} className="btn btn-primary w-full justify-center">{t('oeilCompte.payments.withdrawButton')}</button>
             </div>
 
             {/* Disponibilités */}
             <div className="card">
-              
+
               <div className="flex items-center justify-between mb-4">
-                  <h2 className="font-semibold text-sm">Disponibilités</h2>
+                  <h2 className="font-semibold text-sm">{t('oeilCompte.availability.title')}</h2>
                   <button
                     onClick={toggleAvailable}
                     disabled={togglingDispo}
@@ -183,7 +185,7 @@ const [dispo, setDispo] = useState(() => parseDispo(user?.disponibilites))
                     }`}
                   >
                     <span className={`w-2 h-2 rounded-full ${isAvailable ? 'bg-green-400' : 'bg-[#666]'}`} />
-                    {togglingDispo ? '...' : isAvailable ? 'Disponible' : 'Hors ligne'}
+                    {togglingDispo ? '...' : isAvailable ? t('oeilCompte.availability.available') : t('oeilCompte.availability.offline')}
                   </button>
                 </div>
 
@@ -215,7 +217,7 @@ const [dispo, setDispo] = useState(() => parseDispo(user?.disponibilites))
                 </div>
               ))}
               <button onClick={saveDispo} disabled={savingDispo} className="btn btn-primary btn-sm w-full justify-center mt-4 disabled:opacity-60">
-                {savingDispo ? 'Sauvegarde...' : 'Enregistrer les disponibilités'}
+                {savingDispo ? t('oeilCompte.saving') : t('oeilCompte.availability.saveButton')}
               </button>
             </div>
           </div>

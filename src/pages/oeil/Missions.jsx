@@ -1,5 +1,6 @@
 import ChatModal from '../../components/missions/ChatModal'
 import { useState, useEffect, useCallback } from 'react'
+import { useTranslation } from 'react-i18next'
 import AppLayout from '../../components/layout/AppLayout'
 import { VILLES } from '../../constants/villes'
 import Topbar from '../../components/layout/Topbar'
@@ -12,16 +13,12 @@ import MissionHistoryModal from '../../components/missions/MissionHistoryModal'
 import MissionSummaryModal from '../../components/missions/MissionSummaryModal'
 import ComplianceModal from '../../components/missions/ComplianceModal'
 
-const TABS = [
-  { id: 'priority',  label: 'Prioritaires' },
-  { id: 'available', label: 'Disponibles'  },
-  { id: 'active',    label: 'En cours'     },
-  { id: 'done',      label: 'Terminées'    },
-]
+const TABS = ['priority', 'available', 'active', 'done']
 const TYPE_ICONS = { immobilier:'🏠', file_attente:'⏳', audit:'🔎', personnalisee:'🎯' }
 
 
 export default function OeilMissions() {
+  const { t } = useTranslation()
   const [complianceMission, setComplianceMission] = useState(null)
   const [tab, setTab]             = useState('available')
   const [missions, setMissions]   = useState([])
@@ -49,31 +46,31 @@ export default function OeilMissions() {
   const [assistanceView, setAssistanceView] = useState('choice') // 'choice' | 'problem' | 'transfer'
 
   const doReport = async () => {
-    if (!reportType) { toast('Sélectionnez un type de problème', 'error'); return }
+    if (!reportType) { toast(t('oeilMissions.toasts.selectProblemTypeFull'), 'error'); return }
     setReporting(true)
     try {
       await missionsAPI.reportProblem(reportMission.id, { type: reportType, description: reportDesc })
-      toast('Problème signalé — l\'équipe Shoofly a été alertée', 'success')
+      toast(t('oeilMissions.toasts.problemReportedAlert'), 'success')
       setReportMission(null)
       setReportType('')
       setReportDesc('')
       load(tab)
     } catch (err) {
-      toast(err.response?.data?.error || 'Erreur', 'error')
+      toast(err.response?.data?.error || t('oeilMissions.toasts.genericError'), 'error')
     } finally { setReporting(false) }
   }
 
   const doTransfer = async () => {
-    if (!transferReason) { toast('Veuillez sélectionner une raison', 'error'); return }
+    if (!transferReason) { toast(t('oeilMissions.toasts.selectReasonRequired'), 'error'); return }
     setTransferring(true)
     try {
       await missionsAPI.transfer(transferMission.id, { reason: transferReason })
-      toast('Empêchement signalé — mission remise en priorité', 'info')
+      toast(t('oeilMissions.toasts.transferReported'), 'info')
       setTransferMission(null)
       setTransferReason('')
       load()
     } catch (err) {
-      toast(err.response?.data?.error || 'Erreur', 'error')
+      toast(err.response?.data?.error || t('oeilMissions.toasts.genericError'), 'error')
     } finally { setTransferring(false) }
   }
   const [summaryMission, setSummaryMission] = useState(null)
@@ -147,7 +144,7 @@ const load = useCallback((t) => {
       setMissions(ms)
     })
     .catch((err) => {
-      const msg = err.response?.data?.error || 'Erreur de chargement'
+      const msg = err.response?.data?.error || t('oeilMissions.toasts.loadingError')
       setError(msg)
       toast(msg, 'error')
     })
@@ -169,9 +166,9 @@ const load = useCallback((t) => {
     try {
       await missionsAPI.refuse(id, isAvailable)
       setMissions((prev) => prev.filter((m) => m.id !== id))
-      toast(isAvailable ? 'Mission ignorée' : 'Mission refusée', 'info')
+      toast(isAvailable ? t('oeilMissions.toasts.missionIgnored') : t('oeilMissions.toasts.missionRefused'), 'info')
     } catch {
-      toast('Erreur', 'error')
+      toast(t('oeilMissions.toasts.genericError'), 'error')
     }
   }
 
@@ -181,9 +178,9 @@ const interest = async (id) => {
     try {
       await missionsAPI.interest(id)
       setMissions((prev) => prev.map((m) => m.id === id ? { ...m, interested: true } : m))
-      toast('Intérêt exprimé 👁️ Le client va vous contacter.', 'success')
+      toast(t('oeilMissions.toasts.interestExpressed'), 'success')
     } catch (err) {
-      toast(err.response?.data?.error || 'Erreur', 'error')
+      toast(err.response?.data?.error || t('oeilMissions.toasts.genericError'), 'error')
     }
   }
 
@@ -197,7 +194,7 @@ const advance = async (mission, bypassed = false) => {
     active:   'completed',
   }[mission.status]
 
-    if (!next) { toast('Statut invalide', 'error'); return }
+    if (!next) { toast(t('oeilMissions.toasts.invalidStatus'), 'error'); return }
 
     // Afficher compliance quand l'Œil passe en "en_route"
     if (next === 'en_route' && !bypassed) {
@@ -206,9 +203,9 @@ const advance = async (mission, bypassed = false) => {
     }
 
   const labels = {
-    en_route:  'En route vers la mission ✓',
-    active:    'Mission démarrée ✓',
-    completed: 'Mission terminée ! Bien joué 🎉',
+    en_route:  t('oeilMissions.advanceStatusLabels.enRoute'),
+    active:    t('oeilMissions.advanceStatusLabels.active'),
+    completed: t('oeilMissions.advanceStatusLabels.completed'),
   }
 
   // Bloquer si rapport obligatoire non soumis
@@ -224,13 +221,13 @@ const advance = async (mission, bypassed = false) => {
           const url = isAudit
             ? `/oeil/missions/${mission.id}/audit`
             : `/oeil/missions/${mission.id}/rapport`
-          toast('Vous devez soumettre le rapport avant de terminer la mission 📋', 'error')
+          toast(t('oeilMissions.toasts.reportRequiredBeforeComplete'), 'error')
           setTimeout(() => navigate(url), 300)
           return
         }
 
       } catch {
-        toast('Impossible de vérifier le rapport', 'error')
+        toast(t('oeilMissions.toasts.cannotVerifyReport'), 'error')
         return
       }
     }
@@ -247,7 +244,7 @@ try {
     }
     toast(labels[next], 'success')
   } catch (err) {
-    const msg = err.response?.data?.error || 'Erreur'
+    const msg = err.response?.data?.error || t('oeilMissions.toasts.genericError')
     toast(msg, 'error')
     if (msg.includes('rapport')) {
       const isAudit  = mission.type === 'audit'
@@ -261,42 +258,42 @@ try {
 
 
   const emptyProps = {
-    priority:  { icon:'🟢', title:'Aucune mission prioritaire', desc:'Toutes les missions sont couvertes.'           },
-    available: { icon:'🎯', title:'Aucune mission disponible',  desc:'Toutes les missions ont été assignées. Revenez bientôt !' },
-    active:    { icon:'📋', title:'Aucune mission en cours',    desc:'Acceptez une mission pour commencer.'          },
-    done:      { icon:'✅', title:'Aucune mission terminée',    desc:'Vos missions complétées apparaîtront ici.'     },
+    priority:  { icon:'🟢', title: t('oeilMissions.empty.priority.title'),  desc: t('oeilMissions.empty.priority.desc')  },
+    available: { icon:'🎯', title: t('oeilMissions.empty.available.title'), desc: t('oeilMissions.empty.available.desc') },
+    active:    { icon:'📋', title: t('oeilMissions.empty.active.title'),    desc: t('oeilMissions.empty.active.desc')    },
+    done:      { icon:'✅', title: t('oeilMissions.empty.done.title'),      desc: t('oeilMissions.empty.done.desc')      },
   }
 
   const advanceLabel = {
-    assigned: '🚗 Je suis en route',
-    en_route: '▶️ Démarrer la mission',
-    active:   '✓ Terminer la mission',
+    assigned: t('oeilMissions.advanceLabel.assigned'),
+    en_route: t('oeilMissions.advanceLabel.enRoute'),
+    active:   t('oeilMissions.advanceLabel.active'),
   }
 
   return (
     <AppLayout>
-      <Topbar title="Missions" />
+      <Topbar title={t('oeilMissions.title')} />
       <div className="p-4 md:p-6">
         <div className="flex gap-1 bg-[#222] rounded-xl p-1 w-fit mb-6 flex-wrap">
-          {TABS.map((t) => (
-            <button key={t.id} onClick={() => setTab(t.id)}
+          {TABS.map((tabId) => (
+            <button key={tabId} onClick={() => setTab(tabId)}
               className={`px-4 py-2 rounded-lg text-xs font-medium transition-all flex items-center gap-1.5 ${
-                tab === t.id ? 'bg-[#2A2A2A] text-white' : 'text-[#AAA] hover:text-white'
+                tab === tabId ? 'bg-[#2A2A2A] text-white' : 'text-[#AAA] hover:text-white'
               }`}>
-              {t.id === 'priority' && <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />}
-              {t.label}
-              {t.id === 'priority' && counts.priority > 0 && (
+              {tabId === 'priority' && <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />}
+              {t(`oeilMissions.tabs.${tabId}`)}
+              {tabId === 'priority' && counts.priority > 0 && (
                 <span className="text-[10px] bg-red-500 text-white px-1.5 py-0.5 rounded-full font-bold">
                   {counts.priority}
                 </span>
               )}
-              {t.id !== 'priority' && counts[t.id] > 0 && (
+              {tabId !== 'priority' && counts[tabId] > 0 && (
                 <span className={`text-[10px] px-1.5 py-0.5 rounded-full ${
-                  tab === t.id
+                  tab === tabId
                     ? 'bg-[#FF4D00]/20 text-[#FF4D00]'
                     : 'bg-white/10 text-[#AAA]'
                 }`}>
-                  {counts[t.id]}
+                  {counts[tabId]}
                 </span>
               )}
             </button>
@@ -304,19 +301,19 @@ try {
         </div>
         {tab === 'priority' && (
   priorityMissions.length === 0 ? (
-    <EmptyState icon="🟢" title="Aucune mission prioritaire" description="Toutes les missions sont couvertes." />
+    <EmptyState icon="🟢" title={t('oeilMissions.empty.priority.title')} description={t('oeilMissions.empty.priority.desc')} />
   ) : (
     <div className="space-y-3">
       <div className="bg-red-500/5 border border-red-500/20 rounded-xl p-3 mb-4">
-        <p className="text-xs text-red-400 font-semibold">🔴 Ces missions nécessitent un Œil de toute urgence</p>
-        <p className="text-xs text-[#AAA] mt-0.5">L'Œil précédent a signalé un empêchement — postulez rapidement.</p>
+        <p className="text-xs text-red-400 font-semibold">{t('oeilMissions.priorityBanner.text')}</p>
+        <p className="text-xs text-[#AAA] mt-0.5">{t('oeilMissions.priorityBanner.subtext')}</p>
       </div>
       {priorityMissions.map((m) => (
         <div key={m.id} className="bg-red-500/10 border border-red-500/20 rounded-xl p-3">
           <div className="flex items-start justify-between gap-2 mb-3">
             <div className="min-w-0">
               <div className="flex items-center gap-2 mb-1">
-                <span className="text-[10px] bg-red-500 text-white px-1.5 py-0.5 rounded font-bold">PRIORITÉ</span>
+                <span className="text-[10px] bg-red-500 text-white px-1.5 py-0.5 rounded font-bold">{t('oeilMissions.priorityBanner.badge')}</span>
                 <span className="font-semibold text-sm truncate">{m.title}</span>
               </div>
               <div className="text-xs text-[#AAA] space-y-0.5">
@@ -334,10 +331,10 @@ try {
             </div>
           </div>
           <button
-            onClick={() => user?.is_verified ? missionsAPI.interest(m.id).then(() => { toast('Intérêt exprimé ✓', 'success'); load(tab) }).catch(err => toast(err.response?.data?.error || 'Erreur', 'error')) : navigate('/oeil/verification-identite')}
+            onClick={() => user?.is_verified ? missionsAPI.interest(m.id).then(() => { toast(t('oeilMissions.toasts.interestExpressedShort'), 'success'); load(tab) }).catch(err => toast(err.response?.data?.error || t('oeilMissions.toasts.genericError'), 'error')) : navigate('/oeil/verification-identite')}
             className="btn btn-sm w-full justify-center bg-red-500 text-white hover:bg-red-600"
           >
-            ⚡ Je prends cette mission →
+            {t('oeilMissions.priorityBanner.interestButton')}
           </button>
         </div>
       ))}
@@ -351,7 +348,7 @@ try {
           value={quartier}
           onChange={(e) => setQuartier(e.target.value)}
         >
-          <option value="">Tous les quartiers</option>
+          <option value="">{t('oeilMissions.filters.allQuartiers')}</option>
           {(VILLES[user?.city] || []).map((q) => (
             <option key={q} value={q}>{q}</option>
           ))}
@@ -382,8 +379,8 @@ try {
                       
                       <div className="font-semibold text-sm flex items-center gap-2 flex-wrap">
                         {m.title}
-                        {m.is_urgent && <span className="badge badge-orange text-[10px]">🚨 Urgent</span>}
-                        {m.under_surveillance && <span className="badge badge-red text-[10px]">⚠️ Sous surveillance</span>}
+                        {m.is_urgent && <span className="badge badge-orange text-[10px]">{t('oeilMissions.card.urgentBadge')}</span>}
+                        {m.under_surveillance && <span className="badge badge-red text-[10px]">{t('oeilMissions.card.underSurveillanceBadge')}</span>}
                       </div>
 
                       
@@ -406,7 +403,7 @@ try {
                   <div className="text-right flex-shrink-0">
 
                     <div className="text-green-400 font-bold text-base">{parseFloat(m.oeil_earning || m.price).toFixed(0)} MAD</div>
-                    <div className="text-[11px] text-[#AAA]">votre gain</div>
+                    <div className="text-[11px] text-[#AAA]">{t('oeilMissions.card.yourEarning')}</div>
                   </div>
                 </div>
 
@@ -419,13 +416,13 @@ try {
                           disabled={m.interested || m.has_interested}
                           className="btn btn-sm flex-1 justify-center disabled:opacity-50 bg-green-500 text-white hover:bg-green-600"
                         >
-                          {(m.interested || m.has_interested) ? '✅ Demande envoyée' : '👁️ Je suis intéressé'}
+                          {(m.interested || m.has_interested) ? t('oeilMissions.card.requestSent') : t('oeilMissions.card.interested')}
                         </button>
                         <button
                         onClick={() => refuse(m.id, true)}
                         className="btn btn-sm flex-1 justify-center bg-red-500 text-white hover:bg-red-600"
                       >
-                        ✕ Ignorer
+                        {t('oeilMissions.card.ignore')}
                       </button>
 
 
@@ -436,22 +433,22 @@ try {
 
                   {tab === 'active' && (
                     <>
-                      <button onClick={() => setChatMission(m)} className="btn btn-ghost btn-sm">💬 Chat</button>
+                      <button onClick={() => setChatMission(m)} className="btn btn-ghost btn-sm">{t('oeilMissions.card.chat')}</button>
                       <button onClick={() => setHistoryMission(m)} className="btn btn-ghost btn-sm">🕐</button>
-                      
+
 
                         {['en_route','active'].includes(m.status) && ['airbnb','booking','Airbnb','Booking'].some(s => m.subcategory?.toLowerCase().includes(s.toLowerCase())) && (
                           <button onClick={() => navigate(`/oeil/missions/${m.id}/rapport`)} className="btn btn-ghost btn-sm">
-                            📋 Rapport
+                            {t('oeilMissions.card.reportButton')}
                           </button>
                         )}
                         {['en_route','active'].includes(m.status) && m.type === 'audit' && (
                           <button onClick={() => navigate(`/oeil/missions/${m.id}/audit`)} className="btn btn-ghost btn-sm">
-                            📋 Audit
+                            {t('oeilMissions.card.auditButton')}
                           </button>
                         )}
 
-                      <button className="btn btn-ghost btn-sm">📸 Photos</button>
+                      <button className="btn btn-ghost btn-sm">{t('oeilMissions.card.photosButton')}</button>
                       {advanceLabel[m.status] && (
                         <button onClick={() => advance(m)} className="btn btn-primary btn-sm flex-1 justify-center">
                           {advanceLabel[m.status]}
@@ -459,7 +456,7 @@ try {
                       )}
                       {m.status === 'assigned' && (
                         <button onClick={() => refuse(m.id)} className="btn btn-ghost btn-sm text-red-400">
-                          ✕ Refuser
+                          {t('oeilMissions.card.refuse')}
                         </button>
                       )}
                     </>
@@ -469,13 +466,13 @@ try {
                       onClick={() => setAssistanceMission(m)}
                       className="text-xs text-[#555] hover:text-orange-400 transition-colors mt-2 w-full text-center"
                     >
-                      🆘 Demander assistance
+                      {t('oeilMissions.card.askAssistance')}
                     </button>
                   )}
 
 
                   {tab === 'done' && (
-                    <button onClick={() => setSummaryMission(m)} className="btn btn-ghost btn-sm">📄 Résumé</button>
+                    <button onClick={() => setSummaryMission(m)} className="btn btn-ghost btn-sm">{t('oeilMissions.card.summaryButton')}</button>
                   )}
                 </div>
               </div>
@@ -498,7 +495,7 @@ try {
                 <div className="flex items-center gap-3 mb-6">
                   <div className="w-10 h-10 rounded-xl bg-orange-500/10 flex items-center justify-center text-xl">🆘</div>
                   <div>
-                    <h2 className="font-bold text-base">Demander assistance</h2>
+                    <h2 className="font-bold text-base">{t('oeilMissions.assistanceModal.title')}</h2>
                     <p className="text-xs text-[#AAA]">{assistanceMission.title}</p>
                   </div>
                 </div>
@@ -507,18 +504,18 @@ try {
                     onClick={() => { setAssistanceView('problem'); setReportType(''); setReportDesc('') }}
                     className="w-full bg-[#222] hover:bg-[#2A2A2A] rounded-xl p-4 text-left transition-colors border border-white/5"
                   >
-                    <p className="text-sm font-semibold text-orange-400 mb-1">⚠️ Signaler un problème</p>
-                    <p className="text-xs text-[#AAA]">Client irrespectueux, lieu dangereux, demande illégale...</p>
+                    <p className="text-sm font-semibold text-orange-400 mb-1">{t('oeilMissions.assistanceModal.reportProblem.label')}</p>
+                    <p className="text-xs text-[#AAA]">{t('oeilMissions.assistanceModal.reportProblem.desc')}</p>
                   </button>
                   <button
                     onClick={() => { setAssistanceView('transfer'); setTransferReason('') }}
                     className="w-full bg-[#222] hover:bg-[#2A2A2A] rounded-xl p-4 text-left transition-colors border border-white/5"
                   >
-                    <p className="text-sm font-semibold text-red-400 mb-1">🚨 Empêchement majeur</p>
-                    <p className="text-xs text-[#AAA]">Je ne peux pas effectuer cette mission</p>
+                    <p className="text-sm font-semibold text-red-400 mb-1">{t('oeilMissions.assistanceModal.majorImpediment.label')}</p>
+                    <p className="text-xs text-[#AAA]">{t('oeilMissions.assistanceModal.majorImpediment.desc')}</p>
                   </button>
                 </div>
-                <button onClick={() => setAssistanceMission(null)} className="btn btn-ghost w-full justify-center mt-4">Annuler</button>
+                <button onClick={() => setAssistanceMission(null)} className="btn btn-ghost w-full justify-center mt-4">{t('oeilMissions.assistanceModal.cancel')}</button>
               </>
             )}
 
@@ -528,44 +525,44 @@ try {
                 <div className="flex items-center gap-3 mb-4">
                   <button onClick={() => setAssistanceView('choice')} className="text-[#AAA] hover:text-white">←</button>
                   <div>
-                    <h2 className="font-bold text-base">Signaler un problème</h2>
+                    <h2 className="font-bold text-base">{t('oeilMissions.assistanceModal.problemView.title')}</h2>
                     <p className="text-xs text-[#AAA]">{assistanceMission.title}</p>
                   </div>
                 </div>
                 <div className="mb-4">
-                  <label className="label">Type de problème *</label>
+                  <label className="label">{t('oeilMissions.assistanceModal.problemView.typeLabel')}</label>
                   <select className="input" value={reportType} onChange={e => setReportType(e.target.value)}>
-                    <option value="">Sélectionner...</option>
-                    <option value="Client irrespectueux / insultant">Client irrespectueux / insultant</option>
-                    <option value="Client injoignable">Client injoignable</option>
-                    <option value="Lieu dangereux">Lieu dangereux</option>
-                    <option value="Demande illégale">Demande illégale</option>
-                    <option value="Autre problème">Autre problème</option>
+                    <option value="">{t('oeilMissions.assistanceModal.problemView.selectPlaceholder')}</option>
+                    <option value="Client irrespectueux / insultant">{t('oeilMissions.assistanceModal.problemView.types.disrespectful')}</option>
+                    <option value="Client injoignable">{t('oeilMissions.assistanceModal.problemView.types.unreachable')}</option>
+                    <option value="Lieu dangereux">{t('oeilMissions.assistanceModal.problemView.types.dangerous')}</option>
+                    <option value="Demande illégale">{t('oeilMissions.assistanceModal.problemView.types.illegal')}</option>
+                    <option value="Autre problème">{t('oeilMissions.assistanceModal.problemView.types.other')}</option>
                   </select>
                 </div>
                 <div className="mb-5">
-                  <label className="label">Description (optionnel)</label>
-                  <textarea className="input resize-none h-20 w-full text-sm" placeholder="Décrivez la situation..." value={reportDesc} onChange={e => setReportDesc(e.target.value)} />
+                  <label className="label">{t('oeilMissions.assistanceModal.problemView.descLabel')}</label>
+                  <textarea className="input resize-none h-20 w-full text-sm" placeholder={t('oeilMissions.assistanceModal.problemView.descPlaceholder')} value={reportDesc} onChange={e => setReportDesc(e.target.value)} />
                 </div>
                 <div className="flex gap-3">
-                  <button onClick={() => setAssistanceView('choice')} className="btn btn-ghost flex-1 justify-center">Retour</button>
+                  <button onClick={() => setAssistanceView('choice')} className="btn btn-ghost flex-1 justify-center">{t('oeilMissions.assistanceModal.problemView.back')}</button>
                   <button
                     onClick={async () => {
-                      if (!reportType) { toast('Sélectionnez un type', 'error'); return }
+                      if (!reportType) { toast(t('oeilMissions.toasts.selectProblemType'), 'error'); return }
                       setReporting(true)
                       try {
                         await missionsAPI.reportProblem(assistanceMission.id, { type: reportType, description: reportDesc })
-                        toast('Problème signalé — Shoofly a été alerté ✓', 'success')
+                        toast(t('oeilMissions.toasts.problemReportedShort'), 'success')
                         setAssistanceMission(null)
                         setAssistanceView('choice')
                         load(tab)
-                      } catch (err) { toast(err.response?.data?.error || 'Erreur', 'error') }
+                      } catch (err) { toast(err.response?.data?.error || t('oeilMissions.toasts.genericError'), 'error') }
                       finally { setReporting(false) }
                     }}
                     disabled={reporting || !reportType}
                     className="btn btn-sm flex-1 justify-center bg-orange-500 text-white hover:bg-orange-600 disabled:opacity-50"
                   >
-                    {reporting ? '...' : 'Signaler →'}
+                    {reporting ? t('oeilMissions.assistanceModal.problemView.submitting') : t('oeilMissions.assistanceModal.problemView.submit')}
                   </button>
                 </div>
               </>
@@ -577,54 +574,54 @@ try {
                 <div className="flex items-center gap-3 mb-4">
                   <button onClick={() => setAssistanceView('choice')} className="text-[#AAA] hover:text-white">←</button>
                   <div>
-                    <h2 className="font-bold text-base">Empêchement en cours de mission</h2>
+                    <h2 className="font-bold text-base">{t('oeilMissions.assistanceModal.transferView.title')}</h2>
                     <p className="text-xs text-[#AAA]">{assistanceMission.title}</p>
                   </div>
                 </div>
                 <div className="bg-red-500/5 border border-red-500/20 rounded-xl p-4 mb-4">
-                  <p className="text-xs text-white/80">Cette action est irréversible et réservée aux situations d'urgence réelle.</p>
+                  <p className="text-xs text-white/80">{t('oeilMissions.assistanceModal.transferView.warning')}</p>
                 </div>
                 <div className="bg-[#222] rounded-xl p-3 mb-4 space-y-1">
-                  <p className="text-xs text-[#AAA]">Conséquences :</p>
+                  <p className="text-xs text-[#AAA]">{t('oeilMissions.assistanceModal.transferView.consequencesLabel')}</p>
                   {assistanceMission.status === 'assigned'
-                    ? <p className="text-xs text-white/70">• Vous ne recevrez aucune rémunération</p>
+                    ? <p className="text-xs text-white/70">{t('oeilMissions.assistanceModal.transferView.noPay')}</p>
                     : <>
-                        <p className="text-xs text-white/70">• Vous recevrez 50% si un remplaçant est trouvé</p>
-                        <p className="text-xs text-white/70">• Cooldown 4 heures</p>
+                        <p className="text-xs text-white/70">{t('oeilMissions.assistanceModal.transferView.halfPay')}</p>
+                        <p className="text-xs text-white/70">{t('oeilMissions.assistanceModal.transferView.cooldown')}</p>
                       </>
                   }
-                  <p className="text-xs text-white/70">• Cet incident sera noté sur votre profil</p>
+                  <p className="text-xs text-white/70">{t('oeilMissions.assistanceModal.transferView.noted')}</p>
                 </div>
                 <div className="mb-5">
-                  <label className="label">Raison (obligatoire)</label>
+                  <label className="label">{t('oeilMissions.assistanceModal.transferView.reasonLabel')}</label>
                   <select className="input" value={transferReason} onChange={e => setTransferReason(e.target.value)}>
-                    <option value="">Sélectionner une raison</option>
-                    <option value="Urgence médicale">Urgence médicale</option>
-                    <option value="Accident / incident">Accident / incident sur place</option>
-                    <option value="Problème de sécurité">Problème de sécurité</option>
-                    <option value="Empêchement familial grave">Empêchement familial grave</option>
-                    <option value="Autre cas de force majeure">Autre cas de force majeure</option>
+                    <option value="">{t('oeilMissions.assistanceModal.transferView.reasonPlaceholder')}</option>
+                    <option value="Urgence médicale">{t('oeilMissions.assistanceModal.transferView.reasons.medical')}</option>
+                    <option value="Accident / incident">{t('oeilMissions.assistanceModal.transferView.reasons.accident')}</option>
+                    <option value="Problème de sécurité">{t('oeilMissions.assistanceModal.transferView.reasons.security')}</option>
+                    <option value="Empêchement familial grave">{t('oeilMissions.assistanceModal.transferView.reasons.family')}</option>
+                    <option value="Autre cas de force majeure">{t('oeilMissions.assistanceModal.transferView.reasons.other')}</option>
                   </select>
                 </div>
                 <div className="flex gap-3">
-                  <button onClick={() => setAssistanceView('choice')} className="btn btn-ghost flex-1 justify-center">Retour</button>
+                  <button onClick={() => setAssistanceView('choice')} className="btn btn-ghost flex-1 justify-center">{t('oeilMissions.assistanceModal.transferView.back')}</button>
                   <button
                     onClick={async () => {
-                      if (!transferReason) { toast('Sélectionnez une raison', 'error'); return }
+                      if (!transferReason) { toast(t('oeilMissions.toasts.selectReasonShort'), 'error'); return }
                       setTransferring(true)
                       try {
                         await missionsAPI.transfer(assistanceMission.id, { reason: transferReason })
-                        toast('Empêchement signalé — mission remise en priorité', 'info')
+                        toast(t('oeilMissions.toasts.transferReported'), 'info')
                         setAssistanceMission(null)
                         setAssistanceView('choice')
                         load(tab)
-                      } catch (err) { toast(err.response?.data?.error || 'Erreur', 'error') }
+                      } catch (err) { toast(err.response?.data?.error || t('oeilMissions.toasts.genericError'), 'error') }
                       finally { setTransferring(false) }
                     }}
                     disabled={transferring || !transferReason}
                     className="btn btn-sm flex-1 justify-center bg-red-500 text-white hover:bg-red-600 disabled:opacity-50"
                   >
-                    {transferring ? '...' : 'Confirmer →'}
+                    {transferring ? t('oeilMissions.assistanceModal.transferView.confirming') : t('oeilMissions.assistanceModal.transferView.confirm')}
                   </button>
                 </div>
               </>

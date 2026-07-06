@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useParams, useNavigate } from 'react-router-dom'
 import AppLayout from '../../components/layout/AppLayout'
 import Topbar from '../../components/layout/Topbar'
@@ -25,6 +26,7 @@ function StarRating({ value, onChange, label }) {
 
 // ── Composant Oui/Non ──────────────────────────────────────
 function OuiNon({ value, onChange, label }) {
+  const { t } = useTranslation()
   return (
     <div className="flex items-center justify-between py-2 border-b border-white/5">
       <span className="text-sm text-[#CCC]">{label}</span>
@@ -37,7 +39,7 @@ function OuiNon({ value, onChange, label }) {
                               : 'bg-red-500/20 border-red-500/40 text-red-400'
                 : 'border-white/12 text-[#AAA] hover:border-white/22'
             }`}>
-            {v === 'oui' ? '✓ Oui' : '✗ Non'}
+            {v === 'oui' ? t('oeilAirbnbReport.ouiNon.oui') : t('oeilAirbnbReport.ouiNon.non')}
           </button>
         ))}
       </div>
@@ -103,16 +105,17 @@ function calculateScore(data) {
   return Math.min(100, Math.round(score))
 }
 
-function scoreLabel(s) {
-  if (s >= 90) return { label: 'Excellent', color: 'text-green-400' }
-  if (s >= 80) return { label: 'Très bon', color: 'text-green-400' }
-  if (s >= 70) return { label: 'Correct', color: 'text-yellow-400' }
-  if (s >= 60) return { label: 'Moyen', color: 'text-orange-400' }
-  return { label: 'Décevant', color: 'text-red-400' }
+function scoreLabel(s, t) {
+  if (s >= 90) return { label: t('oeilAirbnbReport.scoreLabels.excellent'), color: 'text-green-400' }
+  if (s >= 80) return { label: t('oeilAirbnbReport.scoreLabels.veryGood'), color: 'text-green-400' }
+  if (s >= 70) return { label: t('oeilAirbnbReport.scoreLabels.correct'), color: 'text-yellow-400' }
+  if (s >= 60) return { label: t('oeilAirbnbReport.scoreLabels.average'), color: 'text-orange-400' }
+  return { label: t('oeilAirbnbReport.scoreLabels.disappointing'), color: 'text-red-400' }
 }
 
 // ── Page principale ────────────────────────────────────────
 export default function AirbnbReport() {
+  const { t } = useTranslation()
   const { missionId } = useParams()
   const navigate = useNavigate()
   const [mission, setMission] = useState(null)
@@ -121,7 +124,7 @@ export default function AirbnbReport() {
   const [submitted, setSubmitted] = useState(false)
   const [data, setData] = useState({})
   const score = calculateScore(data)
-  const { label: scoreLbl, color: scoreColor } = scoreLabel(score)
+  const { label: scoreLbl, color: scoreColor } = scoreLabel(score, t)
 
   const set = (key) => (value) => setData(d => ({ ...d, [key]: value }))
   const setCheck = (key) => (e) => setData(d => ({
@@ -140,7 +143,7 @@ export default function AirbnbReport() {
         setData(rRes.data.report.data || {})
         setSubmitted(rRes.data.report.submitted || false)
       }
-    }).catch(() => toast('Erreur chargement', 'error'))
+    }).catch(() => toast(t('oeilAirbnbReport.toasts.loadError'), 'error'))
       .finally(() => setLoading(false))
   }, [missionId])
 
@@ -157,8 +160,8 @@ export default function AirbnbReport() {
     setSaving(true)
     try {
       await reportsAPI.save(missionId, data, false)
-      toast('Sauvegardé ✓', 'success')
-    } catch { toast('Erreur sauvegarde', 'error') }
+      toast(t('oeilAirbnbReport.toasts.saved'), 'success')
+    } catch { toast(t('oeilAirbnbReport.toasts.saveError'), 'error') }
     finally { setSaving(false) }
   }
 
@@ -206,30 +209,30 @@ const validateAirbnb = () => {
   const submit = async () => {
     const missing = validateAirbnb()
     if (missing.length > 0) {
-      toast(`⚠️ Champs manquants (${missing.length}) — faites défiler pour tout compléter`, 'error')
+      toast(t('oeilAirbnbReport.toasts.missingFields', { count: missing.length }), 'error')
       return
     }
-    if (!window.confirm('Soumettre le rapport ? Le client sera notifié.')) return
+    if (!window.confirm(t('oeilAirbnbReport.confirmSubmit'))) return
     setSaving(true)
     try {
       await reportsAPI.save(missionId, data, true)
       setSubmitted(true)
-      toast('Rapport soumis ! 🎉', 'success')
-    } catch { toast('Erreur soumission', 'error') }
+      toast(t('oeilAirbnbReport.toasts.submitted'), 'success')
+    } catch { toast(t('oeilAirbnbReport.toasts.submitError'), 'error') }
     finally { setSaving(false) }
   }
 
 
 
   if (loading) return (
-    <AppLayout><Topbar title="Rapport de visite" />
+    <AppLayout><Topbar title={t('oeilAirbnbReport.title')} />
       <div className="flex-1 flex items-center justify-center"><Spinner size="lg" /></div>
     </AppLayout>
   )
 
   return (
     <AppLayout>
-      <Topbar title="Rapport de visite" />
+      <Topbar title={t('oeilAirbnbReport.title')} />
       <div className="p-4 md:p-6 max-w-2xl mx-auto pb-32">
 
         {/* Mission info */}
@@ -238,13 +241,13 @@ const validateAirbnb = () => {
             <div className="font-semibold text-sm">{mission?.title}</div>
             <div className="text-xs text-[#AAA]">📍 {mission?.city} · {mission?.subcategory}</div>
           </div>
-          {submitted && <span className="badge badge-green">✓ Soumis</span>}
+          {submitted && <span className="badge badge-green">{t('oeilAirbnbReport.submittedBadge')}</span>}
         </div>
 
         {/* Score en temps réel */}
         <div className="card mb-4 flex items-center justify-between">
           <div>
-            <div className="text-xs text-[#AAA] mb-0.5">Score Shoofly</div>
+            <div className="text-xs text-[#AAA] mb-0.5">{t('oeilAirbnbReport.scoreLabel')}</div>
             <div className={`text-3xl font-bold ${scoreColor}`}>{score}<span className="text-sm text-[#AAA]">/100</span></div>
           </div>
           <div className={`text-sm font-semibold ${scoreColor}`}>{scoreLbl}</div>
@@ -252,81 +255,81 @@ const validateAirbnb = () => {
 
         {submitted && (
           <div className="bg-green-500/10 border border-green-500/20 rounded-xl p-4 mb-4 text-sm text-green-400 text-center">
-            ✅ Rapport soumis — le client a été notifié
+            {t('oeilAirbnbReport.submittedBanner')}
           </div>
         )}
 
         {/* Section 1 — Première impression */}
-        <Section number="1" title="Première impression">
+        <Section number="1" title={t('oeilAirbnbReport.sections.s1.title')}>
           <div>
-            <label className="label">L'annonce correspond-elle à la réalité ?</label>
+            <label className="label">{t('oeilAirbnbReport.sections.s1.question')}</label>
             <div className="flex gap-2 mt-1 flex-wrap">
               {['oui','partiellement','non'].map(v => (
                 <button key={v} type="button" onClick={() => set('conformite')(v)}
                   className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-all ${
                     data.conformite === v ? 'border-[#FF4D00] bg-[#FF4D00]/10 text-white' : 'border-white/12 text-[#AAA]'
                   }`}>
-                  {v === 'oui' ? '✓ Oui totalement' : v === 'partiellement' ? '~ Partiellement' : '✗ Non'}
+                  {v === 'oui' ? t('oeilAirbnbReport.sections.s1.choices.oui') : v === 'partiellement' ? t('oeilAirbnbReport.sections.s1.choices.partiellement') : t('oeilAirbnbReport.sections.s1.choices.non')}
                 </button>
               ))}
             </div>
           </div>
-          <StarRating label="Note générale" value={data.note_generale} onChange={set('note_generale')} />
+          <StarRating label={t('oeilAirbnbReport.sections.s1.generalNoteLabel')} value={data.note_generale} onChange={set('note_generale')} />
           <div>
-            <label className="label">Commentaire</label>
+            <label className="label">{t('oeilAirbnbReport.commentLabel')}</label>
             <textarea className="input resize-none h-20" value={data.commentaire_impression || ''}
               onChange={e => set('commentaire_impression')(e.target.value)}
-              placeholder="Première impression générale..." disabled={submitted} />
+              placeholder={t('oeilAirbnbReport.sections.s1.commentPlaceholder')} disabled={submitted} />
           </div>
         </Section>
 
         {/* Section 2 — Propreté */}
-        <Section number="2" title="Propreté">
-          <StarRating label="État de propreté général" value={data.proprete_note} onChange={set('proprete_note')} />
-          <OuiNon label="Sols propres" value={data.sols_propres} onChange={set('sols_propres')} />
-          <OuiNon label="Salle de bain propre" value={data.sdb_propre} onChange={set('sdb_propre')} />
-          <OuiNon label="Literie propre" value={data.literie_propre} onChange={set('literie_propre')} />
-          <OuiNon label="Odeurs désagréables" value={data.odeurs} onChange={set('odeurs')} />
+        <Section number="2" title={t('oeilAirbnbReport.sections.s2.title')}>
+          <StarRating label={t('oeilAirbnbReport.sections.s2.cleanlinessNoteLabel')} value={data.proprete_note} onChange={set('proprete_note')} />
+          <OuiNon label={t('oeilAirbnbReport.sections.s2.solsPropresLabel')} value={data.sols_propres} onChange={set('sols_propres')} />
+          <OuiNon label={t('oeilAirbnbReport.sections.s2.sdbPropreLabel')} value={data.sdb_propre} onChange={set('sdb_propre')} />
+          <OuiNon label={t('oeilAirbnbReport.sections.s2.literiePropreLabel')} value={data.literie_propre} onChange={set('literie_propre')} />
+          <OuiNon label={t('oeilAirbnbReport.sections.s2.odeursLabel')} value={data.odeurs} onChange={set('odeurs')} />
           <div className="bg-[#FF4D00]/5 border border-[#FF4D00]/20 rounded-lg p-3 text-xs text-[#FF4D00]">
-            📸 Photos obligatoires pour cette section
+            {t('oeilAirbnbReport.photosRequiredNotice')}
           </div>
         </Section>
 
         {/* Section 3 — Confort */}
-        <Section number="3" title="Confort">
-          <StarRating label="Confort du lit" value={data.confort_lit} onChange={set('confort_lit')} />
-          <StarRating label="Confort du canapé" value={data.confort_canape} onChange={set('confort_canape')} />
-          <StarRating label="Niveau de confort global" value={data.confort_global} onChange={set('confort_global')} />
+        <Section number="3" title={t('oeilAirbnbReport.sections.s3.title')}>
+          <StarRating label={t('oeilAirbnbReport.sections.s3.confortLitLabel')} value={data.confort_lit} onChange={set('confort_lit')} />
+          <StarRating label={t('oeilAirbnbReport.sections.s3.confortCanapeLabel')} value={data.confort_canape} onChange={set('confort_canape')} />
+          <StarRating label={t('oeilAirbnbReport.sections.s3.confortGlobalLabel')} value={data.confort_global} onChange={set('confort_global')} />
           <div>
-            <label className="label">Commentaire</label>
+            <label className="label">{t('oeilAirbnbReport.commentLabel')}</label>
             <textarea className="input resize-none h-16" value={data.commentaire_confort || ''}
               onChange={e => set('commentaire_confort')(e.target.value)}
-              placeholder="Confort général..." disabled={submitted} />
+              placeholder={t('oeilAirbnbReport.sections.s3.commentPlaceholder')} disabled={submitted} />
           </div>
         </Section>
 
         {/* Section 4 — Bruit */}
-        <Section number="4" title="Bruit">
-          <StarRating label="Bruit extérieur (1=très bruyant, 5=très calme)" value={data.bruit_exterieur} onChange={set('bruit_exterieur')} />
-          <StarRating label="Isolation phonique entre appartements" value={data.isolation_phonique} onChange={set('isolation_phonique')} />
-          <OuiNon label="Fenêtres bien isolées" value={data.fenetres_isolees} onChange={set('fenetres_isolees')} />
+        <Section number="4" title={t('oeilAirbnbReport.sections.s4.title')}>
+          <StarRating label={t('oeilAirbnbReport.sections.s4.bruitExterieurLabel')} value={data.bruit_exterieur} onChange={set('bruit_exterieur')} />
+          <StarRating label={t('oeilAirbnbReport.sections.s4.isolationPhoniqueLabel')} value={data.isolation_phonique} onChange={set('isolation_phonique')} />
+          <OuiNon label={t('oeilAirbnbReport.sections.s4.fenetresIsoleesLabel')} value={data.fenetres_isolees} onChange={set('fenetres_isolees')} />
           <div className="bg-[#FF4D00]/5 border border-[#FF4D00]/20 rounded-lg p-3 text-xs text-[#FF4D00]">
-            🎥 Vidéo 30 secondes obligatoire (fenêtre ouverte puis fermée)
+            {t('oeilAirbnbReport.sections.s4.videoNotice')}
           </div>
         </Section>
 
         {/* Section 5 — Équipements */}
-        <Section number="5" title="Équipements">
+        <Section number="5" title={t('oeilAirbnbReport.sections.s5.title')}>
           <div className="grid grid-cols-1 gap-0">
             {[
-              { key:'wifi', label:'Wifi', opts:['disponible','non disponible'] },
-              { key:'clim', label:'Climatisation', opts:['fonctionnelle','non fonctionnelle'] },
-              { key:'eau_chaude', label:'Eau chaude', opts:['fonctionnelle','non fonctionnelle'] },
-              { key:'tv', label:'Télévision', opts:['fonctionnelle','non fonctionnelle'] },
-              { key:'machine_laver', label:'Machine à laver', opts:['oui','non'] },
-              { key:'seche_linge', label:'Sèche-linge', opts:['oui','non'] },
-              { key:'fer_repasser', label:'Fer à repasser', opts:['oui','non'] },
-              { key:'produits_nettoyage', label:'Produits de nettoyage fournis', opts:['oui','non'] },
+              { key:'wifi', label: t('oeilAirbnbReport.sections.s5.equip.wifi'), opts:['disponible','non disponible'] },
+              { key:'clim', label: t('oeilAirbnbReport.sections.s5.equip.clim'), opts:['fonctionnelle','non fonctionnelle'] },
+              { key:'eau_chaude', label: t('oeilAirbnbReport.sections.s5.equip.eauChaude'), opts:['fonctionnelle','non fonctionnelle'] },
+              { key:'tv', label: t('oeilAirbnbReport.sections.s5.equip.tv'), opts:['fonctionnelle','non fonctionnelle'] },
+              { key:'machine_laver', label: t('oeilAirbnbReport.sections.s5.equip.machineLaver'), opts:['oui','non'] },
+              { key:'seche_linge', label: t('oeilAirbnbReport.sections.s5.equip.secheLinge'), opts:['oui','non'] },
+              { key:'fer_repasser', label: t('oeilAirbnbReport.sections.s5.equip.ferRepasser'), opts:['oui','non'] },
+              { key:'produits_nettoyage', label: t('oeilAirbnbReport.sections.s5.equip.produitsNettoyage'), opts:['oui','non'] },
             ].map(({ key, label, opts }) => (
               <OuiNon key={key} label={label}
                 value={data[key] === opts[0] ? 'oui' : data[key] === opts[1] ? 'non' : data[key]}
@@ -334,10 +337,10 @@ const validateAirbnb = () => {
             ))}
           </div>
           {data.wifi === 'disponible' && (
-            <StarRating label="Qualité Wifi" value={data.wifi_qualite} onChange={set('wifi_qualite')} />
+            <StarRating label={t('oeilAirbnbReport.sections.s5.wifiQualityLabel')} value={data.wifi_qualite} onChange={set('wifi_qualite')} />
           )}
           <div>
-            <label className="label mt-2">Cuisine — équipements disponibles</label>
+            <label className="label mt-2">{t('oeilAirbnbReport.sections.s5.kitchenLabel')}</label>
             <div className="grid grid-cols-2 gap-2 mt-1">
               {['Réfrigérateur','Micro-onde','Four','Cafetière','Bouilloire','Vaisselle suffisante'].map(item => (
                 <label key={item} className="flex items-center gap-2 text-sm text-[#CCC] cursor-pointer">
@@ -353,10 +356,10 @@ const validateAirbnb = () => {
         </Section>
 
         {/* Section 6 — Luminosité */}
-        <Section number="6" title="Luminosité">
-          <StarRating label="Luminosité naturelle" value={data.luminosite} onChange={set('luminosite')} />
+        <Section number="6" title={t('oeilAirbnbReport.sections.s6.title')}>
+          <StarRating label={t('oeilAirbnbReport.sections.s6.luminositeLabel')} value={data.luminosite} onChange={set('luminosite')} />
           <div>
-            <label className="label">Exposition</label>
+            <label className="label">{t('oeilAirbnbReport.sections.s6.expositionLabel')}</label>
             <div className="flex gap-2 mt-1 flex-wrap">
               {['Nord','Sud','Est','Ouest'].map(v => (
                 <button key={v} type="button" onClick={() => set('exposition')(v)}
@@ -369,40 +372,40 @@ const validateAirbnb = () => {
         </Section>
 
         {/* Section 7 — Sécurité */}
-        <Section number="7" title="Sécurité">
-          <StarRating label="Sentiment de sécurité" value={data.securite_note} onChange={set('securite_note')} />
-          <OuiNon label="Porte sécurisée" value={data.porte_securisee} onChange={set('porte_securisee')} />
-          <OuiNon label="Quartier rassurant" value={data.quartier_rassurant} onChange={set('quartier_rassurant')} />
-          <OuiNon label="Éclairage extérieur" value={data.eclairage_exterieur} onChange={set('eclairage_exterieur')} />
+        <Section number="7" title={t('oeilAirbnbReport.sections.s7.title')}>
+          <StarRating label={t('oeilAirbnbReport.sections.s7.securiteNoteLabel')} value={data.securite_note} onChange={set('securite_note')} />
+          <OuiNon label={t('oeilAirbnbReport.sections.s7.porteSecuriseeLabel')} value={data.porte_securisee} onChange={set('porte_securisee')} />
+          <OuiNon label={t('oeilAirbnbReport.sections.s7.quartierRassurantLabel')} value={data.quartier_rassurant} onChange={set('quartier_rassurant')} />
+          <OuiNon label={t('oeilAirbnbReport.sections.s7.eclairageExterieurLabel')} value={data.eclairage_exterieur} onChange={set('eclairage_exterieur')} />
         </Section>
 
         {/* Section 8 — Accessibilité */}
-        <Section number="8" title="Accessibilité">
-          <StarRating label="Facilité d'accès" value={data.acces_facilite} onChange={set('acces_facilite')} />
-          <OuiNon label="Ascenseur" value={data.ascenseur} onChange={set('ascenseur')} />
-          <OuiNon label="Escaliers difficiles" value={data.escaliers_difficiles} onChange={set('escaliers_difficiles')} />
-          <OuiNon label="Parking disponible" value={data.parking} onChange={set('parking')} />
+        <Section number="8" title={t('oeilAirbnbReport.sections.s8.title')}>
+          <StarRating label={t('oeilAirbnbReport.sections.s8.accesFaciliteLabel')} value={data.acces_facilite} onChange={set('acces_facilite')} />
+          <OuiNon label={t('oeilAirbnbReport.sections.s8.ascenseurLabel')} value={data.ascenseur} onChange={set('ascenseur')} />
+          <OuiNon label={t('oeilAirbnbReport.sections.s8.escaliersDifficilesLabel')} value={data.escaliers_difficiles} onChange={set('escaliers_difficiles')} />
+          <OuiNon label={t('oeilAirbnbReport.sections.s8.parkingLabel')} value={data.parking} onChange={set('parking')} />
         </Section>
 
         {/* Section 9 — Environnement */}
-        <Section number="9" title="Environnement">
-          <StarRating label="Restaurants à proximité" value={data.restaurants} onChange={set('restaurants')} />
-          <StarRating label="Commerces à proximité" value={data.commerces} onChange={set('commerces')} />
-          <StarRating label="Transports à proximité" value={data.transports} onChange={set('transports')} />
-          <StarRating label="Intérêt touristique du quartier" value={data.interet_touristique} onChange={set('interet_touristique')} />
+        <Section number="9" title={t('oeilAirbnbReport.sections.s9.title')}>
+          <StarRating label={t('oeilAirbnbReport.sections.s9.restaurantsLabel')} value={data.restaurants} onChange={set('restaurants')} />
+          <StarRating label={t('oeilAirbnbReport.sections.s9.commercesLabel')} value={data.commerces} onChange={set('commerces')} />
+          <StarRating label={t('oeilAirbnbReport.sections.s9.transportsLabel')} value={data.transports} onChange={set('transports')} />
+          <StarRating label={t('oeilAirbnbReport.sections.s9.interetTouristiqueLabel')} value={data.interet_touristique} onChange={set('interet_touristique')} />
           <div className="bg-[#FF4D00]/5 border border-[#FF4D00]/20 rounded-lg p-3 text-xs text-[#FF4D00]">
-            📸 Photos du quartier obligatoires
+            {t('oeilAirbnbReport.sections.s9.photosNotice')}
           </div>
         </Section>
 
         {/* Section 10 — Vérification photos */}
-        <Section number="10" title="Vérification des photos de l'annonce">
+        <Section number="10" title={t('oeilAirbnbReport.sections.s10.title')}>
           <div className="flex gap-2 flex-wrap">
             {[
-              { v:'conformes', label:'✓ Exactement conformes' },
-              { v:'legerement', label:'~ Légèrement embellies' },
-              { v:'tres', label:'⚠️ Très embellies' },
-              { v:'trompeuses', label:'✗ Trompeuses' },
+              { v:'conformes', label: t('oeilAirbnbReport.sections.s10.choices.conformes') },
+              { v:'legerement', label: t('oeilAirbnbReport.sections.s10.choices.legerement') },
+              { v:'tres', label: t('oeilAirbnbReport.sections.s10.choices.tres') },
+              { v:'trompeuses', label: t('oeilAirbnbReport.sections.s10.choices.trompeuses') },
             ].map(({ v, label }) => (
               <button key={v} type="button" onClick={() => set('photos_conformite')(v)}
                 className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-all ${
@@ -413,9 +416,9 @@ const validateAirbnb = () => {
         </Section>
 
         {/* Section 11 — Points forts/faibles */}
-        <Section number="11" title="Points forts & faibles">
+        <Section number="11" title={t('oeilAirbnbReport.sections.s11.title')}>
           <div>
-            <label className="label">✅ Points forts</label>
+            <label className="label">{t('oeilAirbnbReport.sections.s11.strengthsLabel')}</label>
             <div className="grid grid-cols-2 gap-2 mt-1">
               {['Vue agréable','Très propre','Très calme','Quartier agréable','Bien équipé','Moderne','Spacieux','Bonne connexion internet','Bon rapport qualité/prix'].map(item => (
                 <label key={item} className="flex items-center gap-2 text-sm text-[#CCC] cursor-pointer">
@@ -429,7 +432,7 @@ const validateAirbnb = () => {
             </div>
           </div>
           <div className="mt-3">
-            <label className="label">❌ Points faibles</label>
+            <label className="label">{t('oeilAirbnbReport.sections.s11.weaknessesLabel')}</label>
             <div className="grid grid-cols-2 gap-2 mt-1">
               {['Bruyant','Mauvaise odeur','Humidité','Équipement vétuste','Mauvaise literie','Photos trompeuses','Quartier peu rassurant','Difficulté de stationnement','Mauvaise connexion internet'].map(item => (
                 <label key={item} className="flex items-center gap-2 text-sm text-[#CCC] cursor-pointer">
@@ -445,14 +448,14 @@ const validateAirbnb = () => {
         </Section>
 
         {/* Section 12 — Recommandation */}
-        <Section number="12" title="Recommandation finale">
+        <Section number="12" title={t('oeilAirbnbReport.sections.s12.title')}>
           <div className="flex gap-2 flex-wrap">
             {[
-              { v:'oui_sans', label:'👍 Oui sans hésitation' },
-              { v:'oui_reserves', label:'👌 Oui avec réserves' },
-              { v:'moyennement', label:'😐 Moyennement' },
-              { v:'non', label:'👎 Non' },
-              { v:'eviter', label:'🚫 À éviter' },
+              { v:'oui_sans', label: t('oeilAirbnbReport.sections.s12.choices.ouiSans') },
+              { v:'oui_reserves', label: t('oeilAirbnbReport.sections.s12.choices.ouiReserves') },
+              { v:'moyennement', label: t('oeilAirbnbReport.sections.s12.choices.moyennement') },
+              { v:'non', label: t('oeilAirbnbReport.sections.s12.choices.non') },
+              { v:'eviter', label: t('oeilAirbnbReport.sections.s12.choices.eviter') },
             ].map(({ v, label }) => (
               <button key={v} type="button" onClick={() => set('recommandation')(v)}
                 className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-all ${
@@ -469,11 +472,11 @@ const validateAirbnb = () => {
         <div className="fixed bottom-0 left-0 right-0 md:left-[220px] bg-[#181818] border-t border-white/12 p-4 flex gap-3 z-40">
           <button onClick={save} disabled={saving}
             className="btn btn-ghost flex-1 justify-center disabled:opacity-50">
-            {saving ? '...' : '💾 Sauvegarder'}
+            {saving ? '...' : t('oeilAirbnbReport.saveButton')}
           </button>
           <button onClick={submit} disabled={saving}
             className="btn btn-primary flex-1 justify-center disabled:opacity-50">
-            {saving ? '...' : '✅ Soumettre le rapport'}
+            {saving ? '...' : t('oeilAirbnbReport.submitButton')}
           </button>
         </div>
       )}

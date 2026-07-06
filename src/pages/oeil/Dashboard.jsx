@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import AppLayout from '../../components/layout/AppLayout'
 import Topbar from '../../components/layout/Topbar'
 import { missionsAPI, usersAPI } from '../../api'
@@ -8,6 +9,7 @@ import { useNavigate } from 'react-router-dom'
 import ChatModal from '../../components/missions/ChatModal'
 
 export default function OeilDashboard() {
+  const { t } = useTranslation()
   const { user } = useAuth()
   const navigate = useNavigate()
   const [pending, setPending]         = useState([])
@@ -20,16 +22,16 @@ export default function OeilDashboard() {
   const [transferring, setTransferring] = useState(false)
 
   const doTransfer = async () => {
-    if (!transferReason) { toast('Veuillez sélectionner une raison', 'error'); return }
+    if (!transferReason) { toast(t('oeilDashboard.selectReasonError'), 'error'); return }
     setTransferring(true)
     try {
       await missionsAPI.transfer(transferMission.id, { reason: transferReason })
-      toast('Empêchement signalé — mission remise en priorité', 'info')
+      toast(t('oeilDashboard.transferReportedToast'), 'info')
       setTransferMission(null)
       setTransferReason('')
       load()
     } catch (err) {
-      toast(err.response?.data?.error || 'Erreur', 'error')
+      toast(err.response?.data?.error || t('oeilDashboard.genericError'), 'error')
     } finally { setTransferring(false) }
   }
 
@@ -55,7 +57,7 @@ export default function OeilDashboard() {
           earnings,
         })
       })
-      .catch(() => toast('Erreur de chargement', 'error'))
+      .catch(() => toast(t('oeilDashboard.loadingError'), 'error'))
       .finally(() => setLoading(false))
   }
 
@@ -65,9 +67,9 @@ export default function OeilDashboard() {
   try {
     await missionsAPI.interest(id)
     setPending(prev => prev.map(m => m.id === id ? { ...m, interested: true } : m))
-    toast('Intérêt exprimé 👁️ Le client va vous contacter.', 'success')
+    toast(t('oeilDashboard.interestExpressedToast'), 'success')
   } catch (err) {
-    toast(err.response?.data?.error || 'Erreur', 'error')
+    toast(err.response?.data?.error || t('oeilDashboard.genericError'), 'error')
   }
 }
 
@@ -75,9 +77,9 @@ const refuse = async (id) => {
   try {
     await missionsAPI.refuse(id, true)
     setPending(prev => prev.filter(m => m.id !== id))
-    toast('Mission ignorée', 'info')
+    toast(t('oeilDashboard.missionIgnoredToast'), 'info')
   } catch {
-    toast('Erreur', 'error')
+    toast(t('oeilDashboard.genericError'), 'error')
   }
 }
 
@@ -88,27 +90,27 @@ const refuse = async (id) => {
     if (!next) return
     try {
       await missionsAPI.status(mission.id, { status: next })
-      toast(next === 'completed' ? 'Mission terminée ! 🎉' : 'Statut mis à jour ✓', 'success')
+      toast(next === 'completed' ? t('oeilDashboard.missionCompletedToast') : t('oeilDashboard.statusUpdatedToast'), 'success')
       load()
-    } catch { toast('Erreur', 'error') }
+    } catch { toast(t('oeilDashboard.genericError'), 'error') }
   }
 
   const advanceLabel = {
-    assigned: '🚗 En route',
-    en_route: '▶️ Démarrer',
-    active:   '✓ Terminer',
+    assigned: t('oeilDashboard.advance.enRoute'),
+    en_route: t('oeilDashboard.advance.start'),
+    active:   t('oeilDashboard.advance.finish'),
   }
 
   if (loading) return (
     <AppLayout>
-      <Topbar title="Tableau de bord" />
+      <Topbar title={t('oeilDashboard.title')} />
       <div className="flex-1 flex items-center justify-center"><Spinner size="lg" /></div>
     </AppLayout>
   )
 
   return (
     <AppLayout>
-      <Topbar title="Tableau de bord" />
+      <Topbar title={t('oeilDashboard.title')} />
       <div className="p-4 md:p-6 space-y-4 md:space-y-6">
 
         {/* Bannière vérification identité */}
@@ -123,12 +125,12 @@ const refuse = async (id) => {
             </span>
             <div className="flex-1">
               <p className="text-sm font-semibold text-white">
-                {user?.id_verified_at ? 'Vérification en cours' : 'Identité non vérifiée'}
+                {user?.id_verified_at ? t('oeilDashboard.verifBanner.pendingTitle') : t('oeilDashboard.verifBanner.notVerifiedTitle')}
               </p>
               <p className="text-xs text-[#AAA] mt-0.5">
                 {user?.id_verified_at
-                  ? 'Notre équipe examine vos documents. Vous serez notifié dès validation.'
-                  : 'Vérifiez votre identité pour pouvoir postuler aux missions.'}
+                  ? t('oeilDashboard.verifBanner.pendingDesc')
+                  : t('oeilDashboard.verifBanner.notVerifiedDesc')}
               </p>
             </div>
             {!user?.id_verified_at && (
@@ -136,7 +138,7 @@ const refuse = async (id) => {
                   onClick={() => navigate('/oeil/verification-identite')}
                   className="btn btn-primary btn-sm flex-shrink-0"
                 >
-                  Vérifier →
+                  {t('oeilDashboard.verifBanner.verifyButton')}
                 </button>
               )}
             </div>
@@ -146,46 +148,46 @@ const refuse = async (id) => {
             <div className="rounded-xl p-4 flex items-center gap-3 bg-[#FF4D00]/10 border border-[#FF4D00]/30">
               <span className="text-2xl flex-shrink-0">📸</span>
               <div className="flex-1">
-                <p className="text-sm font-semibold text-white">Ajoutez votre photo de profil</p>
+                <p className="text-sm font-semibold text-white">{t('oeilDashboard.avatarBanner.title')}</p>
                 <p className="text-xs text-[#AAA] mt-0.5">
-                  Un profil avec photo inspire plus confiance aux clients et vous aide à obtenir plus de missions.
+                  {t('oeilDashboard.avatarBanner.desc')}
                 </p>
               </div>
               <button
                 onClick={() => navigate('/oeil/compte')}
                 className="btn btn-primary btn-sm flex-shrink-0"
               >
-                Ajouter →
+                {t('oeilDashboard.avatarBanner.addButton')}
               </button>
             </div>
           )}
           {/* Stats */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
           <div className="stat-card">
-            <div className="text-xs text-[#AAA] mb-1">Missions complétées</div>
+            <div className="text-xs text-[#AAA] mb-1">{t('oeilDashboard.stats.completed')}</div>
             <div className="text-2xl font-bold">{stats?.completed || 0}</div>
           </div>
           <div className="stat-card">
-            <div className="text-xs text-[#AAA] mb-1">Note moyenne</div>
+            <div className="text-xs text-[#AAA] mb-1">{t('oeilDashboard.stats.avgRating')}</div>
             <div className="text-2xl font-bold text-yellow-400">
               {stats?.rating ? `${stats.rating}★` : '—'}
             </div>
             {stats?.rating_count > 0 && (
-              <div className="text-xs text-[#AAA] mt-1">{stats.rating_count} avis</div>
+              <div className="text-xs text-[#AAA] mt-1">{t('oeilDashboard.stats.reviewsCount', { count: stats.rating_count })}</div>
             )}
           </div>
           <div className="stat-card">
-            <div className="text-xs text-[#AAA] mb-1">Revenus (missions)</div>
+            <div className="text-xs text-[#AAA] mb-1">{t('oeilDashboard.stats.earnings')}</div>
             <div className="text-2xl font-bold">
               {stats?.earnings?.toFixed(0) || 0}
-              <span className="text-sm text-[#AAA] ml-1">MAD</span>
+              <span className="text-sm text-[#AAA] ml-1">{t('oeilDashboard.stats.madUnit')}</span>
             </div>
           </div>
           <div className="stat-card">
-            <div className="text-xs text-[#AAA] mb-1">Solde disponible</div>
+            <div className="text-xs text-[#AAA] mb-1">{t('oeilDashboard.stats.balance')}</div>
             <div className="text-2xl font-bold text-green-400">
               {stats?.balance?.toFixed(0) || 0}
-              <span className="text-sm ml-1">MAD</span>
+              <span className="text-sm ml-1">{t('oeilDashboard.stats.madUnit')}</span>
             </div>
           </div>
         </div>
@@ -195,18 +197,18 @@ const refuse = async (id) => {
           <div className="rounded-xl border-2 border-red-500/40 bg-red-500/5 p-4">
             <div className="flex items-center gap-2 mb-3">
               <span className="text-lg">🔴</span>
-              <h2 className="font-bold text-sm text-red-400 uppercase tracking-wider">Missions prioritaires</h2>
+              <h2 className="font-bold text-sm text-red-400 uppercase tracking-wider">{t('oeilDashboard.priority.title')}</h2>
               <span className="bg-red-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">
                 {pending.filter(m => m.is_priority).length}
               </span>
             </div>
-            <p className="text-xs text-[#AAA] mb-3">Ces missions nécessitent un Œil de toute urgence — l'Œil précédent a signalé un empêchement.</p>
+            <p className="text-xs text-[#AAA] mb-3">{t('oeilDashboard.priority.desc')}</p>
             {pending.filter(m => m.is_priority).map((m) => (
               <div key={m.id} className="bg-red-500/10 border border-red-500/20 rounded-xl p-3 mb-2 last:mb-0">
                 <div className="flex items-start justify-between gap-2 mb-2">
                   <div className="min-w-0">
                     <div className="flex items-center gap-2">
-                      <span className="text-[10px] bg-red-500 text-white px-1.5 py-0.5 rounded font-bold">PRIORITÉ</span>
+                      <span className="text-[10px] bg-red-500 text-white px-1.5 py-0.5 rounded font-bold">{t('oeilDashboard.priority.badge')}</span>
                       <span className="font-semibold text-sm truncate">{m.title}</span>
                     </div>
                     <div className="text-xs text-[#AAA] mt-1 space-y-0.5">
@@ -224,7 +226,7 @@ const refuse = async (id) => {
                   disabled={m.interested || m.has_interested}
                   className="btn btn-sm w-full justify-center disabled:opacity-50 bg-red-500 text-white hover:bg-red-600"
                 >
-                  {(m.interested || m.has_interested) ? '✅ Demande envoyée' : '⚡ Je prends cette mission →'}
+                  {(m.interested || m.has_interested) ? t('oeilDashboard.priority.requestSent') : t('oeilDashboard.priority.takeButton')}
                 </button>
               </div>
             ))}
@@ -237,7 +239,7 @@ const refuse = async (id) => {
           <div className="card">
             <div className="flex items-center justify-between mb-4">
               <h2 className="font-semibold text-sm">
-                Missions disponibles
+                {t('oeilDashboard.available.title')}
                 <span className="ml-2 text-xs bg-[#FF4D00]/15 text-[#FF4D00] px-2 py-0.5 rounded-full">
                   {pending.length}
                 </span>
@@ -245,7 +247,7 @@ const refuse = async (id) => {
             </div>
 
             {pending.length === 0 ? (
-              <EmptyState icon="🎯" title="Aucune mission disponible" description="Revenez bientôt !" />
+              <EmptyState icon="🎯" title={t('oeilDashboard.available.emptyTitle')} description={t('oeilDashboard.available.emptyDesc')} />
             ) : pending.map((m) => (
               <div key={m.id} className="bg-[#222] rounded-xl p-3 mb-3 last:mb-0">
                 <div className="flex items-start justify-between gap-2 mb-3">
@@ -272,13 +274,13 @@ const refuse = async (id) => {
                       disabled={m.interested || m.has_interested}
                       className="btn btn-sm flex-1 justify-center disabled:opacity-50 bg-green-500 text-white hover:bg-green-600"
                     >
-                      {(m.interested || m.has_interested) ? '✅ Demande envoyée' : user?.is_verified ? '👁️ Je suis intéressé' : '🛡️ Vérification requise'}
+                      {(m.interested || m.has_interested) ? t('oeilDashboard.available.requestSent') : user?.is_verified ? t('oeilDashboard.available.interested') : t('oeilDashboard.available.verificationRequired')}
                     </button>
                     <button
                       onClick={() => refuse(m.id, true)}
                       className="btn btn-sm flex-1 justify-center bg-red-500 text-white hover:bg-red-600"
                     >
-                      ✕ Ignorer
+                      {t('oeilDashboard.available.ignore')}
                     </button>
                   </div>
 
@@ -291,7 +293,7 @@ const refuse = async (id) => {
           <div className="card">
             <div className="flex items-center justify-between mb-4">
               <h2 className="font-semibold text-sm">
-                Mes missions en cours
+                {t('oeilDashboard.active.title')}
                 <span className="ml-2 text-xs bg-blue-500/15 text-blue-400 px-2 py-0.5 rounded-full">
                   {active.length}
                 </span>
@@ -299,7 +301,7 @@ const refuse = async (id) => {
             </div>
 
             {active.length === 0 ? (
-              <EmptyState icon="📋" title="Aucune mission en cours" description="Acceptez une mission pour commencer." />
+              <EmptyState icon="📋" title={t('oeilDashboard.active.emptyTitle')} description={t('oeilDashboard.active.emptyDesc')} />
             ) : active.map((m) => (
               <div key={m.id} className="bg-[#222] rounded-xl p-3 mb-3 last:mb-0">
                 <div className="flex items-start justify-between mb-2">
@@ -321,7 +323,7 @@ const refuse = async (id) => {
                     onClick={() => setChatMission(m)}
                     className="btn btn-ghost btn-sm flex-1 justify-center"
                   >
-                    💬 Chat
+                    {t('oeilDashboard.active.chat')}
                   </button>
                   {advanceLabel[m.status] && (
                     <button onClick={() => advance(m)} className="btn btn-primary btn-sm">
@@ -334,7 +336,7 @@ const refuse = async (id) => {
                     onClick={() => { setTransferMission(m); setTransferReason('') }}
                     className="text-xs text-[#555] hover:text-red-400 transition-colors mt-2 w-full text-center"
                   >
-                    Signaler un empêchement majeur
+                    {t('oeilDashboard.active.reportImpediment')}
                   </button>
                 )}
 
@@ -355,41 +357,41 @@ const refuse = async (id) => {
           <div className="bg-[#181818] border border-red-500/30 rounded-2xl p-6 w-full max-w-md shadow-xl">
             <div className="flex items-center gap-3 mb-4">
               <div className="w-10 h-10 rounded-xl bg-red-500/10 flex items-center justify-center text-xl flex-shrink-0">🚨</div>
-              <h2 className="font-bold text-base">Empêchement en cours de mission</h2>
+              <h2 className="font-bold text-base">{t('oeilDashboard.transferModal.title')}</h2>
             </div>
             <div className="bg-red-500/5 border border-red-500/20 rounded-xl p-4 mb-4 space-y-1.5">
-              <p className="text-xs text-white/80">Cette action est irréversible et réservée aux situations d'urgence réelle. Le client a planifié ce rendez-vous — votre départ impacte directement sa mission.</p>
+              <p className="text-xs text-white/80">{t('oeilDashboard.transferModal.warning')}</p>
             </div>
             <div className="bg-[#222] rounded-xl p-3 mb-4 space-y-1">
-              <p className="text-xs text-[#AAA]">Conséquences :</p>
+              <p className="text-xs text-[#AAA]">{t('oeilDashboard.transferModal.consequencesLabel')}</p>
               {['assigned'].includes(transferMission.status)
-                ? <p className="text-xs text-white/70">• Vous ne recevrez aucune rémunération pour cette mission</p>
+                ? <p className="text-xs text-white/70">{t('oeilDashboard.transferModal.consequenceNoPay')}</p>
                 : <>
-                    <p className="text-xs text-white/70">• Vous recevrez 50% de la rémunération si un remplaçant est trouvé</p>
-                    <p className="text-xs text-white/70">• Vous ne pourrez pas postuler pendant 4 heures</p>
+                    <p className="text-xs text-white/70">{t('oeilDashboard.transferModal.consequenceHalfPay')}</p>
+                    <p className="text-xs text-white/70">{t('oeilDashboard.transferModal.consequenceNoApply')}</p>
                   </>
               }
-              <p className="text-xs text-white/70">• Cet incident sera noté sur votre profil</p>
+              <p className="text-xs text-white/70">{t('oeilDashboard.transferModal.consequenceNoted')}</p>
             </div>
             <div className="mb-5">
-              <label className="label">Raison (obligatoire)</label>
+              <label className="label">{t('oeilDashboard.transferModal.reasonLabel')}</label>
               <select className="input" value={transferReason} onChange={e => setTransferReason(e.target.value)}>
-                <option value="">Sélectionner une raison</option>
-                <option value="Urgence médicale">Urgence médicale</option>
-                <option value="Accident / incident">Accident / incident sur place</option>
-                <option value="Problème de sécurité">Problème de sécurité</option>
-                <option value="Empêchement familial grave">Empêchement familial grave</option>
-                <option value="Autre cas de force majeure">Autre cas de force majeure</option>
+                <option value="">{t('oeilDashboard.transferModal.reasonPlaceholder')}</option>
+                <option value="Urgence médicale">{t('oeilDashboard.transferModal.reasons.medical')}</option>
+                <option value="Accident / incident">{t('oeilDashboard.transferModal.reasons.accident')}</option>
+                <option value="Problème de sécurité">{t('oeilDashboard.transferModal.reasons.security')}</option>
+                <option value="Empêchement familial grave">{t('oeilDashboard.transferModal.reasons.family')}</option>
+                <option value="Autre cas de force majeure">{t('oeilDashboard.transferModal.reasons.other')}</option>
               </select>
             </div>
             <div className="flex gap-3">
-              <button onClick={() => setTransferMission(null)} className="btn btn-ghost flex-1 justify-center">Retour</button>
+              <button onClick={() => setTransferMission(null)} className="btn btn-ghost flex-1 justify-center">{t('oeilDashboard.transferModal.back')}</button>
               <button
                 onClick={doTransfer}
                 disabled={transferring || !transferReason}
                 className="btn btn-sm flex-1 justify-center bg-red-500 text-white hover:bg-red-600 disabled:opacity-50"
               >
-                {transferring ? '...' : 'Confirmer l\'empêchement →'}
+                {transferring ? t('oeilDashboard.transferModal.confirming') : t('oeilDashboard.transferModal.confirmButton')}
               </button>
             </div>
           </div>

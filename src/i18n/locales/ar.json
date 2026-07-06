@@ -650,5 +650,581 @@
       "generic": "خطأ"
     },
     "submittedToast": "تم إرسال التقرير بنجاح 📄"
+  },
+  "oeilDashboard": {
+    "title": "لوحة التحكم",
+    "selectReasonError": "يرجى اختيار سبب",
+    "transferReportedToast": "تم الإبلاغ عن المانع — أعيدت المهمة إلى قائمة الأولوية",
+    "genericError": "خطأ",
+    "loadingError": "خطأ في التحميل",
+    "interestExpressedToast": "تم إبداء الاهتمام 👁️ سيتواصل معك العميل.",
+    "missionIgnoredToast": "تم تجاهل المهمة",
+    "missionCompletedToast": "اكتملت المهمة! 🎉",
+    "statusUpdatedToast": "تم تحديث الحالة ✓",
+    "advance": {
+      "enRoute": "🚗 في الطريق",
+      "start": "▶️ ابدأ",
+      "finish": "✓ إنهاء"
+    },
+    "verifBanner": {
+      "pendingTitle": "التحقق قيد المعالجة",
+      "notVerifiedTitle": "الهوية غير موثقة",
+      "pendingDesc": "فريقنا يراجع مستنداتك. سيتم إعلامك فور الموافقة.",
+      "notVerifiedDesc": "تحقق من هويتك لتتمكن من التقدم للمهام.",
+      "verifyButton": "التحقق ←"
+    },
+    "avatarBanner": {
+      "title": "أضف صورتك الشخصية",
+      "desc": "الملف الشخصي المزوّد بصورة يمنح العملاء ثقة أكبر ويساعدك على الحصول على مزيد من المهام.",
+      "addButton": "إضافة ←"
+    },
+    "stats": {
+      "completed": "المهام المكتملة",
+      "avgRating": "متوسط التقييم",
+      "reviewsCount": "{{count}} تقييم",
+      "earnings": "الأرباح (المهام)",
+      "balance": "الرصيد المتاح",
+      "madUnit": "درهم"
+    },
+    "priority": {
+      "title": "مهام ذات أولوية",
+      "badge": "أولوية",
+      "desc": "تحتاج هذه المهام إلى عين بشكل عاجل جدًا — أبلغ العين السابقة عن مانع.",
+      "requestSent": "✅ تم إرسال الطلب",
+      "takeButton": "⚡ سأتولى هذه المهمة ←"
+    },
+    "available": {
+      "title": "المهام المتاحة",
+      "emptyTitle": "لا توجد مهمة متاحة",
+      "emptyDesc": "عد قريبًا!",
+      "requestSent": "✅ تم إرسال الطلب",
+      "interested": "👁️ أنا مهتم",
+      "verificationRequired": "🛡️ التحقق مطلوب",
+      "ignore": "✕ تجاهل"
+    },
+    "active": {
+      "title": "مهامي الجارية",
+      "emptyTitle": "لا توجد مهمة جارية",
+      "emptyDesc": "اقبل مهمة للبدء.",
+      "chat": "💬 محادثة",
+      "reportImpediment": "الإبلاغ عن مانع كبير"
+    },
+    "transferModal": {
+      "title": "مانع أثناء تنفيذ المهمة",
+      "warning": "هذا الإجراء لا رجعة فيه ومخصص لحالات الطوارئ الحقيقية فقط. لقد خطط العميل لهذا الموعد — مغادرتك تؤثر مباشرة على مهمته.",
+      "consequencesLabel": "العواقب:",
+      "consequenceNoPay": "• لن تحصل على أي أجر مقابل هذه المهمة",
+      "consequenceHalfPay": "• ستحصل على 50% من الأجر إذا تم إيجاد بديل",
+      "consequenceNoApply": "• لن تتمكن من التقدم لمهام أخرى لمدة 4 ساعات",
+      "consequenceNoted": "• سيتم تسجيل هذا الحادث في ملفك الشخصي",
+      "reasonLabel": "السبب (إلزامي)",
+      "reasonPlaceholder": "اختر سببًا",
+      "reasons": {
+        "medical": "حالة طبية طارئة",
+        "accident": "حادث / واقعة في الموقع",
+        "security": "مشكلة أمنية",
+        "family": "مانع عائلي خطير",
+        "other": "حالة قاهرة أخرى"
+      },
+      "back": "رجوع",
+      "confirmButton": "تأكيد المانع ←",
+      "confirming": "..."
+    }
+  },
+  "oeilMissions": {
+    "title": "المهام",
+    "tabs": {
+      "priority": "ذات أولوية",
+      "available": "متاحة",
+      "active": "جارية",
+      "done": "منتهية"
+    },
+    "toasts": {
+      "selectProblemTypeFull": "اختر نوع المشكلة",
+      "selectProblemType": "اختر نوعًا",
+      "problemReportedAlert": "تم الإبلاغ عن المشكلة — تم تنبيه فريق Shoofly",
+      "problemReportedShort": "تم الإبلاغ عن المشكلة — تم تنبيه Shoofly ✓",
+      "genericError": "خطأ",
+      "selectReasonRequired": "يرجى اختيار سبب",
+      "selectReasonShort": "اختر سببًا",
+      "transferReported": "تم الإبلاغ عن المانع — أعيدت المهمة إلى قائمة الأولوية",
+      "loadingError": "خطأ في التحميل",
+      "missionIgnored": "تم تجاهل المهمة",
+      "missionRefused": "تم رفض المهمة",
+      "interestExpressed": "تم إبداء الاهتمام 👁️ سيتواصل معك العميل.",
+      "interestExpressedShort": "تم إبداء الاهتمام ✓",
+      "invalidStatus": "حالة غير صالحة",
+      "reportRequiredBeforeComplete": "يجب عليك تقديم التقرير قبل إنهاء المهمة 📋",
+      "cannotVerifyReport": "تعذر التحقق من التقرير"
+    },
+    "advanceStatusLabels": {
+      "enRoute": "في الطريق إلى المهمة ✓",
+      "active": "بدأت المهمة ✓",
+      "completed": "اكتملت المهمة! أحسنت 🎉"
+    },
+    "empty": {
+      "priority":  { "title": "لا توجد مهمة ذات أولوية", "desc": "جميع المهام مغطاة." },
+      "available": { "title": "لا توجد مهمة متاحة",  "desc": "تم تعيين جميع المهام. عد قريبًا!" },
+      "active":    { "title": "لا توجد مهمة جارية",    "desc": "اقبل مهمة للبدء." },
+      "done":      { "title": "لا توجد مهمة منتهية",      "desc": "ستظهر مهامك المكتملة هنا." }
+    },
+    "advanceLabel": {
+      "assigned": "🚗 أنا في الطريق",
+      "enRoute": "▶️ بدء المهمة",
+      "active": "✓ إنهاء المهمة"
+    },
+    "priorityBanner": {
+      "text": "🔴 تحتاج هذه المهام إلى عين بشكل عاجل جدًا",
+      "subtext": "أبلغت العين السابقة عن مانع — قدّم طلبك بسرعة.",
+      "badge": "أولوية",
+      "interestButton": "⚡ سأتولى هذه المهمة ←"
+    },
+    "filters": {
+      "allQuartiers": "جميع الأحياء"
+    },
+    "card": {
+      "yourEarning": "أرباحك",
+      "urgentBadge": "🚨 عاجل",
+      "underSurveillanceBadge": "⚠️ تحت المراقبة",
+      "requestSent": "✅ تم إرسال الطلب",
+      "interested": "👁️ أنا مهتم",
+      "ignore": "✕ تجاهل",
+      "chat": "💬 محادثة",
+      "reportButton": "📋 تقرير",
+      "auditButton": "📋 تدقيق",
+      "photosButton": "📸 صور",
+      "refuse": "✕ رفض",
+      "askAssistance": "🆘 طلب المساعدة",
+      "summaryButton": "📄 ملخص"
+    },
+    "assistanceModal": {
+      "title": "طلب المساعدة",
+      "reportProblem": {
+        "label": "⚠️ الإبلاغ عن مشكلة",
+        "desc": "عميل غير محترم، مكان خطير، طلب غير قانوني..."
+      },
+      "majorImpediment": {
+        "label": "🚨 مانع كبير",
+        "desc": "لا يمكنني تنفيذ هذه المهمة"
+      },
+      "cancel": "إلغاء",
+      "problemView": {
+        "title": "الإبلاغ عن مشكلة",
+        "typeLabel": "نوع المشكلة *",
+        "selectPlaceholder": "اختر...",
+        "types": {
+          "disrespectful": "عميل غير محترم / مهين",
+          "unreachable": "تعذر الوصول إلى العميل",
+          "dangerous": "مكان خطير",
+          "illegal": "طلب غير قانوني",
+          "other": "مشكلة أخرى"
+        },
+        "descLabel": "الوصف (اختياري)",
+        "descPlaceholder": "صف الوضع...",
+        "back": "رجوع",
+        "submit": "إبلاغ ←",
+        "submitting": "..."
+      },
+      "transferView": {
+        "title": "مانع أثناء تنفيذ المهمة",
+        "warning": "هذا الإجراء لا رجعة فيه ومخصص لحالات الطوارئ الحقيقية فقط.",
+        "consequencesLabel": "العواقب:",
+        "noPay": "• لن تحصل على أي أجر",
+        "halfPay": "• ستحصل على 50% إذا تم إيجاد بديل",
+        "cooldown": "• فترة انتظار 4 ساعات",
+        "noted": "• سيتم تسجيل هذا الحادث في ملفك الشخصي",
+        "reasonLabel": "السبب (إلزامي)",
+        "reasonPlaceholder": "اختر سببًا",
+        "reasons": {
+          "medical": "حالة طبية طارئة",
+          "accident": "حادث / واقعة في الموقع",
+          "security": "مشكلة أمنية",
+          "family": "مانع عائلي خطير",
+          "other": "حالة قاهرة أخرى"
+        },
+        "back": "رجوع",
+        "confirm": "تأكيد ←",
+        "confirming": "..."
+      }
+    }
+  },
+  "oeilCompte": {
+    "title": "ملفي الشخصي",
+    "avatarUpdatedToast": "تم تحديث صورة الملف الشخصي ✓",
+    "uploadErrorToast": "خطأ أثناء الإرسال",
+    "profileUpdatedToast": "تم تحديث الملف الشخصي ✓",
+    "genericError": "خطأ",
+    "availabilitySavedToast": "تم حفظ أوقات التوفر ✓",
+    "nowAvailableToast": "🟢 أنت الآن متاح",
+    "nowOfflineToast": "🔴 أنت الآن غير متصل",
+    "withdrawComingSoonToast": "ميزة التحويل البنكي متاحة قريبًا",
+    "changePhotoTitle": "تغيير الصورة",
+    "ratingMissions": "{{rating}} · {{count}} مهمة",
+    "verifiedBadge": "✓ موثّق",
+    "firstNameLabel": "الاسم الأول",
+    "lastNameLabel": "الاسم العائلي",
+    "emailLabel": "البريد الإلكتروني",
+    "phoneLabel": "الهاتف",
+    "cityLabel": "المدينة",
+    "bioLabel": "نبذة",
+    "bioPlaceholder": "صف تجربتك...",
+    "saving": "جارٍ الحفظ...",
+    "save": "حفظ",
+    "payments": {
+      "title": "المدفوعات",
+      "balanceLabel": "الرصيد المتاح",
+      "readyToTransfer": "جاهز للتحويل",
+      "zeroBalance": "0 درهم",
+      "withdrawButton": "طلب تحويل ←"
+    },
+    "availability": {
+      "title": "أوقات التوفر",
+      "available": "متاح",
+      "offline": "غير متصل",
+      "saveButton": "حفظ أوقات التوفر"
+    }
+  },
+  "oeilGains": {
+    "title": "💰 أرباحي",
+    "currentBalanceLabel": "الرصيد الحالي",
+    "totalEarningsLabel": "إجمالي الأرباح",
+    "emptyTitle": "لا يوجد ربح حتى الآن",
+    "emptyDesc": "ستظهر هنا مهامك المكتملة وتحويلاتك البنكية.",
+    "bankTransferLabel": "🏦 تحويل بنكي",
+    "transferredBadge": "تم التحويل",
+    "completedBadge": "مكتملة",
+    "typeLabels": {
+      "immobilier": "🏠 عقارات",
+      "fileAttente": "⏳ الانتظار في الطابور",
+      "audit": "🔎 تدقيق",
+      "personnalisee": "🎯 مخصصة"
+    },
+    "table": {
+      "date": "التاريخ",
+      "type": "النوع",
+      "executionDate": "تاريخ التنفيذ",
+      "status": "الحالة",
+      "earnings": "الأرباح"
+    }
+  },
+  "verificationIdentite": {
+    "title": "التحقق من الهوية",
+    "missingDocsError": "يرجى تقديم المستندات الثلاثة",
+    "submittedToast": "تم إرسال المستندات بنجاح ✓",
+    "uploadErrorToast": "خطأ أثناء الإرسال",
+    "successTitle": "تم إرسال المستندات!",
+    "successDesc": "طلبك قيد المراجعة. ستتلقى إشعارًا فور التحقق من هويتك.",
+    "backToDashboard": "العودة إلى لوحة التحكم",
+    "requiredTitle": "التحقق مطلوب",
+    "requiredDesc": "لقبول المهام، يجب التحقق من هويتك.",
+    "securityNotice": "يتم تخزين مستنداتك بشكل آمن ولا يمكن الوصول إليها إلا من قبل فريق Shoofly.",
+    "readyBadge": "✓ جاهز",
+    "changeButton": "تغيير",
+    "clickToChoose": "انقر للاختيار",
+    "uploading": "جارٍ الإرسال...",
+    "submitButton": "إرسال مستنداتي ←",
+    "docs": {
+      "cinRecto": { "label": "البطاقة الوطنية - الوجه الأمامي", "hint": "الوجه الأمامي لبطاقتك الوطنية" },
+      "cinVerso": { "label": "البطاقة الوطنية - الوجه الخلفي", "hint": "الوجه الخلفي لبطاقتك الوطنية" },
+      "selfie":   { "label": "صورة شخصية",    "hint": "صورة لك وأنت تحمل بطاقتك الوطنية بشكل واضح" }
+    }
+  },
+  "compteSuspendu": {
+    "title": "الحساب موقوف",
+    "loadingError": "خطأ في التحميل",
+    "messageTooShortError": "فصّل وضعيتك (10 أحرف على الأقل)",
+    "requestSentToast": "تم إرسال الطلب ✓",
+    "genericError": "خطأ",
+    "heading": "الحساب موقوف",
+    "reliabilityScore": "درجة الموثوقية: {{score}}%",
+    "scoreBelowThreshold": "انخفضت درجة موثوقيتك دون الحد الأدنى المطلوب لقبول المهام.",
+    "suspendedSince": "موقوف منذ {{date}}.",
+    "historySummary": "ملخص سجلّك",
+    "noEvents": "لا يوجد حدث مسجل",
+    "pointsValue": "{{value}} نقطة",
+    "previousRequests": "طلباتك السابقة",
+    "status": {
+      "approved": "✅ مقبولة",
+      "rejected": "❌ مرفوضة",
+      "pending": "⏳ قيد الانتظار"
+    },
+    "yourMessage": "رسالتك: {{message}}",
+    "teamResponseLabel": "رد فريق Shoofly:",
+    "reviewInProgressTitle": "الطلب قيد المراجعة",
+    "reviewInProgressDesc": "فريقنا يراجع ملفك. ستُبلَّغ بالقرار.",
+    "requestReviewTitle": "طلب مراجعة ملفك",
+    "requestReviewDesc": "اشرح وضعيتك — سيدرس فريقنا طلبك بشكل فردي.",
+    "messagePlaceholder": "اشرح ظروف وضعيتك...",
+    "sending": "جارٍ الإرسال...",
+    "submitButton": "إرسال طلبي ←"
+  },
+  "oeilAuditReport": {
+    "topbar": {
+      "loadingTitle": "تقرير التدقيق",
+      "title": "التدقيق السري"
+    },
+    "toasts": {
+      "loadError": "خطأ في التحميل",
+      "saved": "تم الحفظ ✓",
+      "saveError": "خطأ في الحفظ",
+      "missingFields": "⚠️ حقول ناقصة ({{count}}) — مرر لأسفل لإكمال الجميع",
+      "submitted": "تم إرسال التقرير ✅",
+      "submitError": "خطأ في الإرسال"
+    },
+    "confirmSubmit": "هل تريد إرسال التقرير؟ سيتم إعلام العميل.",
+    "submittedBanner": "✅ تم إرسال التقرير — للقراءة فقط",
+    "scoreCard": {
+      "scoreLabel": "درجة Shoofly",
+      "missionLabel": "المهمة"
+    },
+    "visitInfo": {
+      "title": "معلومات الزيارة",
+      "dateLabel": "تاريخ الزيارة",
+      "timeLabel": "وقت الزيارة",
+      "durationLabel": "مدة الزيارة (دقيقة)",
+      "durationPlaceholder": "مثال: 25",
+      "clientsLabel": "عدد العملاء الحاضرين",
+      "clientsPlaceholder": "تقريبًا"
+    },
+    "remarquePlaceholder": "ملاحظة...",
+    "photosRequiredNotice": "📸 الصور إلزامية لهذا القسم",
+    "scoreLabels": {
+      "excellent": "🟢 ممتاز",
+      "veryGood": "🟢 جيد جدًا",
+      "correct": "🟡 مقبول",
+      "toImprove": "🟠 يحتاج تحسين",
+      "critical": "🔴 حرج"
+    },
+    "sections": {
+      "s1": {
+        "title": "الانطباع الأول",
+        "criteria": {
+          "premiereImpression": "سهولة إيجاد المؤسسة",
+          "aspectExterieur": "المظهر الخارجي",
+          "visibiliteEnseigne": "وضوح اللافتة",
+          "attractivite": "الجاذبية العامة",
+          "impressionGlobale": "الانطباع الأول العام"
+        }
+      },
+      "s2": {
+        "title": "الاستقبال",
+        "criteria": {
+          "tempsPriseCharge": "الوقت قبل الاستقبال",
+          "politesse": "اللباقة",
+          "sourire": "الابتسامة",
+          "disponibilite": "التوفر",
+          "professionnalisme": "الاحترافية",
+          "envieRester": "هل جعلك الاستقبال ترغب في البقاء؟"
+        }
+      },
+      "s3": {
+        "title": "النظافة والبيئة",
+        "criteria": {
+          "proprete": "النظافة العامة",
+          "organisation": "تنظيم المكان",
+          "etatMobilier": "حالة الأثاث",
+          "ambiance": "الأجواء العامة",
+          "confort": "الراحة"
+        }
+      },
+      "s4": {
+        "title": "جودة الخدمة",
+        "criteria": {
+          "rapidite": "سرعة الخدمة",
+          "comprehensionBesoin": "فهم احتياجك",
+          "pertinenceReponses": "ملاءمة الإجابات",
+          "qualiteConseils": "جودة النصائح",
+          "niveauPro": "مستوى الاحترافية",
+          "connaissanceProduit": "معرفة المنتج/الخدمة"
+        }
+      },
+      "s5": {
+        "title": "الكفاءة التجارية",
+        "intro": "الموظفون:"
+      },
+      "s6": {
+        "title": "تجربة العميل",
+        "criteria": {
+          "clartePrix": "وضوح الأسعار",
+          "transparence": "الشفافية",
+          "simpliciteParcours": "بساطة المسار",
+          "confianceInspiree": "الثقة الملهمة",
+          "satisfactionGenerale": "الرضا العام"
+        }
+      },
+      "s7": {
+        "title": "ملاحظات مهمة",
+        "positiveIntro": "✅ النقاط الإيجابية الملاحظة:",
+        "negativeIntro": "❌ النقاط السلبية الملاحظة:"
+      },
+      "s8": {
+        "title": "حوادث كبرى",
+        "commentLabel": "تعليق حول الحوادث",
+        "commentPlaceholder": "فصّل إذا لزم الأمر..."
+      },
+      "s9": {
+        "title": "سؤال Shoofly الرئيسي",
+        "question": "لو كنت عميلاً حقيقيًا، هل كنت لتشتري هذا المنتج/الخدمة؟",
+        "choices": {
+          "ouiSans": "👍 نعم دون تردد",
+          "probablementOui": "👌 على الأرجح نعم",
+          "peutEtre": "😐 ربما",
+          "probablementNon": "👎 على الأرجح لا",
+          "certainementNon": "🚫 بالتأكيد لا"
+        },
+        "recommendationLabel": "هل توصي بهذه المؤسسة؟"
+      },
+      "s10": {
+        "title": "تعليق حر",
+        "placeholder": "ملاحظات مفصلة، سياق، عناصر مهمة لم يغطها النموذج..."
+      }
+    },
+    "recap": {
+      "title": "درجة Shoofly التلقائية",
+      "globalScore": "الدرجة الإجمالية",
+      "pointsValue": "{{value}} نقطة",
+      "rows": {
+        "premiereImpression": "الانطباع الأول",
+        "accueil": "الاستقبال",
+        "proprete": "النظافة",
+        "service": "الخدمة",
+        "compCommerciale": "الكفاءة التجارية",
+        "experienceClient": "تجربة العميل",
+        "recommandation": "التوصية"
+      }
+    },
+    "saveButton": "💾 حفظ",
+    "submitButton": "✅ إرسال"
+  },
+  "oeilAirbnbReport": {
+    "title": "تقرير الزيارة",
+    "ouiNon": {
+      "oui": "✓ نعم",
+      "non": "✗ لا"
+    },
+    "scoreLabels": {
+      "excellent": "ممتاز",
+      "veryGood": "جيد جدًا",
+      "correct": "مقبول",
+      "average": "متوسط",
+      "disappointing": "مخيّب للآمال"
+    },
+    "toasts": {
+      "loadError": "خطأ في التحميل",
+      "saved": "تم الحفظ ✓",
+      "saveError": "خطأ في الحفظ",
+      "missingFields": "⚠️ حقول ناقصة ({{count}}) — مرر لأسفل لإكمال الجميع",
+      "submitted": "تم إرسال التقرير! 🎉",
+      "submitError": "خطأ في الإرسال"
+    },
+    "confirmSubmit": "هل تريد إرسال التقرير؟ سيتم إعلام العميل.",
+    "submittedBadge": "✓ مُرسَل",
+    "scoreLabel": "درجة Shoofly",
+    "submittedBanner": "✅ تم إرسال التقرير — تم إعلام العميل",
+    "commentLabel": "تعليق",
+    "photosRequiredNotice": "📸 الصور إلزامية لهذا القسم",
+    "sections": {
+      "s1": {
+        "title": "الانطباع الأول",
+        "question": "هل يطابق الإعلان الواقع؟",
+        "choices": {
+          "oui": "✓ نعم تمامًا",
+          "partiellement": "~ جزئيًا",
+          "non": "✗ لا"
+        },
+        "generalNoteLabel": "التقييم العام",
+        "commentPlaceholder": "الانطباع الأول العام..."
+      },
+      "s2": {
+        "title": "النظافة",
+        "cleanlinessNoteLabel": "حالة النظافة العامة",
+        "solsPropresLabel": "الأرضيات نظيفة",
+        "sdbPropreLabel": "الحمام نظيف",
+        "literiePropreLabel": "الفراش نظيف",
+        "odeursLabel": "روائح كريهة"
+      },
+      "s3": {
+        "title": "الراحة",
+        "confortLitLabel": "راحة السرير",
+        "confortCanapeLabel": "راحة الأريكة",
+        "confortGlobalLabel": "مستوى الراحة العام",
+        "commentPlaceholder": "الراحة العامة..."
+      },
+      "s4": {
+        "title": "الضوضاء",
+        "bruitExterieurLabel": "الضوضاء الخارجية (1=صاخب جدًا، 5=هادئ جدًا)",
+        "isolationPhoniqueLabel": "العزل الصوتي بين الشقق",
+        "fenetresIsoleesLabel": "النوافذ معزولة جيدًا",
+        "videoNotice": "🎥 فيديو 30 ثانية إلزامي (نافذة مفتوحة ثم مغلقة)"
+      },
+      "s5": {
+        "title": "التجهيزات",
+        "equip": {
+          "wifi": "واي فاي",
+          "clim": "التكييف",
+          "eauChaude": "الماء الساخن",
+          "tv": "التلفاز",
+          "machineLaver": "غسالة الملابس",
+          "secheLinge": "مجفف الملابس",
+          "ferRepasser": "مكواة",
+          "produitsNettoyage": "مواد التنظيف متوفرة"
+        },
+        "wifiQualityLabel": "جودة الواي فاي",
+        "kitchenLabel": "المطبخ — التجهيزات المتوفرة"
+      },
+      "s6": {
+        "title": "الإضاءة",
+        "luminositeLabel": "الإضاءة الطبيعية",
+        "expositionLabel": "التوجيه"
+      },
+      "s7": {
+        "title": "الأمان",
+        "securiteNoteLabel": "الشعور بالأمان",
+        "porteSecuriseeLabel": "باب مؤمّن",
+        "quartierRassurantLabel": "حي مطمئن",
+        "eclairageExterieurLabel": "الإضاءة الخارجية"
+      },
+      "s8": {
+        "title": "إمكانية الوصول",
+        "accesFaciliteLabel": "سهولة الوصول",
+        "ascenseurLabel": "مصعد",
+        "escaliersDifficilesLabel": "سلالم صعبة",
+        "parkingLabel": "موقف سيارات متاح"
+      },
+      "s9": {
+        "title": "البيئة المحيطة",
+        "restaurantsLabel": "مطاعم قريبة",
+        "commercesLabel": "محلات تجارية قريبة",
+        "transportsLabel": "وسائل نقل قريبة",
+        "interetTouristiqueLabel": "الأهمية السياحية للحي",
+        "photosNotice": "📸 صور الحي إلزامية"
+      },
+      "s10": {
+        "title": "التحقق من صور الإعلان",
+        "choices": {
+          "conformes": "✓ مطابقة تمامًا",
+          "legerement": "~ مُجمَّلة قليلًا",
+          "tres": "⚠️ مُجمَّلة كثيرًا",
+          "trompeuses": "✗ مضللة"
+        }
+      },
+      "s11": {
+        "title": "نقاط القوة والضعف",
+        "strengthsLabel": "✅ نقاط القوة",
+        "weaknessesLabel": "❌ نقاط الضعف"
+      },
+      "s12": {
+        "title": "التوصية النهائية",
+        "choices": {
+          "ouiSans": "👍 نعم دون تردد",
+          "ouiReserves": "👌 نعم مع تحفظات",
+          "moyennement": "😐 متوسط",
+          "non": "👎 لا",
+          "eviter": "🚫 يجب تجنبه"
+        }
+      }
+    },
+    "saveButton": "💾 حفظ",
+    "submitButton": "✅ إرسال التقرير"
   }
 }
