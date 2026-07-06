@@ -3,6 +3,7 @@ import { useNavigate, Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { useAuth } from '../../context/AuthContext'
 import { captureAcquisitionParams } from '../../utils/acquisitionTracking'
+import LanguageToggle from '../../components/ui/LanguageToggle'
 
 const ROLES = [
   { id: 'client', icon: '👤', labelKey: 'login.roles.client' },
@@ -57,8 +58,11 @@ export default function Login() {
       <div className="relative z-10 w-full max-w-[400px] mx-4">
         <div className="bg-[#181818] border border-white/20 rounded-2xl p-9">
           {/* Logo */}
-          <div className="font-display font-bold text-2xl tracking-tight mb-0.5">
-            SHOOF<span className="text-[#FF4D00]">LY</span>
+          <div className="flex items-start justify-between gap-2 mb-0.5">
+            <div className="font-display font-bold text-2xl tracking-tight">
+              SHOOF<span className="text-[#FF4D00]">LY</span>
+            </div>
+            <LanguageToggle />
           </div>
           <p className="text-sm text-[#AAA] mb-7">{t('login.subtitle')}</p>
 

@@ -2,6 +2,7 @@ import { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { captureAcquisitionParams } from '../utils/acquisitionTracking'
+import LanguageToggle from '../components/ui/LanguageToggle'
 
 const MISSIONS = [
   { icon: '🏠', key: 'immobilier' },
@@ -42,6 +43,7 @@ export default function Landing() {
           SHOOF<span className="text-[#FF4D00]">LY</span>
         </div>
         <div className="flex items-center gap-3">
+          <LanguageToggle />
           <button onClick={() => navigate('/login')}
             className="text-sm text-[#AAA] hover:text-white transition-colors">
             {t('landing.nav.login')}

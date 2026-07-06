@@ -5,6 +5,7 @@ import { authAPI } from '../../api'
 import { VILLES, VILLES_LIST } from '../../constants/villes'
 import { captureAcquisitionParams, getAcquisitionParams, clearAcquisitionParams } from '../../utils/acquisitionTracking'
 import { toast } from '../../components/ui'
+import LanguageToggle from '../../components/ui/LanguageToggle'
 
 import { useRef, useEffect } from 'react'
 
@@ -159,7 +160,10 @@ const [form, setForm] = useState({
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-[#FF4D00]/5 rounded-full blur-3xl pointer-events-none" />
       <div className="relative z-10 w-full max-w-[460px] mx-4">
         <div className="bg-[#181818] border border-white/20 rounded-2xl p-9">
-          <div className="font-display font-bold text-2xl mb-0.5">SHOOF<span className="text-[#FF4D00]">LY</span></div>
+          <div className="flex items-start justify-between gap-2 mb-0.5">
+            <div className="font-display font-bold text-2xl">SHOOF<span className="text-[#FF4D00]">LY</span></div>
+            <LanguageToggle />
+          </div>
           <p className="text-sm text-[#AAA] mb-6">{t('register.subtitle')}</p>
 
           {/* Steps indicator */}
