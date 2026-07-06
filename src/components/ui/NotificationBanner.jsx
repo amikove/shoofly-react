@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import { requestPushPermission } from '../../hooks/useNotifications'
 
 // Bannière qui demande la permission push si pas encore accordée
 export default function NotificationBanner() {
+  const { t } = useTranslation()
   const [show, setShow]       = useState(false)
   const [granted, setGranted] = useState(false)
 
@@ -28,23 +30,23 @@ export default function NotificationBanner() {
     <div className="fixed bottom-6 left-6 z-50 max-w-sm">
       <div className="bg-[#181818] border border-white/20 rounded-2xl p-4 shadow-[0_16px_40px_rgba(0,0,0,0.5)] flex gap-3">
         <div className="text-2xl flex-shrink-0">🔔</div>
-        <div className="flex-1">
-          <div className="font-semibold text-sm mb-0.5">Activer les notifications</div>
-          <div className="text-xs text-[#AAA] mb-3 leading-relaxed">
-            Recevez une alerte quand vous avez un nouveau message ou une nouvelle mission.
+        <div className="flex-1 min-w-0">
+          <div className="font-semibold text-sm mb-0.5 break-words">{t('notificationBanner.title')}</div>
+          <div className="text-xs text-[#AAA] mb-3 leading-relaxed break-words">
+            {t('notificationBanner.desc')}
           </div>
           <div className="flex gap-2">
             <button
               onClick={allow}
               className="btn btn-primary btn-sm"
             >
-              Activer
+              {t('notificationBanner.allow')}
             </button>
             <button
               onClick={() => setShow(false)}
               className="btn btn-ghost btn-sm"
             >
-              Plus tard
+              {t('notificationBanner.later')}
             </button>
           </div>
         </div>

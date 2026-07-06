@@ -12,7 +12,7 @@
     "dashboard": "لوحة التحكم",
     "missions": "المهام",
     "messages": "الرسائل",
-    "mesSignalements": "بلاغاتي",
+    "mesSignalements": "تبليغاتي",
     "lesOeils": "العيون",
     "compte": "الحساب",
     "mesGains": "أرباحي",
@@ -25,11 +25,12 @@
     },
     "hero": {
       "badge": "🇲🇦 متوفر في المغرب",
-      "tagline": "ننتظر نحن. تعيشون أنتم.",
+      "tagline": "الانتظار علينا، والحياة لكم.",
       "title1": "كونوا في كل مكان.",
       "title2": "دون أن تتحركوا.",
       "paragraph1": "لماذا تضيعون نصف يوم في طابور انتظار (الضمان الاجتماعي، عيادة، قنصلية...)، أو تقطعون مئات الكيلومترات لتُفاجَؤوا بشقة Airbnb لا تطابق الإعلان، أو تقاطعون يوم عطلتكم من أجل إجراء إداري بسيط؟",
       "paragraph2": "وقتكم أثمن من ذلك.",
+      "brandTransliteration": " (شوفلاي)",
       "paragraph3": "يربطكم بعينكم الميدانية: شخص موثّق ينتظر، يزور، يتحقق، يستلم أو ينجز أي مهمة حضور فعلي بدلاً عنكم، في جميع أنحاء المغرب.",
       "ctaCreateMission": "أنشئ مهمة ←",
       "ctaBecomeOeil": "كن عيناً ميدانية"
@@ -48,7 +49,7 @@
         "desc": "الضمان الاجتماعي، القنصليات، المستشفيات، البنوك، الإدارات"
       },
       "audit": {
-        "label": "تدقيق سري",
+        "label": "تسوق سري",
         "desc": "تقييم مجهول للمطاعم والمحلات والخدمات"
       },
       "custom": {
@@ -66,7 +67,7 @@
         "desc": "صف احتياجك، اختر المدينة والميزانية. تكفي دقيقة واحدة."
       },
       "step2": {
-        "title": "عين ميدانية توافق",
+        "title": "عين ميدانية تقبل مهمتك",
         "desc": "عون ميداني موثّق بالقرب منك يتكفل بمهمتك."
       },
       "step3": {
@@ -98,7 +99,7 @@
       },
       "paymentReleased": {
         "label": "الدفع يُحرَّر بعد مصادقتك",
-        "desc": "لا يُدفع للعون إلا عندما تصادق أنت على المهمة — أبداً قبل ذلك"
+        "desc": "لا يتقاضى العون أجره إلا بعد أن تصادق على إنجاز المهمة"
       },
       "standardizedReports": {
         "label": "تقارير موحدة وموضوعية",
@@ -188,7 +189,7 @@
           "etudiant": "طالب",
           "salarie": "موظف",
           "freelance": "مستقل",
-          "autoEntrepreneur": "منظم ذاتي",
+          "autoEntrepreneur": "مقاول ذاتي",
           "enRechercheEmploi": "باحث عن عمل",
           "retraite": "متقاعد",
           "autre": "آخر"
@@ -205,7 +206,7 @@
           "revenuComplementaire": "دخل إضافي",
           "revenuPrincipal": "دخل رئيسي",
           "experienceProfessionnelle": "خبرة مهنية",
-          "flexibilite": "مرونة",
+          "flexibilite": "مرونة في أوقات العمل",
           "autre": "آخر"
         },
         "birthDateLabel": "تاريخ الميلاد *",
@@ -216,9 +217,9 @@
       "client": {
         "profilLabel": "ما هو الملف الذي يناسبك أكثر؟",
         "profilOptions": {
-          "particulier": "فرد",
-          "entrepreneur": "منظم مشاريع / رئيس مقاولة",
-          "professionnel": "محترف / موظف",
+          "particulier": "شخص عادي",
+          "entrepreneur": "رائد أعمال / رئيس مقاولة",
+          "professionnel": "موظف / أجير",
           "expatrie": "مغترب / غير مقيم",
           "etudiant": "طالب",
           "investisseurImmobilier": "مستثمر عقاري",
@@ -234,7 +235,7 @@
           "superviserActivite": "لمراقبة نشاط عن بعد",
           "autre": "آخر"
         },
-        "usageFrequencyLabel": "التكرار المتوقع",
+        "usageFrequencyLabel": "وتيرة الاستخدام المتوقعة",
         "usageFrequencyOptions": {
           "uneSeuleFois": "مرة واحدة فقط",
           "quelquesFoisParAn": "بضع مرات في السنة",
@@ -285,7 +286,7 @@
     "stats": {
       "total": "إجمالي المهام",
       "active": "قيد الإنجاز",
-      "completed": "منجزة",
+      "completed": "مكتملة",
       "totalSpent": "إجمالي الإنفاق",
       "wallet": "المحفظة",
       "madValue": "{{value}} درهم"
@@ -330,7 +331,7 @@
       "assigned": "مُسندة",
       "enRoute": "في الطريق",
       "active": "قيد الإنجاز",
-      "completed": "منجزة",
+      "completed": "مكتملة",
       "cancelled": "ملغاة",
       "allTypes": "جميع الأنواع",
       "immobilier": "العقارات",
@@ -492,8 +493,8 @@
   },
   "mesSignalements": {
     "title": "📋 بلاغاتي",
-    "emptyTitle": "لا يوجد بلاغ",
-    "emptyDesc": "لم تقدم أي بلاغ حتى الآن.",
+    "emptyTitle": "لا يوجد تبليغ",
+    "emptyDesc": "لم تقدم أي تبليغ حتى الآن.",
     "yourMessage": "رسالتك:",
     "teamResponse": "رد فريق Shoofly:",
     "reportedOn": "تم الإبلاغ في {{date}}",
@@ -518,12 +519,12 @@
       "personnalisee": "مخصصة"
     },
     "subcategories": {
-      "Airbnb": "Airbnb",
-      "Booking": "Booking",
-      "Avito": "Avito",
-      "Mubawab": "Mubawab",
+      "Airbnb": "إير بي إن بي",
+      "Booking": "بوكينج",
+      "Avito": "أفيتو",
+      "Mubawab": "مبوب",
       "Agence immobilière": "وكالة عقارية",
-      "Particulier": "خاص",
+      "Particulier": "مالك فردي",
       "Autre": "أخرى",
       "Présence physique": "حضور شخصي",
       "Accompagnement": "مرافقة",
@@ -1294,5 +1295,22 @@
     },
     "saveButton": "💾 حفظ",
     "submitButton": "✅ إرسال التقرير"
+  },
+  "notificationBanner": {
+    "title": "فعّل الإشعارات",
+    "desc": "تلقَّ تنبيهًا عند وصول رسالة جديدة أو مهمة جديدة.",
+    "allow": "تفعيل",
+    "later": "لاحقًا"
+  },
+  "statusBadge": {
+    "active": "مباشر",
+    "assigned": "مُسندة",
+    "enRoute": "في الطريق",
+    "pending": "قيد الانتظار",
+    "cancelled": "ملغاة",
+    "sousReclamation": "🚨 مطالبة",
+    "completed": "مكتملة",
+    "missionTerminee": "✅ المهمة منتهية",
+    "attenteValidation": "⏳ بانتظار التصديق"
   }
 }

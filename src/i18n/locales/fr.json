@@ -30,6 +30,7 @@
       "title2": "Sans bouger.",
       "paragraph1": "Pourquoi perdre une demi-journée dans une file d'attente (CNSS, cabinet, consulat...), parcourir des centaines de kilomètres pour être choqué d'un Airbnb qui ne correspond pas à l'annonce, ou interrompre votre journée de congé pour une simple démarche administrative ?",
       "paragraph2": "Votre temps a plus de valeur que cela.",
+      "brandTransliteration": "",
       "paragraph3": "vous met en relation avec votre Œil sur le terrain : une personne vérifiée qui attend, visite, vérifie, récupère ou accomplit toute mission physique à votre place, partout au Maroc.",
       "ctaCreateMission": "Créer une mission →",
       "ctaBecomeOeil": "Devenir un Œil"
@@ -1294,5 +1295,22 @@
     },
     "saveButton": "💾 Sauvegarder",
     "submitButton": "✅ Soumettre le rapport"
+  },
+  "notificationBanner": {
+    "title": "Activer les notifications",
+    "desc": "Recevez une alerte quand vous avez un nouveau message ou une nouvelle mission.",
+    "allow": "Activer",
+    "later": "Plus tard"
+  },
+  "statusBadge": {
+    "active": "Live",
+    "assigned": "Assigné",
+    "enRoute": "En route",
+    "pending": "En attente",
+    "cancelled": "Annulée",
+    "sousReclamation": "🚨 Réclamation",
+    "completed": "Complétée",
+    "missionTerminee": "✅ Mission terminée",
+    "attenteValidation": "⏳ Attente validation"
   }
 }

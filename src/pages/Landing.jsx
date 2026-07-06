@@ -75,7 +75,7 @@ export default function Landing() {
             {t('landing.hero.paragraph2')}
             </p>
             <p className="text-[#AAA] text-base md:text-lg max-w-2xl mx-auto mb-10 leading-relaxed">
-            <strong className="font-display font-bold text-white">SHOOF<span className="text-[#FF4D00]">LY</span></strong> {t('landing.hero.paragraph3')}
+            <strong className="font-display font-bold text-white">SHOOF<span className="text-[#FF4D00]">LY</span></strong>{t('landing.hero.brandTransliteration')} {t('landing.hero.paragraph3')}
             </p>
 
         <div className="flex flex-col sm:flex-row gap-3 justify-center">

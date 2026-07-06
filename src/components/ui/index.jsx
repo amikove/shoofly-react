@@ -1,4 +1,5 @@
 import { createPortal } from 'react-dom'
+import { useTranslation } from 'react-i18next'
 
 // ── Badge ────────────────────────────────────────────
 export function Badge({ children, variant = 'gray' }) {
@@ -21,24 +22,25 @@ export function Badge({ children, variant = 'gray' }) {
 // ── Status Badge ───────────────────────────────────────────
 
 export function StatusBadge({ status, validated, role }) {
+  const { t } = useTranslation()
   const map = {
-    active:           { label: 'Live',              variant: 'green'  },
-    assigned:         { label: 'Assigné',            variant: 'blue'   },
-    en_route:         { label: 'En route',           variant: 'blue'   },
-    pending:          { label: 'En attente',         variant: 'yellow' },
-    cancelled:        { label: 'Annulée',            variant: 'red'    },
-    sous_reclamation: { label: '🚨 Réclamation',     variant: 'orange' },
-    completed:        { label: 'Complétée',          variant: 'gray'   },
+    active:           { label: t('statusBadge.active'),           variant: 'green'  },
+    assigned:         { label: t('statusBadge.assigned'),         variant: 'blue'   },
+    en_route:         { label: t('statusBadge.enRoute'),          variant: 'blue'   },
+    pending:          { label: t('statusBadge.pending'),          variant: 'yellow' },
+    cancelled:        { label: t('statusBadge.cancelled'),        variant: 'red'    },
+    sous_reclamation: { label: t('statusBadge.sousReclamation'),  variant: 'orange' },
+    completed:        { label: t('statusBadge.completed'),        variant: 'gray'   },
   }
 
   if (status === 'completed') {
     if (validated) {
-      return <Badge variant="green">✅ Mission terminée</Badge>
+      return <Badge variant="green">{t('statusBadge.missionTerminee')}</Badge>
     }
     if (role === 'oeil') {
-      return <Badge variant="yellow">⏳ Attente validation</Badge>
+      return <Badge variant="yellow">{t('statusBadge.attenteValidation')}</Badge>
     }
-    return <Badge variant="yellow">⏳ Attente validation</Badge>
+    return <Badge variant="yellow">{t('statusBadge.attenteValidation')}</Badge>
   }
 
   const { label, variant } = map[status] || { label: status, variant: 'gray' }
