@@ -10,21 +10,21 @@ import { missionsAPI, adminAPI } from '../../api'
 
 const MENUS = {
   client: [
-      { to: '/client',           icon: '⊞',  label: 'Dashboard'   },
-      { to: '/client/missions',  icon: '📋',  label: 'Missions'    },
-      { to: '/client/messages',  icon: '💬',  label: 'Messages'    },
-      { to: '/client/mes-signalements', icon: '🚨', label: 'Mes signalements' },
-      { to: '/client/oeils',     icon: '👁️',  label: 'Les Œils'    },
-      { to: '/client/compte',    icon: '👤',  label: 'Compte'      },
+      { to: '/client',           icon: '⊞',  label: 'menu.dashboard'   },
+      { to: '/client/missions',  icon: '📋',  label: 'menu.missions'    },
+      { to: '/client/messages',  icon: '💬',  label: 'menu.messages'    },
+      { to: '/client/mes-signalements', icon: '🚨', label: 'menu.mesSignalements' },
+      { to: '/client/oeils',     icon: '👁️',  label: 'menu.lesOeils'    },
+      { to: '/client/compte',    icon: '👤',  label: 'menu.compte'      },
     ],
 
   oeil: [
-      { to: '/oeil',                      icon: '⊞',  label: 'Dashboard'        },
-      { to: '/oeil/missions',             icon: '🎯',  label: 'Missions'         },
-      { to: '/oeil/messages',             icon: '💬',  label: 'Messages'         },
-      { to: '/oeil/mes-signalements',     icon: '🚨',  label: 'Mes signalements' },
-      { to: '/oeil/gains',                icon: '💰',  label: 'Mes gains'        },
-      { to: '/oeil/compte',               icon: '👤',  label: 'Profil'           },
+      { to: '/oeil',                      icon: '⊞',  label: 'menu.dashboard'        },
+      { to: '/oeil/missions',             icon: '🎯',  label: 'menu.missions'         },
+      { to: '/oeil/messages',             icon: '💬',  label: 'menu.messages'         },
+      { to: '/oeil/mes-signalements',     icon: '🚨',  label: 'menu.mesSignalements' },
+      { to: '/oeil/gains',                icon: '💰',  label: 'menu.mesGains'        },
+      { to: '/oeil/compte',               icon: '👤',  label: 'menu.profil'           },
     ],
 
   admin: [
@@ -52,7 +52,7 @@ const LABELS = {
 
 export default function AppLayout({ children }) {
   const { user, logout, hasPermission, isSuperAdmin } = useAuth()
-  const { i18n } = useTranslation()
+  const { t, i18n } = useTranslation()
   const navigate               = useNavigate()
   const location = window.location.pathname
 
@@ -111,6 +111,7 @@ useEffect(() => {
 
   
   const role  = user?.role || 'client'
+  const itemLabel = (item) => (role === 'admin' ? item.label : t(item.label))
 
   // Filtrer les items selon les permissions
   const items = (MENUS[role] || []).filter(item => {
@@ -172,7 +173,7 @@ useEffect(() => {
                     className={({ isActive }) => `nav-item ${isActive ? 'nav-item-active' : ''}`}
                   >
                     <span className="w-4 text-center text-base">{item.icon}</span>
-                    <span className="flex-1">{item.label}</span>
+                    <span className="flex-1">{itemLabel(item)}</span>
                     
                       {item.to.includes('/messages') && unreadCount > 0 && (
                         <span className="bg-[#FF4D00] text-white text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center">
@@ -275,7 +276,7 @@ useEffect(() => {
                   </span>
                 )}
               </span>
-              <span>{item.label}</span>
+              <span>{itemLabel(item)}</span>
             </NavLink>
           ))}
         <button

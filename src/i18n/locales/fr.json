@@ -1,4 +1,14 @@
 {
+  "menu": {
+    "dashboard": "Dashboard",
+    "missions": "Missions",
+    "messages": "Messages",
+    "mesSignalements": "Mes signalements",
+    "lesOeils": "Les Œils",
+    "compte": "Compte",
+    "mesGains": "Mes gains",
+    "profil": "Profil"
+  },
   "landing": {
     "nav": {
       "login": "Connexion",

@@ -1,4 +1,14 @@
 {
+  "menu": {
+    "dashboard": "لوحة التحكم",
+    "missions": "المهام",
+    "messages": "الرسائل",
+    "mesSignalements": "بلاغاتي",
+    "lesOeils": "العيون",
+    "compte": "الحساب",
+    "mesGains": "أرباحي",
+    "profil": "الملف الشخصي"
+  },
   "landing": {
     "nav": {
       "login": "تسجيل الدخول",
