@@ -212,7 +212,7 @@ useEffect(() => {
               }`}
             >
               <span className={`w-1.5 h-1.5 rounded-full ${isAvail ? 'bg-green-400' : 'bg-[#777]'}`} />
-              {isAvail ? 'Disponible' : 'Indisponible'}
+              {isAvail ? t('appLayout.available') : t('appLayout.unavailable')}
             </button>
           )}
           <div className="flex items-center gap-2">
@@ -224,7 +224,7 @@ useEffect(() => {
             <button
               onClick={handleLogout}
               className="text-[#AAA] hover:text-white text-xs px-1.5 py-1 rounded border border-white/12 hover:border-white/22 transition-all"
-              title="Déconnexion"
+              title={t('appLayout.logout')}
             >✕</button>
           </div>
         </div>
@@ -284,7 +284,7 @@ useEffect(() => {
           style={{ flex:1, display:'flex', flexDirection:'column', alignItems:'center', gap:2, padding:'6px 4px', color:'#777', fontSize:10, fontWeight:500, background:'none', border:'none', cursor:'pointer' }}
         >
           <span style={{ fontSize:20 }}>↩</span>
-          <span>Quitter</span>
+          <span>{t('appLayout.logout')}</span>
         </button>
       </nav>
 

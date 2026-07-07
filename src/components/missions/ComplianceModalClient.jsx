@@ -1,4 +1,7 @@
+import { useTranslation } from 'react-i18next'
+
 export default function ComplianceModalClient({ onAccept }) {
+  const { t } = useTranslation()
   return (
     <div className="fixed inset-0 bg-black/80 z-[70] flex items-center justify-center p-4 backdrop-blur-sm">
       <div className="bg-[#181818] border border-orange-500/30 rounded-2xl p-6 w-full max-w-md shadow-xl">
@@ -7,27 +10,27 @@ export default function ComplianceModalClient({ onAccept }) {
           <div className="w-10 h-10 rounded-xl bg-orange-500/10 flex items-center justify-center text-xl flex-shrink-0">
             ⚠️
           </div>
-          <h2 className="font-bold text-base">Important — À lire avant de continuer</h2>
+          <h2 className="font-bold text-base">{t('complianceModalClient.title')}</h2>
         </div>
 
         <div className="bg-orange-500/5 border border-orange-500/20 rounded-xl p-4 mb-5">
           <p className="text-sm text-white/80 leading-relaxed mb-3">
-            Afin de garantir votre sécurité et le bon déroulement de la mission, toute communication doit rester sur <strong className="font-display font-bold text-white">SHOOF<span className="text-[#FF4D00]">LY</span></strong> jusqu'à sa clôture.
+            {t('complianceModalClient.paragraph1Prefix')} <strong className="font-display font-bold text-white">SHOOF<span className="text-[#FF4D00]">LY</span></strong> {t('complianceModalClient.paragraph1Suffix')}
           </p>
           <p className="text-sm text-white/80 leading-relaxed">
-            Le partage de numéros de téléphone, d'adresses e-mail, de liens ou de comptes de messagerie externe est <strong className="text-orange-400">strictement interdit</strong>. Cette règle protège les deux parties et garantit que notre équipe puisse intervenir efficacement en cas de problème.
+            {t('complianceModalClient.paragraph2Prefix')} <strong className="text-orange-400">{t('complianceModalClient.paragraph2Strong')}</strong> {t('complianceModalClient.paragraph2Suffix')}
           </p>
         </div>
 
         <div className="flex items-start gap-2 mb-5">
           <span className="text-green-400 mt-0.5">✓</span>
           <p className="text-xs text-[#AAA] leading-relaxed">
-            En continuant, vous acceptez de respecter cette règle. Tout contournement de la plateforme entraîne la suspension du compte.
+            {t('complianceModalClient.acceptNotice')}
           </p>
         </div>
 
         <button onClick={onAccept} className="btn btn-primary w-full justify-center">
-          J'ai compris, je continue →
+          {t('complianceModalClient.continueButton')}
         </button>
       </div>
     </div>

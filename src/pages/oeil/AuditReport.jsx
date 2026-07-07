@@ -6,6 +6,7 @@ import Topbar from '../../components/layout/Topbar'
 import { missionsAPI, reportsAPI } from '../../api'
 import { Spinner, toast } from '../../components/ui'
 import { translateLocation } from '../../constants/villesTranslations'
+import { COMPETENCE_COMMERCIALE, POINTS_POSITIFS, POINTS_NEGATIFS, INCIDENTS } from '../../constants/auditReportLabels'
 
 // ── Composant Note étoiles ─────────────────────────────────
 function StarRating({ value, onChange, label, disabled }) {
@@ -57,27 +58,28 @@ function CritereNote({ label, noteKey, remarqueKey, data, set, disabled }) {
 
 // ── Composant Checkbox liste ───────────────────────────────
 function CheckList({ items, dataKey, data, set, disabled, variant }) {
-  const toggle = (item) => {
+  const toggle = (value) => {
     const current = data[dataKey] || []
-    const next = current.includes(item) ? current.filter(i => i !== item) : [...current, item]
+    const next = current.includes(value) ? current.filter(i => i !== value) : [...current, value]
     set(dataKey)(next)
   }
   return (
     <div className="grid grid-cols-1 gap-1.5 mt-2">
       {items.map(item => {
-        const checked = (data[dataKey] || []).includes(item)
+        const { value, label } = typeof item === 'string' ? { value: item, label: item } : item
+        const checked = (data[dataKey] || []).includes(value)
         const bg = checked
           ? variant === 'green' ? 'bg-green-500/20 border border-green-500/30'
           : variant === 'red'   ? 'bg-red-500/20 border border-red-500/30'
           : 'bg-white/5 border border-white/10'
           : 'border border-white/10'
         return (
-          <label key={item} className={`flex items-center gap-2 text-sm cursor-pointer px-3 py-2 rounded-lg transition-all ${bg} ${checked ? variant === 'green' ? 'text-green-300' : variant === 'red' ? 'text-red-300' : 'text-white' : 'text-[#CCC]'}`}>
+          <label key={value} className={`flex items-center gap-2 text-sm cursor-pointer px-3 py-2 rounded-lg transition-all ${bg} ${checked ? variant === 'green' ? 'text-green-300' : variant === 'red' ? 'text-red-300' : 'text-white' : 'text-[#CCC]'}`}>
             <input type="checkbox" checked={checked}
-              onChange={() => !disabled && toggle(item)}
+              onChange={() => !disabled && toggle(value)}
               className={`w-4 h-4 ${variant === 'green' ? 'accent-green-500' : variant === 'red' ? 'accent-red-500' : 'accent-[#FF4D00]'}`}
               disabled={disabled} />
-            {item}
+            {label}
           </label>
         )
       })}
@@ -400,15 +402,7 @@ export default function AuditReport() {
         <Section number="5" title={t('oeilAuditReport.sections.s5.title')}>
           <div className="text-xs text-[#AAA] mb-2">{t('oeilAuditReport.sections.s5.intro')}</div>
           <CheckList
-            items={[
-              'A posé des questions pour comprendre votre besoin',
-              'A présenté plusieurs options',
-              'A expliqué les avantages',
-              'A répondu clairement aux objections',
-              'A proposé un produit/service complémentaire',
-              'A tenté une vente additionnelle',
-              "N'a fait aucun effort commercial",
-            ]}
+            items={COMPETENCE_COMMERCIALE.map(({ value, key }) => ({ value, label: t(`oeilAuditReport.sections.s5.items.${key}`) }))}
             dataKey="competence_commerciale" data={data} set={set} disabled={submitted}
           />
         </Section>
@@ -426,12 +420,12 @@ export default function AuditReport() {
         <Section number="7" title={t('oeilAuditReport.sections.s7.title')}>
           <div className="text-xs text-[#AAA] mb-1">{t('oeilAuditReport.sections.s7.positiveIntro')}</div>
                 <CheckList
-                items={['Personnel accueillant','Service rapide','Très propre','Bonne ambiance','Produits attractifs','Très professionnel','Bons conseils','Excellent rapport qualité/prix','Très bonne organisation','Forte confiance']}
+                items={POINTS_POSITIFS.map(({ value, key }) => ({ value, label: t(`oeilAuditReport.sections.s7.positiveItems.${key}`) }))}
                 dataKey="points_positifs" data={data} set={set} disabled={submitted} variant="green"
                 />
                 <div className="text-xs text-[#AAA] mt-4 mb-1">{t('oeilAuditReport.sections.s7.negativeIntro')}</div>
                 <CheckList
-                items={['Attente excessive','Personnel peu accueillant','Manque de professionnalisme','Mauvaise organisation','Prix peu clairs','Établissement sale','Manque de disponibilité','Produits mal présentés','Mauvais conseils','Faible confiance']}
+                items={POINTS_NEGATIFS.map(({ value, key }) => ({ value, label: t(`oeilAuditReport.sections.s7.negativeItems.${key}`) }))}
                 dataKey="points_negatifs" data={data} set={set} disabled={submitted} variant="red"
                 />
 
@@ -441,7 +435,7 @@ export default function AuditReport() {
         {/* Section 8 — Incidents */}
         <Section number="8" title={t('oeilAuditReport.sections.s8.title')}>
           <CheckList
-            items={['Aucun incident','Personnel impoli','Conflit avec un client','Refus de service','Publicité trompeuse','Non-respect des prix affichés',"Problème d'hygiène",'Information erronée','Autre']}
+            items={INCIDENTS.map(({ value, key }) => ({ value, label: t(`oeilAuditReport.sections.s8.items.${key}`) }))}
             dataKey="incidents" data={data} set={set} disabled={submitted}
           />
           <div className="mt-3">

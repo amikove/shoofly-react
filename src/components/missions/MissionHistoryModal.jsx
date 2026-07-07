@@ -1,16 +1,20 @@
 import { useState, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import { missionsAPI } from '../../api'
 import { Spinner } from '../ui'
 
-const STATUS_CONFIG = {
-  pending:          { icon: '📋', label: 'Mission créée',              color: 'text-yellow-400'  },
-  assigned:         { icon: '🤝', label: 'Œil assigné',               color: 'text-blue-400'    },
-  en_route:         { icon: '🚗', label: 'En route',                  color: 'text-blue-400'    },
-  active:           { icon: '▶️', label: 'Mission démarrée',           color: 'text-[#FF4D00]'   },
-  completed:        { icon: '✅', label: 'Mission terminée par l\'Œil', color: 'text-green-400'   },
-  validated:        { icon: '💰', label: 'Validée par le client',      color: 'text-green-400'   },
-  cancelled:        { icon: '❌', label: 'Mission annulée',            color: 'text-red-400'     },
-  sous_reclamation: { icon: '🚨', label: 'Réclamation client',         color: 'text-orange-400'  },
+function useStatusConfig() {
+  const { t } = useTranslation()
+  return {
+    pending:          { icon: '📋', label: t('missionHistoryModal.status.pending'),   color: 'text-yellow-400'  },
+    assigned:         { icon: '🤝', label: t('missionHistoryModal.status.assigned'),  color: 'text-blue-400'    },
+    en_route:         { icon: '🚗', label: t('missionHistoryModal.status.enRoute'),   color: 'text-blue-400'    },
+    active:           { icon: '▶️', label: t('missionHistoryModal.status.active'),     color: 'text-[#FF4D00]'   },
+    completed:        { icon: '✅', label: t('missionHistoryModal.status.completed'), color: 'text-green-400'   },
+    validated:        { icon: '💰', label: t('missionHistoryModal.status.validated'), color: 'text-green-400'   },
+    cancelled:        { icon: '❌', label: t('missionHistoryModal.status.cancelled'), color: 'text-red-400'     },
+    sous_reclamation: { icon: '🚨', label: t('missionHistoryModal.status.sousReclamation'), color: 'text-orange-400'  },
+  }
 }
 
 function formatDate(dateStr) {
@@ -23,6 +27,8 @@ function formatDate(dateStr) {
 }
 
 export default function MissionHistoryModal({ mission, onClose }) {
+  const { t } = useTranslation()
+  const STATUS_CONFIG = useStatusConfig()
   const [history, setHistory] = useState([])
   const [loading, setLoading] = useState(true)
 
@@ -43,7 +49,7 @@ export default function MissionHistoryModal({ mission, onClose }) {
 
         <div className="flex items-center justify-between mb-4 flex-shrink-0">
           <div>
-            <h2 className="font-semibold text-sm">Historique de la mission</h2>
+            <h2 className="font-semibold text-sm">{t('missionHistoryModal.title')}</h2>
             <p className="text-xs text-[#AAA] mt-0.5">{mission.title}</p>
           </div>
           <button onClick={onClose} className="text-[#AAA] hover:text-white text-lg">✕</button>
@@ -53,11 +59,11 @@ export default function MissionHistoryModal({ mission, onClose }) {
           {loading ? (
             <div className="flex justify-center py-8"><Spinner size="md" /></div>
           ) : history.length === 0 ? (
-            <div className="text-center py-8 text-[#AAA] text-sm">Aucun historique disponible</div>
+            <div className="text-center py-8 text-[#AAA] text-sm">{t('missionHistoryModal.empty')}</div>
           ) : (
             <div className="relative">
               {/* Ligne verticale */}
-              <div className="absolute left-4 top-0 bottom-0 w-px bg-white/10" />
+              <div className="absolute start-4 top-0 bottom-0 w-px bg-white/10" />
               <div className="space-y-4">
                 {history.map((h, i) => {
                   const cfg = STATUS_CONFIG[h.status] || { icon: '•', label: h.status, color: 'text-white' }
@@ -71,7 +77,7 @@ export default function MissionHistoryModal({ mission, onClose }) {
                         {h.note && <div className="text-xs text-[#AAA] mt-0.5">{h.note}</div>}
                         {h.changed_by_name && (
                           <div className="text-xs text-[#555] mt-0.5">
-                            par {h.changed_by_name}
+                            {t('missionHistoryModal.by', { name: h.changed_by_name })}
                           </div>
                         )}
                         <div className="text-xs text-[#555] mt-0.5">{formatDate(h.created_at)}</div>
@@ -85,7 +91,7 @@ export default function MissionHistoryModal({ mission, onClose }) {
         </div>
 
         <button onClick={onClose} className="btn btn-ghost btn-sm mt-4 flex-shrink-0 w-full justify-center">
-          Fermer
+          {t('missionHistoryModal.close')}
         </button>
       </div>
     </div>

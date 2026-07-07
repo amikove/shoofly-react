@@ -6,6 +6,7 @@ import Topbar from '../../components/layout/Topbar'
 import { missionsAPI, reportsAPI } from '../../api'
 import { Spinner, toast } from '../../components/ui'
 import { translateLocation } from '../../constants/villesTranslations'
+import { CUISINE_ITEMS, POINTS_FORTS, POINTS_FAIBLES } from '../../constants/airbnbReportLabels'
 
 // ── Composant Note étoiles ─────────────────────────────────
 function StarRating({ value, onChange, label }) {
@@ -343,13 +344,13 @@ const validateAirbnb = () => {
           <div>
             <label className="label mt-2">{t('oeilAirbnbReport.sections.s5.kitchenLabel')}</label>
             <div className="grid grid-cols-2 gap-2 mt-1">
-              {['Réfrigérateur','Micro-onde','Four','Cafetière','Bouilloire','Vaisselle suffisante'].map(item => (
-                <label key={item} className="flex items-center gap-2 text-sm text-[#CCC] cursor-pointer">
-                  <input type="checkbox" value={item}
-                    checked={(data.cuisine || []).includes(item)}
+              {CUISINE_ITEMS.map(({ value, key }) => (
+                <label key={value} className="flex items-center gap-2 text-sm text-[#CCC] cursor-pointer">
+                  <input type="checkbox" value={value}
+                    checked={(data.cuisine || []).includes(value)}
                     onChange={setCheck('cuisine')}
                     className="accent-[#FF4D00]" disabled={submitted} />
-                  {item}
+                  {t(`oeilAirbnbReport.sections.s5.kitchenItems.${key}`)}
                 </label>
               ))}
             </div>
@@ -421,13 +422,13 @@ const validateAirbnb = () => {
           <div>
             <label className="label">{t('oeilAirbnbReport.sections.s11.strengthsLabel')}</label>
             <div className="grid grid-cols-2 gap-2 mt-1">
-              {['Vue agréable','Très propre','Très calme','Quartier agréable','Bien équipé','Moderne','Spacieux','Bonne connexion internet','Bon rapport qualité/prix'].map(item => (
-                <label key={item} className="flex items-center gap-2 text-sm text-[#CCC] cursor-pointer">
-                  <input type="checkbox" value={item}
-                    checked={(data.points_forts || []).includes(item)}
+              {POINTS_FORTS.map(({ value, key }) => (
+                <label key={value} className="flex items-center gap-2 text-sm text-[#CCC] cursor-pointer">
+                  <input type="checkbox" value={value}
+                    checked={(data.points_forts || []).includes(value)}
                     onChange={setCheck('points_forts')}
                     className="accent-green-500" disabled={submitted} />
-                  {item}
+                  {t(`oeilAirbnbReport.sections.s11.strengths.${key}`)}
                 </label>
               ))}
             </div>
@@ -435,13 +436,13 @@ const validateAirbnb = () => {
           <div className="mt-3">
             <label className="label">{t('oeilAirbnbReport.sections.s11.weaknessesLabel')}</label>
             <div className="grid grid-cols-2 gap-2 mt-1">
-              {['Bruyant','Mauvaise odeur','Humidité','Équipement vétuste','Mauvaise literie','Photos trompeuses','Quartier peu rassurant','Difficulté de stationnement','Mauvaise connexion internet'].map(item => (
-                <label key={item} className="flex items-center gap-2 text-sm text-[#CCC] cursor-pointer">
-                  <input type="checkbox" value={item}
-                    checked={(data.points_faibles || []).includes(item)}
+              {POINTS_FAIBLES.map(({ value, key }) => (
+                <label key={value} className="flex items-center gap-2 text-sm text-[#CCC] cursor-pointer">
+                  <input type="checkbox" value={value}
+                    checked={(data.points_faibles || []).includes(value)}
                     onChange={setCheck('points_faibles')}
                     className="accent-red-500" disabled={submitted} />
-                  {item}
+                  {t(`oeilAirbnbReport.sections.s11.weaknesses.${key}`)}
                 </label>
               ))}
             </div>

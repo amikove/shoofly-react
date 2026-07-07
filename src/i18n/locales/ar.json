@@ -1104,32 +1104,76 @@
           "pertinenceReponses": "ملاءمة الإجابات",
           "qualiteConseils": "جودة النصائح",
           "niveauPro": "مستوى الاحترافية",
-          "connaissanceProduit": "معرفة المنتج/الخدمة"
+          "connaissanceProduit": "المعرفة بالمنتج"
         }
       },
       "s5": {
-        "title": "الكفاءة التجارية",
-        "intro": "الموظفون:"
+        "title": "الفعالية التجارية",
+        "intro": "الموظفون:",
+        "items": {
+          "aPoseQuestions": "طرح أسئلة لفهم احتياجك",
+          "aPresenteOptions": "قدّم عدة خيارات",
+          "aExpliqueAvantages": "شرح المزايا",
+          "aReponduObjections": "أجاب بوضوح عن الاعتراضات",
+          "aProposeComplementaire": "اقترح منتجًا/خدمة تكميلية",
+          "aTenteVenteAdditionnelle": "حاول بيعًا إضافيًا",
+          "aucunEffortCommercial": "لم يبذل أي مجهود تجاري"
+        }
       },
       "s6": {
         "title": "تجربة العميل",
         "criteria": {
           "clartePrix": "وضوح الأسعار",
           "transparence": "الشفافية",
-          "simpliciteParcours": "بساطة المسار",
-          "confianceInspiree": "الثقة الملهمة",
+          "simpliciteParcours": "سهولة الإجراء",
+          "confianceInspiree": "الثقة المكتسبة",
           "satisfactionGenerale": "الرضا العام"
         }
       },
       "s7": {
         "title": "ملاحظات مهمة",
         "positiveIntro": "✅ النقاط الإيجابية الملاحظة:",
-        "negativeIntro": "❌ النقاط السلبية الملاحظة:"
+        "negativeIntro": "❌ النقاط السلبية الملاحظة:",
+        "positiveItems": {
+          "personnelAccueillant": "طاقم مرحّب",
+          "serviceRapide": "خدمة سريعة",
+          "tresPropre": "نظيف جدًا",
+          "bonneAmbiance": "أجواء جيدة",
+          "produitsAttractifs": "منتجات جذابة",
+          "tresProfessionnel": "احترافي جدًا",
+          "bonsConseils": "نصائح جيدة",
+          "excellentRapportQualitePrix": "جودة ممتازة مقابل السعر",
+          "tresBonneOrganisation": "تنظيم جيد جدًا",
+          "forteConfiance": "ثقة قوية"
+        },
+        "negativeItems": {
+          "attenteExcessive": "انتظار مفرط",
+          "personnelPeuAccueillant": "طاقم غير مرحّب",
+          "manqueProfessionnalisme": "نقص في الاحترافية",
+          "mauvaiseOrganisation": "تنظيم سيء",
+          "prixPeuClairs": "أسعار غير واضحة",
+          "etablissementSale": "مؤسسة غير نظيفة",
+          "manqueDisponibilite": "نقص في التوفر",
+          "produitsMalPresentes": "منتجات معروضة بشكل سيء",
+          "mauvaisConseils": "نصائح سيئة",
+          "faibleConfiance": "ثقة ضعيفة"
+        }
       },
       "s8": {
         "title": "حوادث كبرى",
         "commentLabel": "تعليق حول الحوادث",
-        "commentPlaceholder": "فصّل إذا لزم الأمر..."
+        "commentPlaceholder": "فصّل إذا لزم الأمر...",
+        "items": {
+          "aucunIncident": "لا يوجد حادث",
+          "personnelImpoli": "طاقم غير مهذب",
+          "conflitClient": "خلاف مع عميل",
+          "refusService": "رفض تقديم الخدمة",
+          "publiciteTrompeuse": "إشهار مضلل",
+          "nonRespectPrix": "عدم احترام الأسعار المعلنة",
+          "problemeHygiene": "مشكل في النظافة",
+          "informationErronee": "معلومة خاطئة",
+          "autre": "أخرى"
+        }
       },
       "s9": {
         "title": "سؤال Shoofly الرئيسي",
@@ -1239,7 +1283,15 @@
           "produitsNettoyage": "مواد التنظيف متوفرة"
         },
         "wifiQualityLabel": "جودة الواي فاي",
-        "kitchenLabel": "المطبخ — التجهيزات المتوفرة"
+        "kitchenLabel": "المطبخ — التجهيزات المتوفرة",
+        "kitchenItems": {
+          "refrigerateur": "ثلاجة",
+          "microOnde": "ميكروويف",
+          "four": "فرن",
+          "cafetiere": "آلة قهوة",
+          "bouilloire": "غلاية ماء",
+          "vaisselle": "أواني كافية"
+        }
       },
       "s6": {
         "title": "الإضاءة",
@@ -1280,7 +1332,29 @@
       "s11": {
         "title": "نقاط القوة والضعف",
         "strengthsLabel": "✅ نقاط القوة",
-        "weaknessesLabel": "❌ نقاط الضعف"
+        "weaknessesLabel": "❌ نقاط الضعف",
+        "strengths": {
+          "vueAgreable": "إطلالة جميلة",
+          "tresPropre": "نظيف جدًا",
+          "tresCalme": "هادئ جدًا",
+          "quartierAgreable": "حي لطيف",
+          "bienEquipe": "مجهّز جيدًا",
+          "moderne": "عصري",
+          "spacieux": "واسع",
+          "bonneConnexion": "اتصال إنترنت جيد",
+          "bonRapportQualitePrix": "جودة جيدة مقابل السعر"
+        },
+        "weaknesses": {
+          "bruyant": "صاخب",
+          "mauvaiseOdeur": "رائحة كريهة",
+          "humidite": "رطوبة",
+          "equipementVetuste": "تجهيزات قديمة",
+          "mauvaiseLiterie": "فراش سيء",
+          "photosTrompeuses": "صور مضللة",
+          "quartierPeuRassurant": "حي غير مطمئن",
+          "difficulteStationnement": "صعوبة ركن السيارة",
+          "mauvaiseConnexion": "اتصال إنترنت ضعيف"
+        }
       },
       "s12": {
         "title": "التوصية النهائية",
@@ -1295,6 +1369,123 @@
     },
     "saveButton": "💾 حفظ",
     "submitButton": "✅ إرسال التقرير"
+  },
+  "appLayout": {
+    "available": "متاح",
+    "unavailable": "غير متاح",
+    "logout": "تسجيل الخروج"
+  },
+  "chatModal": {
+    "file": "ملف",
+    "loadError": "خطأ في تحميل الرسائل",
+    "sendError": "خطأ في إرسال الرسالة",
+    "fileTooLarge": "الملف كبير جدًا (10 ميغا كحد أقصى)",
+    "fileSent": "تم إرسال الملف ✓",
+    "fileSendError": "خطأ في إرسال الملف",
+    "oeilLabel": "العين الميدانية: {{name}}",
+    "clientLabel": "العميل: {{name}}",
+    "noMessages": "لا توجد رسائل. ابدأ المحادثة.",
+    "sendPhotoVideo": "إرسال صورة أو فيديو",
+    "messagePlaceholder": "رسالتك..."
+  },
+  "clientAuditReportView": {
+    "topbarTitle": "تقرير التدقيق",
+    "pageTitle": "تقرير التسوق السري",
+    "notAvailable": "التقرير غير متوفر بعد",
+    "back": "← رجوع",
+    "backToMissions": "← العودة إلى المهام",
+    "reportSubmitted": "تم تقديم التقرير",
+    "shooflyScore": "تقييم Shoofly",
+    "at": "الساعة {{time}}",
+    "duration": "المدة: {{minutes}} دقيقة"
+  },
+  "clientAirbnbReportView": {
+    "notAvailable": "التقرير غير متوفر بعد",
+    "inProgress": "قيد الإنجاز",
+    "disclaimerTitle": "تقرير زيارة مستقل",
+    "disclaimerPrefix": "التقييم مؤشر فقط لأن",
+    "disclaimerStars": "النجوم ⭐",
+    "disclaimerMiddle": "تعكس الانطباع الشخصي للعين الميدانية. للحصول على معلومة أكثر موثوقية، ركّز على إجابات",
+    "disclaimerOuiNon": "نعم / لا",
+    "disclaimerSuffix": "الموضوعية والقابلة للتحقق ميدانيًا.",
+    "understood": "فهمت",
+    "conformite": "المطابقة",
+    "conformiteAnnonce": "مطابقة الإعلان:",
+    "bed": "السرير",
+    "sofa": "الأريكة",
+    "global": "عام",
+    "photosAre": "الصور:"
+  },
+  "complianceModalClient": {
+    "title": "مهم — يُرجى القراءة قبل المتابعة",
+    "paragraph1Prefix": "لضمان سلامتك وحسن سير المهمة، يجب أن يبقى كل تواصل داخل",
+    "paragraph1Suffix": "إلى غاية إقفالها.",
+    "paragraph2Prefix": "مشاركة أرقام الهاتف أو عناوين البريد الإلكتروني أو الروابط أو حسابات المراسلة الخارجية أمر",
+    "paragraph2Strong": "ممنوع منعاً كلياً",
+    "paragraph2Suffix": ". هذه القاعدة تحمي الطرفين وتضمن قدرة فريقنا على التدخل بفعالية عند حدوث أي مشكلة.",
+    "acceptNotice": "بمتابعتك، فإنك توافق على احترام هذه القاعدة. أي تحايل على المنصة يؤدي إلى تعليق الحساب.",
+    "continueButton": "فهمت، أتابع ←"
+  },
+  "complianceModalOeil": {
+    "title": "تذكير قبل البدء",
+    "photos": {
+      "title": "الصور إلزامية",
+      "desc": "يجب عليك التقاط صور في عين المكان لإثبات تنقلك. بدون دليل مرئي، يمكن الطعن في المهمة."
+    },
+    "location": {
+      "title": "ابقَ في مكان المهمة",
+      "desc": "حضورك الفعلي مطلوب. أي تضارب في الموقع سيتم رصده."
+    },
+    "deadlines": {
+      "title": "احترم الآجال",
+      "desc": "أنجز المهمة ضمن الآجال المتفق عليها مع العميل."
+    },
+    "antiContactPrefix": "يجب أن يبقى كل تواصل داخل",
+    "antiContactMiddle": "مشاركة الأرقام أو البريد الإلكتروني أو الحسابات الخارجية أمر",
+    "antiContactStrong": "ممنوع منعاً كلياً",
+    "antiContactSuffix": "ويؤدي إلى تعليق الحساب.",
+    "acceptNotice": "بمتابعتك، فإنك توافق على هذه الشروط. أي إخلال بها قد يؤدي إلى تحذير أو تعليق حسابك.",
+    "continueButton": "فهمت، أبدأ ←"
+  },
+  "missionSummaryModal": {
+    "statusLabel": "الحالة",
+    "earningLabel": "أرباحك",
+    "awaitingValidation": "بانتظار تصديق العميل",
+    "missionDate": "تاريخ المهمة",
+    "completedOn": "أُنجزت في",
+    "validatedOn": "صُودق عليها في",
+    "clientRating": "التقييم الوارد من العميل",
+    "notRatedYet": "لم يتم تقييمك من طرف العميل بعد",
+    "viewReport": "عرض التقرير المُقدَّم",
+    "history": "السجل",
+    "awaitingClientValidation": "بانتظار تصديق العميل",
+    "close": "إغلاق",
+    "status": {
+      "pending": "قيد الانتظار",
+      "assigned": "تم إسناد عين ميدانية",
+      "enRoute": "في الطريق",
+      "active": "بدأت",
+      "completed": "منتهية",
+      "validated": "مصادق عليها — تم الدفع",
+      "cancelled": "ملغاة",
+      "sousReclamation": "قيد المطالبة"
+    }
+  },
+  "missionHistoryModal": {
+    "title": "سجل المهمة",
+    "empty": "لا يوجد سجل متاح",
+    "by": "بواسطة {{name}}",
+    "close": "إغلاق",
+    "status": {
+      "pending": "تم إنشاء المهمة",
+      "assigned": "تم إسناد المهمة لعين ميدانية",
+      "enRoute": "في الطريق",
+      "active": "بدأت المهمة",
+      "completed": "أنهى العين الميدانية المهمة",
+      "validated": "صادق عليها العميل",
+      "cancelled": "تم إلغاء المهمة",
+      "sousReclamation": "مطالبة من العميل"
+    }
   },
   "notificationBanner": {
     "title": "فعّل الإشعارات",

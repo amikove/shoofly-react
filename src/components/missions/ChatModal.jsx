@@ -1,5 +1,6 @@
 
 import { useState, useEffect, useRef } from 'react'
+import { useTranslation } from 'react-i18next'
 import { missionsAPI, mediaAPI } from '../../api'
 import ComplianceModal from './ComplianceModalClient'
 import { toast, Spinner } from '../ui'
@@ -7,6 +8,7 @@ import { useSocket } from '../../context/SocketContext'
 import { useAuth } from '../../context/AuthContext'
 
 export default function ChatModal({ mission, onClose }) {
+  const { t } = useTranslation()
   const { user }              = useAuth()
   const { onEvent, sendMessage, joinMission, leaveMission } = useSocket()
   const [messages, setMessages] = useState([])
@@ -49,7 +51,7 @@ useEffect(() => {
       const msgs = msgRes.data.messages || []
       const medias = (mediaRes.data.media || []).map((m) => ({
         id: `media-${m.id}`,
-        content: `📎 ${m.filename || 'Fichier'}`,
+        content: `📎 ${m.filename || t('chatModal.file')}`,
         sender_id: m.uploader_id,
         sender_role: m.uploader_role,
         type: 'media',
@@ -62,7 +64,7 @@ useEffect(() => {
       )
       setMessages(all)
     })
-    .catch(() => toast('Erreur chargement messages', 'error'))
+    .catch(() => toast(t('chatModal.loadError'), 'error'))
     .finally(() => setLoading(false))
 
     // Rejoindre la room Socket.io
@@ -96,7 +98,7 @@ const send = async () => {
     try {
           await missionsAPI.message(mission.id, { content })
     } catch {
-      toast('Erreur envoi message', 'error')
+      toast(t('chatModal.sendError'), 'error')
       setMsg(content)
     } finally { setSending(false) }
   }
@@ -104,7 +106,7 @@ const send = async () => {
   const sendFile = async (file) => {
     if (!file) return
     const maxSize = 10 * 1024 * 1024 // 10 Mo
-    if (file.size > maxSize) { toast('Fichier trop volumineux (max 10 Mo)', 'error'); return }
+    if (file.size > maxSize) { toast(t('chatModal.fileTooLarge'), 'error'); return }
 
     setUploading(true)
     try {
@@ -112,7 +114,7 @@ const send = async () => {
       formData.append('files', file)
       formData.append('caption', file.name)
       const { data } = await mediaAPI.upload(mission.id, formData)
-      toast('Fichier envoyé ✓', 'success')
+      toast(t('chatModal.fileSent'), 'success')
       // Ajouter un message système pour le fichier
       setMessages(prev => [...prev, {
         id: Date.now(),
@@ -124,7 +126,7 @@ const send = async () => {
         created_at: new Date().toISOString()
       }])
     } catch {
-      toast('Erreur envoi fichier', 'error')
+      toast(t('chatModal.fileSendError'), 'error')
     } finally { setUploading(false) }
   }
 
@@ -150,8 +152,8 @@ const send = async () => {
             <div className="font-semibold text-sm">{mission.title}</div>
             <div className="text-xs text-[#AAA] mt-0.5">
               {user?.role === 'client'
-                ? `Œil : ${mission.oeil_name || '—'}`
-                : `Client : ${mission.client_name || '—'}`
+                ? t('chatModal.oeilLabel', { name: mission.oeil_name || '—' })
+                : t('chatModal.clientLabel', { name: mission.client_name || '—' })
               }
             </div>
           </div>
@@ -166,7 +168,7 @@ const send = async () => {
             </div>
           ) : messages.length === 0 ? (
             <div className="text-center text-xs text-[#AAA] mt-8">
-              Aucun message. Commencez la conversation.
+              {t('chatModal.noMessages')}
             </div>
           ) : messages.map((m, i) => (
             <div key={m.id || i} className={`flex flex-col ${isMe(m) ? 'items-end' : m.type === 'system' ? 'items-center' : 'items-start'}`}>
@@ -216,7 +218,7 @@ const send = async () => {
             onClick={() => fileRef.current?.click()}
             disabled={uploading}
             className="w-8 h-8 flex items-center justify-center rounded-lg bg-[#222] border border-white/12 text-[#AAA] hover:text-white hover:border-white/22 transition-all disabled:opacity-50 text-sm flex-shrink-0"
-            title="Envoyer une photo ou vidéo"
+            title={t('chatModal.sendPhotoVideo')}
           >
             {uploading ? '⏳' : '📎'}
           </button>
@@ -224,7 +226,7 @@ const send = async () => {
           {/* Input texte */}
           <input
             className="flex-1 bg-[#222] border border-white/20 rounded-lg px-3 py-2 text-sm text-white outline-none placeholder:text-white/20 focus:border-[#FF4D00]/50 transition-colors"
-            placeholder="Votre message..."
+            placeholder={t('chatModal.messagePlaceholder')}
             value={msg}
             onChange={(e) => setMsg(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && send()}

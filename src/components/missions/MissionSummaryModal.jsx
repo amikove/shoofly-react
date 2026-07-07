@@ -5,15 +5,18 @@ import { Spinner, Stars } from '../ui'
 import { useNavigate } from 'react-router-dom'
 import { translateLocation } from '../../constants/villesTranslations'
 
-const STATUS_CONFIG = {
-  pending:          { icon: '📋', label: 'En attente',               color: 'text-yellow-400' },
-  assigned:         { icon: '🤝', label: 'Œil assigné',              color: 'text-blue-400'   },
-  en_route:         { icon: '🚗', label: 'En route',                 color: 'text-blue-400'   },
-  active:           { icon: '▶️', label: 'Démarrée',                 color: 'text-[#FF4D00]'  },
-  completed:        { icon: '✅', label: 'Terminée',                  color: 'text-green-400'  },
-  validated:        { icon: '💰', label: 'Validée — Payée',          color: 'text-green-400'  },
-  cancelled:        { icon: '❌', label: 'Annulée',                   color: 'text-red-400'    },
-  sous_reclamation: { icon: '🚨', label: 'En réclamation',           color: 'text-orange-400' },
+function useStatusConfig() {
+  const { t } = useTranslation()
+  return {
+    pending:          { icon: '📋', label: t('missionSummaryModal.status.pending'),   color: 'text-yellow-400' },
+    assigned:         { icon: '🤝', label: t('missionSummaryModal.status.assigned'),  color: 'text-blue-400'   },
+    en_route:         { icon: '🚗', label: t('missionSummaryModal.status.enRoute'),   color: 'text-blue-400'   },
+    active:           { icon: '▶️', label: t('missionSummaryModal.status.active'),     color: 'text-[#FF4D00]'  },
+    completed:        { icon: '✅', label: t('missionSummaryModal.status.completed'), color: 'text-green-400'  },
+    validated:        { icon: '💰', label: t('missionSummaryModal.status.validated'), color: 'text-green-400'  },
+    cancelled:        { icon: '❌', label: t('missionSummaryModal.status.cancelled'), color: 'text-red-400'    },
+    sous_reclamation: { icon: '🚨', label: t('missionSummaryModal.status.sousReclamation'), color: 'text-orange-400' },
+  }
 }
 
 function formatDate(dateStr) {
@@ -25,7 +28,8 @@ function formatDate(dateStr) {
 }
 
 export default function MissionSummaryModal({ mission, onClose }) {
-  const { i18n } = useTranslation()
+  const { t, i18n } = useTranslation()
+  const STATUS_CONFIG = useStatusConfig()
   const navigate = useNavigate()
   const [history, setHistory]   = useState([])
   const [rating, setRating]     = useState(null)
@@ -73,18 +77,18 @@ export default function MissionSummaryModal({ mission, onClose }) {
           {/* Statut + Paiement */}
           <div className="bg-[#222] rounded-xl p-4 flex items-center justify-between">
             <div>
-              <div className="text-xs text-[#AAA] mb-1">Statut</div>
+              <div className="text-xs text-[#AAA] mb-1">{t('missionSummaryModal.statusLabel')}</div>
               <div className={`text-sm font-semibold ${statusCfg.color}`}>
                 {statusCfg.icon} {statusCfg.label}
               </div>
             </div>
             <div className="text-right">
-              <div className="text-xs text-[#AAA] mb-1">Votre gain</div>
+              <div className="text-xs text-[#AAA] mb-1">{t('missionSummaryModal.earningLabel')}</div>
               <div className={`text-xl font-bold ${isValidated ? 'text-green-400' : 'text-[#AAA]'}`}>
                 {parseFloat(mission.oeil_earning || 0).toFixed(0)} MAD
               </div>
               {!isValidated && (
-                  <div className="text-[10px] text-orange-400 mt-1">⏳ En attente de validation client</div>
+                  <div className="text-[10px] text-orange-400 mt-1">⏳ {t('missionSummaryModal.awaitingValidation')}</div>
                 )}
             </div>
           </div>
@@ -92,18 +96,18 @@ export default function MissionSummaryModal({ mission, onClose }) {
           {/* Dates */}
           <div className="space-y-2">
             <div className="flex items-center justify-between text-xs">
-              <span className="text-[#AAA]">📅 Date mission</span>
+              <span className="text-[#AAA]">📅 {t('missionSummaryModal.missionDate')}</span>
               <span className="text-white">{formatDate(mission.scheduled_at)}</span>
             </div>
             {mission.completed_by_oeil_at && (
               <div className="flex items-center justify-between text-xs">
-                <span className="text-[#AAA]">✅ Terminée le</span>
+                <span className="text-[#AAA]">✅ {t('missionSummaryModal.completedOn')}</span>
                 <span className="text-white">{formatDate(mission.completed_by_oeil_at)}</span>
               </div>
             )}
             {mission.validated_at && (
               <div className="flex items-center justify-between text-xs">
-                <span className="text-[#AAA]">💰 Validée le</span>
+                <span className="text-[#AAA]">💰 {t('missionSummaryModal.validatedOn')}</span>
                 <span className="text-green-400">{formatDate(mission.validated_at)}</span>
               </div>
             )}
@@ -112,7 +116,7 @@ export default function MissionSummaryModal({ mission, onClose }) {
           {/* Note client */}
           {!loading && rating && (
             <div className="bg-[#222] rounded-xl p-3">
-              <div className="text-xs text-[#AAA] mb-2">Note reçue du client</div>
+              <div className="text-xs text-[#AAA] mb-2">{t('missionSummaryModal.clientRating')}</div>
               <div className="flex items-center gap-2">
                 <Stars value={rating.score} />
                 <span className="text-sm font-semibold text-yellow-400">{rating.score}/5</span>
@@ -123,7 +127,7 @@ export default function MissionSummaryModal({ mission, onClose }) {
             </div>
           )}
           {!loading && !rating && (
-            <div className="text-xs text-[#555] text-center py-1">Pas encore noté par le client</div>
+            <div className="text-xs text-[#555] text-center py-1">{t('missionSummaryModal.notRatedYet')}</div>
           )}
 
           {/* Lien rapport */}
@@ -132,16 +136,16 @@ export default function MissionSummaryModal({ mission, onClose }) {
               onClick={() => { onClose(); navigate(`/oeil/missions/${mission.id}/${isAudit ? 'audit' : 'rapport'}`) }}
               className="btn btn-ghost btn-sm w-full justify-center"
             >
-              📋 Voir le rapport soumis
+              📋 {t('missionSummaryModal.viewReport')}
             </button>
           )}
 
           {/* Historique */}
           {!loading && history.length > 0 && (
             <div>
-              <div className="text-xs text-[#AAA] mb-3">Historique</div>
+              <div className="text-xs text-[#AAA] mb-3">{t('missionSummaryModal.history')}</div>
               <div className="relative">
-                <div className="absolute left-3.5 top-0 bottom-0 w-px bg-white/10" />
+                <div className="absolute start-3.5 top-0 bottom-0 w-px bg-white/10" />
                 <div className="space-y-3">
                   {history.map((h) => {
                     const cfg = STATUS_CONFIG[h.status] || { icon: '•', label: h.status, color: 'text-white' }
@@ -167,12 +171,12 @@ export default function MissionSummaryModal({ mission, onClose }) {
 
           {!isValidated && mission.completed_by_oeil_at && (
             <div className="bg-orange-500/10 border border-orange-500/20 rounded-xl p-3 mt-2 text-xs text-orange-400 text-center">
-              ⏳ En attente de la validation du client 😉
+              ⏳ {t('missionSummaryModal.awaitingClientValidation')} 😉
             </div>
           )}
 
         <button onClick={onClose} className="btn btn-ghost btn-sm mt-4 flex-shrink-0 w-full justify-center">
-          Fermer
+          {t('missionSummaryModal.close')}
         </button>
       </div>
     </div>

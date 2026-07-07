@@ -1109,7 +1109,16 @@
       },
       "s5": {
         "title": "Compétence commerciale",
-        "intro": "Le personnel :"
+        "intro": "Le personnel :",
+        "items": {
+          "aPoseQuestions": "A posé des questions pour comprendre votre besoin",
+          "aPresenteOptions": "A présenté plusieurs options",
+          "aExpliqueAvantages": "A expliqué les avantages",
+          "aReponduObjections": "A répondu clairement aux objections",
+          "aProposeComplementaire": "A proposé un produit/service complémentaire",
+          "aTenteVenteAdditionnelle": "A tenté une vente additionnelle",
+          "aucunEffortCommercial": "N'a fait aucun effort commercial"
+        }
       },
       "s6": {
         "title": "Expérience client",
@@ -1124,12 +1133,47 @@
       "s7": {
         "title": "Observations importantes",
         "positiveIntro": "✅ Points positifs observés :",
-        "negativeIntro": "❌ Points négatifs observés :"
+        "negativeIntro": "❌ Points négatifs observés :",
+        "positiveItems": {
+          "personnelAccueillant": "Personnel accueillant",
+          "serviceRapide": "Service rapide",
+          "tresPropre": "Très propre",
+          "bonneAmbiance": "Bonne ambiance",
+          "produitsAttractifs": "Produits attractifs",
+          "tresProfessionnel": "Très professionnel",
+          "bonsConseils": "Bons conseils",
+          "excellentRapportQualitePrix": "Excellent rapport qualité/prix",
+          "tresBonneOrganisation": "Très bonne organisation",
+          "forteConfiance": "Forte confiance"
+        },
+        "negativeItems": {
+          "attenteExcessive": "Attente excessive",
+          "personnelPeuAccueillant": "Personnel peu accueillant",
+          "manqueProfessionnalisme": "Manque de professionnalisme",
+          "mauvaiseOrganisation": "Mauvaise organisation",
+          "prixPeuClairs": "Prix peu clairs",
+          "etablissementSale": "Établissement sale",
+          "manqueDisponibilite": "Manque de disponibilité",
+          "produitsMalPresentes": "Produits mal présentés",
+          "mauvaisConseils": "Mauvais conseils",
+          "faibleConfiance": "Faible confiance"
+        }
       },
       "s8": {
         "title": "Incidents majeurs",
         "commentLabel": "Commentaire incidents",
-        "commentPlaceholder": "Détaillez si nécessaire..."
+        "commentPlaceholder": "Détaillez si nécessaire...",
+        "items": {
+          "aucunIncident": "Aucun incident",
+          "personnelImpoli": "Personnel impoli",
+          "conflitClient": "Conflit avec un client",
+          "refusService": "Refus de service",
+          "publiciteTrompeuse": "Publicité trompeuse",
+          "nonRespectPrix": "Non-respect des prix affichés",
+          "problemeHygiene": "Problème d'hygiène",
+          "informationErronee": "Information erronée",
+          "autre": "Autre"
+        }
       },
       "s9": {
         "title": "Question clé Shoofly",
@@ -1239,7 +1283,15 @@
           "produitsNettoyage": "Produits de nettoyage fournis"
         },
         "wifiQualityLabel": "Qualité Wifi",
-        "kitchenLabel": "Cuisine — équipements disponibles"
+        "kitchenLabel": "Cuisine — équipements disponibles",
+        "kitchenItems": {
+          "refrigerateur": "Réfrigérateur",
+          "microOnde": "Micro-onde",
+          "four": "Four",
+          "cafetiere": "Cafetière",
+          "bouilloire": "Bouilloire",
+          "vaisselle": "Vaisselle suffisante"
+        }
       },
       "s6": {
         "title": "Luminosité",
@@ -1280,7 +1332,29 @@
       "s11": {
         "title": "Points forts & faibles",
         "strengthsLabel": "✅ Points forts",
-        "weaknessesLabel": "❌ Points faibles"
+        "weaknessesLabel": "❌ Points faibles",
+        "strengths": {
+          "vueAgreable": "Vue agréable",
+          "tresPropre": "Très propre",
+          "tresCalme": "Très calme",
+          "quartierAgreable": "Quartier agréable",
+          "bienEquipe": "Bien équipé",
+          "moderne": "Moderne",
+          "spacieux": "Spacieux",
+          "bonneConnexion": "Bonne connexion internet",
+          "bonRapportQualitePrix": "Bon rapport qualité/prix"
+        },
+        "weaknesses": {
+          "bruyant": "Bruyant",
+          "mauvaiseOdeur": "Mauvaise odeur",
+          "humidite": "Humidité",
+          "equipementVetuste": "Équipement vétuste",
+          "mauvaiseLiterie": "Mauvaise literie",
+          "photosTrompeuses": "Photos trompeuses",
+          "quartierPeuRassurant": "Quartier peu rassurant",
+          "difficulteStationnement": "Difficulté de stationnement",
+          "mauvaiseConnexion": "Mauvaise connexion internet"
+        }
       },
       "s12": {
         "title": "Recommandation finale",
@@ -1295,6 +1369,123 @@
     },
     "saveButton": "💾 Sauvegarder",
     "submitButton": "✅ Soumettre le rapport"
+  },
+  "appLayout": {
+    "available": "Disponible",
+    "unavailable": "Indisponible",
+    "logout": "Déconnexion"
+  },
+  "chatModal": {
+    "file": "Fichier",
+    "loadError": "Erreur chargement messages",
+    "sendError": "Erreur envoi message",
+    "fileTooLarge": "Fichier trop volumineux (max 10 Mo)",
+    "fileSent": "Fichier envoyé ✓",
+    "fileSendError": "Erreur envoi fichier",
+    "oeilLabel": "Œil : {{name}}",
+    "clientLabel": "Client : {{name}}",
+    "noMessages": "Aucun message. Commencez la conversation.",
+    "sendPhotoVideo": "Envoyer une photo ou vidéo",
+    "messagePlaceholder": "Votre message..."
+  },
+  "clientAuditReportView": {
+    "topbarTitle": "Rapport d'audit",
+    "pageTitle": "Rapport d'audit mystère",
+    "notAvailable": "Rapport non encore disponible",
+    "back": "← Retour",
+    "backToMissions": "← Retour aux missions",
+    "reportSubmitted": "Rapport soumis",
+    "shooflyScore": "Score Shoofly",
+    "at": "à {{time}}",
+    "duration": "Durée : {{minutes}} min"
+  },
+  "clientAirbnbReportView": {
+    "notAvailable": "Rapport non encore disponible",
+    "inProgress": "En cours",
+    "disclaimerTitle": "Rapport de visite indépendant",
+    "disclaimerPrefix": "Le score est indicatif car les",
+    "disclaimerStars": "étoiles ⭐",
+    "disclaimerMiddle": "reflètent la perception personnelle de l'Œil. Pour une information plus fiable, concentrez-vous sur les réponses",
+    "disclaimerOuiNon": "Oui / Non",
+    "disclaimerSuffix": "qui sont objectives et vérifiables sur place.",
+    "understood": "Compris",
+    "conformite": "Conformité",
+    "conformiteAnnonce": "Conformité annonce :",
+    "bed": "Lit",
+    "sofa": "Canapé",
+    "global": "Global",
+    "photosAre": "Les photos sont :"
+  },
+  "complianceModalClient": {
+    "title": "Important — À lire avant de continuer",
+    "paragraph1Prefix": "Afin de garantir votre sécurité et le bon déroulement de la mission, toute communication doit rester sur",
+    "paragraph1Suffix": "jusqu'à sa clôture.",
+    "paragraph2Prefix": "Le partage de numéros de téléphone, d'adresses e-mail, de liens ou de comptes de messagerie externe est",
+    "paragraph2Strong": "strictement interdit",
+    "paragraph2Suffix": ". Cette règle protège les deux parties et garantit que notre équipe puisse intervenir efficacement en cas de problème.",
+    "acceptNotice": "En continuant, vous acceptez de respecter cette règle. Tout contournement de la plateforme entraîne la suspension du compte.",
+    "continueButton": "J'ai compris, je continue →"
+  },
+  "complianceModalOeil": {
+    "title": "Rappel avant démarrage",
+    "photos": {
+      "title": "Photos obligatoires",
+      "desc": "Vous devez prendre des photos sur place pour prouver votre déplacement. Sans preuve visuelle, la mission peut être contestée."
+    },
+    "location": {
+      "title": "Restez sur le lieu de mission",
+      "desc": "Votre présence physique est requise. Toute incohérence de localisation sera détectée."
+    },
+    "deadlines": {
+      "title": "Respectez les délais",
+      "desc": "Complétez la mission dans les délais convenus avec le client."
+    },
+    "antiContactPrefix": "Toute communication doit rester sur",
+    "antiContactMiddle": "Le partage de numéros, emails ou comptes externes est",
+    "antiContactStrong": "strictement interdit",
+    "antiContactSuffix": "et entraîne la suspension du compte.",
+    "acceptNotice": "En continuant, vous acceptez ces conditions. Tout manquement peut entraîner un avertissement ou la suspension de votre compte.",
+    "continueButton": "J'ai compris, je démarre →"
+  },
+  "missionSummaryModal": {
+    "statusLabel": "Statut",
+    "earningLabel": "Votre gain",
+    "awaitingValidation": "En attente de validation client",
+    "missionDate": "Date mission",
+    "completedOn": "Terminée le",
+    "validatedOn": "Validée le",
+    "clientRating": "Note reçue du client",
+    "notRatedYet": "Pas encore noté par le client",
+    "viewReport": "Voir le rapport soumis",
+    "history": "Historique",
+    "awaitingClientValidation": "En attente de la validation du client",
+    "close": "Fermer",
+    "status": {
+      "pending": "En attente",
+      "assigned": "Œil assigné",
+      "enRoute": "En route",
+      "active": "Démarrée",
+      "completed": "Terminée",
+      "validated": "Validée — Payée",
+      "cancelled": "Annulée",
+      "sousReclamation": "En réclamation"
+    }
+  },
+  "missionHistoryModal": {
+    "title": "Historique de la mission",
+    "empty": "Aucun historique disponible",
+    "by": "par {{name}}",
+    "close": "Fermer",
+    "status": {
+      "pending": "Mission créée",
+      "assigned": "Œil assigné",
+      "enRoute": "En route",
+      "active": "Mission démarrée",
+      "completed": "Mission terminée par l'Œil",
+      "validated": "Validée par le client",
+      "cancelled": "Mission annulée",
+      "sousReclamation": "Réclamation client"
+    }
   },
   "notificationBanner": {
     "title": "Activer les notifications",

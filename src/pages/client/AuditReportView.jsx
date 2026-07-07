@@ -6,6 +6,7 @@ import Topbar from '../../components/layout/Topbar'
 import { missionsAPI, reportsAPI } from '../../api'
 import { Spinner, Stars } from '../../components/ui'
 import { translateLocation } from '../../constants/villesTranslations'
+import { competenceCommercialeLabel, pointsPositifsLabel, pointsNegatifsLabel, incidentsLabel } from '../../constants/auditReportLabels'
 
 function ScoreBar({ label, value, max }) {
   const pct = Math.round((value / max) * 100)
@@ -49,16 +50,19 @@ function Section({ title, children }) {
   )
 }
 
-function scoreLabel(s) {
-  if (s >= 90) return { label: 'Excellent 🟢',    color: 'text-green-400'  }
-  if (s >= 80) return { label: 'Très bon 🟢',     color: 'text-green-400'  }
-  if (s >= 70) return { label: 'Correct 🟡',      color: 'text-yellow-400' }
-  if (s >= 60) return { label: 'À améliorer 🟠',  color: 'text-orange-400' }
-  return              { label: 'Critique 🔴',      color: 'text-red-400'    }
+function useScoreLabel(t) {
+  return (s) => {
+    if (s >= 90) return { label: `${t('oeilAuditReport.scoreLabels.excellent')} 🟢`, color: 'text-green-400'  }
+    if (s >= 80) return { label: `${t('oeilAuditReport.scoreLabels.veryGood')} 🟢`,  color: 'text-green-400'  }
+    if (s >= 70) return { label: `${t('oeilAuditReport.scoreLabels.correct')} 🟡`,   color: 'text-yellow-400' }
+    if (s >= 60) return { label: `${t('oeilAuditReport.scoreLabels.toImprove')} 🟠`, color: 'text-orange-400' }
+    return              { label: `${t('oeilAuditReport.scoreLabels.critical')} 🔴`,  color: 'text-red-400'    }
+  }
 }
 
 export default function AuditReportView() {
-  const { i18n } = useTranslation()
+  const { t, i18n } = useTranslation()
+  const scoreLabel = useScoreLabel(t)
   const { missionId } = useParams()
   const navigate = useNavigate()
   const [mission, setMission] = useState(null)
@@ -76,18 +80,18 @@ export default function AuditReportView() {
   }, [missionId])
 
   if (loading) return (
-    <AppLayout><Topbar title="Rapport d'audit" />
+    <AppLayout><Topbar title={t('clientAuditReportView.topbarTitle')} />
       <div className="flex-1 flex items-center justify-center"><Spinner size="lg" /></div>
     </AppLayout>
   )
 
   if (!report || !report.submitted) return (
     <AppLayout>
-      <Topbar title="Rapport d'audit" />
+      <Topbar title={t('clientAuditReportView.topbarTitle')} />
       <div className="flex-1 flex items-center justify-center flex-col gap-3 text-[#AAA]">
         <div className="text-4xl opacity-30">📋</div>
-        <p className="text-sm">Rapport non encore disponible</p>
-        <button onClick={() => navigate(-1)} className="btn btn-ghost btn-sm mt-2">← Retour</button>
+        <p className="text-sm">{t('clientAuditReportView.notAvailable')}</p>
+        <button onClick={() => navigate(-1)} className="btn btn-ghost btn-sm mt-2">{t('clientAuditReportView.back')}</button>
       </div>
     </AppLayout>
   )
@@ -96,9 +100,17 @@ export default function AuditReportView() {
   const score = d.score_final || 0
   const { label: scoreLbl, color: scoreColor } = scoreLabel(score)
 
+  const achatProduitLabels = {
+    oui_sans: t('oeilAuditReport.sections.s9.choices.ouiSans'),
+    probablement_oui: t('oeilAuditReport.sections.s9.choices.probablementOui'),
+    peut_etre: t('oeilAuditReport.sections.s9.choices.peutEtre'),
+    probablement_non: t('oeilAuditReport.sections.s9.choices.probablementNon'),
+    certainement_non: t('oeilAuditReport.sections.s9.choices.certainementNon'),
+  }
+
   return (
     <AppLayout>
-      <Topbar title="Rapport d'audit mystère" />
+      <Topbar title={t('clientAuditReportView.pageTitle')} />
       <div className="p-4 md:p-6 max-w-2xl mx-auto">
 
         {/* Header */}
@@ -107,10 +119,10 @@ export default function AuditReportView() {
             <div>
               <div className="font-semibold">{mission?.title}</div>
               <div className="text-xs text-[#AAA] mt-0.5">📍 {translateLocation(mission?.city, i18n.language)}</div>
-              {d.date_visite && <div className="text-xs text-[#AAA] mt-0.5">📅 {d.date_visite} {d.heure_visite && `à ${d.heure_visite}`}</div>}
-              {d.duree_visite && <div className="text-xs text-[#AAA] mt-0.5">⏱ Durée : {d.duree_visite} min</div>}
+              {d.date_visite && <div className="text-xs text-[#AAA] mt-0.5">📅 {d.date_visite} {d.heure_visite && t('clientAuditReportView.at', { time: d.heure_visite })}</div>}
+              {d.duree_visite && <div className="text-xs text-[#AAA] mt-0.5">⏱ {t('clientAuditReportView.duration', { minutes: d.duree_visite })}</div>}
             </div>
-            <span className="badge badge-green">✓ Rapport soumis</span>
+            <span className="badge badge-green">✓ {t('clientAuditReportView.reportSubmitted')}</span>
           </div>
         </div>
 
@@ -118,7 +130,7 @@ export default function AuditReportView() {
         <div className="card mb-4">
           <div className="flex items-center justify-between mb-4">
             <div>
-              <div className="text-xs text-[#AAA] mb-0.5">Score Shoofly</div>
+              <div className="text-xs text-[#AAA] mb-0.5">{t('clientAuditReportView.shooflyScore')}</div>
               <div className={`text-4xl font-bold ${scoreColor}`}>
                 {score}<span className="text-sm text-[#AAA]">/100</span>
               </div>
@@ -129,61 +141,61 @@ export default function AuditReportView() {
             </div>
           </div>
           <div className="space-y-2">
-            <ScoreBar label="Première impression" value={10} max={10} />
-            <ScoreBar label="Accueil"             value={20} max={20} />
-            <ScoreBar label="Propreté"            value={15} max={15} />
-            <ScoreBar label="Service"             value={20} max={20} />
-            <ScoreBar label="Comp. commerciale"   value={15} max={15} />
-            <ScoreBar label="Expérience client"   value={15} max={15} />
-            <ScoreBar label="Recommandation"      value={5}  max={5}  />
+            <ScoreBar label={t('oeilAuditReport.recap.rows.premiereImpression')} value={10} max={10} />
+            <ScoreBar label={t('oeilAuditReport.recap.rows.accueil')}            value={20} max={20} />
+            <ScoreBar label={t('oeilAuditReport.recap.rows.proprete')}           value={15} max={15} />
+            <ScoreBar label={t('oeilAuditReport.recap.rows.service')}           value={20} max={20} />
+            <ScoreBar label={t('oeilAuditReport.recap.rows.compCommerciale')}   value={15} max={15} />
+            <ScoreBar label={t('oeilAuditReport.recap.rows.experienceClient')}  value={15} max={15} />
+            <ScoreBar label={t('oeilAuditReport.recap.rows.recommandation')}    value={5}  max={5}  />
           </div>
         </div>
 
         {/* Section 1 — Première impression */}
-        <Section title="1. Première impression">
-          <CritereDisplay label="Facilité à trouver"       note={d.premiere_impression}  remarque={d.premiere_impression_rem}  />
-          <CritereDisplay label="Aspect extérieur"          note={d.aspect_exterieur}      remarque={d.aspect_exterieur_rem}      />
-          <CritereDisplay label="Visibilité enseigne"       note={d.visibilite_enseigne}   remarque={d.visibilite_enseigne_rem}   />
-          <CritereDisplay label="Attractivité"              note={d.attractivite}          remarque={d.attractivite_rem}          />
-          <CritereDisplay label="Impression globale"        note={d.impression_globale}    remarque={d.impression_globale_rem}    />
+        <Section title={`1. ${t('oeilAuditReport.sections.s1.title')}`}>
+          <CritereDisplay label={t('oeilAuditReport.sections.s1.criteria.premiereImpression')} note={d.premiere_impression}  remarque={d.premiere_impression_rem}  />
+          <CritereDisplay label={t('oeilAuditReport.sections.s1.criteria.aspectExterieur')}    note={d.aspect_exterieur}      remarque={d.aspect_exterieur_rem}      />
+          <CritereDisplay label={t('oeilAuditReport.sections.s1.criteria.visibiliteEnseigne')} note={d.visibilite_enseigne}   remarque={d.visibilite_enseigne_rem}   />
+          <CritereDisplay label={t('oeilAuditReport.sections.s1.criteria.attractivite')}       note={d.attractivite}          remarque={d.attractivite_rem}          />
+          <CritereDisplay label={t('oeilAuditReport.sections.s1.criteria.impressionGlobale')}  note={d.impression_globale}    remarque={d.impression_globale_rem}    />
         </Section>
 
         {/* Section 2 — Accueil */}
-        <Section title="2. Accueil">
-          <CritereDisplay label="Temps prise en charge"    note={d.temps_prise_charge}    remarque={d.temps_prise_charge_rem}    />
-          <CritereDisplay label="Politesse"                note={d.politesse}             remarque={d.politesse_rem}             />
-          <CritereDisplay label="Sourire"                  note={d.sourire}               remarque={d.sourire_rem}               />
-          <CritereDisplay label="Disponibilité"            note={d.disponibilite}         remarque={d.disponibilite_rem}         />
-          <CritereDisplay label="Professionnalisme"        note={d.professionnalisme_accueil} remarque={d.professionnalisme_accueil_rem} />
-          <CritereDisplay label="Envie de rester"          note={d.envie_rester}          remarque={d.envie_rester_rem}          />
+        <Section title={`2. ${t('oeilAuditReport.sections.s2.title')}`}>
+          <CritereDisplay label={t('oeilAuditReport.sections.s2.criteria.tempsPriseCharge')}   note={d.temps_prise_charge}    remarque={d.temps_prise_charge_rem}    />
+          <CritereDisplay label={t('oeilAuditReport.sections.s2.criteria.politesse')}          note={d.politesse}             remarque={d.politesse_rem}             />
+          <CritereDisplay label={t('oeilAuditReport.sections.s2.criteria.sourire')}            note={d.sourire}               remarque={d.sourire_rem}               />
+          <CritereDisplay label={t('oeilAuditReport.sections.s2.criteria.disponibilite')}      note={d.disponibilite}         remarque={d.disponibilite_rem}         />
+          <CritereDisplay label={t('oeilAuditReport.sections.s2.criteria.professionnalisme')}  note={d.professionnalisme_accueil} remarque={d.professionnalisme_accueil_rem} />
+          <CritereDisplay label={t('oeilAuditReport.sections.s2.criteria.envieRester')}        note={d.envie_rester}          remarque={d.envie_rester_rem}          />
         </Section>
 
         {/* Section 3 — Propreté */}
-        <Section title="3. Propreté et environnement">
-          <CritereDisplay label="Propreté générale"        note={d.proprete_generale}     remarque={d.proprete_generale_rem}     />
-          <CritereDisplay label="Organisation"             note={d.organisation}          remarque={d.organisation_rem}          />
-          <CritereDisplay label="État du mobilier"         note={d.etat_mobilier}         remarque={d.etat_mobilier_rem}         />
-          <CritereDisplay label="Ambiance"                 note={d.ambiance}              remarque={d.ambiance_rem}              />
-          <CritereDisplay label="Confort"                  note={d.confort}               remarque={d.confort_rem}               />
+        <Section title={`3. ${t('oeilAuditReport.sections.s3.title')}`}>
+          <CritereDisplay label={t('oeilAuditReport.sections.s3.criteria.proprete')}      note={d.proprete_generale}     remarque={d.proprete_generale_rem}     />
+          <CritereDisplay label={t('oeilAuditReport.sections.s3.criteria.organisation')}  note={d.organisation}          remarque={d.organisation_rem}          />
+          <CritereDisplay label={t('oeilAuditReport.sections.s3.criteria.etatMobilier')}  note={d.etat_mobilier}         remarque={d.etat_mobilier_rem}         />
+          <CritereDisplay label={t('oeilAuditReport.sections.s3.criteria.ambiance')}      note={d.ambiance}              remarque={d.ambiance_rem}              />
+          <CritereDisplay label={t('oeilAuditReport.sections.s3.criteria.confort')}       note={d.confort}               remarque={d.confort_rem}               />
         </Section>
 
         {/* Section 4 — Service */}
-        <Section title="4. Qualité du service">
-          <CritereDisplay label="Rapidité"                 note={d.rapidite_service}      remarque={d.rapidite_service_rem}      />
-          <CritereDisplay label="Compréhension besoin"     note={d.comprehension_besoin}  remarque={d.comprehension_besoin_rem}  />
-          <CritereDisplay label="Pertinence réponses"      note={d.pertinence_reponses}   remarque={d.pertinence_reponses_rem}   />
-          <CritereDisplay label="Qualité conseils"         note={d.qualite_conseils}      remarque={d.qualite_conseils_rem}      />
-          <CritereDisplay label="Niveau pro"               note={d.niveau_pro}            remarque={d.niveau_pro_rem}            />
-          <CritereDisplay label="Connaissance produit"     note={d.connaissance_produit}  remarque={d.connaissance_produit_rem}  />
+        <Section title={`4. ${t('oeilAuditReport.sections.s4.title')}`}>
+          <CritereDisplay label={t('oeilAuditReport.sections.s4.criteria.rapidite')}             note={d.rapidite_service}      remarque={d.rapidite_service_rem}      />
+          <CritereDisplay label={t('oeilAuditReport.sections.s4.criteria.comprehensionBesoin')}  note={d.comprehension_besoin}  remarque={d.comprehension_besoin_rem}  />
+          <CritereDisplay label={t('oeilAuditReport.sections.s4.criteria.pertinenceReponses')}   note={d.pertinence_reponses}   remarque={d.pertinence_reponses_rem}   />
+          <CritereDisplay label={t('oeilAuditReport.sections.s4.criteria.qualiteConseils')}      note={d.qualite_conseils}      remarque={d.qualite_conseils_rem}      />
+          <CritereDisplay label={t('oeilAuditReport.sections.s4.criteria.niveauPro')}            note={d.niveau_pro}            remarque={d.niveau_pro_rem}            />
+          <CritereDisplay label={t('oeilAuditReport.sections.s4.criteria.connaissanceProduit')}  note={d.connaissance_produit}  remarque={d.connaissance_produit_rem}  />
         </Section>
 
         {/* Section 5 — Compétence commerciale */}
         {d.competence_commerciale?.length > 0 && (
-          <Section title="5. Compétence commerciale">
+          <Section title={`5. ${t('oeilAuditReport.sections.s5.title')}`}>
             <div className="flex flex-wrap gap-1.5">
               {d.competence_commerciale.map(item => (
                 <span key={item} className={`badge text-[10px] ${item === "N'a fait aucun effort commercial" ? 'badge-red' : 'badge-green'}`}>
-                  {item}
+                  {competenceCommercialeLabel(item, t)}
                 </span>
               ))}
             </div>
@@ -191,30 +203,30 @@ export default function AuditReportView() {
         )}
 
         {/* Section 6 — Expérience client */}
-        <Section title="6. Expérience client">
-          <CritereDisplay label="Clarté des prix"          note={d.clarte_prix}           remarque={d.clarte_prix_rem}           />
-          <CritereDisplay label="Transparence"             note={d.transparence}          remarque={d.transparence_rem}          />
-          <CritereDisplay label="Simplicité parcours"      note={d.simplicite_parcours}   remarque={d.simplicite_parcours_rem}   />
-          <CritereDisplay label="Confiance inspirée"       note={d.confiance_inspiree}    remarque={d.confiance_inspiree_rem}    />
-          <CritereDisplay label="Satisfaction générale"    note={d.satisfaction_generale} remarque={d.satisfaction_generale_rem} />
+        <Section title={`6. ${t('oeilAuditReport.sections.s6.title')}`}>
+          <CritereDisplay label={t('oeilAuditReport.sections.s6.criteria.clartePrix')}          note={d.clarte_prix}           remarque={d.clarte_prix_rem}           />
+          <CritereDisplay label={t('oeilAuditReport.sections.s6.criteria.transparence')}        note={d.transparence}          remarque={d.transparence_rem}          />
+          <CritereDisplay label={t('oeilAuditReport.sections.s6.criteria.simpliciteParcours')}  note={d.simplicite_parcours}   remarque={d.simplicite_parcours_rem}   />
+          <CritereDisplay label={t('oeilAuditReport.sections.s6.criteria.confianceInspiree')}   note={d.confiance_inspiree}    remarque={d.confiance_inspiree_rem}    />
+          <CritereDisplay label={t('oeilAuditReport.sections.s6.criteria.satisfactionGenerale')} note={d.satisfaction_generale} remarque={d.satisfaction_generale_rem} />
         </Section>
 
         {/* Section 7 — Observations */}
         {(d.points_positifs?.length > 0 || d.points_negatifs?.length > 0) && (
-          <Section title="7. Observations">
+          <Section title={`7. ${t('oeilAuditReport.sections.s7.title')}`}>
             {d.points_positifs?.length > 0 && (
               <div className="mb-3">
-                <div className="text-xs text-green-400 font-semibold mb-1">✅ Points positifs</div>
+                <div className="text-xs text-green-400 font-semibold mb-1">{t('oeilAuditReport.sections.s7.positiveIntro')}</div>
                 <div className="flex flex-wrap gap-1">
-                  {d.points_positifs.map(p => <span key={p} className="badge badge-green text-[10px]">{p}</span>)}
+                  {d.points_positifs.map(p => <span key={p} className="badge badge-green text-[10px]">{pointsPositifsLabel(p, t)}</span>)}
                 </div>
               </div>
             )}
             {d.points_negatifs?.length > 0 && (
               <div>
-                <div className="text-xs text-red-400 font-semibold mb-1">❌ Points négatifs</div>
+                <div className="text-xs text-red-400 font-semibold mb-1">{t('oeilAuditReport.sections.s7.negativeIntro')}</div>
                 <div className="flex flex-wrap gap-1">
-                  {d.points_negatifs.map(p => <span key={p} className="badge badge-red text-[10px]">{p}</span>)}
+                  {d.points_negatifs.map(p => <span key={p} className="badge badge-red text-[10px]">{pointsNegatifsLabel(p, t)}</span>)}
                 </div>
               </div>
             )}
@@ -223,10 +235,10 @@ export default function AuditReportView() {
 
         {/* Section 8 — Incidents */}
         {d.incidents?.length > 0 && (
-          <Section title="8. Incidents">
+          <Section title={`8. ${t('oeilAuditReport.sections.s8.title')}`}>
             <div className="flex flex-wrap gap-1">
               {d.incidents.map(i => (
-                <span key={i} className={`badge text-[10px] ${i === 'Aucun incident' ? 'badge-green' : 'badge-red'}`}>{i}</span>
+                <span key={i} className={`badge text-[10px] ${i === 'Aucun incident' ? 'badge-green' : 'badge-red'}`}>{incidentsLabel(i, t)}</span>
               ))}
             </div>
             {d.incidents_commentaire && <p className="text-xs text-[#AAA] mt-2 italic">"{d.incidents_commentaire}"</p>}
@@ -235,29 +247,25 @@ export default function AuditReportView() {
 
         {/* Section 9 — Question clé */}
         {d.achat_produit && (
-          <Section title="9. Question clé Shoofly">
+          <Section title={`9. ${t('oeilAuditReport.sections.s9.title')}`}>
             <div className="text-center py-2">
               <span className="text-lg font-bold">
-                {d.achat_produit === 'oui_sans'         ? '👍 Oui sans hésitation' :
-                 d.achat_produit === 'probablement_oui' ? '👌 Probablement oui'    :
-                 d.achat_produit === 'peut_etre'        ? '😐 Peut-être'           :
-                 d.achat_produit === 'probablement_non' ? '👎 Probablement non'    :
-                                                          '🚫 Certainement non'    }
+                {achatProduitLabels[d.achat_produit]}
               </span>
             </div>
-            <CritereDisplay label="Recommandation" note={d.recommandation_note} remarque={d.recommandation_rem} />
+            <CritereDisplay label={t('oeilAuditReport.sections.s9.recommendationLabel')} note={d.recommandation_note} remarque={d.recommandation_rem} />
           </Section>
         )}
 
         {/* Section 10 — Commentaire libre */}
         {d.commentaire_libre && (
-          <Section title="10. Commentaire libre">
+          <Section title={`10. ${t('oeilAuditReport.sections.s10.title')}`}>
             <p className="text-sm text-[#CCC] leading-relaxed">{d.commentaire_libre}</p>
           </Section>
         )}
 
         <button onClick={() => navigate(-1)} className="btn btn-ghost w-full justify-center mt-4">
-          ← Retour aux missions
+          {t('clientAuditReportView.backToMissions')}
         </button>
 
       </div>
