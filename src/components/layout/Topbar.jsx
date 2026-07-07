@@ -132,14 +132,14 @@ const handleClick = (n) => {
               <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
             </svg>
             {unread > 0 && (
-              <span className="absolute -top-1 -right-1 bg-[#FF4D00] text-white text-[10px] font-bold min-w-[14px] h-3.5 rounded-full flex items-center justify-center px-0.5">
+              <span className="absolute -top-1 -end-1 bg-[#FF4D00] text-white text-[10px] font-bold min-w-[14px] h-3.5 rounded-full flex items-center justify-center px-0.5">
                 {unread}
               </span>
             )}
           </button>
 
           {showNotifs && (
-            <div className="absolute right-0 top-10 w-[300px] bg-[#181818] border border-white/20 rounded-xl shadow-[0_16px_40px_rgba(0,0,0,0.5)] overflow-hidden z-50">
+            <div className="absolute end-0 top-10 w-[300px] max-w-[calc(100vw-2rem)] bg-[#181818] border border-white/20 rounded-xl shadow-[0_16px_40px_rgba(0,0,0,0.5)] overflow-hidden z-50">
               <div className="flex items-center justify-between px-4 py-2.5 border-b border-white/12">
                 <span className="text-sm font-semibold">Notifications</span>
                 <button onClick={markAll} className="text-[11px] text-[#FF4D00]">Tout lire</button>

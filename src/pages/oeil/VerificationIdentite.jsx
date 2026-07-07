@@ -91,14 +91,14 @@ export default function VerificationIdentite() {
                   <p className="font-semibold text-sm">{label}</p>
                   <p className="text-xs text-[#AAA]">{hint}</p>
                 </div>
-                {files[key] && <span className="ml-auto text-green-400 text-xs font-semibold">{t('verificationIdentite.readyBadge')}</span>}
+                {files[key] && <span className="ms-auto text-green-400 text-xs font-semibold">{t('verificationIdentite.readyBadge')}</span>}
               </div>
               {previews[key] ? (
                 <div className="relative">
                   <img src={previews[key]} alt={label} className="w-full h-36 object-cover rounded-xl" />
                   <button
                     onClick={() => { setFiles((f) => ({ ...f, [key]: null })); setPreviews((p) => ({ ...p, [key]: null })) }}
-                    className="absolute top-2 right-2 bg-black/60 text-white text-xs px-2 py-1 rounded-lg"
+                    className="absolute top-2 end-2 bg-black/60 text-white text-xs px-2 py-1 rounded-lg"
                   >
                     {t('verificationIdentite.changeButton')}
                   </button>

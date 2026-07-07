@@ -94,7 +94,7 @@ function ChoixUnique({ items, dataKey, data, set, disabled }) {
       {items.map(({ v, label }) => (
         <button key={v} type="button"
           onClick={() => !disabled && set(dataKey)(v)}
-          className={`px-3 py-2 rounded-lg text-sm text-left border transition-all ${
+          className={`px-3 py-2 rounded-lg text-sm text-start border transition-all ${
             data[dataKey] === v
               ? 'border-[#FF4D00] bg-[#FF4D00]/10 text-white'
               : 'border-white/12 text-[#AAA] hover:border-white/22'

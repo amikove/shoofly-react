@@ -22,7 +22,7 @@ export default function ToastContainer() {
   const dismiss = (id) => setToasts((t) => t.filter((x) => x.id !== id))
 
   return (
-    <div className="fixed bottom-6 right-6 z-[999] flex flex-col gap-2">
+    <div className="fixed bottom-6 end-6 z-[999] flex flex-col gap-2">
       {toasts.map((t) => (
         <div
           key={t.id}
@@ -33,7 +33,7 @@ export default function ToastContainer() {
           <span className="flex-1">{t.msg}</span>
           <button
             onClick={(e) => { e.stopPropagation(); dismiss(t.id) }}
-            className="text-white/40 hover:text-white/80 flex-shrink-0 ml-1"
+            className="text-white/40 hover:text-white/80 flex-shrink-0 ms-1"
           >✕</button>
         </div>
       ))}

@@ -27,7 +27,7 @@ export default function NotificationBanner() {
   if (!show || granted) return null
 
   return (
-    <div className="fixed bottom-6 left-6 z-50 max-w-sm">
+    <div className="fixed bottom-6 start-6 z-50 max-w-sm">
       <div className="bg-[#181818] border border-white/20 rounded-2xl p-4 shadow-[0_16px_40px_rgba(0,0,0,0.5)] flex gap-3">
         <div className="text-2xl flex-shrink-0">🔔</div>
         <div className="flex-1 min-w-0">

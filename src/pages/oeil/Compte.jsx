@@ -115,7 +115,7 @@ const [dispo, setDispo] = useState(() => parseDispo(user?.disponibilites))
                   <button
                     onClick={() => avatarInputRef.current?.click()}
                     disabled={uploadingAvatar}
-                    className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-[#FF4D00] flex items-center justify-center text-white text-xs disabled:opacity-50"
+                    className="absolute -bottom-1 -end-1 w-6 h-6 rounded-full bg-[#FF4D00] flex items-center justify-center text-white text-xs disabled:opacity-50"
                     title={t('oeilCompte.changePhotoTitle')}
                   >
                     {uploadingAvatar ? '...' : '📷'}
@@ -211,9 +211,9 @@ const [dispo, setDispo] = useState(() => parseDispo(user?.disponibilites))
                   {/* Toggle on/off */}
                   <button
                     onClick={() => toggleJour(i)}
-                    className={`ml-auto w-10 h-5 rounded-full transition-colors shrink-0 relative ${d.actif ? 'bg-[#FF4D00]' : 'bg-[#333]'}`}
+                    className={`ms-auto w-10 h-5 rounded-full transition-colors shrink-0 relative ${d.actif ? 'bg-[#FF4D00]' : 'bg-[#333]'}`}
                   >
-                    <span className={`absolute top-0.5 w-4 h-4 bg-white rounded-full shadow transition-all ${d.actif ? 'left-5' : 'left-0.5'}`} />
+                    <span className={`absolute top-0.5 w-4 h-4 bg-white rounded-full shadow transition-all ${d.actif ? 'end-0.5' : 'start-0.5'}`} />
                   </button>
                 </div>
               ))}

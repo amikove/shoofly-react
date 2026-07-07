@@ -503,14 +503,14 @@ try {
                 <div className="space-y-3">
                   <button
                     onClick={() => { setAssistanceView('problem'); setReportType(''); setReportDesc('') }}
-                    className="w-full bg-[#222] hover:bg-[#2A2A2A] rounded-xl p-4 text-left transition-colors border border-white/5"
+                    className="w-full bg-[#222] hover:bg-[#2A2A2A] rounded-xl p-4 text-start transition-colors border border-white/5"
                   >
                     <p className="text-sm font-semibold text-orange-400 mb-1">{t('oeilMissions.assistanceModal.reportProblem.label')}</p>
                     <p className="text-xs text-[#AAA]">{t('oeilMissions.assistanceModal.reportProblem.desc')}</p>
                   </button>
                   <button
                     onClick={() => { setAssistanceView('transfer'); setTransferReason('') }}
-                    className="w-full bg-[#222] hover:bg-[#2A2A2A] rounded-xl p-4 text-left transition-colors border border-white/5"
+                    className="w-full bg-[#222] hover:bg-[#2A2A2A] rounded-xl p-4 text-start transition-colors border border-white/5"
                   >
                     <p className="text-sm font-semibold text-red-400 mb-1">{t('oeilMissions.assistanceModal.majorImpediment.label')}</p>
                     <p className="text-xs text-[#AAA]">{t('oeilMissions.assistanceModal.majorImpediment.desc')}</p>

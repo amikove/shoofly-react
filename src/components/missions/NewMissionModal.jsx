@@ -345,7 +345,7 @@ if (parseFloat(form.price) < minPrice) {
               <div className="text-sm font-semibold">👁️ {preselectedOeil.first_name} {preselectedOeil.last_name}</div>
               <div className="text-xs text-[#AAA]">{t('newMissionModal.directAssignment', { city: preselectedOeil.city })}</div>
             </div>
-            <span className="ml-auto badge badge-orange text-[10px]">{t('newMissionModal.directBadge')}</span>
+            <span className="ms-auto badge badge-orange text-[10px]">{t('newMissionModal.directBadge')}</span>
           </div>
         )}
 

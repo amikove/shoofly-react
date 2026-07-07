@@ -77,7 +77,7 @@ export default function Messagerie() {
                 <button
                   key={m.id}
                   onClick={() => openChat(m)}
-                  className={`w-full flex items-center gap-3 px-4 py-3 hover:bg-white/5 transition-colors text-left ${i < inbox.length - 1 ? 'border-b border-white/10' : ''}`}
+                  className={`w-full flex items-center gap-3 px-4 py-3 hover:bg-white/5 transition-colors text-start ${i < inbox.length - 1 ? 'border-b border-white/10' : ''}`}
                 >
                   {/* Icône type */}
                   <div className="text-2xl shrink-0">{TYPE_ICON[m.type] || '📌'}</div>
