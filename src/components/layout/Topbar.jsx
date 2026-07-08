@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import { usersAPI } from '../../api'
 import { useAuth } from '../../context/AuthContext'
@@ -6,6 +7,7 @@ import { useSocket } from '../../context/SocketContext'
 import { useNotif } from '../../context/NotifContext'
 
 export default function Topbar({ title, actions }) {
+  const { t }       = useTranslation()
   const { user }    = useAuth()
   const navigate    = useNavigate()
   const { onEvent } = useSocket() || {}
@@ -141,13 +143,17 @@ const handleClick = (n) => {
           {showNotifs && (
             <div className="absolute end-0 top-10 w-[300px] max-w-[calc(100vw-2rem)] bg-[#181818] border border-white/20 rounded-xl shadow-[0_16px_40px_rgba(0,0,0,0.5)] overflow-hidden z-50">
               <div className="flex items-center justify-between px-4 py-2.5 border-b border-white/12">
-                <span className="text-sm font-semibold">Notifications</span>
-                <button onClick={markAll} className="text-[11px] text-[#FF4D00]">Tout lire</button>
+                <span className="text-sm font-semibold">{t('notifications.title')}</span>
+                <button onClick={markAll} className="text-[11px] text-[#FF4D00]">{t('notifications.markAllRead')}</button>
               </div>
               <div className="max-h-[300px] overflow-y-auto">
                 {!notifs.length ? (
-                  <div className="py-8 text-center text-xs text-[#AAA]">Aucune notification</div>
-                ) : notifs.slice(0, 10).map((n, i) => (
+                  <div className="py-8 text-center text-xs text-[#AAA]">{t('notifications.empty')}</div>
+                ) : notifs.slice(0, 10).map((n, i) => {
+                  const params = n.params || {}
+                  const displayTitle = n.title_key ? t(`notif.${n.title_key}`, params) : n.title
+                  const displayBody = n.body_key ? t(`notif.${n.body_key}`, params) : n.body
+                  return (
                   <div
                     key={n.id || i}
                     onClick={() => handleClick(n)}
@@ -159,15 +165,16 @@ const handleClick = (n) => {
                       {n.type === 'mission' ? '📋' : n.type === 'media' ? '📸' : n.type === 'message' ? '💬' : 'ℹ️'}
                     </span>
                     <div className="flex-1 min-w-0">
-                      <div className="text-xs font-medium">{n.title}</div>
-                      <div className="text-[11px] text-[#AAA] leading-relaxed">{n.body}</div>
+                      <div className="text-xs font-medium">{displayTitle}</div>
+                      <div className="text-[11px] text-[#AAA] leading-relaxed">{displayBody}</div>
                       {n.mission_id && (
-                        <div className="text-[10px] text-[#FF4D00] mt-0.5">Cliquer pour ouvrir →</div>
+                        <div className="text-[10px] text-[#FF4D00] mt-0.5">{t('notifications.clickToOpen')}</div>
                       )}
                     </div>
                     {!n.is_read && <div className="w-1.5 h-1.5 rounded-full bg-[#FF4D00] flex-shrink-0 mt-1" />}
                   </div>
-                ))}
+                  )
+                })}
               </div>
             </div>
           )}
