@@ -28,7 +28,7 @@ const WHY = [
 ]
 
 export default function Landing() {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   useEffect(() => { captureAcquisitionParams() }, [])
   const navigate = useNavigate()
 
@@ -75,8 +75,13 @@ export default function Landing() {
             {t('landing.hero.paragraph2')}
             </p>
             <p className="text-[#AAA] text-base md:text-lg max-w-2xl mx-auto mb-10 leading-relaxed">
-            <strong className="font-display font-bold text-white">SHOOF<span className="text-[#FF4D00]">LY</span></strong>{t('landing.hero.brandTransliteration')} {t('landing.hero.paragraph3')}
-            </p>
+<strong className="font-display font-bold text-white">SHOOF<span className="text-[#FF4D00]">LY</span></strong>
+              {i18n.language === 'ar' && (
+                <strong className="font-display font-bold">
+                  {' '}(<span className="text-white">شووف</span><span className="text-[#FF4D00]">لي</span>)
+                </strong>
+              )}
+              {' '}{t('landing.hero.paragraph3')}            </p>
 
         <div className="flex flex-col sm:flex-row gap-3 justify-center">
           <button onClick={() => navigate('/register')}
