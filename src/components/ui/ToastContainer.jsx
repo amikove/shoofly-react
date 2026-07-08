@@ -14,9 +14,9 @@ export default function ToastContainer() {
 
   const icons  = { success: '✅', error: '❌', info: '💬' }
   const colors = {
-    success: 'border-green-500/30 bg-green-500/10',
-    error:   'border-red-500/30 bg-red-500/10',
-    info:    'border-[#FF4D00]/30 bg-[#FF4D00]/10',
+    success: 'border-green-500/30 bg-green-500/20',
+    error:   'border-red-500/30 bg-red-500/20',
+    info:    'border-[#FF4D00]/30 bg-[#FF4D00]/30',
   }
 
   const dismiss = (id) => setToasts((t) => t.filter((x) => x.id !== id))
@@ -27,7 +27,7 @@ export default function ToastContainer() {
         <div
           key={t.id}
           onClick={() => { t.onClick?.(); dismiss(t.id) }}
-          className={`toast-in flex items-center gap-2 px-4 py-3 rounded-xl border text-sm font-medium min-w-[240px] max-w-[320px] transition-opacity ${colors[t.type]} ${t.onClick ? 'cursor-pointer hover:opacity-80' : ''}`}
+         className={`toast-in flex items-center gap-2 px-4 py-3 rounded-xl border text-sm font-medium min-w-[240px] max-w-[320px] transition-opacity bg-[#181818] ${colors[t.type]} ${t.onClick ? 'cursor-pointer hover:opacity-80' : ''}`}
         >
           <span className="flex-shrink-0">{icons[t.type]}</span>
           <span className="flex-1">{t.msg}</span>
