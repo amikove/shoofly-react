@@ -1616,6 +1616,15 @@
     "accountAutoSuspendedTitle": "🔴 Compte suspendu",
     "accountAutoSuspendedBody": "Votre score de fiabilité est tombé en dessous de 50%. Vous pouvez demander un examen de votre dossier."
   },
+  "systemMessage": {
+    "oeilAccepted": "{{oeilName}} a accepté la mission.",
+    "missionEnRoute": "L'Œil est en route.",
+    "missionStarted": "Mission démarrée.",
+    "missionCompleted": "Mission terminée avec succès.",
+    "missionCancelled": "Mission annulée.",
+    "missionImpediment": "L'Œil a signalé un empêchement. Mission remise en priorité.",
+    "assignedByAdmin": "{{oeilName}} a été assigné par l'admin."
+  },
   "statusBadge": {
     "active": "Live",
     "assigned": "Assigné",

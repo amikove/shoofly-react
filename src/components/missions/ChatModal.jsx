@@ -174,7 +174,7 @@ const send = async () => {
             <div key={m.id || i} className={`flex flex-col ${isMe(m) ? 'items-end' : m.type === 'system' ? 'items-center' : 'items-start'}`}>
               {m.type === 'system' ? (
                 <div className="text-[11px] text-[#555] bg-[#222] px-3 py-1 rounded-full">
-                  {m.content}
+                  {m.content_key ? t(`systemMessage.${m.content_key}`, m.params || {}) : m.content}
                 </div>
               ) : (
                 <div className={`max-w-[75%] px-3 py-2 rounded-xl text-xs leading-relaxed ${

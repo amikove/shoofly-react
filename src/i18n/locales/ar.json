@@ -1616,6 +1616,15 @@
     "accountAutoSuspendedTitle": "🔴 حساب معلّق",
     "accountAutoSuspendedBody": "انخفضت درجة موثوقيتك دون 50%. يمكنك طلب مراجعة ملفك."
   },
+  "systemMessage": {
+    "oeilAccepted": "قبل {{oeilName}} المهمة.",
+    "missionEnRoute": "العين الميدانية في الطريق.",
+    "missionStarted": "بدأت المهمة.",
+    "missionCompleted": "اكتملت المهمة بنجاح.",
+    "missionCancelled": "تم إلغاء المهمة.",
+    "missionImpediment": "أبلغت العين الميدانية عن مانع. أعيدت المهمة إلى قائمة الأولوية.",
+    "assignedByAdmin": "أسندت الإدارة المهمة إلى {{oeilName}}."
+  },
   "statusBadge": {
     "active": "مباشر",
     "assigned": "مُسندة",
