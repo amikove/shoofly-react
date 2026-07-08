@@ -144,7 +144,7 @@ const send = async () => {
     <div className="fixed inset-0 bg-black/75 z-50 flex items-center justify-center p-4 backdrop-blur-sm"
          onClick={(e) => e.target === e.currentTarget && onClose()}>
       <div className="bg-[#181818] border border-white/20 rounded-2xl w-full max-w-md flex flex-col shadow-[0_24px_60px_rgba(0,0,0,0.6)]"
-           style={{ height: '560px' }}>
+             style={{ height: 'min(560px, 85vh)' }}>
 
         {/* Header */}
         <div className="flex items-center justify-between px-5 py-4 border-b border-white/10 flex-shrink-0">
