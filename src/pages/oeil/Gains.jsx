@@ -55,11 +55,11 @@ export default function OeilGains() {
               <table>
                 <thead>
                   <tr>
-                    <th>{t('oeilGains.table.date')}</th>
-                    <th>{t('oeilGains.table.type')}</th>
-                    <th>{t('oeilGains.table.executionDate')}</th>
-                    <th>{t('oeilGains.table.status')}</th>
-                    <th>{t('oeilGains.table.earnings')}</th>
+                    <th className="text-center">{t('oeilGains.table.date')}</th>
+                    <th className="text-center">{t('oeilGains.table.type')}</th>
+                    <th className="text-center">{t('oeilGains.table.executionDate')}</th>
+                    <th className="text-center">{t('oeilGains.table.status')}</th>
+                    <th className="text-center">{t('oeilGains.table.earnings')}</th>
                   </tr>
                 </thead>
                 <tbody>
