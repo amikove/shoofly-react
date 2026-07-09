@@ -19,6 +19,61 @@
     "profil": "Profil"
   },
   "landing": {
+    "faq": {
+      "introTitle": "Questions fréquentes",
+      "introSubtitle": "Parce que votre temps est précieux. Au lieu de perdre plusieurs heures dans un déplacement ou une file d'attente, un Œil Shoofly s'en charge pour vous pendant que vous continuez votre journée.",
+      "groupTrust": "Confiance",
+      "groupDesire": "Ce que vous pouvez faire",
+      "groupPractical": "Pratique",
+      "q1": {
+        "q": "Comment puis-je faire confiance à quelqu'un que je n'ai jamais rencontré ?",
+        "a": "Chaque Œil est vérifié et identifié avant de rejoindre la plateforme. Vous voyez sa note, ses avis clients et son historique de missions avant même de le choisir."
+      },
+      "q2": {
+        "q": "Que se passe-t-il si je ne suis pas satisfait du résultat ?",
+        "a": "L'Œil n'est payé qu'après votre validation, jamais avant. Si le résultat ne vous convient pas, signalez-le directement depuis votre espace client — notre équipe examine chaque réclamation et applique la solution prévue (remboursement ou nouvelle intervention selon le cas)."
+      },
+      "q3": {
+        "q": "Quelles preuves vais-je recevoir ?",
+        "a": "Un rapport complet avec photos et vidéos, selon une grille de contrôle standardisée — pas juste \"c'est fait\", mais la preuve que c'est bien fait."
+      },
+      "q4": {
+        "q": "Quand suis-je débité ?",
+        "a": "Le paiement est sécurisé lors de la réservation. Les fonds sont conservés jusqu'à la réalisation de la mission, puis versés à l'Œil selon les conditions prévues."
+      },
+      "q5": {
+        "q": "Puis-je annuler une mission ?",
+        "a": "Oui. Les conditions d'annulation et les éventuels remboursements dépendent de l'avancement de la mission. Elles sont clairement indiquées avant votre validation."
+      },
+      "q6": {
+        "q": "Pourquoi payer quelqu'un pour visiter un appartement ?",
+        "a": "Les photos d'une annonce ne montrent pas toujours la réalité : bruit, humidité, voisinage, propreté, état réel du logement... Un Œil Shoofly visite le logement avant vous et vous transmet un rapport objectif avec photos, vidéos et observations."
+      },
+      "q7": {
+        "q": "Pourquoi faire appel à un client mystère ?",
+        "a": "Parce que vos clients vivent parfois une expérience très différente de celle que vous imaginez. Un audit Shoofly permet d'évaluer objectivement l'accueil, le service, la propreté, la qualité des conseils et l'expérience client."
+      },
+      "q8": {
+        "q": "Quelles missions puis-je confier, concrètement ?",
+        "a": "Faire la queue à votre place chez le médecin, visiter un appartement avant de le réserver sur Airbnb, déposer un dossier à la CNSS, auditer discrètement votre propre restaurant... Si ça demande une présence physique, Shoofly peut probablement le faire."
+      },
+      "q9": {
+        "q": "Je vis à l'étranger, Shoofly peut-il m'aider à distance ?",
+        "a": "C'est exactement pour ça que Shoofly existe. Visitez un appartement, vérifiez un chantier ou gérez une démarche administrative au Maroc sans prendre l'avion."
+      },
+      "q10": {
+        "q": "Combien de temps avant qu'un Œil accepte ma mission ?",
+        "a": "Ça dépend de vous : plus votre offre est attractive, plus vite un Œil se manifeste — parfois en quelques secondes seulement."
+      },
+      "q11": {
+        "q": "Shoofly est disponible dans quelle ville ?",
+        "a": "Chaque jour, de nouveaux Œils rejoignent de nouvelles villes. Créez votre compte gratuitement pour consulter en temps réel la disponibilité dans la vôtre."
+      },
+      "q12": {
+        "q": "Combien ça coûte ?",
+        "a": "Le prix est fixé par vous à la création de la mission, selon votre budget — pas de frais cachés."
+      }
+    },
     "nav": {
       "login": "Connexion",
       "register": "S'inscrire"

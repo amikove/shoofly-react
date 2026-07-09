@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { captureAcquisitionParams } from '../utils/acquisitionTracking'
@@ -171,7 +171,10 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* FOOTER */}
+        {/* FAQ */}
+        <FaqSection t={t} />
+
+        {/* FOOTER */}
       <footer className="px-6 md:px-16 py-8 border-t border-white/10 flex flex-col md:flex-row items-center justify-between gap-4">
         <div className="font-display font-bold text-lg">
           SHOOF<span className="text-[#FF4D00]">LY</span>
@@ -185,7 +188,91 @@ export default function Landing() {
           <button onClick={() => navigate('/verification')} className="hover:text-white transition-colors">{t('landing.footer.verification')}</button>
         </div>
       </footer>
-
     </div>
+  )
+}
+
+// ── Section FAQ (accordéon) ──────────────────────────────
+function FaqSection({ t }) {
+  const [openIndex, setOpenIndex] = useState(null)
+
+  const groups = [
+    {
+      title: t('landing.faq.groupTrust'),
+      items: [
+        { q: t('landing.faq.q1.q'), a: t('landing.faq.q1.a') },
+        { q: t('landing.faq.q2.q'), a: t('landing.faq.q2.a') },
+        { q: t('landing.faq.q3.q'), a: t('landing.faq.q3.a') },
+        { q: t('landing.faq.q4.q'), a: t('landing.faq.q4.a') },
+        { q: t('landing.faq.q5.q'), a: t('landing.faq.q5.a') },
+      ],
+    },
+    {
+      title: t('landing.faq.groupDesire'),
+      items: [
+        { q: t('landing.faq.q6.q'), a: t('landing.faq.q6.a') },
+        { q: t('landing.faq.q7.q'), a: t('landing.faq.q7.a') },
+        { q: t('landing.faq.q8.q'), a: t('landing.faq.q8.a') },
+        { q: t('landing.faq.q9.q'), a: t('landing.faq.q9.a') },
+      ],
+    },
+    {
+      title: t('landing.faq.groupPractical'),
+      items: [
+        { q: t('landing.faq.q10.q'), a: t('landing.faq.q10.a') },
+        { q: t('landing.faq.q11.q'), a: t('landing.faq.q11.a') },
+        { q: t('landing.faq.q12.q'), a: t('landing.faq.q12.a') },
+      ],
+    },
+  ]
+
+  let globalIndex = -1
+
+  return (
+    <section className="px-6 md:px-16 py-20 bg-[#141414]">
+      <div className="max-w-3xl mx-auto">
+        <div className="text-center mb-4">
+          <h2 className="font-display font-bold text-2xl md:text-3xl mb-2">
+            {t('landing.faq.introTitle')}
+          </h2>
+          <p className="text-[#AAA] max-w-xl mx-auto">{t('landing.faq.introSubtitle')}</p>
+        </div>
+
+        <div className="mt-12 space-y-8">
+          {groups.map((group, gi) => (
+            <div key={gi}>
+              <p className="text-xs font-semibold text-[#FF4D00] uppercase tracking-wider mb-3">
+                {group.title}
+              </p>
+              <div className="space-y-2">
+                {group.items.map((item) => {
+                  globalIndex++
+                  const idx = globalIndex
+                  const isOpen = openIndex === idx
+                  return (
+                    <div key={idx} className="border border-white/10 rounded-xl overflow-hidden bg-[#181818]">
+                      <button
+                        onClick={() => setOpenIndex(isOpen ? null : idx)}
+                        className="w-full flex items-center justify-between gap-3 px-5 py-4 text-start"
+                      >
+                        <span className="font-medium text-sm md:text-base">{item.q}</span>
+                        <span className={`text-[#FF4D00] flex-shrink-0 transition-transform ${isOpen ? 'rotate-45' : ''}`}>
+                          +
+                        </span>
+                      </button>
+                      {isOpen && (
+                        <div className="px-5 pb-4 text-sm text-[#AAA] leading-relaxed">
+                          {item.a}
+                        </div>
+                      )}
+                    </div>
+                  )
+                })}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
   )
 }
