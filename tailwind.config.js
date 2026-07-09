@@ -5,8 +5,8 @@ export default {
     extend: {
       keyframes: {
         'pulse-slow': {
-          '0%, 100%': { opacity: 0.15, transform: 'scale(1)' },
-          '50%': { opacity: 0.32, transform: 'scale(1.08)' },
+          '0%, 100%': { transform: 'scale(1)' },
+          '50%': { transform: 'scale(1.08)' },
         },
         'fade-in-up': {
           '0%': { opacity: 0, transform: 'translateY(16px)' },
