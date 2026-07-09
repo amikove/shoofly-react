@@ -15,6 +15,7 @@ import Register from './pages/auth/Register'
 import Landing from './pages/Landing'
 import Confidentialite from './pages/legal/Confidentialite'
 import CGV from './pages/legal/CGV'
+import MentionsLegales from './pages/legal/MentionsLegales'
 import Verification from './pages/legal/Verification'
 
 // Client pages
@@ -109,6 +110,7 @@ export default function App() {
 
       <Route path="/confidentialite" element={<Confidentialite />} />
       <Route path="/cgv" element={<CGV />} />
+      <Route path="/mentions-legales" element={<MentionsLegales />} />
       <Route path="/verification" element={<Verification />} />
     
       <Route path="/" element={user ? <Navigate to={`/${user.role}`} replace /> : <Landing />} />
