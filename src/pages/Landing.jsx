@@ -114,7 +114,7 @@ export default function Landing() {
           <p className="text-[#AAA] text-center mb-12">{t('landing.missionsSection.subtitle')}</p>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
             {MISSIONS.map((m) => (
-              <div key={m.key} className="bg-[#1A1A1A] border border-white/10 rounded-2xl p-6 hover:border-[#FF4D00]/30 transition-colors">
+              <div key={m.key} className="bg-[#1A1A1A] border border-white/10 rounded-2xl p-6 hover:scale-105 hover:border-[#FF4D00]/40 transition-all duration-200">
                 <div className="text-4xl mb-4">{m.icon}</div>
                 <div className="font-semibold mb-2">{t(`landing.missions.${m.key}.label`)}</div>
                 <div className="text-xs text-[#AAA] leading-relaxed">{t(`landing.missions.${m.key}.desc`)}</div>
@@ -136,7 +136,7 @@ export default function Landing() {
           <p className="text-[#AAA] text-center mb-12">{t('landing.howItWorks.subtitle')}</p>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {STEPS.map((s) => (
-              <div key={s.n} className="text-center">
+              <div key={s.n} className="text-center rounded-2xl border border-transparent p-4 hover:scale-105 hover:border-[#FF4D00]/40 transition-all duration-200">
                 <div className="w-14 h-14 rounded-2xl bg-[#FF4D00]/10 border border-[#FF4D00]/20 flex items-center justify-center mx-auto mb-4">
                   <span className="font-display font-bold text-[#FF4D00] text-lg">{s.n}</span>
                 </div>
@@ -159,7 +159,7 @@ export default function Landing() {
           </h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 {WHY.map((w) => (
-                    <div key={w.key} className="flex items-start gap-4 bg-[#1A1A1A] border border-white/10 rounded-2xl p-5 hover:border-[#FF4D00]/30 transition-colors">
+                    <div key={w.key} className="flex items-start gap-4 bg-[#1A1A1A] border border-white/10 rounded-2xl p-5 hover:scale-105 hover:border-[#FF4D00]/40 transition-all duration-200">
                     <div className="w-12 h-12 rounded-xl bg-[#FF4D00]/10 flex items-center justify-center text-2xl flex-shrink-0">
                         {w.icon}
                     </div>
