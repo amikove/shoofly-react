@@ -35,6 +35,10 @@ export default function Landing() {
   useEffect(() => { captureAcquisitionParams() }, [])
   const navigate = useNavigate()
 
+  const missionsReveal = useScrollReveal()
+  const howItWorksReveal = useScrollReveal()
+  const whyReveal = useScrollReveal()
+
   return (
     <div className="min-h-screen bg-[#0F0F0F] text-white">
 
@@ -99,7 +103,10 @@ export default function Landing() {
       </section>
 
       {/* TYPES DE MISSIONS */}
-      <section className="px-6 md:px-16 py-20 bg-[#141414]">
+      <section
+        ref={missionsReveal.ref}
+        className={`px-6 md:px-16 py-20 bg-[#141414] transition-all duration-700 ${missionsReveal.visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
+      >
         <div className="max-w-5xl mx-auto">
           <h2 className="font-display font-bold text-2xl md:text-3xl text-center mb-3">
             {t('landing.missionsSection.title')}
@@ -118,7 +125,10 @@ export default function Landing() {
       </section>
 
       {/* COMMENT ÇA MARCHE */}
-      <section className="px-6 md:px-16 py-20">
+      <section
+        ref={howItWorksReveal.ref}
+        className={`px-6 md:px-16 py-20 transition-all duration-700 ${howItWorksReveal.visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
+      >
         <div className="max-w-4xl mx-auto">
           <h2 className="font-display font-bold text-2xl md:text-3xl text-center mb-3">
             {t('landing.howItWorks.title')}
@@ -139,7 +149,10 @@ export default function Landing() {
       </section>
 
       {/* POURQUOI SHOOFLY */}
-      <section className="px-6 md:px-16 py-20 bg-[#141414]">
+      <section
+        ref={whyReveal.ref}
+        className={`px-6 md:px-16 py-20 bg-[#141414] transition-all duration-700 ${whyReveal.visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
+      >
         <div className="max-w-4xl mx-auto">
           <h2 className="font-display font-bold text-2xl md:text-3xl text-center mb-12">
             {t('landing.why.title')}
@@ -259,6 +272,7 @@ function TestimonialsSection({ t }) {
 // ── Section FAQ (accordéon) ──────────────────────────────
 function FaqSection({ t }) {
   const [openIndex, setOpenIndex] = useState(null)
+  const reveal = useScrollReveal()
 
   const groups = [
     {
@@ -293,7 +307,10 @@ function FaqSection({ t }) {
   let globalIndex = -1
 
   return (
-    <section className="px-6 md:px-16 py-20 bg-[#141414]">
+    <section
+      ref={reveal.ref}
+      className={`px-6 md:px-16 py-20 bg-[#141414] transition-all duration-700 ${reveal.visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
+    >
       <div className="max-w-3xl mx-auto">
         <div className="text-center mb-4">
           <h2 className="font-display font-bold text-2xl md:text-3xl mb-2">
