@@ -167,7 +167,7 @@
       "button": "Commencer maintenant →"
     },
     "stat": {
-      "text": "En moyenne {{value}}h de votre temps économisées par mission"
+      "text": "En moyenne <strong>{{value}}h</strong> de votre temps économisées par mission"
     },
     "testimonials": {
       "title": "Ce qui pourrait vous arriver",

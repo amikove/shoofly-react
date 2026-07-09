@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { useTranslation } from 'react-i18next'
+import { Trans, useTranslation } from 'react-i18next'
 import { captureAcquisitionParams } from '../utils/acquisitionTracking'
 import LanguageToggle from '../components/ui/LanguageToggle'
 import useScrollReveal from '../hooks/useScrollReveal'
@@ -238,9 +238,20 @@ function StatBadge({ t }) {
   }, [value])
 
   return (
-    <div className="mt-8 inline-flex items-center gap-2 bg-[#181818] border border-white/10 rounded-full px-5 py-2.5 text-sm text-[#AAA]">
-      <span aria-hidden="true">⏱️</span>
-      <span>{t('landing.stat.text', { value })}</span>
+    <div className="mt-8 inline-flex items-center gap-3 bg-[#FF4D00]/10 border border-[#FF4D00]/30 rounded-full pl-3 pr-5 py-2 text-sm text-white/90">
+      <span
+        aria-hidden="true"
+        className="flex items-center justify-center w-8 h-8 rounded-full bg-[#FF4D00]/20 text-base"
+      >
+        ⏱️
+      </span>
+      <span>
+        <Trans
+          i18nKey="landing.stat.text"
+          values={{ value }}
+          components={{ strong: <strong className="text-[#FF4D00] font-bold text-base" /> }}
+        />
+      </span>
     </div>
   )
 }
