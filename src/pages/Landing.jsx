@@ -75,12 +75,12 @@ export default function Landing() {
             <div className="relative">
               <div
                 aria-hidden="true"
-                className="absolute inset-0 flex items-center justify-center overflow-hidden pointer-events-none"
+                className="absolute inset-0 flex items-center justify-center pointer-events-none"
               >
-                <div className="w-[420px] h-[240px] md:w-[560px] md:h-[300px] bg-[#FF4D00]/10 rounded-full blur-3xl animate-pulse-slow" />
+                <div className="w-[420px] h-[240px] md:w-[600px] md:h-[340px] bg-[#FF4D00]/30 rounded-full blur-[80px] animate-pulse-slow" />
               </div>
               <h1
-                className="relative font-display font-bold text-4xl md:text-5xl leading-tight mb-6 animate-fade-in-up"
+                className="relative z-10 font-display font-bold text-4xl md:text-5xl leading-tight mb-6 animate-fade-in-up"
                 style={{ animationDelay: '150ms' }}
               >
                 {t('landing.hero.title1')}<br />
