@@ -217,9 +217,10 @@ export default function Landing() {
         <div className="flex gap-4 text-xs text-[#555]">
           <button onClick={() => navigate('/login')} className="hover:text-white transition-colors">{t('landing.footer.login')}</button>
           <button onClick={() => navigate('/register')} className="hover:text-white transition-colors">{t('landing.footer.register')}</button>
-          <button onClick={() => navigate('/cgv')} className="hover:text-white transition-colors">{t('landing.footer.cgv')}</button>
-          <button onClick={() => navigate('/confidentialite')} className="hover:text-white transition-colors">{t('landing.footer.confidentiality')}</button>
-          <button onClick={() => navigate('/verification')} className="hover:text-white transition-colors">{t('landing.footer.verification')}</button>
+           <button onClick={() => navigate('/cgv')} className="hover:text-white transition-colors">{t('landing.footer.cgv')}</button>
+           <button onClick={() => navigate('/confidentialite')} className="hover:text-white transition-colors">{t('landing.footer.confidentiality')}</button>
+           <button onClick={() => navigate('/mentions-legales')} className="hover:text-white transition-colors">{t('landing.footer.mentionsLegales')}</button>
+           <button onClick={() => navigate('/verification')} className="hover:text-white transition-colors">{t('landing.footer.verification')}</button>
         </div>
       </footer>
     </div>

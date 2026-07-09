@@ -204,6 +204,7 @@
       "login": "Connexion",
       "register": "Inscription",
       "cgv": "CGV",
+        "mentionsLegales": "Mentions légales",
       "confidentiality": "Confidentialité",
       "verification": "Vérification"
     }
