@@ -1731,150 +1731,7 @@
       "lastUpdated": "Dernière mise à jour : juillet 2026",
       "section1": {
         "title": "1. Objet et champ d'application",
-        "body": "Les présentes Conditions Générales de Vente et d'Utilisation (CGVU) régissent l'accès et l'utilisation de la plateforme SHOOFLY, éditée par [RAISON SOCIALE EN COURS DE CONSTITUTION — AutoEntrepreneur ou société en cours de création], et s'appliquent à toute personne utilisant la plateforme en qualité de Client ou d'Œil (prestataire de terrain). Toute utilisation de la plateforme implique l'acceptation pleine et entière des présentes CGVU.",
-        "confidentialite": {
-          "pageTitle": "Politique de confidentialité",
-          "lastUpdated": "Dernière mise à jour : juillet 2026",
-          "section1": {
-            "title": "1. Identité du responsable de traitement",
-            "body": "[RAISON SOCIALE EN COURS DE CONSTITUTION — AutoEntrepreneur ou société en cours de création], dont le siège social est situé à [ADRESSE], Rabat, Maroc, est responsable du traitement de vos données personnelles conformément à la loi n° 09-08 relative à la protection des personnes physiques à l'égard du traitement des données à caractère personnel.",
-            "mentionsLegales": {
-              "pageTitle": "Mentions légales",
-              "lastUpdated": "Dernière mise à jour : juillet 2026",
-              "section1": {
-                "title": "1. Éditeur du site",
-                "warning": "⚠️ Section à compléter dès l'immatriculation officielle de la société.",
-                "items": [
-                  "Raison sociale : [RAISON SOCIALE EN COURS DE CONSTITUTION — AutoEntrepreneur ou société en cours de création]",
-                  "Forme juridique : [À COMPLÉTER]",
-                  "Numéro de Registre du Commerce (RC) : [À COMPLÉTER]",
-                  "Identifiant Commun de l'Entreprise (ICE) : [À COMPLÉTER]",
-                  "Identifiant Fiscal (IF) : [À COMPLÉTER]",
-                  "Siège social : [ADRESSE], Rabat, Maroc",
-                  "Capital social : [À COMPLÉTER, le cas échéant]",
-                  "Responsable de la publication : [NOM DU PORTEUR DE PROJET]"
-                ]
-              },
-              "section2": {
-                "title": "2. Contact",
-                "items": [
-                  "E-mail général : contact@shoofly.ma",
-                  "E-mail juridique : legal@shoofly.ma",
-                  "E-mail confidentialité des données : privacy@shoofly.ma"
-                ]
-              },
-              "section3": {
-                "title": "3. Hébergement",
-                "warning": "⚠️ Section à compléter avec les vrais prestataires d'hébergement utilisés en production.",
-                "items": [
-                  "Hébergement du site (frontend) : [PRESTATAIRE — ex. Vercel Inc.]",
-                  "Hébergement de l'application et des données (backend, base de données) : [PRESTATAIRE — ex. Render]"
-                ]
-              },
-              "section4": {
-                "title": "4. Propriété intellectuelle",
-                "body": "L'ensemble des éléments composant la plateforme SHOOFLY (textes, logos, marques, graphismes, icônes, structure) est protégé par le droit marocain de la propriété intellectuelle. Toute reproduction, représentation, modification ou exploitation, totale ou partielle, sans autorisation écrite préalable est strictement interdite."
-              },
-              "section5": {
-                "title": "5. Données personnelles",
-                "body": "Le traitement des données personnelles collectées via la plateforme est détaillé dans notre",
-                "linkConfidentialite": "Politique de confidentialité"
-              },
-              "section6": {
-                "title": "6. Conditions d'utilisation",
-                "body": "L'utilisation de la plateforme est régie par nos",
-                "linkCgv": "Conditions Générales de Vente et d'Utilisation"
-              },
-              "section7": {
-                "title": "7. Droit applicable",
-                "body": "Les présentes mentions légales sont soumises au droit marocain. Tout litige relève de la compétence exclusive des tribunaux de Rabat."
-              }
-            }
-          },
-          "section2": {
-            "title": "2. Données collectées",
-            "intro": "Dans le cadre de l'utilisation de la plateforme SHOOFLY, nous collectons les données suivantes :",
-            "items": [
-              "Données d'identité : nom, prénom, date de naissance, photo d'identité (pour les Œils)",
-              "Données de contact : adresse e-mail, numéro de téléphone, ville et quartier",
-              "Données de connexion : adresse IP, historique de connexion, type d'appareil",
-              "Données de transaction : historique des missions, montants, paiements",
-              "Données de géolocalisation : position GPS pendant les missions (Œils uniquement)",
-              "Données de communication : messages échangés sur la plateforme",
-              "Données d'évaluation : notes et avis laissés par les utilisateurs",
-              "Données d'origine d'inscription : source d'acquisition (ex : campagne publicitaire ayant conduit à votre inscription), le cas échéant"
-            ]
-          },
-          "section3": {
-            "title": "3. Finalités du traitement",
-            "intro": "Vos données sont traitées pour les finalités suivantes :",
-            "items": [
-              "Création et gestion de votre compte utilisateur",
-              "Mise en relation entre clients et Œils",
-              "Exécution et suivi des missions",
-              "Traitement des paiements et gestion du portefeuille",
-              "Prévention de la fraude et sécurisation de la plateforme",
-              "Envoi de notifications relatives à vos missions",
-              "Amélioration de nos services et analyses statistiques (y compris via des outils de mesure d'audience, voir section 9 « Cookies »)",
-              "Respect de nos obligations légales et réglementaires"
-            ]
-          },
-          "section4": {
-            "title": "4. Base légale du traitement",
-            "body": "Le traitement de vos données repose sur : l'exécution du contrat qui vous lie à SHOOFLY, votre consentement explicite lors de l'inscription, nos intérêts légitimes (prévention de la fraude, amélioration du service), et le respect de nos obligations légales."
-          },
-          "section5": {
-            "title": "5. Durée de conservation",
-            "items": [
-              "Données de compte : conservées pendant toute la durée de votre inscription, puis 3 ans après la clôture du compte",
-              "Données de transaction : 10 ans conformément aux obligations comptables marocaines",
-              "Données de géolocalisation : 6 mois après la fin de la mission",
-              "Messages : 2 ans après la clôture de la mission concernée"
-            ]
-          },
-          "section6": {
-            "title": "6. Partage des données",
-            "intro": "Vos données peuvent être partagées avec :",
-            "items": [
-              "Les autres utilisateurs de la plateforme dans le strict cadre de l'exécution d'une mission (nom, note, ville)",
-              "Nos prestataires techniques (hébergement, paiement, notifications, mesure d'audience) dans le cadre de leurs missions",
-              "Les autorités compétentes marocaines sur demande légale"
-            ],
-            "outro": "SHOOFLY ne vend en aucun cas vos données personnelles à des tiers."
-          },
-          "section7": {
-            "title": "7. Vos droits",
-            "intro": "Conformément à la loi n° 09-08, vous disposez des droits suivants :",
-            "items": [
-              "Droit d'accès à vos données personnelles",
-              "Droit de rectification des données inexactes",
-              "Droit d'opposition au traitement",
-              "Droit à l'effacement de vos données",
-              "Droit à la portabilité de vos données"
-            ],
-            "contact": "Pour exercer ces droits, contactez-nous à :",
-            "cndp": "Vous pouvez également introduire une réclamation auprès de la",
-            "cndpFull": "(Commission Nationale de contrôle de la protection des Données à caractère Personnel)."
-          },
-          "section8": {
-            "title": "8. Sécurité",
-            "body": "SHOOFLY met en œuvre des mesures techniques et organisationnelles appropriées pour protéger vos données contre tout accès non autorisé, perte, destruction ou altération, notamment le chiffrement des données en transit (HTTPS), le hachage des mots de passe, et des accès restreints aux données par notre équipe."
-          },
-          "section9": {
-            "title": "9. Cookies et outils de mesure d'audience",
-            "intro": "SHOOFLY utilise deux catégories de cookies :",
-            "items": [
-              "Cookies strictement nécessaires : indispensables au fonctionnement de la plateforme (authentification, maintien de votre session). Ils ne peuvent pas être désactivés.",
-              "Cookies de mesure d'audience : SHOOFLY utilise Google Analytics afin de mesurer la fréquentation du site et comprendre comment il est utilisé, dans le but d'améliorer nos services. Ces cookies collectent des données de navigation de façon agrégée."
-            ],
-            "outro": "SHOOFLY n'utilise aucun cookie publicitaire tiers."
-          },
-          "section10": {
-            "title": "10. Contact",
-            "intro": "Pour toute question relative à cette politique :",
-            "address": "[RAISON SOCIALE EN COURS DE CONSTITUTION] — [ADRESSE] — Rabat, Maroc"
-          }
-        }
+        "body": "Les présentes Conditions Générales de Vente et d'Utilisation (CGVU) régissent l'accès et l'utilisation de la plateforme SHOOFLY, éditée par [RAISON SOCIALE EN COURS DE CONSTITUTION — AutoEntrepreneur ou société en cours de création], et s'appliquent à toute personne utilisant la plateforme en qualité de Client ou d'Œil (prestataire de terrain). Toute utilisation de la plateforme implique l'acceptation pleine et entière des présentes CGVU."
       },
       "section2": {
         "title": "2. Définitions",
@@ -1988,6 +1845,149 @@
         "title": "14. Contact",
         "intro": "Pour toute question :",
         "address": "[RAISON SOCIALE EN COURS DE CONSTITUTION] — [ADRESSE] — Rabat, Maroc"
+      }
+    },
+    "confidentialite": {
+      "pageTitle": "Politique de confidentialité",
+      "lastUpdated": "Dernière mise à jour : juillet 2026",
+      "section1": {
+        "title": "1. Identité du responsable de traitement",
+        "body": "[RAISON SOCIALE EN COURS DE CONSTITUTION — AutoEntrepreneur ou société en cours de création], dont le siège social est situé à [ADRESSE], Rabat, Maroc, est responsable du traitement de vos données personnelles conformément à la loi n° 09-08 relative à la protection des personnes physiques à l'égard du traitement des données à caractère personnel."
+      },
+      "section2": {
+        "title": "2. Données collectées",
+        "intro": "Dans le cadre de l'utilisation de la plateforme SHOOFLY, nous collectons les données suivantes :",
+        "items": [
+          "Données d'identité : nom, prénom, date de naissance, photo d'identité (pour les Œils)",
+          "Données de contact : adresse e-mail, numéro de téléphone, ville et quartier",
+          "Données de connexion : adresse IP, historique de connexion, type d'appareil",
+          "Données de transaction : historique des missions, montants, paiements",
+          "Données de géolocalisation : position GPS pendant les missions (Œils uniquement)",
+          "Données de communication : messages échangés sur la plateforme",
+          "Données d'évaluation : notes et avis laissés par les utilisateurs",
+          "Données d'origine d'inscription : source d'acquisition (ex : campagne publicitaire ayant conduit à votre inscription), le cas échéant"
+        ]
+      },
+      "section3": {
+        "title": "3. Finalités du traitement",
+        "intro": "Vos données sont traitées pour les finalités suivantes :",
+        "items": [
+          "Création et gestion de votre compte utilisateur",
+          "Mise en relation entre clients et Œils",
+          "Exécution et suivi des missions",
+          "Traitement des paiements et gestion du portefeuille",
+          "Prévention de la fraude et sécurisation de la plateforme",
+          "Envoi de notifications relatives à vos missions",
+          "Amélioration de nos services et analyses statistiques (y compris via des outils de mesure d'audience, voir section 9 « Cookies »)",
+          "Respect de nos obligations légales et réglementaires"
+        ]
+      },
+      "section4": {
+        "title": "4. Base légale du traitement",
+        "body": "Le traitement de vos données repose sur : l'exécution du contrat qui vous lie à SHOOFLY, votre consentement explicite lors de l'inscription, nos intérêts légitimes (prévention de la fraude, amélioration du service), et le respect de nos obligations légales."
+      },
+      "section5": {
+        "title": "5. Durée de conservation",
+        "items": [
+          "Données de compte : conservées pendant toute la durée de votre inscription, puis 3 ans après la clôture du compte",
+          "Données de transaction : 10 ans conformément aux obligations comptables marocaines",
+          "Données de géolocalisation : 6 mois après la fin de la mission",
+          "Messages : 2 ans après la clôture de la mission concernée"
+        ]
+      },
+      "section6": {
+        "title": "6. Partage des données",
+        "intro": "Vos données peuvent être partagées avec :",
+        "items": [
+          "Les autres utilisateurs de la plateforme dans le strict cadre de l'exécution d'une mission (nom, note, ville)",
+          "Nos prestataires techniques (hébergement, paiement, notifications, mesure d'audience) dans le cadre de leurs missions",
+          "Les autorités compétentes marocaines sur demande légale"
+        ],
+        "outro": "SHOOFLY ne vend en aucun cas vos données personnelles à des tiers."
+      },
+      "section7": {
+        "title": "7. Vos droits",
+        "intro": "Conformément à la loi n° 09-08, vous disposez des droits suivants :",
+        "items": [
+          "Droit d'accès à vos données personnelles",
+          "Droit de rectification des données inexactes",
+          "Droit d'opposition au traitement",
+          "Droit à l'effacement de vos données",
+          "Droit à la portabilité de vos données"
+        ],
+        "contact": "Pour exercer ces droits, contactez-nous à :",
+        "cndp": "Vous pouvez également introduire une réclamation auprès de la",
+        "cndpFull": "(Commission Nationale de contrôle de la protection des Données à caractère Personnel)."
+      },
+      "section8": {
+        "title": "8. Sécurité",
+        "body": "SHOOFLY met en œuvre des mesures techniques et organisationnelles appropriées pour protéger vos données contre tout accès non autorisé, perte, destruction ou altération, notamment le chiffrement des données en transit (HTTPS), le hachage des mots de passe, et des accès restreints aux données par notre équipe."
+      },
+      "section9": {
+        "title": "9. Cookies et outils de mesure d'audience",
+        "intro": "SHOOFLY utilise deux catégories de cookies :",
+        "items": [
+          "Cookies strictement nécessaires : indispensables au fonctionnement de la plateforme (authentification, maintien de votre session). Ils ne peuvent pas être désactivés.",
+          "Cookies de mesure d'audience : SHOOFLY utilise Google Analytics afin de mesurer la fréquentation du site et comprendre comment il est utilisé, dans le but d'améliorer nos services. Ces cookies collectent des données de navigation de façon agrégée."
+        ],
+        "outro": "SHOOFLY n'utilise aucun cookie publicitaire tiers."
+      },
+      "section10": {
+        "title": "10. Contact",
+        "intro": "Pour toute question relative à cette politique :",
+        "address": "[RAISON SOCIALE EN COURS DE CONSTITUTION] — [ADRESSE] — Rabat, Maroc"
+      }
+    },
+    "mentionsLegales": {
+      "pageTitle": "Mentions légales",
+      "lastUpdated": "Dernière mise à jour : juillet 2026",
+      "section1": {
+        "title": "1. Éditeur du site",
+        "warning": "⚠️ Section à compléter dès l'immatriculation officielle de la société.",
+        "items": [
+          "Raison sociale : [RAISON SOCIALE EN COURS DE CONSTITUTION — AutoEntrepreneur ou société en cours de création]",
+          "Forme juridique : [À COMPLÉTER]",
+          "Numéro de Registre du Commerce (RC) : [À COMPLÉTER]",
+          "Identifiant Commun de l'Entreprise (ICE) : [À COMPLÉTER]",
+          "Identifiant Fiscal (IF) : [À COMPLÉTER]",
+          "Siège social : [ADRESSE], Rabat, Maroc",
+          "Capital social : [À COMPLÉTER, le cas échéant]",
+          "Responsable de la publication : [NOM DU PORTEUR DE PROJET]"
+        ]
+      },
+      "section2": {
+        "title": "2. Contact",
+        "items": [
+          "E-mail général : contact@shoofly.ma",
+          "E-mail juridique : legal@shoofly.ma",
+          "E-mail confidentialité des données : privacy@shoofly.ma"
+        ]
+      },
+      "section3": {
+        "title": "3. Hébergement",
+        "warning": "⚠️ Section à compléter avec les vrais prestataires d'hébergement utilisés en production.",
+        "items": [
+          "Hébergement du site (frontend) : [PRESTATAIRE — ex. Vercel Inc.]",
+          "Hébergement de l'application et des données (backend, base de données) : [PRESTATAIRE — ex. Render]"
+        ]
+      },
+      "section4": {
+        "title": "4. Propriété intellectuelle",
+        "body": "L'ensemble des éléments composant la plateforme SHOOFLY (textes, logos, marques, graphismes, icônes, structure) est protégé par le droit marocain de la propriété intellectuelle. Toute reproduction, représentation, modification ou exploitation, totale ou partielle, sans autorisation écrite préalable est strictement interdite."
+      },
+      "section5": {
+        "title": "5. Données personnelles",
+        "body": "Le traitement des données personnelles collectées via la plateforme est détaillé dans notre",
+        "linkConfidentialite": "Politique de confidentialité"
+      },
+      "section6": {
+        "title": "6. Conditions d'utilisation",
+        "body": "L'utilisation de la plateforme est régie par nos",
+        "linkCgv": "Conditions Générales de Vente et d'Utilisation"
+      },
+      "section7": {
+        "title": "7. Droit applicable",
+        "body": "Les présentes mentions légales sont soumises au droit marocain. Tout litige relève de la compétence exclusive des tribunaux de Rabat."
       }
     }
   }
