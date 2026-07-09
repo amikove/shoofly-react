@@ -63,7 +63,7 @@ export default function Landing() {
       </nav>
 
       {/* HERO */}
-      <section className="px-6 md:px-16 py-24 md:py-36 max-w-4xl mx-auto text-center">
+      <section className="relative px-6 md:px-16 py-24 md:py-36 max-w-4xl mx-auto text-center overflow-hidden">
         <div className="inline-block bg-[#FF4D00]/10 border border-[#FF4D00]/20 text-[#FF4D00] text-xs font-semibold px-4 py-1.5 rounded-full mb-6">
           {t('landing.hero.badge')}
         </div>
@@ -71,10 +71,23 @@ export default function Landing() {
             <div className="text-[#AAA] text-sm font-medium tracking-widest uppercase mb-4">
             {t('landing.hero.tagline')}
             </div>
-            <h1 className="font-display font-bold text-4xl md:text-5xl leading-tight mb-6">
-            {t('landing.hero.title1')}<br />
-            <span className="text-[#FF4D00]">{t('landing.hero.title2')}</span>
-            </h1>
+
+            <div className="relative">
+              <div
+                aria-hidden="true"
+                className="absolute inset-0 flex items-center justify-center overflow-hidden pointer-events-none"
+              >
+                <div className="w-[420px] h-[240px] md:w-[560px] md:h-[300px] bg-[#FF4D00]/10 rounded-full blur-3xl animate-pulse-slow" />
+              </div>
+              <h1
+                className="relative font-display font-bold text-4xl md:text-5xl leading-tight mb-6 animate-fade-in-up"
+                style={{ animationDelay: '150ms' }}
+              >
+                {t('landing.hero.title1')}<br />
+                <span className="text-[#FF4D00]">{t('landing.hero.title2')}</span>
+              </h1>
+            </div>
+
             <p className="text-white/80 text-base md:text-lg max-w-2xl mx-auto mb-4 leading-relaxed">
             {t('landing.hero.paragraph1')}
             </p>
