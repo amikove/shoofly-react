@@ -1724,5 +1724,128 @@
     "completed": "Complétée",
     "missionTerminee": "✅ Mission terminée",
     "attenteValidation": "⏳ Attente validation"
+  },
+  "legal": {
+    "cgv": {
+      "pageTitle": "Conditions Générales de Vente et d'Utilisation",
+      "lastUpdated": "Dernière mise à jour : juillet 2026",
+      "section1": {
+        "title": "1. Objet et champ d'application",
+        "body": "Les présentes Conditions Générales de Vente et d'Utilisation (CGVU) régissent l'accès et l'utilisation de la plateforme SHOOFLY, éditée par [RAISON SOCIALE EN COURS DE CONSTITUTION — AutoEntrepreneur ou société en cours de création], et s'appliquent à toute personne utilisant la plateforme en qualité de Client ou d'Œil (prestataire de terrain). Toute utilisation de la plateforme implique l'acceptation pleine et entière des présentes CGVU."
+      },
+      "section2": {
+        "title": "2. Définitions",
+        "items": [
+          "**Plateforme** : le site web et l'application SHOOFLY",
+          "**Client** : toute personne physique ou morale créant et commandant des missions sur la plateforme",
+          "**Œil** : prestataire indépendant inscrit sur la plateforme pour effectuer des missions physiques",
+          "**Mission** : tâche physique commandée par un Client et exécutée par un Œil",
+          "**Portefeuille (Wallet)** : solde disponible sur la plateforme, utilisable pour de futures missions"
+        ]
+      },
+      "section3": {
+        "title": "3. Inscription et conditions d'accès",
+        "intro": "Pour utiliser la plateforme, l'utilisateur doit :",
+        "items": [
+          "Être âgé d'au moins 18 ans",
+          "Fournir des informations exactes et à jour lors de l'inscription",
+          "Disposer d'un moyen de paiement valide (Clients)",
+          "Fournir une pièce d'identité valide et passer le processus de vérification (Œils)",
+          "Accepter les présentes CGVU et la Politique de confidentialité"
+        ],
+        "outro": "SHOOFLY se réserve le droit de refuser ou de suspendre tout compte sans justification."
+      },
+      "section4": {
+        "title": "4. Statut des Œils",
+        "body1": "Les Œils sont des prestataires indépendants et non des employés, agents ou représentants de SHOOFLY. SHOOFLY agit uniquement en qualité d'intermédiaire de mise en relation. Chaque Œil est seul responsable de l'exécution de ses missions, du respect des lois applicables, et de ses obligations fiscales et sociales.",
+        "body2": "Chaque Œil dispose d'un score de fiabilité, calculé à partir de son historique de missions (respect des délais, qualité d'exécution, annulations). Un score de fiabilité inférieur à un seuil déterminé par SHOOFLY entraîne la suspension automatique et temporaire du compte, jusqu'à réexamen par SHOOFLY. L'Œil suspendu peut soumettre une demande de réintégration, examinée par l'équipe SHOOFLY.",
+        "body3": "En cas d'empêchement, l'Œil peut transférer une mission acceptée à un autre Œil disponible, selon les modalités prévues sur la plateforme. L'absence de remplaçant trouvé dans le délai imparti peut entraîner une pénalité sur le score de fiabilité et/ou le solde de l'Œil concerné."
+      },
+      "section5": {
+        "title": "5. Création et exécution des missions",
+        "items": [
+          "Le Client décrit sa mission, fixe son budget et choisit parmi les Œils intéressés",
+          "Le montant net que percevra l'Œil pour la mission lui est indiqué clairement avant qu'il n'accepte celle-ci",
+          "L'Œil accepte la mission et s'engage à l'exécuter conformément aux instructions",
+          "Toute communication relative à la mission doit rester sur la plateforme SHOOFLY",
+          "L'échange de coordonnées personnelles (téléphone, email, réseaux sociaux) est strictement interdit",
+          "L'Œil s'engage à respecter les délais et à fournir les preuves d'exécution demandées (photos, vidéos, rapport selon le type de mission)",
+          "Le Client dispose de 12 heures après la fin de la mission pour valider ou contester le résultat",
+          "À l'issue de chaque mission, Client et Œil peuvent laisser une note et un avis, visibles sur la plateforme"
+        ]
+      },
+      "section6": {
+        "title": "6. Prix et paiement",
+        "items": [
+          "Le prix de chaque mission est fixé librement par le Client",
+          "Le montant que percevra l'Œil est affiché avant son acceptation de la mission — il s'agit du montant net qui lui sera effectivement versé",
+          "Le paiement du Client est traité via PayZone, prestataire de paiement sécurisé",
+          "Le paiement est sécurisé et libéré à l'Œil uniquement après validation de la mission par le Client",
+          "Si le Client ne valide pas la mission dans les 12 heures suivant sa réalisation, celle-ci est automatiquement considérée comme terminée et le paiement est libéré",
+          "Des codes promotionnels peuvent être proposés par SHOOFLY, selon les conditions précisées lors de leur émission"
+        ]
+      },
+      "section7": {
+        "title": "7. Politique de remboursement",
+        "items": [
+          "Annulation avant assignation d'un Œil : l'intégralité du montant est créditée sur votre portefeuille (Wallet) et reste disponible pour une future réservation, sans limite de durée",
+          "Annulation après assignation : remboursement de 50% du montant si annulation plus de 2h avant la mission, aucun remboursement dans les 2h précédant la mission",
+          "Mission non exécutée par l'Œil : remboursement intégral automatique sur votre Wallet, disponible immédiatement pour une prochaine mission",
+          "Réclamation acceptée par SHOOFLY : remboursement intégral crédité sur le portefeuille",
+          "Les crédits du portefeuille SHOOFLY ne sont pas remboursables en espèces ou par virement, sauf en cas de fermeture définitive du compte sur demande écrite à legal@shoofly.ma"
+        ]
+      },
+      "section8": {
+        "title": "8. Réclamations et litiges",
+        "intro": "En cas de problème lié à une mission, signalé par le Client ou par l'Œil :",
+        "items": [
+          "Le signalement peut être effectué directement depuis l'espace personnel, pendant ou après la mission",
+          "SHOOFLY examine chaque signalement et rend une décision dans un délai raisonnable",
+          "L'auteur du signalement est informé de la décision et de son motif",
+          "La décision de SHOOFLY est souveraine et s'impose aux deux parties",
+          "En cas de signalement abusif répété, SHOOFLY se réserve le droit de suspendre le compte concerné",
+          "Tout litige non résolu à l'amiable sera soumis aux tribunaux compétents de Rabat"
+        ]
+      },
+      "section9": {
+        "title": "9. Responsabilités et limitations",
+        "items": [
+          "SHOOFLY est un intermédiaire de mise en relation et n'est pas partie au contrat entre Client et Œil",
+          "SHOOFLY ne garantit pas les résultats des missions ni la disponibilité permanente des Œils",
+          "La responsabilité de SHOOFLY est limitée au montant de la mission concernée",
+          "SHOOFLY n'est pas responsable des dommages indirects, pertes de chance ou préjudices consécutifs",
+          "L'Œil est seul responsable de l'exécution de la mission et de tout dommage causé à des tiers"
+        ]
+      },
+      "section10": {
+        "title": "10. Comportements interdits",
+        "items": [
+          "Contournement de la plateforme (contact direct hors SHOOFLY)",
+          "Fausse identité ou usurpation d'identité",
+          "Fausses missions ou faux rapports",
+          "Harcèlement, menaces ou comportements abusifs envers d'autres utilisateurs",
+          "Utilisation de la plateforme à des fins illégales",
+          "Tentative de fraude au paiement"
+        ],
+        "outro": "Tout manquement entraîne la suspension immédiate du compte et peut faire l'objet de poursuites judiciaires."
+      },
+      "section11": {
+        "title": "11. Propriété intellectuelle",
+        "body": "La marque SHOOFLY, le logo, le design et l'ensemble des contenus de la plateforme sont protégés par le droit marocain de la propriété intellectuelle. Toute reproduction, même partielle, est interdite sans autorisation écrite préalable."
+      },
+      "section12": {
+        "title": "12. Modification des CGVU",
+        "body": "SHOOFLY se réserve le droit de modifier les présentes CGVU à tout moment. Les utilisateurs seront informés par email ou notification in-app. La poursuite de l'utilisation de la plateforme après modification vaut acceptation des nouvelles conditions."
+      },
+      "section13": {
+        "title": "13. Droit applicable",
+        "body": "Les présentes CGVU sont soumises au droit marocain, notamment la loi n° 31-08 sur la protection du consommateur, la loi n° 09-08 sur la protection des données personnelles, et le Code des obligations et des contrats (DOC). Tout litige sera soumis à la compétence exclusive des tribunaux de Rabat."
+      },
+      "section14": {
+        "title": "14. Contact",
+        "intro": "Pour toute question :",
+        "address": "[RAISON SOCIALE EN COURS DE CONSTITUTION] — [ADRESSE] — Rabat, Maroc"
+      }
+    }
   }
 }
