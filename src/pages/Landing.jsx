@@ -367,7 +367,13 @@ function TestimonialsSection({ t, i18n }) {
           onMouseEnter={() => setHovered(true)}
           onMouseLeave={() => setHovered(false)}
         >
-          <div className="relative overflow-hidden h-[300px] sm:h-[280px] md:h-[270px]">
+          {/* Pas de hauteur fixe / overflow-hidden ici : la carte active reste dans le
+              flux normal (au lieu d'être absolute) pour que ce conteneur épouse sa
+              hauteur réelle, quelle que soit la longueur du témoignage affiché. Les
+              cartes latérales restent absolute et se centrent verticalement sur cette
+              hauteur. overflow-x-hidden seul évite le débordement horizontal des
+              cartes latérales sans jamais rogner le texte verticalement. */}
+          <div className="relative overflow-x-hidden">
             {sideCard(leftKey, 'left', leftIndex)}
 
             <div
@@ -378,10 +384,10 @@ function TestimonialsSection({ t, i18n }) {
               style={{
                 touchAction: 'pan-y',
                 ...(isSwiping
-                  ? { transform: `translate(calc(-50% + ${dragOffset}px), -50%)`, transition: 'none' }
+                  ? { transform: `translateX(${dragOffset}px)`, transition: 'none' }
                   : {}),
               }}
-              className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 w-[85%] sm:w-[72%] md:w-[60%] bg-[#181818] border border-white/10 rounded-2xl p-8 md:p-10 min-h-[240px] flex flex-col justify-center hover:scale-105 hover:border-[#FF4D00]/40 transition-all duration-200"
+              className="relative z-10 mx-auto w-[85%] sm:w-[72%] md:w-[60%] bg-[#181818] border border-white/10 rounded-2xl p-8 md:p-10 min-h-[240px] flex flex-col justify-center hover:scale-105 hover:border-[#FF4D00]/40 transition-all duration-200"
             >
               <p key={activeKey} className="text-white/90 text-base md:text-lg leading-relaxed mb-6 animate-fade-in">
                 « {t(`landing.testimonials.items.${activeKey}.quote`)} »
