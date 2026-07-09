@@ -166,6 +166,39 @@
       "subtitle": "Inscription gratuite. Première mission en quelques minutes.",
       "button": "Commencer maintenant →"
     },
+    "stat": {
+      "text": "En moyenne {{value}}h de votre temps économisées par mission"
+    },
+    "testimonials": {
+      "title": "Ce qui pourrait vous arriver",
+      "subtitle": "Exemples de situations vécues par nos utilisateurs",
+      "items": {
+        "item1": {
+          "quote": "J'avais une démarche urgente à faire à la CNSS, en pleine semaine de travail. Un Œil a attendu la file à ma place et m'a prévenu dès que mon tour approchait — 3h20 d'attente économisées.",
+          "role": "Salarié, Rabat"
+        },
+        "item2": {
+          "quote": "Rendez-vous chez le dentiste que je ne pouvais pas honorer à temps à cause du travail. Un Œil a pris ma place dans la salle d'attente et m'a prévenu dès que mon tour approchait. Je suis arrivé pile à temps.",
+          "role": "Client, Casablanca"
+        },
+        "item3": {
+          "quote": "Ma mère ne pouvait pas se déplacer pour attendre le retrait de ses résultats d'analyses. Un Œil s'en est chargé et me les a apportés le jour même.",
+          "role": "Cliente, Salé"
+        },
+        "item4": {
+          "quote": "Le chiffre d'affaires baissait depuis des mois sans que je comprenne pourquoi. Un audit mystère Shoofly m'a révélé que le service prenait plus de 25 minutes aux heures de pointe. J'ai changé l'organisation en cuisine, le problème a disparu.",
+          "role": "Propriétaire de restaurant"
+        },
+        "item5": {
+          "quote": "Je pensais que mon équipe proposait toujours nos pâtisseries maison en complément. L'audit anonyme a montré que ce n'était le cas qu'une fois sur cinq. Un rappel simple à l'équipe, et les ventes additionnelles sont reparties.",
+          "role": "Gérant de café"
+        },
+        "item6": {
+          "quote": "J'ai réservé un appartement pour mes vacances en me fiant uniquement aux photos. Sur place : humidité, literie en mauvais état, rien à voir avec l'annonce. Des vacances gâchées. Depuis, je ne réserve plus sans passer par Shoofly — un Œil visite le logement avant moi, je pars l'esprit tranquille.",
+          "role": "Voyageur, ancien client Airbnb déçu"
+        }
+      }
+    },
     "footer": {
       "copyright": "© 2026 Shoofly. Tous droits réservés.",
       "login": "Connexion",

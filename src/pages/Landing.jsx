@@ -1,8 +1,9 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { captureAcquisitionParams } from '../utils/acquisitionTracking'
 import LanguageToggle from '../components/ui/LanguageToggle'
+import useScrollReveal from '../hooks/useScrollReveal'
 
 const MISSIONS = [
   { icon: '🏠', key: 'immobilier' },
@@ -26,6 +27,8 @@ const WHY = [
   { icon: '🔐', key: 'paymentReleased' },
   { icon: '📋', key: 'standardizedReports' },
 ]
+
+const TESTIMONIALS = ['item1', 'item2', 'item3', 'item4', 'item5', 'item6']
 
 export default function Landing() {
   const { t, i18n } = useTranslation()
@@ -171,6 +174,9 @@ export default function Landing() {
         </div>
       </section>
 
+        {/* AVIS CLIENTS (exemples illustratifs) */}
+        <TestimonialsSection t={t} />
+
         {/* FAQ */}
         <FaqSection t={t} />
 
@@ -189,6 +195,64 @@ export default function Landing() {
         </div>
       </footer>
     </div>
+  )
+}
+
+// ── Section Avis clients (carrousel d'exemples illustratifs) ──────────────
+function TestimonialsSection({ t }) {
+  const reveal = useScrollReveal()
+  const [index, setIndex] = useState(0)
+  const [hovered, setHovered] = useState(false)
+
+  useEffect(() => {
+    if (hovered) return
+    const id = setInterval(() => {
+      setIndex((i) => (i + 1) % TESTIMONIALS.length)
+    }, 4500)
+    return () => clearInterval(id)
+  }, [hovered])
+
+  const activeKey = TESTIMONIALS[index]
+
+  return (
+    <section
+      ref={reveal.ref}
+      className={`px-6 md:px-16 py-20 transition-all duration-700 ${reveal.visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
+    >
+      <div className="max-w-3xl mx-auto">
+        <h2 className="font-display font-bold text-2xl md:text-3xl text-center mb-3">
+          {t('landing.testimonials.title')}
+        </h2>
+        <p className="text-[#AAA] text-center text-sm mb-12">
+          {t('landing.testimonials.subtitle')}
+        </p>
+
+        <div
+          onMouseEnter={() => setHovered(true)}
+          onMouseLeave={() => setHovered(false)}
+        >
+          <div className="bg-[#181818] border border-white/10 rounded-2xl p-8 md:p-10 min-h-[240px] flex flex-col justify-center hover:scale-105 hover:border-[#FF4D00]/40 transition-all duration-200">
+            <p key={activeKey} className="text-white/90 text-base md:text-lg leading-relaxed mb-6 animate-fade-in">
+              « {t(`landing.testimonials.items.${activeKey}.quote`)} »
+            </p>
+            <p className="text-[#FF4D00] text-sm font-semibold">
+              {t(`landing.testimonials.items.${activeKey}.role`)}
+            </p>
+          </div>
+
+          <div className="flex justify-center gap-2 mt-6">
+            {TESTIMONIALS.map((key, i) => (
+              <button
+                key={key}
+                onClick={() => setIndex(i)}
+                aria-label={`${i + 1}`}
+                className={`h-2 rounded-full transition-all duration-200 ${i === index ? 'w-6 bg-[#FF4D00]' : 'w-2 bg-white/20 hover:bg-white/40'}`}
+              />
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
   )
 }
 
