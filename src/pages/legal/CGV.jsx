@@ -11,24 +11,24 @@ export default function CGV() {
       </nav>
       <div className="max-w-3xl mx-auto px-6 py-16">
         <h1 className="font-display font-bold text-3xl mb-2">Conditions Générales de Vente et d'Utilisation</h1>
-        <p className="text-[#AAA] text-sm mb-10">Dernière mise à jour : juin 2026</p>
+        <p className="text-[#AAA] text-sm mb-10">Dernière mise à jour : juillet 2026</p>
 
         <div className="space-y-8 text-[#CCC] text-sm leading-relaxed">
 
           <section>
             <h2 className="text-white font-semibold text-lg mb-3">1. Objet et champ d'application</h2>
-            <p>Les présentes Conditions Générales de Vente et d'Utilisation (CGVU) régissent l'accès et l'utilisation de la plateforme SHOOFLY, éditée par la société SHOOFLY SARL, et s'appliquent à toute personne utilisant la plateforme en qualité de Client ou d'Œil (prestataire de terrain). Toute utilisation de la plateforme implique l'acceptation pleine et entière des présentes CGVU.</p>
+            <p>Les présentes Conditions Générales de Vente et d'Utilisation (CGVU) régissent l'accès et l'utilisation de la plateforme SHOOFLY, éditée par [RAISON SOCIALE EN COURS DE CONSTITUTION — AutoEntrepreneur ou société en cours de création], et s'appliquent à toute personne utilisant la plateforme en qualité de Client ou d'Œil (prestataire de terrain). Toute utilisation de la plateforme implique l'acceptation pleine et entière des présentes CGVU.</p>
           </section>
 
           <section>
             <h2 className="text-white font-semibold text-lg mb-3">2. Définitions</h2>
             <ul className="space-y-2">
               {[
-                '**Plateforme** : le site web et l\'application SHOOFLY accessible à l\'adresse shoofly.ma',
+                '**Plateforme** : le site web et l\'application SHOOFLY',
                 '**Client** : toute personne physique ou morale créant et commandant des missions sur la plateforme',
                 '**Œil** : prestataire indépendant inscrit sur la plateforme pour effectuer des missions physiques',
                 '**Mission** : tâche physique commandée par un Client et exécutée par un Œil',
-                '**Commission** : rémunération prélevée par SHOOFLY sur le prix de chaque mission (30%)',
+                '**Portefeuille (Wallet)** : solde disponible sur la plateforme, utilisable pour de futures missions',
               ].map((item, i) => (
                 <li key={i} className="flex items-start gap-2">
                   <span className="text-[#FF4D00] mt-0.5">→</span>
@@ -60,7 +60,9 @@ export default function CGV() {
 
           <section>
             <h2 className="text-white font-semibold text-lg mb-3">4. Statut des Œils</h2>
-            <p>Les Œils sont des prestataires indépendants et non des employés, agents ou représentants de SHOOFLY. SHOOFLY agit uniquement en qualité d'intermédiaire de mise en relation. Chaque Œil est seul responsable de l'exécution de ses missions, du respect des lois applicables, et de ses obligations fiscales et sociales.</p>
+            <p className="mb-3">Les Œils sont des prestataires indépendants et non des employés, agents ou représentants de SHOOFLY. SHOOFLY agit uniquement en qualité d'intermédiaire de mise en relation. Chaque Œil est seul responsable de l'exécution de ses missions, du respect des lois applicables, et de ses obligations fiscales et sociales.</p>
+            <p className="mb-3">Chaque Œil dispose d'un score de fiabilité, calculé à partir de son historique de missions (respect des délais, qualité d'exécution, annulations). Un score de fiabilité inférieur à un seuil déterminé par SHOOFLY entraîne la suspension automatique et temporaire du compte, jusqu'à réexamen par SHOOFLY. L'Œil suspendu peut soumettre une demande de réintégration, examinée par l'équipe SHOOFLY.</p>
+            <p>En cas d'empêchement, l'Œil peut transférer une mission acceptée à un autre Œil disponible, selon les modalités prévues sur la plateforme. L'absence de remplaçant trouvé dans le délai imparti peut entraîner une pénalité sur le score de fiabilité et/ou le solde de l'Œil concerné.</p>
           </section>
 
           <section>
@@ -68,11 +70,13 @@ export default function CGV() {
             <ul className="space-y-2">
               {[
                 'Le Client décrit sa mission, fixe son budget et choisit parmi les Œils intéressés',
+                'Le montant net que percevra l\'Œil pour la mission lui est indiqué clairement avant qu\'il n\'accepte celle-ci',
                 'L\'Œil accepte la mission et s\'engage à l\'exécuter conformément aux instructions',
                 'Toute communication relative à la mission doit rester sur la plateforme SHOOFLY',
                 'L\'échange de coordonnées personnelles (téléphone, email, réseaux sociaux) est strictement interdit',
-                'L\'Œil s\'engage à respecter les délais et à fournir les preuves d\'exécution demandées',
-                'Le Client dispose de 12 heures après la fin de la mission pour valider ou contester',
+                'L\'Œil s\'engage à respecter les délais et à fournir les preuves d\'exécution demandées (photos, vidéos, rapport selon le type de mission)',
+                'Le Client dispose de 12 heures après la fin de la mission pour valider ou contester le résultat',
+                'À l\'issue de chaque mission, Client et Œil peuvent laisser une note et un avis, visibles sur la plateforme',
               ].map((item, i) => (
                 <li key={i} className="flex items-start gap-2">
                   <span className="text-[#FF4D00] mt-0.5">→</span>
@@ -86,12 +90,12 @@ export default function CGV() {
             <h2 className="text-white font-semibold text-lg mb-3">6. Prix et paiement</h2>
             <ul className="space-y-2">
               {[
-                'Le prix de chaque mission est fixé librement par le Client, avec un minimum de 50 MAD',
-                'SHOOFLY prélève une commission de 30% sur chaque mission complétée',
-                'L\'Œil perçoit 70% du montant de la mission après validation par le Client',
-                'Le paiement est effectué via CMI (Centre Monétique Interbancaire)',
-                'Le paiement est sécurisé et libéré uniquement après validation de la mission',
-                'Si le client ne valide pas la mission dans les 12 heures suivant sa réalisation, celle-ci sera automatiquement considérée comme terminée et le paiement sera libéré.',
+                'Le prix de chaque mission est fixé librement par le Client',
+                'Le montant que percevra l\'Œil est affiché avant son acceptation de la mission — il s\'agit du montant net qui lui sera effectivement versé',
+                'Le paiement du Client est traité via PayZone, prestataire de paiement sécurisé',
+                'Le paiement est sécurisé et libéré à l\'Œil uniquement après validation de la mission par le Client',
+                'Si le Client ne valide pas la mission dans les 12 heures suivant sa réalisation, celle-ci est automatiquement considérée comme terminée et le paiement est libéré',
+                'Des codes promotionnels peuvent être proposés par SHOOFLY, selon les conditions précisées lors de leur émission',
               ].map((item, i) => (
                 <li key={i} className="flex items-start gap-2">
                   <span className="text-[#FF4D00] mt-0.5">→</span>
@@ -105,11 +109,11 @@ export default function CGV() {
             <h2 className="text-white font-semibold text-lg mb-3">7. Politique de remboursement</h2>
             <ul className="space-y-2">
               {[
-                'Annulation avant assignation d\'un Œil : l\'intégralité du montant est créditée sur votre portefeuille (Wallet) et reste disponible pour une future réservation, sans limite de durée.',
+                'Annulation avant assignation d\'un Œil : l\'intégralité du montant est créditée sur votre portefeuille (Wallet) et reste disponible pour une future réservation, sans limite de durée',
                 'Annulation après assignation : remboursement de 50% du montant si annulation plus de 2h avant la mission, aucun remboursement dans les 2h précédant la mission',
-                'Mission non exécutée par l\'Œil : remboursement intégral automatique sur votre Wallet, disponible immédiatement pour une prochaine mission.',
-                'Réclamation acceptée par l\'admin : remboursement intégral crédité sur le portefeuille SHOOFLY',
-                'Les crédits portefeuille SHOOFLY ne sont pas remboursables en espèces ou par virement, sauf en cas de fermeture définitive du compte sur demande écrite à legal@shoofly.ma',
+                'Mission non exécutée par l\'Œil : remboursement intégral automatique sur votre Wallet, disponible immédiatement pour une prochaine mission',
+                'Réclamation acceptée par SHOOFLY : remboursement intégral crédité sur le portefeuille',
+                'Les crédits du portefeuille SHOOFLY ne sont pas remboursables en espèces ou par virement, sauf en cas de fermeture définitive du compte sur demande écrite à legal@shoofly.ma',
               ].map((item, i) => (
                 <li key={i} className="flex items-start gap-2">
                   <span className="text-[#FF4D00] mt-0.5">→</span>
@@ -121,13 +125,14 @@ export default function CGV() {
 
           <section>
             <h2 className="text-white font-semibold text-lg mb-3">8. Réclamations et litiges</h2>
-            <p className="mb-3">En cas de litige entre un Client et un Œil :</p>
+            <p className="mb-3">En cas de problème lié à une mission, signalé par le Client ou par l'Œil :</p>
             <ul className="space-y-2">
               {[
-                'Le Client dispose de 12 heures après la fin de mission pour soumettre une réclamation motivée',
-                'SHOOFLY examine la réclamation et rend une décision dans un délai de 48 heures',
+                'Le signalement peut être effectué directement depuis l\'espace personnel, pendant ou après la mission',
+                'SHOOFLY examine chaque signalement et rend une décision dans un délai raisonnable',
+                'L\'auteur du signalement est informé de la décision et de son motif',
                 'La décision de SHOOFLY est souveraine et s\'impose aux deux parties',
-                'En cas de réclamation abusive répétée, SHOOFLY se réserve le droit de suspendre le compte',
+                'En cas de signalement abusif répété, SHOOFLY se réserve le droit de suspendre le compte concerné',
                 'Tout litige non résolu à l\'amiable sera soumis aux tribunaux compétents de Rabat',
               ].map((item, i) => (
                 <li key={i} className="flex items-start gap-2">
@@ -144,7 +149,7 @@ export default function CGV() {
               {[
                 'SHOOFLY est un intermédiaire de mise en relation et n\'est pas partie au contrat entre Client et Œil',
                 'SHOOFLY ne garantit pas les résultats des missions ni la disponibilité permanente des Œils',
-                'La responsabilité de SHOOFLY est limitée au montant de la commission perçue sur la mission concernée',
+                'La responsabilité de SHOOFLY est limitée au montant de la mission concernée',
                 'SHOOFLY n\'est pas responsable des dommages indirects, pertes de chance ou préjudices consécutifs',
                 'L\'Œil est seul responsable de l\'exécution de la mission et de tout dommage causé à des tiers',
               ].map((item, i) => (
@@ -178,7 +183,7 @@ export default function CGV() {
 
           <section>
             <h2 className="text-white font-semibold text-lg mb-3">11. Propriété intellectuelle</h2>
-            <p>La marque SHOOFLY, le logo, le design et l'ensemble des contenus de la plateforme sont la propriété exclusive de SHOOFLY SARL et sont protégés par le droit marocain de la propriété intellectuelle. Toute reproduction, même partielle, est interdite sans autorisation écrite préalable.</p>
+            <p>La marque SHOOFLY, le logo, le design et l'ensemble des contenus de la plateforme sont protégés par le droit marocain de la propriété intellectuelle. Toute reproduction, même partielle, est interdite sans autorisation écrite préalable.</p>
           </section>
 
           <section>
@@ -193,7 +198,7 @@ export default function CGV() {
 
           <section>
             <h2 className="text-white font-semibold text-lg mb-3">14. Contact</h2>
-            <p>Pour toute question : <strong className="text-white">legal@shoofly.ma</strong><br />SHOOFLY SARL — [ADRESSE LÉGALE] — Rabat, Maroc</p>
+            <p>Pour toute question : <strong className="text-white">legal@shoofly.ma</strong><br />[RAISON SOCIALE EN COURS DE CONSTITUTION] — [ADRESSE] — Rabat, Maroc</p>
           </section>
 
         </div>
