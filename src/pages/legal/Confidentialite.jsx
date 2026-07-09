@@ -1,7 +1,10 @@
 import { useNavigate } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 
 export default function Confidentialite() {
   const navigate = useNavigate()
+  const { t } = useTranslation()
+
   return (
     <div className="min-h-screen bg-[#0F0F0F] text-white">
       <nav className="flex items-center justify-between px-6 md:px-16 py-5 border-b border-white/10">
@@ -10,30 +13,21 @@ export default function Confidentialite() {
         </button>
       </nav>
       <div className="max-w-3xl mx-auto px-6 py-16">
-        <h1 className="font-display font-bold text-3xl mb-2">Politique de confidentialité</h1>
-        <p className="text-[#AAA] text-sm mb-10">Dernière mise à jour : juillet 2026</p>
+        <h1 className="font-display font-bold text-3xl mb-2">{t('legal.confidentialite.pageTitle')}</h1>
+        <p className="text-[#AAA] text-sm mb-10">{t('legal.confidentialite.lastUpdated')}</p>
 
         <div className="space-y-8 text-[#CCC] text-sm leading-relaxed">
 
           <section>
-            <h2 className="text-white font-semibold text-lg mb-3">1. Identité du responsable de traitement</h2>
-            <p>[RAISON SOCIALE EN COURS DE CONSTITUTION — AutoEntrepreneur ou société en cours de création], dont le siège social est situé à [ADRESSE], Rabat, Maroc, est responsable du traitement de vos données personnelles conformément à la loi n° 09-08 relative à la protection des personnes physiques à l'égard du traitement des données à caractère personnel.</p>
+            <h2 className="text-white font-semibold text-lg mb-3">{t('legal.confidentialite.section1.title')}</h2>
+            <p>{t('legal.confidentialite.section1.body')}</p>
           </section>
 
           <section>
-            <h2 className="text-white font-semibold text-lg mb-3">2. Données collectées</h2>
-            <p className="mb-3">Dans le cadre de l'utilisation de la plateforme SHOOFLY, nous collectons les données suivantes :</p>
+            <h2 className="text-white font-semibold text-lg mb-3">{t('legal.confidentialite.section2.title')}</h2>
+            <p className="mb-3">{t('legal.confidentialite.section2.intro')}</p>
             <ul className="space-y-2">
-              {[
-                'Données d\'identité : nom, prénom, date de naissance, photo d\'identité (pour les Œils)',
-                'Données de contact : adresse e-mail, numéro de téléphone, ville et quartier',
-                'Données de connexion : adresse IP, historique de connexion, type d\'appareil',
-                'Données de transaction : historique des missions, montants, paiements',
-                'Données de géolocalisation : position GPS pendant les missions (Œils uniquement)',
-                'Données de communication : messages échangés sur la plateforme',
-                'Données d\'évaluation : notes et avis laissés par les utilisateurs',
-                'Données d\'origine d\'inscription : source d\'acquisition (ex : campagne publicitaire ayant conduit à votre inscription), le cas échéant',
-              ].map((item, i) => (
+              {t('legal.confidentialite.section2.items', { returnObjects: true }).map((item, i) => (
                 <li key={i} className="flex items-start gap-2">
                   <span className="text-[#FF4D00] mt-0.5">→</span>
                   <span>{item}</span>
@@ -43,19 +37,10 @@ export default function Confidentialite() {
           </section>
 
           <section>
-            <h2 className="text-white font-semibold text-lg mb-3">3. Finalités du traitement</h2>
-            <p className="mb-3">Vos données sont traitées pour les finalités suivantes :</p>
+            <h2 className="text-white font-semibold text-lg mb-3">{t('legal.confidentialite.section3.title')}</h2>
+            <p className="mb-3">{t('legal.confidentialite.section3.intro')}</p>
             <ul className="space-y-2">
-              {[
-                'Création et gestion de votre compte utilisateur',
-                'Mise en relation entre clients et Œils',
-                'Exécution et suivi des missions',
-                'Traitement des paiements et gestion du portefeuille',
-                'Prévention de la fraude et sécurisation de la plateforme',
-                'Envoi de notifications relatives à vos missions',
-                'Amélioration de nos services et analyses statistiques (y compris via des outils de mesure d\'audience, voir section 9 « Cookies »)',
-                'Respect de nos obligations légales et réglementaires',
-              ].map((item, i) => (
+              {t('legal.confidentialite.section3.items', { returnObjects: true }).map((item, i) => (
                 <li key={i} className="flex items-start gap-2">
                   <span className="text-[#FF4D00] mt-0.5">→</span>
                   <span>{item}</span>
@@ -65,19 +50,14 @@ export default function Confidentialite() {
           </section>
 
           <section>
-            <h2 className="text-white font-semibold text-lg mb-3">4. Base légale du traitement</h2>
-            <p>Le traitement de vos données repose sur : l'exécution du contrat qui vous lie à SHOOFLY, votre consentement explicite lors de l'inscription, nos intérêts légitimes (prévention de la fraude, amélioration du service), et le respect de nos obligations légales.</p>
+            <h2 className="text-white font-semibold text-lg mb-3">{t('legal.confidentialite.section4.title')}</h2>
+            <p>{t('legal.confidentialite.section4.body')}</p>
           </section>
 
           <section>
-            <h2 className="text-white font-semibold text-lg mb-3">5. Durée de conservation</h2>
+            <h2 className="text-white font-semibold text-lg mb-3">{t('legal.confidentialite.section5.title')}</h2>
             <ul className="space-y-2">
-              {[
-                'Données de compte : conservées pendant toute la durée de votre inscription, puis 3 ans après la clôture du compte',
-                'Données de transaction : 10 ans conformément aux obligations comptables marocaines',
-                'Données de géolocalisation : 6 mois après la fin de la mission',
-                'Messages : 2 ans après la clôture de la mission concernée',
-              ].map((item, i) => (
+              {t('legal.confidentialite.section5.items', { returnObjects: true }).map((item, i) => (
                 <li key={i} className="flex items-start gap-2">
                   <span className="text-[#FF4D00] mt-0.5">→</span>
                   <span>{item}</span>
@@ -87,69 +67,56 @@ export default function Confidentialite() {
           </section>
 
           <section>
-            <h2 className="text-white font-semibold text-lg mb-3">6. Partage des données</h2>
-            <p className="mb-3">Vos données peuvent être partagées avec :</p>
+            <h2 className="text-white font-semibold text-lg mb-3">{t('legal.confidentialite.section6.title')}</h2>
+            <p className="mb-3">{t('legal.confidentialite.section6.intro')}</p>
             <ul className="space-y-2">
-              {[
-                'Les autres utilisateurs de la plateforme dans le strict cadre de l\'exécution d\'une mission (nom, note, ville)',
-                'Nos prestataires techniques (hébergement, paiement, notifications, mesure d\'audience) dans le cadre de leurs missions',
-                'Les autorités compétentes marocaines sur demande légale',
-              ].map((item, i) => (
+              {t('legal.confidentialite.section6.items', { returnObjects: true }).map((item, i) => (
                 <li key={i} className="flex items-start gap-2">
                   <span className="text-[#FF4D00] mt-0.5">→</span>
                   <span>{item}</span>
                 </li>
               ))}
             </ul>
-            <p className="mt-3">SHOOFLY ne vend en aucun cas vos données personnelles à des tiers.</p>
+            <p className="mt-3">{t('legal.confidentialite.section6.outro')}</p>
           </section>
 
           <section>
-            <h2 className="text-white font-semibold text-lg mb-3">7. Vos droits</h2>
-            <p className="mb-3">Conformément à la loi n° 09-08, vous disposez des droits suivants :</p>
+            <h2 className="text-white font-semibold text-lg mb-3">{t('legal.confidentialite.section7.title')}</h2>
+            <p className="mb-3">{t('legal.confidentialite.section7.intro')}</p>
             <ul className="space-y-2">
-              {[
-                'Droit d\'accès à vos données personnelles',
-                'Droit de rectification des données inexactes',
-                'Droit d\'opposition au traitement',
-                'Droit à l\'effacement de vos données',
-                'Droit à la portabilité de vos données',
-              ].map((item, i) => (
+              {t('legal.confidentialite.section7.items', { returnObjects: true }).map((item, i) => (
                 <li key={i} className="flex items-start gap-2">
                   <span className="text-[#FF4D00] mt-0.5">→</span>
                   <span>{item}</span>
                 </li>
               ))}
             </ul>
-            <p className="mt-3">Pour exercer ces droits, contactez-nous à : <strong className="text-white">privacy@shoofly.ma</strong></p>
-            <p className="mt-2">Vous pouvez également introduire une réclamation auprès de la <strong className="text-white">CNDP</strong> (Commission Nationale de contrôle de la protection des Données à caractère Personnel).</p>
+            <p className="mt-3">{t('legal.confidentialite.section7.contact')} <strong className="text-white">privacy@shoofly.ma</strong></p>
+            <p className="mt-2">{t('legal.confidentialite.section7.cndp')} <strong className="text-white">CNDP</strong> {t('legal.confidentialite.section7.cndpFull')}</p>
           </section>
 
           <section>
-            <h2 className="text-white font-semibold text-lg mb-3">8. Sécurité</h2>
-            <p>SHOOFLY met en œuvre des mesures techniques et organisationnelles appropriées pour protéger vos données contre tout accès non autorisé, perte, destruction ou altération, notamment le chiffrement des données en transit (HTTPS), le hachage des mots de passe, et des accès restreints aux données par notre équipe.</p>
+            <h2 className="text-white font-semibold text-lg mb-3">{t('legal.confidentialite.section8.title')}</h2>
+            <p>{t('legal.confidentialite.section8.body')}</p>
           </section>
 
           <section>
-            <h2 className="text-white font-semibold text-lg mb-3">9. Cookies et outils de mesure d'audience</h2>
-            <p className="mb-3">SHOOFLY utilise deux catégories de cookies :</p>
+            <h2 className="text-white font-semibold text-lg mb-3">{t('legal.confidentialite.section9.title')}</h2>
+            <p className="mb-3">{t('legal.confidentialite.section9.intro')}</p>
             <ul className="space-y-2">
-              {[
-                'Cookies strictement nécessaires : indispensables au fonctionnement de la plateforme (authentification, maintien de votre session). Ils ne peuvent pas être désactivés.',
-                'Cookies de mesure d\'audience : SHOOFLY utilise Google Analytics afin de mesurer la fréquentation du site et comprendre comment il est utilisé, dans le but d\'améliorer nos services. Ces cookies collectent des données de navigation de façon agrégée.',
-              ].map((item, i) => (
+              {t('legal.confidentialite.section9.items', { returnObjects: true }).map((item, i) => (
                 <li key={i} className="flex items-start gap-2">
                   <span className="text-[#FF4D00] mt-0.5">→</span>
                   <span>{item}</span>
                 </li>
               ))}
             </ul>
-            <p className="mt-3">SHOOFLY n'utilise aucun cookie publicitaire tiers.</p>
+            <p className="mt-3">{t('legal.confidentialite.section9.outro')}</p>
           </section>
 
           <section>
-            <h2 className="text-white font-semibold text-lg mb-3">10. Contact</h2>
-            <p>Pour toute question relative à cette politique : <strong className="text-white">privacy@shoofly.ma</strong><br />[RAISON SOCIALE EN COURS DE CONSTITUTION] — [ADRESSE] — Rabat, Maroc</p>
+            <h2 className="text-white font-semibold text-lg mb-3">{t('legal.confidentialite.section10.title')}</h2>
+            <p>{t('legal.confidentialite.section10.intro')} <strong className="text-white">privacy@shoofly.ma</strong><br />{t('legal.confidentialite.section10.address')}</p>
           </section>
 
         </div>
