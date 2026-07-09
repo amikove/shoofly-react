@@ -11,13 +11,13 @@ export default function Confidentialite() {
       </nav>
       <div className="max-w-3xl mx-auto px-6 py-16">
         <h1 className="font-display font-bold text-3xl mb-2">Politique de confidentialité</h1>
-        <p className="text-[#AAA] text-sm mb-10">Dernière mise à jour : juin 2026</p>
+        <p className="text-[#AAA] text-sm mb-10">Dernière mise à jour : juillet 2026</p>
 
         <div className="space-y-8 text-[#CCC] text-sm leading-relaxed">
 
           <section>
             <h2 className="text-white font-semibold text-lg mb-3">1. Identité du responsable de traitement</h2>
-            <p>La société <strong className="text-white">SHOOFLY SARL</strong>, immatriculée au Registre du Commerce de Rabat sous le numéro RC [À COMPLÉTER], dont le siège social est situé à [ADRESSE LÉGALE], Rabat, Maroc, est responsable du traitement de vos données personnelles conformément à la loi n° 09-08 relative à la protection des personnes physiques à l'égard du traitement des données à caractère personnel.</p>
+            <p>[RAISON SOCIALE EN COURS DE CONSTITUTION — AutoEntrepreneur ou société en cours de création], dont le siège social est situé à [ADRESSE], Rabat, Maroc, est responsable du traitement de vos données personnelles conformément à la loi n° 09-08 relative à la protection des personnes physiques à l'égard du traitement des données à caractère personnel.</p>
           </section>
 
           <section>
@@ -32,6 +32,7 @@ export default function Confidentialite() {
                 'Données de géolocalisation : position GPS pendant les missions (Œils uniquement)',
                 'Données de communication : messages échangés sur la plateforme',
                 'Données d\'évaluation : notes et avis laissés par les utilisateurs',
+                'Données d\'origine d\'inscription : source d\'acquisition (ex : campagne publicitaire ayant conduit à votre inscription), le cas échéant',
               ].map((item, i) => (
                 <li key={i} className="flex items-start gap-2">
                   <span className="text-[#FF4D00] mt-0.5">→</span>
@@ -52,7 +53,7 @@ export default function Confidentialite() {
                 'Traitement des paiements et gestion du portefeuille',
                 'Prévention de la fraude et sécurisation de la plateforme',
                 'Envoi de notifications relatives à vos missions',
-                'Amélioration de nos services et analyses statistiques anonymisées',
+                'Amélioration de nos services et analyses statistiques (y compris via des outils de mesure d\'audience, voir section 9 « Cookies »)',
                 'Respect de nos obligations légales et réglementaires',
               ].map((item, i) => (
                 <li key={i} className="flex items-start gap-2">
@@ -91,7 +92,7 @@ export default function Confidentialite() {
             <ul className="space-y-2">
               {[
                 'Les autres utilisateurs de la plateforme dans le strict cadre de l\'exécution d\'une mission (nom, note, ville)',
-                'Nos prestataires techniques (hébergement, paiement, notifications) dans le cadre de leurs missions',
+                'Nos prestataires techniques (hébergement, paiement, notifications, mesure d\'audience) dans le cadre de leurs missions',
                 'Les autorités compétentes marocaines sur demande légale',
               ].map((item, i) => (
                 <li key={i} className="flex items-start gap-2">
@@ -130,13 +131,25 @@ export default function Confidentialite() {
           </section>
 
           <section>
-            <h2 className="text-white font-semibold text-lg mb-3">9. Cookies</h2>
-            <p>SHOOFLY utilise des cookies strictement nécessaires au fonctionnement de la plateforme (authentification, session). Aucun cookie publicitaire ou de tracking tiers n'est utilisé.</p>
+            <h2 className="text-white font-semibold text-lg mb-3">9. Cookies et outils de mesure d'audience</h2>
+            <p className="mb-3">SHOOFLY utilise deux catégories de cookies :</p>
+            <ul className="space-y-2">
+              {[
+                'Cookies strictement nécessaires : indispensables au fonctionnement de la plateforme (authentification, maintien de votre session). Ils ne peuvent pas être désactivés.',
+                'Cookies de mesure d\'audience : SHOOFLY utilise Google Analytics afin de mesurer la fréquentation du site et comprendre comment il est utilisé, dans le but d\'améliorer nos services. Ces cookies collectent des données de navigation de façon agrégée.',
+              ].map((item, i) => (
+                <li key={i} className="flex items-start gap-2">
+                  <span className="text-[#FF4D00] mt-0.5">→</span>
+                  <span>{item}</span>
+                </li>
+              ))}
+            </ul>
+            <p className="mt-3">SHOOFLY n'utilise aucun cookie publicitaire tiers.</p>
           </section>
 
           <section>
             <h2 className="text-white font-semibold text-lg mb-3">10. Contact</h2>
-            <p>Pour toute question relative à cette politique : <strong className="text-white">privacy@shoofly.ma</strong><br />SHOOFLY SARL — [ADRESSE LÉGALE] — Rabat, Maroc</p>
+            <p>Pour toute question relative à cette politique : <strong className="text-white">privacy@shoofly.ma</strong><br />[RAISON SOCIALE EN COURS DE CONSTITUTION] — [ADRESSE] — Rabat, Maroc</p>
           </section>
 
         </div>
