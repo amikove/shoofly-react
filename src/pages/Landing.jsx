@@ -203,7 +203,7 @@ export default function Landing() {
       </section>
 
         {/* AVIS CLIENTS (exemples illustratifs) */}
-        <TestimonialsSection t={t} />
+        <TestimonialsSection t={t} i18n={i18n} />
 
         {/* FAQ */}
         <FaqSection t={t} />
@@ -256,8 +256,8 @@ function StatBadge({ t }) {
   )
 }
 
-// ── Section Avis clients (carrousel d'exemples illustratifs) ──────────────
-function TestimonialsSection({ t }) {
+// ── Section Avis clients (carrousel "pellicule" : carte active + fragments prev/next) ──
+function TestimonialsSection({ t, i18n }) {
   const reveal = useScrollReveal()
   const [index, setIndex] = useState(0)
   const [hovered, setHovered] = useState(false)
@@ -271,6 +271,32 @@ function TestimonialsSection({ t }) {
   }, [hovered])
 
   const activeKey = TESTIMONIALS[index]
+  const prevIndex = (index - 1 + TESTIMONIALS.length) % TESTIMONIALS.length
+  const nextIndex = (index + 1) % TESTIMONIALS.length
+
+  // En RTL, la carte "suivante" (chronologiquement) doit apparaître à gauche
+  // et la carte "précédente" à droite, pour rester cohérent avec le sens de lecture.
+  const isRTL = i18n.language === 'ar'
+  const leftKey = TESTIMONIALS[isRTL ? nextIndex : prevIndex]
+  const rightKey = TESTIMONIALS[isRTL ? prevIndex : nextIndex]
+
+  // Positionnement en left-0 / right-0 (propriétés CSS physiques, non affectées par
+  // dir="rtl") pour garantir que "left"/"right" restent des côtés physiques réels,
+  // quel que soit le sens de lecture — la logique prev/next reste, elle, dans isRTL ci-dessus.
+  const sideCard = (key, side) => (
+    <div
+      key={key}
+      aria-hidden="true"
+      className={`absolute top-1/2 -translate-y-1/2 ${side === 'left' ? 'left-0 -translate-x-[15%] sm:-translate-x-[22%]' : 'right-0 translate-x-[15%] sm:translate-x-[22%]'} w-[55%] sm:w-[48%] md:w-[42%] scale-75 opacity-40 pointer-events-none select-none bg-[#181818] border border-white/10 rounded-2xl p-4 sm:p-6 md:p-8 min-h-[180px] sm:min-h-[210px] md:min-h-[220px]`}
+    >
+      <p className="text-white/90 text-xs sm:text-sm md:text-base leading-relaxed mb-3">
+        « {t(`landing.testimonials.items.${key}.quote`)} »
+      </p>
+      <p className="text-[#FF4D00] text-xs font-semibold">
+        {t(`landing.testimonials.items.${key}.role`)}
+      </p>
+    </div>
+  )
 
   return (
     <section
@@ -289,13 +315,19 @@ function TestimonialsSection({ t }) {
           onMouseEnter={() => setHovered(true)}
           onMouseLeave={() => setHovered(false)}
         >
-          <div className="bg-[#181818] border border-white/10 rounded-2xl p-8 md:p-10 min-h-[240px] flex flex-col justify-center hover:scale-105 hover:border-[#FF4D00]/40 transition-all duration-200">
-            <p key={activeKey} className="text-white/90 text-base md:text-lg leading-relaxed mb-6 animate-fade-in">
-              « {t(`landing.testimonials.items.${activeKey}.quote`)} »
-            </p>
-            <p className="text-[#FF4D00] text-sm font-semibold">
-              {t(`landing.testimonials.items.${activeKey}.role`)}
-            </p>
+          <div className="relative overflow-hidden h-[300px] sm:h-[280px] md:h-[270px]">
+            {sideCard(leftKey, 'left')}
+
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 w-[85%] sm:w-[72%] md:w-[60%] bg-[#181818] border border-white/10 rounded-2xl p-8 md:p-10 min-h-[240px] flex flex-col justify-center hover:scale-105 hover:border-[#FF4D00]/40 transition-all duration-200">
+              <p key={activeKey} className="text-white/90 text-base md:text-lg leading-relaxed mb-6 animate-fade-in">
+                « {t(`landing.testimonials.items.${activeKey}.quote`)} »
+              </p>
+              <p className="text-[#FF4D00] text-sm font-semibold">
+                {t(`landing.testimonials.items.${activeKey}.role`)}
+              </p>
+            </div>
+
+            {sideCard(rightKey, 'right')}
           </div>
 
           <div className="flex justify-center gap-2 mt-6">
