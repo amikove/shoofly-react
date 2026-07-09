@@ -261,14 +261,18 @@ function TestimonialsSection({ t, i18n }) {
   const reveal = useScrollReveal()
   const [index, setIndex] = useState(0)
   const [hovered, setHovered] = useState(false)
+  const [isSwiping, setIsSwiping] = useState(false)
+  const [dragOffset, setDragOffset] = useState(0)
+  const touchStartRef = useRef({ x: 0, y: 0 })
+  const dragOffsetRef = useRef(0)
 
   useEffect(() => {
-    if (hovered) return
+    if (hovered || isSwiping) return
     const id = setInterval(() => {
       setIndex((i) => (i + 1) % TESTIMONIALS.length)
     }, 4500)
     return () => clearInterval(id)
-  }, [hovered])
+  }, [hovered, isSwiping])
 
   const activeKey = TESTIMONIALS[index]
   const prevIndex = (index - 1 + TESTIMONIALS.length) % TESTIMONIALS.length
@@ -281,6 +285,46 @@ function TestimonialsSection({ t, i18n }) {
   const rightIndex = isRTL ? prevIndex : nextIndex
   const leftKey = TESTIMONIALS[leftIndex]
   const rightKey = TESTIMONIALS[rightIndex]
+
+  // Swipe tactile sur la carte active : seuil minimum pour éviter qu'un tap ou
+  // un tremblement de doigt déclenche une navigation accidentelle. Le sens est
+  // inversé en RTL pour rester cohérent avec la logique isRTL ci-dessus.
+  const SWIPE_THRESHOLD = 50
+  const SWIPE_MAX_DRAG = 140
+
+  const handleTouchStart = (e) => {
+    const touch = e.touches[0]
+    touchStartRef.current = { x: touch.clientX, y: touch.clientY }
+    dragOffsetRef.current = 0
+    setIsSwiping(true)
+    setDragOffset(0)
+  }
+
+  const handleTouchMove = (e) => {
+    const touch = e.touches[0]
+    const deltaX = touch.clientX - touchStartRef.current.x
+    const clamped = Math.max(-SWIPE_MAX_DRAG, Math.min(SWIPE_MAX_DRAG, deltaX))
+    dragOffsetRef.current = clamped
+    setDragOffset(clamped)
+  }
+
+  const handleTouchEnd = () => {
+    const deltaX = dragOffsetRef.current
+    if (deltaX <= -SWIPE_THRESHOLD) {
+      setIndex(isRTL ? prevIndex : nextIndex)
+    } else if (deltaX >= SWIPE_THRESHOLD) {
+      setIndex(isRTL ? nextIndex : prevIndex)
+    }
+    dragOffsetRef.current = 0
+    setDragOffset(0)
+    setIsSwiping(false)
+  }
+
+  const handleTouchCancel = () => {
+    dragOffsetRef.current = 0
+    setDragOffset(0)
+    setIsSwiping(false)
+  }
 
   // Positionnement en left-0 / right-0 (propriétés CSS physiques, non affectées par
   // dir="rtl") pour garantir que "left"/"right" restent des côtés physiques réels,
@@ -326,7 +370,19 @@ function TestimonialsSection({ t, i18n }) {
           <div className="relative overflow-hidden h-[300px] sm:h-[280px] md:h-[270px]">
             {sideCard(leftKey, 'left', leftIndex)}
 
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 w-[85%] sm:w-[72%] md:w-[60%] bg-[#181818] border border-white/10 rounded-2xl p-8 md:p-10 min-h-[240px] flex flex-col justify-center hover:scale-105 hover:border-[#FF4D00]/40 transition-all duration-200">
+            <div
+              onTouchStart={handleTouchStart}
+              onTouchMove={handleTouchMove}
+              onTouchEnd={handleTouchEnd}
+              onTouchCancel={handleTouchCancel}
+              style={{
+                touchAction: 'pan-y',
+                ...(isSwiping
+                  ? { transform: `translate(calc(-50% + ${dragOffset}px), -50%)`, transition: 'none' }
+                  : {}),
+              }}
+              className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 w-[85%] sm:w-[72%] md:w-[60%] bg-[#181818] border border-white/10 rounded-2xl p-8 md:p-10 min-h-[240px] flex flex-col justify-center hover:scale-105 hover:border-[#FF4D00]/40 transition-all duration-200"
+            >
               <p key={activeKey} className="text-white/90 text-base md:text-lg leading-relaxed mb-6 animate-fade-in">
                 « {t(`landing.testimonials.items.${activeKey}.quote`)} »
               </p>
