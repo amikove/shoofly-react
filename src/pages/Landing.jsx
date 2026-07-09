@@ -113,6 +113,8 @@ export default function Landing() {
             {t('landing.hero.ctaBecomeOeil')}
           </button>
         </div>
+
+        <StatBadge t={t} />
       </section>
 
       {/* TYPES DE MISSIONS */}
@@ -220,6 +222,25 @@ export default function Landing() {
           <button onClick={() => navigate('/verification')} className="hover:text-white transition-colors">{t('landing.footer.verification')}</button>
         </div>
       </footer>
+    </div>
+  )
+}
+
+// ── Badge statistique (chiffre moyen fixe, avec effet de comptage à l'affichage) ──
+function StatBadge({ t }) {
+  const [value, setValue] = useState(0)
+
+  useEffect(() => {
+    const target = 3
+    if (value >= target) return
+    const id = setTimeout(() => setValue((v) => v + 1), 250)
+    return () => clearTimeout(id)
+  }, [value])
+
+  return (
+    <div className="mt-8 inline-flex items-center gap-2 bg-[#181818] border border-white/10 rounded-full px-5 py-2.5 text-sm text-[#AAA]">
+      <span aria-hidden="true">⏱️</span>
+      <span>{t('landing.stat.text', { value })}</span>
     </div>
   )
 }
