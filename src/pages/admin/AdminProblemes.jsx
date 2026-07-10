@@ -54,11 +54,13 @@ export default function AdminProblemes() {
   const [customAmount, setCustomAmount] = useState('')
   const [showCustomAmount, setShowCustomAmount] = useState(false)
 
-  const doCancel = async (clientAtFault, refundAmount) => {
+  const doCancel = async (clientAtFault, refundAmount, refundPercent) => {
     setCancelling(true)
     try {
       const body = { status: 'cancelled' }
-      if (refundAmount !== undefined) {
+      if (refundPercent !== undefined) {
+        body.refund_percent = refundPercent
+      } else if (refundAmount !== undefined) {
         body.refund_amount = refundAmount
       } else {
         body.client_at_fault = clientAtFault
@@ -327,22 +329,29 @@ export default function AdminProblemes() {
                 </>
               ) : (
                 <>
-                  <label className="label">Montant à rembourser au client (MAD)</label>
+                  <label className="label">Pourcentage à rembourser au client (%)</label>
                   <input
                     type="number"
                     min="0"
+                    max="100"
                     className="input w-full mb-4"
                     value={customAmount}
                     onChange={(e) => setCustomAmount(e.target.value)}
-                    placeholder="Ex: 75"
+                    placeholder="Ex: 30"
                   />
+                  <p className="text-xs text-[#555] mb-4">
+                    Prix de la mission : {cancelModal?.mission_price ? `${cancelModal.mission_price} MAD` : '—'}
+                    {customAmount && cancelModal?.mission_price && (
+                      <> → remboursement de {Math.round((parseFloat(customAmount) || 0) * cancelModal.mission_price / 100)} MAD</>
+                    )}
+                  </p>
                   <div className="flex gap-2 mb-2">
                     <button
-                      onClick={() => doCancel(undefined, parseFloat(customAmount) || 0)}
+                      onClick={() => doCancel(undefined, undefined, parseFloat(customAmount) || 0)}
                       disabled={cancelling || customAmount === ''}
                       className="btn btn-primary flex-1 justify-center disabled:opacity-50"
                     >
-                      {cancelling ? '...' : 'Confirmer ce montant'}
+                      {cancelling ? '...' : 'Confirmer ce pourcentage'}
                     </button>
                   </div>
                   <button
