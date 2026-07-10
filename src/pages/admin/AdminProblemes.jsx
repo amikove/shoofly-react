@@ -167,6 +167,7 @@ export default function AdminProblemes() {
                 <table>
                   <thead>
                     <tr>
+                      <th>Réf</th>
                       <th>Type</th>
                       <th>Par</th>
                       <th>Rapporteur</th>
@@ -182,6 +183,7 @@ export default function AdminProblemes() {
                   <tbody>
                     {reports.map((r) => (
                       <tr key={r.id} className="cursor-pointer" onClick={() => setSelectedReport(r)}>
+                        <td className="text-[#555] text-xs">#{String(r.mission_id).slice(-6).toUpperCase()}</td>
                         <td className={`font-medium ${typeColor(r.type)}`}>{TYPE_SHORT[r.type] || r.type}</td>
                         <td>
                           <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-[#333] text-[#AAA] text-[10px] font-semibold">
