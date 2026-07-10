@@ -632,6 +632,15 @@
       "CNSS": "CNSS",
       "ANCFCC": "ANCFCC",
       "Services d'état civil": "Services d'état civil",
+      "Centre de visite technique": "Centre de visite technique",
+      "Tribunal": "Tribunal",
+      "Centre d'immatriculation": "Centre d'immatriculation",
+      "Préfectures / Annexes administratives": "Préfectures / Annexes administratives",
+      "Douane": "Douane",
+      "Bureau des passeports / Cartes nationales": "Bureau des passeports / Cartes nationales",
+      "Adoul / Notaires": "Adoul / Notaires",
+      "CRI / Centres régionaux d'investissement": "CRI / Centres régionaux d'investissement",
+      "Impôts (DGI)": "Impôts (DGI)",
       "ONEE": "ONEE",
       "REDAL": "REDAL",
       "RADEEMA": "RADEEMA",
@@ -649,6 +658,7 @@
       "À préciser": "À préciser"
     },
     "groupLabels": {
+      "Véhicules & Transport": "Véhicules & Transport",
       "Centres de santé": "Centres de santé",
       "Administrations": "Administrations",
       "Services publics": "Services publics",

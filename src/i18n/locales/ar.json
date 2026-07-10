@@ -634,6 +634,15 @@
       "CNSS": "صندوق الضمان الإجتماعي",
       "ANCFCC": "المحافظة العقارية",
       "Services d'état civil": "مصلحة الحالة المدنية",
+      "Centre de visite technique": "مركز الفحص التقني للسيارات",
+      "Tribunal": "المحكمة",
+      "Centre d'immatriculation": "مركز التسجيل",
+      "Préfectures / Annexes administratives": "العمالة / الملحقات الإدارية",
+      "Douane": "الجمارك",
+      "Bureau des passeports / Cartes nationales": "مكتب جوازات السفر / البطاقات الوطنية",
+      "Adoul / Notaires": "العدول / الموثقون",
+      "CRI / Centres régionaux d'investissement": "المركز الجهوي للاستثمار",
+      "Impôts (DGI)": "الضرائب (المديرية العامة للضرائب)",
       "ONEE": "المكتب الوطني للكهرباء والماء",
       "REDAL": "ريضال",
       "RADEEMA": "راديما",
@@ -651,6 +660,7 @@
       "À préciser": "يُحدد لاحقًا"
     },
     "groupLabels": {
+      "Véhicules & Transport": "المركبات والنقل",
       "Centres de santé": "مراكز صحية",
       "Administrations": "إدارات",
       "Services publics": "خدمات عمومية",
