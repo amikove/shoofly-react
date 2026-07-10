@@ -82,6 +82,7 @@ export const adminAPI = {
     listExpenses: (params) => api.get('/api/users/admin/expenses', { params }),
     deleteExpense: (id) => api.delete(`/api/users/admin/expenses/${id}`),
   users:          (params) => api.get('/api/users/admin/all', { params }),
+  userProfile:    (userId, params) => api.get(`/api/users/admin/profile/${userId}`, { params }),
   verifyOeil:     (id)     => api.put(`/api/users/admin/${id}/verify-oeil`),
   toggleActive:   (id)     => api.put(`/api/users/admin/${id}/toggle-active`),
   withdrawals:    ()       => api.get('/api/users/admin/withdrawals'),
