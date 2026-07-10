@@ -49,6 +49,33 @@ export default function AdminProblemes() {
   // Tri sur la date d'exécution (colonne cliquable)
   const [sortByExecution, setSortByExecution] = useState(false)
   const [sortDir, setSortDir] = useState('asc')
+  const [cancelModal, setCancelModal] = useState(null)
+  const [cancelling, setCancelling] = useState(false)
+  const [customAmount, setCustomAmount] = useState('')
+  const [showCustomAmount, setShowCustomAmount] = useState(false)
+
+  const doCancel = async (clientAtFault, refundAmount) => {
+    setCancelling(true)
+    try {
+      const body = { status: 'cancelled' }
+      if (refundAmount !== undefined) {
+        body.refund_amount = refundAmount
+      } else {
+        body.client_at_fault = clientAtFault
+      }
+      await missionsAPI.status(cancelModal.mission_id, body)
+      toast('Mission annulée ✓', 'success')
+      setCancelModal(null)
+      setShowCustomAmount(false)
+      setCustomAmount('')
+      setSelectedReport(null)
+      load()
+    } catch (err) {
+      toast(err.response?.data?.error || 'Erreur', 'error')
+    } finally {
+      setCancelling(false)
+    }
+  }
   const toggleExecutionSort = () => {
     if (!sortByExecution) { setSortByExecution(true); setSortDir('asc') }
     else if (sortDir === 'asc') { setSortDir('desc') }
@@ -247,10 +274,92 @@ export default function AdminProblemes() {
                     >
                       {acting[selectedReport.id] ? '...' : '🙈 Ignorer'}
                     </button>
+                    <button
+                      onClick={() => setCancelModal(selectedReport)}
+                      className="btn btn-ghost btn-sm text-red-400"
+                    >
+                      Annuler la mission
+                    </button>
                     <button onClick={() => setSelectedReport(null)} className="btn btn-ghost btn-sm ml-auto">Fermer</button>
                   </div>
                 )
               )}
+            </div>
+          </div>
+        )}
+
+        {cancelModal && (
+          <div className="fixed inset-0 bg-black/80 z-[80] flex items-center justify-center p-4 backdrop-blur-sm">
+            <div className="bg-[#181818] border border-white/10 rounded-2xl p-6 w-full max-w-md shadow-xl">
+              <h2 className="font-bold text-base mb-1">Annuler la mission</h2>
+              <p className="text-xs text-[#AAA] mb-4">{cancelModal.mission_title}</p>
+
+              {!showCustomAmount ? (
+                <>
+                  <p className="text-sm text-white/80 mb-4">
+                    Cette annulation est-elle due à une faute du client (injoignable, comportement abusif, etc.) ?
+                  </p>
+                  <p className="text-xs text-[#555] mb-4">
+                    Si oui, le remboursement suivra les règles habituelles (100%/50%/0% selon le délai). Si non, le client sera remboursé intégralement, quel que soit le délai.
+                  </p>
+                  <div className="flex gap-2 mb-2">
+                    <button
+                      onClick={() => doCancel(true)}
+                      disabled={cancelling}
+                      className="btn btn-ghost flex-1 justify-center text-amber-400 disabled:opacity-50"
+                    >
+                      {cancelling ? '...' : 'Oui, faute du client'}
+                    </button>
+                    <button
+                      onClick={() => doCancel(false)}
+                      disabled={cancelling}
+                      className="btn btn-primary flex-1 justify-center disabled:opacity-50"
+                    >
+                      {cancelling ? '...' : 'Non, rembourser 100%'}
+                    </button>
+                  </div>
+                  <button
+                    onClick={() => setShowCustomAmount(true)}
+                    className="btn btn-ghost w-full justify-center text-xs text-[#FF4D00]"
+                  >
+                    Définir un montant personnalisé
+                  </button>
+                </>
+              ) : (
+                <>
+                  <label className="label">Montant à rembourser au client (MAD)</label>
+                  <input
+                    type="number"
+                    min="0"
+                    className="input w-full mb-4"
+                    value={customAmount}
+                    onChange={(e) => setCustomAmount(e.target.value)}
+                    placeholder="Ex: 75"
+                  />
+                  <div className="flex gap-2 mb-2">
+                    <button
+                      onClick={() => doCancel(undefined, parseFloat(customAmount) || 0)}
+                      disabled={cancelling || customAmount === ''}
+                      className="btn btn-primary flex-1 justify-center disabled:opacity-50"
+                    >
+                      {cancelling ? '...' : 'Confirmer ce montant'}
+                    </button>
+                  </div>
+                  <button
+                    onClick={() => setShowCustomAmount(false)}
+                    className="btn btn-ghost w-full justify-center text-xs"
+                  >
+                    ← Retour
+                  </button>
+                </>
+              )}
+
+              <button
+                onClick={() => { setCancelModal(null); setShowCustomAmount(false); setCustomAmount('') }}
+                className="btn btn-ghost w-full justify-center mt-2 text-xs"
+              >
+                Fermer sans annuler
+              </button>
             </div>
           </div>
         )}
