@@ -57,10 +57,8 @@ export default function InterestsModal({ mission, onClose, onHired }) {
         ) : (
           <div className="space-y-3">
             {interests.map((o) => (
-              <div key={o.id} className="bg-[#222] rounded-xl p-4 flex items-start gap-3">
-                  <div className="cursor-pointer" onClick={() => setProfileOeil(o)}>
-                    <Avatar name={`${o.first_name} ${o.last_name}`} size={40} src={o.avatar_url} />
-                  </div>
+              <div key={o.id} className="bg-[#222] rounded-xl p-4 flex items-start gap-3 cursor-pointer hover:bg-[#282828] transition-colors" onClick={() => setProfileOeil(o)}>
+                  <Avatar name={`${o.first_name} ${o.last_name}`} size={40} src={o.avatar_url} />
                 <div className="flex-1 min-w-0">
                   <div className="font-semibold text-sm">{o.first_name} {o.last_name}</div>
                   <div className="text-xs text-[#AAA] flex gap-3 mt-0.5 flex-wrap">
@@ -76,10 +74,10 @@ export default function InterestsModal({ mission, onClose, onHired }) {
                   )}
                 </div>
                 <button
-                  onClick={() => hire(o.id)}
-                  disabled={hiring === o.id || hired}
-                  className="btn btn-primary btn-sm flex-shrink-0 disabled:opacity-50"
-                >
+                    onClick={(e) => { e.stopPropagation(); hire(o.id) }}
+                    disabled={hiring === o.id || hired}
+                    className="btn btn-primary btn-sm flex-shrink-0 disabled:opacity-50"
+                  >
                   {hiring === o.id ? t('interestsModal.hiring') : hired ? '✓' : t('interestsModal.hire')}
                 </button>
               </div>
