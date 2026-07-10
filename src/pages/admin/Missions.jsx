@@ -11,9 +11,25 @@ export default function AdminMissions() {
   const [status, setStatus]           = useState('')
   const [tab, setTab]                 = useState('all') // 'all' | 'priority'
   const [assignModal, setAssignModal] = useState(null)
-  const [oeils, setOeils]             = useState([])
-  const [selectedOeil, setSelectedOeil] = useState('')
-  const [assigning, setAssigning]     = useState(false)
+    const [oeils, setOeils]             = useState([])
+    const [selectedOeil, setSelectedOeil] = useState('')
+    const [assigning, setAssigning]     = useState(false)
+    const [cancelModal, setCancelModal] = useState(null)
+    const [cancelling, setCancelling]   = useState(false)
+
+    const doCancel = async (clientAtFault) => {
+      setCancelling(true)
+      try {
+        await missionsAPI.status(cancelModal.id, { status: 'cancelled', client_at_fault: clientAtFault })
+        toast('Mission annulée ✓', 'success')
+        setCancelModal(null)
+        load()
+      } catch (err) {
+        toast(err.response?.data?.error || 'Erreur', 'error')
+      } finally {
+        setCancelling(false)
+      }
+    }
   const [oeilSearch, setOeilSearch]   = useState('')
     // Pagination (Admin Missions, onglets "Toutes les missions" et "Priorité")
     const [page, setPage] = useState(1)
@@ -222,13 +238,21 @@ const doAssign = async () => {
                         <td><StatusBadge status={m.status} /></td>
                       <td>
                         {m.status === 'pending' && (
-                          <button
-                            onClick={() => openAssign(m)}
-                            className="btn btn-ghost btn-sm text-[#FF4D00]"
-                          >
-                            Affecter
-                          </button>
-                        )}
+                            <button
+                              onClick={() => openAssign(m)}
+                              className="btn btn-ghost btn-sm text-[#FF4D00]"
+                            >
+                              Affecter
+                            </button>
+                          )}
+                          {['pending', 'assigned', 'en_route', 'active'].includes(m.status) && (
+                            <button
+                              onClick={() => setCancelModal(m)}
+                              className="btn btn-ghost btn-sm text-red-400"
+                            >
+                              Annuler
+                            </button>
+                          )}
                       </td>
                     </tr>
                   ))}
@@ -346,6 +370,42 @@ const doAssign = async () => {
                 {assigning ? '...' : 'Affecter cet Œil →'}
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {cancelModal && (
+        <div className="fixed inset-0 bg-black/80 z-[70] flex items-center justify-center p-4 backdrop-blur-sm">
+          <div className="bg-[#181818] border border-white/10 rounded-2xl p-6 w-full max-w-md shadow-xl">
+            <h2 className="font-bold text-base mb-1">Annuler la mission</h2>
+            <p className="text-xs text-[#AAA] mb-4">{cancelModal.title}</p>
+
+            <p className="text-sm text-white/80 mb-4">
+              Cette annulation est-elle due à une faute du client (injoignable, comportement abusif, etc.) ?
+            </p>
+            <p className="text-xs text-[#555] mb-4">
+              Si oui, le remboursement suivra les règles habituelles (100%/50%/0% selon le délai). Si non, le client sera remboursé intégralement, quel que soit le délai.
+            </p>
+
+            <div className="flex gap-2">
+              <button
+                onClick={() => doCancel(true)}
+                disabled={cancelling}
+                className="btn btn-ghost flex-1 justify-center text-amber-400 disabled:opacity-50"
+              >
+                {cancelling ? '...' : 'Oui, faute du client'}
+              </button>
+              <button
+                onClick={() => doCancel(false)}
+                disabled={cancelling}
+                className="btn btn-primary flex-1 justify-center disabled:opacity-50"
+              >
+                {cancelling ? '...' : 'Non, rembourser 100%'}
+              </button>
+            </div>
+            <button onClick={() => setCancelModal(null)} className="btn btn-ghost w-full justify-center mt-2 text-xs">
+              Fermer sans annuler
+            </button>
           </div>
         </div>
       )}
