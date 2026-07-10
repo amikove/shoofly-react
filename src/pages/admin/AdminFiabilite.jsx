@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
+import { useNavigate } from 'react-router-dom'
 import AppLayout from '../../components/layout/AppLayout'
 import Topbar from '../../components/layout/Topbar'
 import { reliabilityAPI } from '../../api'
@@ -43,6 +44,7 @@ export default function AdminFiabilite() {
 // ═══════════════════════════════════════════════════════════
 function SuspendedTab() {
   const { i18n } = useTranslation()
+  const navigate = useNavigate()
   const [oeils, setOeils] = useState([])
   const [loading, setLoading] = useState(true)
   const [reactivating, setReactivating] = useState(null) // id de l'Œil en cours de réactivation (affiche le mini-formulaire)
@@ -84,7 +86,7 @@ function SuspendedTab() {
           <div className="flex items-center gap-3 mb-3">
             <Avatar name={`${o.first_name} ${o.last_name}`} size={44} />
             <div className="flex-1">
-              <p className="font-semibold">{o.first_name} {o.last_name}</p>
+              <p className="font-semibold cursor-pointer hover:text-[#FF4D00] hover:underline w-fit" onClick={() => navigate(`/admin/users/${o.id}`)}>{o.first_name} {o.last_name}</p>
               <p className="text-xs text-[#AAA]">{o.email}</p>
               <p className="text-xs text-[#666] mt-0.5">📍 {translateLocation(o.city, i18n.language)}{o.quartier ? ` · ${translateLocation(o.quartier, i18n.language)}` : ''}</p>
             </div>
@@ -143,6 +145,7 @@ function SuspendedTab() {
 // ═══════════════════════════════════════════════════════════
 function RequestsTab() {
   const { i18n } = useTranslation()
+  const navigate = useNavigate()
   const [requests, setRequests] = useState([])
   const [loading, setLoading]   = useState(true)
   const [history, setHistory]   = useState({})
@@ -198,7 +201,7 @@ function RequestsTab() {
           <div className="flex items-center gap-3 mb-3">
             <Avatar name={`${r.first_name} ${r.last_name}`} size={44} />
             <div className="flex-1">
-              <p className="font-semibold">{r.first_name} {r.last_name}</p>
+              <p className="font-semibold cursor-pointer hover:text-[#FF4D00] hover:underline w-fit" onClick={() => navigate(`/admin/users/${r.oeil_id}`)}>{r.first_name} {r.last_name}</p>
               <p className="text-xs text-[#AAA]">{r.email}</p>
             </div>
             <div className="text-right">
@@ -300,6 +303,7 @@ function RequestsTab() {
 // ═══════════════════════════════════════════════════════════
 function ScoresTab() {
   const { i18n } = useTranslation()
+  const navigate = useNavigate()
   const [oeils, setOeils] = useState([])
   const [loading, setLoading] = useState(true)
   const [city, setCity] = useState('')
@@ -383,7 +387,7 @@ function ScoresTab() {
               <tbody>
                 {oeils.map((o) => (
                   <tr key={o.id}>
-                    <td className="font-medium">{o.first_name} {o.last_name}</td>
+                    <td className="font-medium cursor-pointer hover:text-[#FF4D00] hover:underline" onClick={() => navigate(`/admin/users/${o.id}`)}>{o.first_name} {o.last_name}</td>
                     <td className="text-[#AAA]">{o.email}</td>
                     <td className="text-[#AAA]">{o.city ? translateLocation(o.city, i18n.language) : '—'}</td>
                     <td className="text-[#AAA]">{o.quartier ? translateLocation(o.quartier, i18n.language) : '—'}</td>

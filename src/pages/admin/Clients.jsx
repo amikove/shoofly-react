@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import AppLayout from '../../components/layout/AppLayout'
 import Topbar from '../../components/layout/Topbar'
 import { adminAPI } from '../../api'
 import { Spinner, EmptyState, Avatar, toast } from '../../components/ui'
 
 export default function AdminClients() {
+  const navigate = useNavigate()
   const [clients, setClients] = useState([])
   const [loading, setLoading] = useState(true)
 
@@ -31,7 +33,12 @@ export default function AdminClients() {
                 <tbody>
                   {clients.map((c) => (
                     <tr key={c.id}>
-                      <td><div className="flex items-center gap-2"><Avatar name={`${c.first_name} ${c.last_name}`} size={26} bgColor="bg-blue-500/10" textColor="text-blue-400" /><span className="font-medium">{c.first_name} {c.last_name}</span></div></td>
+                      <td>
+                        <div className="flex items-center gap-2 cursor-pointer hover:text-[#FF4D00]" onClick={() => navigate(`/admin/users/${c.id}`)}>
+                          <Avatar name={`${c.first_name} ${c.last_name}`} size={26} bgColor="bg-blue-500/10" textColor="text-blue-400" />
+                          <span className="font-medium hover:underline">{c.first_name} {c.last_name}</span>
+                        </div>
+                      </td>
                       <td className="text-[#AAA] text-xs">{c.email}</td>
                       <td className="text-[#AAA]">{c.city || '—'}</td>
                       <td className="text-center">{c.total_missions || 0}</td>

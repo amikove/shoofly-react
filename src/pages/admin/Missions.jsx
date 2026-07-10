@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import AppLayout from '../../components/layout/AppLayout'
 import Topbar from '../../components/layout/Topbar'
 import { missionsAPI, adminAPI, usersAPI } from '../../api'
 import { StatusBadge, Spinner, EmptyState, toast, Pagination } from '../../components/ui'
 
 export default function AdminMissions() {
+ const navigate = useNavigate()
  const [missions, setMissions]       = useState([])
   const [loading, setLoading]         = useState(true)
   const [search, setSearch]           = useState('')
@@ -218,8 +220,16 @@ const doAssign = async () => {
                         {m.is_priority && <span className="ml-1 text-[9px] bg-red-500 text-white px-1 py-0.5 rounded font-bold">PRIORITÉ</span>}
                       </td>
                       <td className="font-medium">{m.title}</td>
-                      <td className="text-[#AAA]">{m.client_name}</td>
-                      <td>{m.oeil_name || '—'}</td>
+                      <td className="text-[#AAA]">
+                        <span className="cursor-pointer hover:text-[#FF4D00] hover:underline" onClick={() => navigate(`/admin/users/${m.client_id}`)}>
+                          {m.client_name}
+                        </span>
+                      </td>
+                      <td>
+                        {m.oeil_id
+                          ? <span className="cursor-pointer hover:text-[#FF4D00] hover:underline" onClick={() => navigate(`/admin/users/${m.oeil_id}`)}>{m.oeil_name}</span>
+                          : '—'}
+                      </td>
                       <td className="text-green-400 font-semibold">{parseFloat(m.price).toFixed(0)} MAD</td>
                         {tab === 'priority' && (
                           <>

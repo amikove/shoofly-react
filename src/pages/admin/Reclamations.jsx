@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import AppLayout from '../../components/layout/AppLayout'
 import Topbar from '../../components/layout/Topbar'
 import { adminAPI } from '../../api'
 import { Spinner, toast } from '../../components/ui'
 
 export default function AdminReclamations() {
+  const navigate = useNavigate()
   const [claims, setClaims]     = useState([])
   const [loading, setLoading]   = useState(true)
   const [resolving, setResolving] = useState(null)
@@ -50,7 +52,14 @@ export default function AdminReclamations() {
                     <span className="text-[#555] font-normal ml-2 text-xs">#{String(c.mission_id).slice(-6).toUpperCase()}</span>
                   </div>
                   <div className="text-xs text-[#AAA] mt-0.5">
-                    Client : <span className="text-white">{c.client_name}</span> · Œil : <span className="text-white">{c.oeil_name}</span>
+                    Client :{' '}
+                    <span className="text-white cursor-pointer hover:text-[#FF4D00] hover:underline" onClick={() => navigate(`/admin/users/${c.client_id}`)}>
+                      {c.client_name}
+                    </span>
+                    {' '}· Œil :{' '}
+                    <span className="text-white cursor-pointer hover:text-[#FF4D00] hover:underline" onClick={() => navigate(`/admin/users/${c.oeil_id}`)}>
+                      {c.oeil_name}
+                    </span>
                 </div>
                 <div className="text-xs text-[#AAA] mt-0.5">
                   Prix : <span className="text-green-400">{c.mission_price} MAD</span> · Gain Œil : <span className="text-[#FF4D00]">{c.oeil_earning} MAD</span>

@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import AppLayout from '../../components/layout/AppLayout'
 import Topbar from '../../components/layout/Topbar'
 import { missionsAPI } from '../../api'
@@ -27,6 +28,7 @@ const typeColor = (type) => {
 }
 
 export default function AdminProblemes() {
+  const navigate = useNavigate()
   const [reports, setReports]   = useState([])
   const [loading, setLoading]   = useState(true)
   const [tab, setTab]           = useState('open')
@@ -214,7 +216,13 @@ export default function AdminProblemes() {
                 <div>
                   <span className={`text-sm font-semibold ${typeColor(selectedReport.type)}`}>⚠️ {selectedReport.type}</span>
                   <p className="text-xs text-[#AAA] mt-1">
-                    Signalé par <span className="text-white">{selectedReport.reporter_first} {selectedReport.reporter_last}</span>
+                    Signalé par{' '}
+                    <span
+                      className="text-white cursor-pointer hover:text-[#FF4D00] hover:underline"
+                      onClick={(e) => { e.stopPropagation(); navigate(`/admin/users/${selectedReport.reporter_id}`) }}
+                    >
+                      {selectedReport.reporter_first} {selectedReport.reporter_last}
+                    </span>
                     {' '}({selectedReport.reporter_role === 'client' ? 'Client' : 'Œil'})
                   </p>
                 </div>
