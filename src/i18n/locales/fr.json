@@ -596,6 +596,7 @@
     }
   },
   "newMissionModal": {
+    "immobilierNotice": "L'avis de l'Œil reflète l'état du bien au moment de sa visite. Pour une décision éclairée, basez-vous en priorité sur les photos et vidéos du rapport plutôt que sur la seule note attribuée.",
     "title": "Nouvelle mission",
     "subtitleDirect": "Mission directe pour {{name}}",
     "subtitleVisible": "Visible par tous les Œils disponibles",

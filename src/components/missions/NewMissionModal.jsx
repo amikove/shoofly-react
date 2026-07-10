@@ -368,6 +368,11 @@ if (parseFloat(form.price) < minPrice) {
         <form onSubmit={submit} className="space-y-3">
 
           <SubcategorySelector type={type} value={subcategory} onChange={setSub} t={t} />
+            {type === 'immobilier' && subcategory && (
+              <div className="bg-[#FF4D00]/5 border border-[#FF4D00]/20 rounded-xl p-3 text-xs text-[#AAA] leading-relaxed">
+                ⚠️ {t('newMissionModal.immobilierNotice')}
+              </div>
+            )}
 
           {/* Titre */}
           <div>
