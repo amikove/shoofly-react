@@ -230,10 +230,27 @@ export default function AdminProblemes() {
               </div>
 
               <div className="bg-[#222] rounded-xl p-3 mb-3 space-y-1">
-                <p className="text-xs font-semibold text-white">📋 {selectedReport.mission_title}</p>
-                <p className="text-xs text-[#AAA]">📍 {selectedReport.city} · 📅 {selectedReport.scheduled_at ? new Date(selectedReport.scheduled_at).toLocaleDateString('fr-FR') : '—'}</p>
-                <p className="text-xs text-[#AAA]">👥 Client : {selectedReport.client_first} {selectedReport.client_last} · 👁️ Œil : {selectedReport.oeil_first || '—'} {selectedReport.oeil_last || ''}</p>
-              </div>
+                  <p className="text-xs font-semibold text-white">📋 {selectedReport.mission_title}</p>
+                  <p className="text-xs text-[#AAA]">📍 {selectedReport.city} · 📅 {selectedReport.scheduled_at ? new Date(selectedReport.scheduled_at).toLocaleDateString('fr-FR') : '—'}</p>
+                  <p className="text-xs text-[#AAA]">
+                    👥 Client :{' '}
+                    {selectedReport.client_id ? (
+                      <span className="text-[#FF4D00] cursor-pointer hover:underline" onClick={() => navigate(`/admin/users/${selectedReport.client_id}`)}>
+                        {selectedReport.client_first} {selectedReport.client_last}
+                      </span>
+                    ) : (
+                      <>{selectedReport.client_first} {selectedReport.client_last}</>
+                    )}
+                    {' '}· 👁️ Œil :{' '}
+                    {selectedReport.oeil_id ? (
+                      <span className="text-[#FF4D00] cursor-pointer hover:underline" onClick={() => navigate(`/admin/users/${selectedReport.oeil_id}`)}>
+                        {selectedReport.oeil_first} {selectedReport.oeil_last}
+                      </span>
+                    ) : (
+                      <>{selectedReport.oeil_first || '—'} {selectedReport.oeil_last || ''}</>
+                    )}
+                  </p>
+                </div>
 
               {selectedReport.description && (
                 <div className="bg-orange-500/5 border border-orange-500/20 rounded-xl p-3 mb-3">
