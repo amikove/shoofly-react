@@ -21,6 +21,7 @@ export default function OeilDashboard() {
   const [transferMission, setTransferMission] = useState(null)
   const [transferReason, setTransferReason] = useState('')
   const [transferring, setTransferring] = useState(false)
+  const [advancing, setAdvancing] = useState(null)
 
   const doTransfer = async () => {
     if (!transferReason) { toast(t('oeilDashboard.selectReasonError'), 'error'); return }
@@ -89,11 +90,13 @@ const refuse = async (id) => {
   const advance = async (mission) => {
     const next = { assigned:'en_route', en_route:'active', active:'completed' }[mission.status]
     if (!next) return
+    setAdvancing(mission.id)
     try {
       await missionsAPI.status(mission.id, { status: next })
       toast(next === 'completed' ? t('oeilDashboard.missionCompletedToast') : t('oeilDashboard.statusUpdatedToast'), 'success')
       load()
     } catch { toast(t('oeilDashboard.genericError'), 'error') }
+    finally { setAdvancing(null) }
   }
 
   const advanceLabel = {
@@ -327,7 +330,11 @@ const refuse = async (id) => {
                     {t('oeilDashboard.active.chat')}
                   </button>
                   {advanceLabel[m.status] && (
-                    <button onClick={() => advance(m)} className="btn btn-primary btn-sm">
+                    <button
+                      onClick={() => advance(m)}
+                      disabled={advancing === m.id}
+                      className="btn btn-primary btn-sm disabled:opacity-60"
+                    >
                       {advanceLabel[m.status]}
                     </button>
                   )}
