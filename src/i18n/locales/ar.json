@@ -572,7 +572,8 @@
       "assigned": "مُسندة",
       "enRoute": "في الطريق",
       "completed": "منتهية",
-      "cancelled": "ملغاة"
+      "cancelled": "ملغاة",
+      "sousReclamation": "🚨 تحت المراجعة"
     },
     "timeAgo": {
       "now": "الآن",
@@ -1570,7 +1571,7 @@
       "completed": "منتهية",
       "validated": "مصادق عليها — تم الدفع",
       "cancelled": "ملغاة",
-      "sousReclamation": "تحت المراجعة "
+      "sousReclamation": "🚨 تحت المراجعة "
     }
   },
   "missionHistoryModal": {
@@ -1586,7 +1587,7 @@
       "completed": "أنهى العين الميدانية المهمة",
       "validated": "صادق عليها العميل",
       "cancelled": "تم إلغاء المهمة",
-      "sousReclamation": "مطالبة من العميل"
+      "sousReclamation": "🚨 تحت المراجعة "
     }
   },
   "notificationBanner": {
@@ -1733,7 +1734,7 @@
     "enRoute": "في الطريق",
     "pending": "قيد الانتظار",
     "cancelled": "ملغاة",
-    "sousReclamation": "🚨 مطالبة",
+    "sousReclamation": "🚨 تحت المراجعة ",
     "completed": "مكتملة",
     "missionTerminee": "✅ المهمة منتهية",
     "attenteValidation": "⏳ بانتظار التصديق"

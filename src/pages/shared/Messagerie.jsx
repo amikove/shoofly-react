@@ -8,11 +8,12 @@ import ChatModal from '../../components/missions/ChatModal'
 import { useAuth } from '../../context/AuthContext'
 
 const STATUS_LABEL_KEY = {
-  pending:   { key: 'pending',   color: 'text-yellow-400' },
-  assigned:  { key: 'assigned',  color: 'text-blue-400'   },
-  en_route:  { key: 'enRoute',   color: 'text-purple-400' },
-  completed: { key: 'completed', color: 'text-green-400'  },
-  cancelled: { key: 'cancelled', color: 'text-red-400'    },
+  pending:          { key: 'pending',         color: 'text-yellow-400' },
+  assigned:         { key: 'assigned',        color: 'text-blue-400'   },
+  en_route:         { key: 'enRoute',         color: 'text-purple-400' },
+  completed:        { key: 'completed',       color: 'text-green-400'  },
+  cancelled:        { key: 'cancelled',       color: 'text-red-400'    },
+  sous_reclamation: { key: 'sousReclamation', color: 'text-orange-400' },
 }
 
 const TYPE_ICON = {

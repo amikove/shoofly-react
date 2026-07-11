@@ -566,12 +566,13 @@
     "emptyDesc": "Vos échanges avec les Œils apparaîtront ici.",
     "noMessage": "Aucun message",
     "status": {
-      "pending": "En attente",
-      "assigned": "Assignée",
-      "enRoute": "En route",
-      "completed": "Terminée",
-      "cancelled": "Annulée"
-    },
+        "pending": "En attente",
+        "assigned": "Assignée",
+        "enRoute": "En route",
+        "completed": "Terminée",
+        "cancelled": "Annulée",
+        "sousReclamation": "🚨 Réclamation"
+      },
     "timeAgo": {
       "now": "à l'instant",
       "minutes": "il y a {{count}} min",
