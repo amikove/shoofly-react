@@ -1129,7 +1129,9 @@ export default function AdminDashboard() {
                             <td>{e.category}</td>
                             <td className="text-[#AAA] text-xs">{e.description || '—'}</td>
                             <td className="text-red-400 font-semibold">{parseFloat(e.amount).toFixed(0)} MAD</td>
-                            <td className="text-xs text-[#AAA]">{e.first_name ? `${e.first_name} ${e.last_name}` : '—'}</td>
+                            <td className="text-xs text-[#AAA]">
+                              {e.first_name ? `${e.first_name} ${e.last_name}` : e.category === 'Promotions' ? '🤖 Système (Promo)' : '—'}
+                            </td>
                             <td>
                               <button onClick={() => removeExpense(e.id)} className="text-[#555] hover:text-red-400 text-xs">✕</button>
                             </td>
