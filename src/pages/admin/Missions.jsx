@@ -78,15 +78,23 @@ export default function AdminMissions() {
     } catch { toast('Erreur chargement Œils', 'error') }
   }
 
-const doAssign = async () => {
-    if (!selectedOeil) { toast('Sélectionnez un Œil', 'error'); return }
-    setAssigning(true)
-    try {
-      await missionsAPI.assignAdmin(assignModal.id, { oeil_id: selectedOeil })
-      toast('Mission assignée ✓', 'success')
-      setAssignModal(null)
-      load()
-} catch (err) {
+const doAssign = async (overrideWarning = false) => {
+      if (!selectedOeil) { toast('Sélectionnez un Œil', 'error'); return }
+      setAssigning(true)
+      try {
+        await missionsAPI.assignAdmin(assignModal.id, { oeil_id: selectedOeil, override_warning: overrideWarning })
+        toast('Mission assignée ✓', 'success')
+        setAssignModal(null)
+        load()
+      } catch (err) {
+        if (err.response?.status === 409 && err.response?.data?.requires_confirmation) {
+          if (window.confirm(err.response.data.error + '\n\nConfirmer quand même ?')) {
+            setAssigning(false)
+            return doAssign(true)
+          }
+          setAssigning(false)
+          return
+        }
       console.error('Assign error:', err)
       toast(err.response?.data?.error || err.message || 'Erreur', 'error')
     } finally { setAssigning(false) }
