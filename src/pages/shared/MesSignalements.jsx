@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next'
 import AppLayout from '../../components/layout/AppLayout'
 import Topbar from '../../components/layout/Topbar'
 import { missionsAPI } from '../../api'
-import { Spinner, EmptyState } from '../../components/ui'
+import { Spinner, EmptyState, toast } from '../../components/ui'
 
 const STATUS_LABEL_KEYS = {
   open:        { key: 'open',       variant: 'text-orange-400' },
@@ -19,9 +19,9 @@ export default function MesSignalements() {
 
   useEffect(() => {
     missionsAPI.myReports()
-      .then(({ data }) => setReports(data.reports || []))
-      .catch(() => {})
-      .finally(() => setLoading(false))
+        .then(({ data }) => setReports(data.reports || []))
+        .catch(() => toast('Erreur lors du chargement de vos signalements', 'error'))
+        .finally(() => setLoading(false))
   }, [])
 
   return (
