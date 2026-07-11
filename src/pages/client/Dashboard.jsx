@@ -140,10 +140,16 @@ const [interestsMission, setInterestsMission] = useState(null)
                 <div className="flex-1 min-w-0">
                   <div className="font-semibold text-sm truncate">{o.first_name} {o.last_name}</div>
                   <div className="flex items-center gap-1 mt-0.5 flex-wrap">
-                    <Stars value={o.rating_avg || 0} />
-                    <span className="text-[11px] text-[#AAA]">
-                      {t('clientDashboard.availableOeils.ratingMissions', { rating: o.rating_avg || '—', count: o.total_missions || 0 })}
-                    </span>
+                    {o.is_new_oeil ? (
+                      <span className="badge badge-blue">{t('clientDashboard.availableOeils.newOeilBadge')}</span>
+                    ) : (
+                      <>
+                        <Stars value={o.rating_avg || 0} />
+                        <span className="text-[11px] text-[#AAA]">
+                          {t('clientDashboard.availableOeils.ratingMissions', { rating: o.rating_avg || '—', count: o.total_missions || 0 })}
+                        </span>
+                      </>
+                    )}
                   </div>
                 </div>
                 <span className={`badge flex-shrink-0 ${o.is_available ? 'badge-green' : 'badge-gray'}`}>

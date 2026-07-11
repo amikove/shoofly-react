@@ -398,6 +398,7 @@
       "emptyTitle": "لا توجد عين ميدانية",
       "emptyDesc": "ستظهر هنا العيون الميدانية المتاحة.",
       "ratingMissions": "{{rating}} · {{count}} مهمة",
+      "newOeilBadge": "🆕 جديد",
       "available": "متاح",
       "busy": "مشغول"
     },
@@ -522,6 +523,7 @@
     "emptyDesc": "عدّل عوامل التصفية.",
     "errorLoading": "خطأ في التحميل",
     "ratingMissions": "{{rating}} · {{count}} مهمة",
+    "newOeilBadge": "🆕 جديد",
     "available": "متاح",
     "busy": "مشغول",
     "order": "طلب",
@@ -729,6 +731,7 @@
   "oeilProfileModal": {
     "subtitle": "📍 {{city}} · {{count}} مهمة",
     "reviewsCount": "({{count}} تقييم)",
+    "newOeilBadge": "🆕 جديد",
     "available": "متاح",
     "unavailable": "غير متاح",
     "reliabilityScore": "درجة الموثوقية: {{score}}%",
@@ -759,6 +762,7 @@
     "emptyDesc": "عد خلال بضع دقائق.",
     "ratingReviews": "⭐ {{rating}}/5 ({{count}} تقييم)",
     "missionsCount": "✅ {{count}} مهمة",
+    "newOeilBadge": "🆕 جديد",
     "hiring": "...",
     "hire": "توظيف",
     "hiredToast": "تم توظيف العين الميدانية! 🎉",

@@ -42,9 +42,15 @@ export default function OeilProfileModal({ oeil, onClose, onCommander }) {
             <Avatar name={`${profile.first_name} ${profile.last_name}`} size={60} src={profile.avatar_url} />
             <div className="flex-1">
               <div className="flex items-center gap-2 mb-1">
-                <Stars value={profile.rating_avg || 0} />
-                <span className="text-sm font-semibold text-yellow-400">{profile.rating_avg || '—'}</span>
-                <span className="text-xs text-[#AAA]">{t('oeilProfileModal.reviewsCount', { count: profile.rating_count || 0 })}</span>
+                {profile.is_new_oeil ? (
+                  <Badge variant="blue">{t('oeilProfileModal.newOeilBadge')}</Badge>
+                ) : (
+                  <>
+                    <Stars value={profile.rating_avg || 0} />
+                    <span className="text-sm font-semibold text-yellow-400">{profile.rating_avg || '—'}</span>
+                    <span className="text-xs text-[#AAA]">{t('oeilProfileModal.reviewsCount', { count: profile.rating_count || 0 })}</span>
+                  </>
+                )}
               </div>
               {profile.is_available
                 ? <Badge variant="green">{t('oeilProfileModal.available')}</Badge>
@@ -54,7 +60,12 @@ export default function OeilProfileModal({ oeil, onClose, onCommander }) {
           </div>
 
           {/* Score de fiabilité */}
-          {profile.reliability_score !== undefined && profile.reliability_score !== null && (
+          {profile.is_new_oeil ? (
+            <div className="flex items-center gap-2 rounded-xl px-3 py-2 mb-5 bg-blue-500/10 border border-blue-500/20">
+              <span className="text-base">🆕</span>
+              <p className="text-xs font-semibold text-white">{t('oeilProfileModal.newOeilBadge')}</p>
+            </div>
+          ) : profile.reliability_score !== undefined && profile.reliability_score !== null && (
             <div className={`flex items-center gap-2 rounded-xl px-3 py-2 mb-5 ${
               profile.reliability_score >= 95 ? 'bg-green-500/10 border border-green-500/20' :
               profile.reliability_score >= 90 ? 'bg-teal-500/10 border border-teal-500/20' :
@@ -119,8 +130,17 @@ export default function OeilProfileModal({ oeil, onClose, onCommander }) {
                   <div className="text-xs text-[#AAA] mt-0.5">{t('oeilProfileModal.missions')}</div>
                 </div>
                 <div className="bg-[#222] rounded-xl p-3 text-center">
-                  <div className="text-xl font-bold text-yellow-400">{profile.rating_avg || '—'}</div>
-                  <div className="text-xs text-[#AAA] mt-0.5">{t('oeilProfileModal.averageRating')}</div>
+                  {profile.is_new_oeil ? (
+                    <>
+                      <div className="text-xl font-bold text-[#5AA0FF]">🆕</div>
+                      <div className="text-xs text-[#AAA] mt-0.5">{t('oeilProfileModal.newOeilBadge')}</div>
+                    </>
+                  ) : (
+                    <>
+                      <div className="text-xl font-bold text-yellow-400">{profile.rating_avg || '—'}</div>
+                      <div className="text-xs text-[#AAA] mt-0.5">{t('oeilProfileModal.averageRating')}</div>
+                    </>
+                  )}
                 </div>
               </div>
               {!profile.bio && !profile.total_missions && (

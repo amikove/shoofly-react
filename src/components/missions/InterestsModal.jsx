@@ -63,7 +63,10 @@ export default function InterestsModal({ mission, onClose, onHired }) {
                   <div className="font-semibold text-sm">{o.first_name} {o.last_name}</div>
                   <div className="text-xs text-[#AAA] flex gap-3 mt-0.5 flex-wrap">
                     <span>📍 {o.city ? translateLocation(o.city, i18n.language) : '—'}</span>
-                    <span>{t('interestsModal.ratingReviews', { rating: o.rating_avg || '0', count: o.rating_count || 0 })}</span>
+                    {o.is_new_oeil
+                      ? <span className="badge badge-blue">{t('interestsModal.newOeilBadge')}</span>
+                      : <span>{t('interestsModal.ratingReviews', { rating: o.rating_avg || '0', count: o.rating_count || 0 })}</span>
+                    }
                     <span>{t('interestsModal.missionsCount', { count: o.total_missions || 0 })}</span>
                   </div>
                   {o.bio && <p className="text-xs text-[#777] mt-1 line-clamp-2">{o.bio}</p>}

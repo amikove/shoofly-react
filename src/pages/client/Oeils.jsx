@@ -31,9 +31,15 @@ function AvisPopup({ oeil, onClose }) {
           <div>
             <div className="font-semibold text-sm">{oeil.first_name} {oeil.last_name}</div>
             <div className="flex items-center gap-1.5 mt-0.5">
-              <Stars value={oeil.rating_avg || 0} />
-              <span className="text-xs text-yellow-400 font-semibold">{oeil.rating_avg || '—'}</span>
-              <span className="text-xs text-[#AAA]">{t('clientOeils.avisPopup.reviewsCount', { count: oeil.rating_count || 0 })}</span>
+              {oeil.is_new_oeil ? (
+                <span className="badge badge-blue">{t('clientOeils.newOeilBadge')}</span>
+              ) : (
+                <>
+                  <Stars value={oeil.rating_avg || 0} />
+                  <span className="text-xs text-yellow-400 font-semibold">{oeil.rating_avg || '—'}</span>
+                  <span className="text-xs text-[#AAA]">{t('clientOeils.avisPopup.reviewsCount', { count: oeil.rating_count || 0 })}</span>
+                </>
+              )}
             </div>
           </div>
           <button onClick={onClose} className="text-[#AAA] hover:text-white text-lg">✕</button>
@@ -143,10 +149,16 @@ export default function ClientOeils() {
                     <div className="flex-1">
                       <div className="font-semibold">{o.first_name} {o.last_name}</div>
                     <div className="flex items-center gap-1.5 mt-0.5">
-                      <Stars value={o.rating_avg || 0} />
-                      <span className="text-xs text-[#AAA]">
-                        {t('clientOeils.ratingMissions', { rating: o.rating_avg || '—', count: o.total_missions || 0 })}
-                      </span>
+                      {o.is_new_oeil ? (
+                        <span className="badge badge-blue">{t('clientOeils.newOeilBadge')}</span>
+                      ) : (
+                        <>
+                          <Stars value={o.rating_avg || 0} />
+                          <span className="text-xs text-[#AAA]">
+                            {t('clientOeils.ratingMissions', { rating: o.rating_avg || '—', count: o.total_missions || 0 })}
+                          </span>
+                        </>
+                      )}
                     </div>
                     <div className="text-xs text-[#AAA] mt-0.5">📍 {translateLocation(o.city, i18n.language)}</div>
                   </div>

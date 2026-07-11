@@ -396,6 +396,7 @@
       "emptyTitle": "Aucun Œil",
       "emptyDesc": "Les Œils disponibles apparaîtront ici.",
       "ratingMissions": "{{rating}} · {{count}} missions",
+      "newOeilBadge": "🆕 Nouveau",
       "available": "Dispo",
       "busy": "Occupé"
     },
@@ -520,6 +521,7 @@
     "emptyDesc": "Modifiez vos filtres.",
     "errorLoading": "Erreur de chargement",
     "ratingMissions": "{{rating}} · {{count}} missions",
+    "newOeilBadge": "🆕 Nouveau",
     "available": "Dispo",
     "busy": "Occupé",
     "order": "Commander",
@@ -727,6 +729,7 @@
   "oeilProfileModal": {
     "subtitle": "📍 {{city}} · {{count}} missions",
     "reviewsCount": "({{count}} avis)",
+    "newOeilBadge": "🆕 Nouveau",
     "available": "Disponible",
     "unavailable": "Indisponible",
     "reliabilityScore": "Score de fiabilité : {{score}}%",
@@ -757,6 +760,7 @@
     "emptyDesc": "Revenez dans quelques minutes.",
     "ratingReviews": "⭐ {{rating}}/5 ({{count}} avis)",
     "missionsCount": "✅ {{count}} missions",
+    "newOeilBadge": "🆕 Nouveau",
     "hiring": "...",
     "hire": "Embaucher",
     "hiredToast": "Œil embauché ! 🎉",
