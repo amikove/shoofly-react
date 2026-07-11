@@ -242,9 +242,8 @@ export default function NewMissionModal({ open, onClose, onCreated, preselectedO
 
 const submit = async (e) => {
     e.preventDefault()
-console.log('bypassed:', e._bypassed, 'showCompliance:', showCompliance)
+
     if (!e._bypassed) { setShowCompliance(true); return }
-    console.log('form:', form.title, form.city, form.price, form.quartier, form.scheduled_date, form.scheduled_time)
 
 if (!form.title || !form.city || !form.price) {
       toast(t('newMissionModal.errors.titleCityBudgetRequired'), 'error')
@@ -277,7 +276,6 @@ if (parseFloat(form.price) < minPrice) {
 
     setLoading(true)
     try {
-      console.log('form values:', form.scheduled_date, form.scheduled_time, form.title, form.city, form.quartier, form.price)
       const adresseFull = [form.quartier, form.city].filter(Boolean).join(', ')
       const payload = {
         type,
@@ -290,7 +288,6 @@ if (parseFloat(form.price) < minPrice) {
         description:  form.description,
         scheduled_at: (() => {
   const dt = new Date(`${form.scheduled_date}T${form.scheduled_time}`)
-  console.log('scheduled_at:', dt.toISOString(), 'valid:', !isNaN(dt))
   return dt.toISOString()
 })(),
       }
