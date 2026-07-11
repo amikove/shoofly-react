@@ -307,7 +307,7 @@ const cancel = async (id) => {
             </td>
             <td className="text-lg">{TYPE_ICONS[m.type] || '📋'}</td>
             <td className="text-[#AAA]">{m.oeil_name || '—'}</td>
-            <td className="text-[#AAA] text-xs">{new Date(m.created_at).toLocaleDateString('fr-MA')}</td>
+            <td className="text-[#AAA] text-xs">{new Date(m.created_at).toLocaleDateString('fr-FR')}</td>
             <td className="text-green-400 font-semibold">{parseFloat(m.price).toFixed(0)} MAD</td>
             <td><StatusBadge status={m.status} validated={!!m.validated_at} role="client" /></td>
             <td>
@@ -398,7 +398,7 @@ const cancel = async (id) => {
         <div className="flex-1 min-w-0">
           <div className="font-semibold text-sm truncate">{m.title}</div>
           <div className="text-[11px] text-[#AAA] mt-0.5">
-            {TYPE_ICONS[m.type]} · {m.oeil_name || t('clientMissions.mobile.notAssigned')} · {new Date(m.created_at).toLocaleDateString('fr-MA')}
+            {TYPE_ICONS[m.type]} · {m.oeil_name || t('clientMissions.mobile.notAssigned')} · {new Date(m.created_at).toLocaleDateString('fr-FR')}
           </div>
         </div>
         <div className="flex-shrink-0 flex flex-col items-end gap-1">
