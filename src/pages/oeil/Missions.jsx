@@ -105,10 +105,10 @@ const load = useCallback((t) => {
 
   // Charger les compteurs de tous les onglets en parallèle
   Promise.all([
-    missionsAPI.list({ mode: 'available', is_priority: true, limit: 100 }),
-    missionsAPI.list({ mode: 'available', limit: 100 }),
-    missionsAPI.list({ mode: 'mine', limit: 100 }),
-    missionsAPI.list({ mode: 'mine', status: 'completed', limit: 100 }),
+    missionsAPI.list({ mode: 'available', is_priority: true, limit: 200 }),
+      missionsAPI.list({ mode: 'available', limit: 200 }),
+      missionsAPI.list({ mode: 'mine', limit: 200 }),
+      missionsAPI.list({ mode: 'mine', status: 'completed', limit: 200 }),
   ]).then(([prioRes, availRes, activeRes, doneRes]) => {
     const prio = (prioRes.data.missions || []).filter(m => m.is_priority)
     setPriorityMissions(prio)
@@ -127,9 +127,9 @@ const load = useCallback((t) => {
       // Tri fixe par date d'exécution la plus proche (missions urgentes en premier)
       params = { mode: 'available', sort: 'scheduled_asc', page, limit: 20, ...(quartier ? { quartier } : {}) }
   } else if (t === 'active') {
-      params = { mode: 'mine', limit: 100 } // Aligné avec le compteur pour éviter la troncature par défaut (limit=20)
+      params = { mode: 'mine', limit: 200 } // Aligné avec le compteur pour éviter la troncature par défaut (limit=20)
   } else {
-      params = { mode: 'mine', status: 'completed', limit: 100 } // Aligné avec le compteur pour éviter la troncature par défaut (limit=20)
+      params = { mode: 'mine', status: 'completed', limit: 200 } // Aligné avec le compteur pour éviter la troncature par défaut (limit=20)
   }
   return missionsAPI.list(params)
       .then(({ data }) => {
