@@ -161,15 +161,21 @@ export default function AdminPromos() {
                         {p.expires_at ? new Date(p.expires_at).toLocaleDateString('fr-FR') : '—'}
                       </td>
                       <td>
-                        <span className={`badge ${p.is_active ? 'badge-green' : 'badge-gray'}`}>
-                          {p.is_active ? 'Actif' : 'Inactif'}
-                        </span>
-                      </td>
-                      <td>
-                        <div className="flex gap-1">
-                          <button onClick={() => toggle(p.id)} className={`btn btn-ghost btn-sm ${p.is_active ? 'text-yellow-400' : 'text-green-400'}`}>
-                            {p.is_active ? 'Désactiver' : 'Activer'}
-                          </button>
+                          {(() => {
+                            const isExpired = p.expires_at && new Date(p.expires_at) < new Date()
+                            if (isExpired) return <span className="badge badge-red">Expiré</span>
+                            return <span className={`badge ${p.is_active ? 'badge-green' : 'badge-gray'}`}>{p.is_active ? 'Actif' : 'Désactivé'}</span>
+                          })()}
+                        </td>
+                        <td>
+                          <div className="flex gap-1">
+                            <button
+                              onClick={() => toggle(p.id)}
+                              disabled={p.expires_at && new Date(p.expires_at) < new Date()}
+                              className={`btn btn-ghost btn-sm ${p.is_active ? 'text-yellow-400' : 'text-green-400'} disabled:opacity-40 disabled:cursor-not-allowed`}
+                            >
+                              {p.is_active ? 'Désactiver' : 'Activer'}
+                            </button>
                           <button onClick={() => remove(p.id)} className="btn btn-ghost btn-sm text-red-400">
                             Supprimer
                           </button>
