@@ -18,6 +18,7 @@ export default function AdminMissions() {
     const [assigning, setAssigning]     = useState(false)
     const [cancelModal, setCancelModal] = useState(null)
     const [cancelling, setCancelling]   = useState(false)
+    const [overrideWarningModal, setOverrideWarningModal] = useState(null) // message à confirmer avant affectation forcée
 
     const doCancel = async (clientAtFault) => {
       setCancelling(true)
@@ -88,11 +89,8 @@ const doAssign = async (overrideWarning = false) => {
         load()
       } catch (err) {
         if (err.response?.status === 409 && err.response?.data?.requires_confirmation) {
-          if (window.confirm(err.response.data.error + '\n\nConfirmer quand même ?')) {
-            setAssigning(false)
-            return doAssign(true)
-          }
           setAssigning(false)
+          setOverrideWarningModal(err.response.data.error)
           return
         }
       console.error('Assign error:', err)
@@ -409,6 +407,32 @@ const doAssign = async (overrideWarning = false) => {
             <button onClick={() => setCancelModal(null)} className="btn btn-ghost w-full justify-center mt-2 text-xs">
               Fermer sans annuler
             </button>
+          </div>
+        </div>
+      )}
+
+      {overrideWarningModal && (
+        <div className="fixed inset-0 bg-black/80 z-[90] flex items-center justify-center p-4 backdrop-blur-sm">
+          <div className="bg-[#181818] border border-amber-500/30 rounded-2xl p-6 w-full max-w-md shadow-xl">
+            <div className="flex items-center gap-3 mb-4">
+              <span className="text-2xl">⚠️</span>
+              <h2 className="font-bold text-base">Confirmation requise</h2>
+            </div>
+            <p className="text-sm text-white/80 mb-6">{overrideWarningModal}</p>
+            <div className="flex gap-2">
+              <button
+                onClick={() => { setOverrideWarningModal(null); doAssign(true) }}
+                className="btn btn-primary flex-1 justify-center"
+              >
+                Confirmer quand même
+              </button>
+              <button
+                onClick={() => setOverrideWarningModal(null)}
+                className="btn btn-ghost flex-1 justify-center"
+              >
+                Annuler
+              </button>
+            </div>
           </div>
         </div>
       )}
