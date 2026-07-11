@@ -60,10 +60,10 @@ export function useNotifications({ onChatOpen } = {}) {
   useEffect(() => {
         if (!onEvent || !user) return
 
-        console.log('🔔 useNotifications monté pour:', user.email)
+        
 
         const unsubDebug = onEvent('notification', (data) => {
-          console.log('📡 notification reçue:', data)
+          
         })
 
         // Nouveau message reçu

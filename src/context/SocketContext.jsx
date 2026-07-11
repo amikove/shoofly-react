@@ -24,7 +24,6 @@ export function SocketProvider({ children }) {
     })
 
     socketRef.current.on('connect', () => {
-      console.log('🔌 Socket connecté')
       setConnected(true)
     })
 
@@ -43,7 +42,6 @@ export function SocketProvider({ children }) {
     })
 
     socketRef.current.on('reconnect', (attempt) => {
-      console.log('🔌 Socket reconnecté après', attempt, 'tentatives')
       setConnected(true)
     })
 
