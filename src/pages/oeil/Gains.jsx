@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next'
 import AppLayout from '../../components/layout/AppLayout'
 import Topbar from '../../components/layout/Topbar'
 import { usersAPI } from '../../api'
-import { Spinner, EmptyState } from '../../components/ui'
+import { Spinner, EmptyState, toast } from '../../components/ui'
 
 export default function OeilGains() {
   const { t } = useTranslation()
@@ -23,10 +23,10 @@ export default function OeilGains() {
       .then(({ data }) => {
         setLines(data.lines || [])
         setBalance(data.balance || 0)
-        setTotalEarnings(data.total_earnings || 0)
-      })
-      .catch(() => {})
-      .finally(() => setLoading(false))
+          setTotalEarnings(data.total_earnings || 0)
+        })
+        .catch(() => toast('Erreur lors du chargement de vos gains', 'error'))
+        .finally(() => setLoading(false))
   }, [])
 
   return (
