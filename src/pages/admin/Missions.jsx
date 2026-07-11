@@ -36,40 +36,26 @@ export default function AdminMissions() {
     // Pagination (Admin Missions, onglets "Toutes les missions" et "Priorité")
     const [page, setPage] = useState(1)
     const [totalPages, setTotalPages] = useState(1)
-    // Tri par colonne cliquable (tableau Admin Missions)
-    const [sortBy, setSortBy] = useState(null)   // 'title' | 'client_name' | 'oeil_name' | 'price' | 'status'
-    const [sortDir, setSortDir] = useState('asc') // 'asc' | 'desc'
-    const handleSort = (col) => {
-      if (sortBy === col) {
-        setSortDir(d => d === 'asc' ? 'desc' : 'asc')
-      } else {
-        setSortBy(col)
-        setSortDir('asc')
+    // Tri par colonne cliquable — envoyé au backend, plus de tri en mémoire sur la page courante
+      const [sortBy, setSortBy] = useState(null)   // 'title' | 'client' | 'oeil' | 'price' | 'status' | 'scheduled' | 'deadline'
+      const [sortDir, setSortDir] = useState('asc') // 'asc' | 'desc'
+      const handleSort = (col) => {
+        if (sortBy === col) {
+          setSortDir(d => d === 'asc' ? 'desc' : 'asc')
+        } else {
+          setSortBy(col)
+          setSortDir('asc')
+        }
       }
-    }
-    const sortedMissions = [...missions].sort((a, b) => {
-      if (!sortBy) return 0
-      let va = a[sortBy], vb = b[sortBy]
-      if (sortBy === 'price') {
-        va = parseFloat(va) || 0; vb = parseFloat(vb) || 0
-      } else if (sortBy === 'scheduled_at' || sortBy === 'transfer_deadline') {
-        // Dates : valeurs absentes toujours reléguées en fin de liste, quel que soit le sens du tri
-        va = va ? new Date(va).getTime() : Infinity
-        vb = vb ? new Date(vb).getTime() : Infinity
-      } else {
-        va = (va || '').toString().toLowerCase(); vb = (vb || '').toString().toLowerCase()
-      }
-      if (va < vb) return sortDir === 'asc' ? -1 : 1
-      if (va > vb) return sortDir === 'asc' ? 1 : -1
-      return 0
-    })
 
   const load = () => {
-      setLoading(true)
-      const params = tab === 'priority'
-        ? { admin: true, is_priority: true, status: 'pending', sort: 'deadline_asc', page, limit: 20 } // Priorité : deadline de transfert la plus proche en premier
-        : { search, status, admin: true, sort: 'created_desc', page, limit: 20 } // Toutes missions : les plus récentes en premier
-      missionsAPI.list(params)
+        setLoading(true)
+        const defaultSort = tab === 'priority' ? 'deadline_asc' : 'created_desc'
+        const activeSort = sortBy ? `${sortBy}_${sortDir}` : defaultSort
+        const params = tab === 'priority'
+          ? { admin: true, is_priority: true, status: 'pending', sort: activeSort, page, limit: 20 }
+          : { search, status, admin: true, sort: activeSort, page, limit: 20 }
+        missionsAPI.list(params)
         .then(({ data }) => {
           setMissions(data.missions || [])
           setTotalPages(data.pages || 1)
@@ -78,7 +64,7 @@ export default function AdminMissions() {
         .finally(() => setLoading(false))
     }
 
-    useEffect(() => { load() }, [search, status, tab, page])
+    useEffect(() => { load() }, [search, status, tab, page, sortBy, sortDir])
     // Revenir à la page 1 si on change de recherche, statut ou onglet (évite une page vide hors limites)
     useEffect(() => { setPage(1) }, [search, status, tab])
 
@@ -199,13 +185,13 @@ const doAssign = async () => {
                   <tr>
                     <th>Réf</th>
                     <th className="cursor-pointer select-none" onClick={() => handleSort('title')}>Mission {sortBy === 'title' ? (sortDir === 'asc' ? '▲' : '▼') : ''}</th>
-                    <th className="cursor-pointer select-none" onClick={() => handleSort('client_name')}>Client {sortBy === 'client_name' ? (sortDir === 'asc' ? '▲' : '▼') : ''}</th>
-                    <th className="cursor-pointer select-none" onClick={() => handleSort('oeil_name')}>Œil {sortBy === 'oeil_name' ? (sortDir === 'asc' ? '▲' : '▼') : ''}</th>
+                    <th className="cursor-pointer select-none" onClick={() => handleSort('client')}>Client {sortBy === 'client' ? (sortDir === 'asc' ? '▲' : '▼') : ''}</th>
+                    <th className="cursor-pointer select-none" onClick={() => handleSort('oeil')}>Œil {sortBy === 'oeil' ? (sortDir === 'asc' ? '▲' : '▼') : ''}</th>
                     <th className="cursor-pointer select-none" onClick={() => handleSort('price')}>Prix {sortBy === 'price' ? (sortDir === 'asc' ? '▲' : '▼') : ''}</th>
                     {tab === 'priority' && (
                         <>
-                          <th className="cursor-pointer select-none" onClick={() => handleSort('scheduled_at')}>Exécution {sortBy === 'scheduled_at' ? (sortDir === 'asc' ? '▲' : '▼') : ''}</th>
-                          <th className="cursor-pointer select-none" onClick={() => handleSort('transfer_deadline')}>Deadline {sortBy === 'transfer_deadline' ? (sortDir === 'asc' ? '▲' : '▼') : ''}</th>
+                          <th className="cursor-pointer select-none" onClick={() => handleSort('scheduled')}>Exécution {sortBy === 'scheduled' ? (sortDir === 'asc' ? '▲' : '▼') : ''}</th>
+                          <th className="cursor-pointer select-none" onClick={() => handleSort('deadline')}>Deadline {sortBy === 'deadline' ? (sortDir === 'asc' ? '▲' : '▼') : ''}</th>
                         </>
                       )}
                     <th className="cursor-pointer select-none" onClick={() => handleSort('status')}>Statut {sortBy === 'status' ? (sortDir === 'asc' ? '▲' : '▼') : ''}</th>
@@ -213,7 +199,7 @@ const doAssign = async () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {sortedMissions.map((m) => (
+                  {missions.map((m) => (
                     <tr key={m.id}>
                       <td className="text-[#AAA] text-xs">
                         #{String(m.id).slice(-6).toUpperCase()}
