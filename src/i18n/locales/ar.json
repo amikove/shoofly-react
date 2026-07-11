@@ -1717,7 +1717,11 @@
     "accountSuspendedTitle": "حساب معلّق",
     "accountSuspendedDefaultBody": "تم تعليق حسابك عقب رصد نشاط مشبوه.",
     "accountAutoSuspendedTitle": "🔴 حساب معلّق",
-    "accountAutoSuspendedBody": "انخفضت درجة موثوقيتك دون 50%. يمكنك طلب مراجعة ملفك."
+    "accountAutoSuspendedBody": "انخفضت درجة موثوقيتك دون 50%. يمكنك طلب مراجعة ملفك.",
+    "staleMissionAdminTitle": "⏳ مهمة بدون عين منذ 12 ساعة",
+    "staleMissionAdminBody": "لم يُعثر بعد على عين لمهمة \"{{missionTitle}}\"، وهي في الانتظار منذ أكثر من 12 ساعة.",
+    "staleMissionClientTitle": "💡 لا تزال مهمتك بدون عين",
+    "staleMissionClientBody": "مهمتك \"{{missionTitle}}\" لم تجد بعد عينًا بعد مرور 12 ساعة. زيادة الميزانية قد تجذب المزيد من المرشحين. تحقق من مهمتك لتعديلها."
   },
   "systemMessage": {
     "oeilAccepted": "قبل {{oeilName}} المهمة.",
