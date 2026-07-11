@@ -366,7 +366,7 @@ const doAssign = async (overrideWarning = false) => {
             <div className="flex gap-3">
               <button onClick={() => setAssignModal(null)} className="btn btn-ghost flex-1 justify-center">Annuler</button>
               <button
-                onClick={doAssign}
+                onClick={() => doAssign(false)}
                 disabled={assigning || !selectedOeil}
                 className="btn btn-primary flex-1 justify-center disabled:opacity-50"
               >
