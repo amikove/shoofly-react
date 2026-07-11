@@ -21,7 +21,7 @@ const MAIN_TABS = [
   { id: 'claims',      label: '📋 Réclamations' },
 ]
 
-const COMING_SOON_TABS = []
+
 
 const EXPENSE_CATEGORIES = ['Marketing', 'Influenceurs', 'Serveurs', 'SMS/WhatsApp', 'Salaires', 'Autre']
 
@@ -1210,15 +1210,7 @@ export default function AdminDashboard() {
           </>
         )}
 
-        {COMING_SOON_TABS.includes(tab) && (
-          <div className="card text-center py-16">
-            <div className="text-4xl opacity-30 mb-3">🚧</div>
-            <h3 className="text-sm font-semibold text-white mb-1">Bientôt disponible</h3>
-            <p className="text-xs text-[#AAA] max-w-[280px] mx-auto leading-relaxed">
-              Cet onglet est en cours de construction et sera activé prochainement.
-            </p>
-          </div>
-        )}
+        
 
         {tab === 'claims' && (
           <div className="space-y-3">
