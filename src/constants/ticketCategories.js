@@ -232,3 +232,36 @@ export function getSubcategoriesForRole(category, role) {
   if (category.subcategoriesByRole) return category.subcategoriesByRole[role] || []
   return category.subcategories || []
 }
+
+// Correspondance documentée entre l'ancien champ libre "type" de
+// mission_problem_reports (menu déroulant de l'ancien bouton "Signaler un
+// problème", voir PROBLEM_TYPE_OPTIONS dans client/Missions.jsx et le <select>
+// inline de oeil/Missions.jsx) et category/subcategory du nouveau système de
+// tickets. Sert de référence si un script de reprise des anciennes données est
+// un jour nécessaire ; le nouveau bouton (étape 7) n'appelle plus l'ancienne
+// route et ouvre directement NewTicketModal pré-rempli avec mission_id +
+// category='mission', laissant l'utilisateur choisir la sous-catégorie exacte.
+export const LEGACY_PROBLEM_TYPE_MAPPING = {
+  client: {
+    'Œil ne répond plus': { category: 'mission', subcategory: 'Mon Œil ne répond plus' },
+    "Œil n'est pas sur place": { category: 'mission', subcategory: "L'Œil ne s'est jamais présenté" },
+    // Choix arbitraire : "travail insuffisant/non conforme" pourrait aussi correspondre à
+    // "Les photos sont insuffisantes" — "Le rapport semble incomplet" retenu comme plus générique.
+    'Travail insuffisant / non conforme': { category: 'mission', subcategory: 'Le rapport semble incomplet' },
+    'Comportement irrespectueux': { category: 'mission', subcategory: "Le comportement de l'Œil est inapproprié" },
+    'Autre problème': { category: 'mission', subcategory: null },
+  },
+  oeil: {
+    // Choix arbitraire : pas d'équivalent exact "insulte" côté Œil — "Client agressif" retenu.
+    'Client irrespectueux / insultant': { category: 'securite', subcategory: 'Client agressif' },
+    'Client injoignable': { category: 'mission', subcategory: 'Client injoignable' },
+    // Choix arbitraire : recoupe à la fois 'securite' et 'urgence' ("Situation dangereuse" existe
+    // dans les deux) — classé en 'securite' (non-urgence) car l'ancien flux n'était jamais traité
+    // en urgence immédiate ; à reconsidérer si on veut escalader ce cas en urgence par défaut.
+    'Lieu dangereux': { category: 'securite', subcategory: 'Situation dangereuse' },
+    // Choix arbitraire : pas d'équivalent exact "demande illégale" — "Tentative d'arnaque" retenu
+    // comme le plus proche sémantiquement.
+    'Demande illégale': { category: 'securite', subcategory: "Tentative d'arnaque" },
+    'Autre problème': { category: 'mission', subcategory: null },
+  },
+}
