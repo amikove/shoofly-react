@@ -521,29 +521,43 @@ if (parseFloat(form.price) < minPrice) {
             <label className="label">{t('newMissionModal.replacementPreference.label')}</label>
             <div className="grid grid-cols-1 gap-2">
               <button
-                type="button"
-                onClick={() => setReplacementPreference('fast')}
-                className={`text-start p-3 rounded-xl border transition-all ${
-                  replacementPreference === 'fast'
-                    ? 'border-[#FF4D00] bg-[#FF4D00]/10'
-                    : 'border-white/12 bg-[#222] hover:border-white/22'
-                }`}
-              >
-                <div className="text-sm font-semibold">🟢 {t('newMissionModal.replacementPreference.fastTitle')}</div>
-                <p className="text-xs text-[#AAA] mt-1 leading-relaxed">{t('newMissionModal.replacementPreference.fastDesc')}</p>
-              </button>
-              <button
-                type="button"
-                onClick={() => setReplacementPreference('choose')}
-                className={`text-start p-3 rounded-xl border transition-all ${
-                  replacementPreference === 'choose'
-                    ? 'border-[#FF4D00] bg-[#FF4D00]/10'
-                    : 'border-white/12 bg-[#222] hover:border-white/22'
-                }`}
-              >
-                <div className="text-sm font-semibold">🔵 {t('newMissionModal.replacementPreference.chooseTitle')}</div>
-                <p className="text-xs text-[#AAA] mt-1 leading-relaxed">{t('newMissionModal.replacementPreference.chooseDesc')}</p>
-              </button>
+                  type="button"
+                  onClick={() => setReplacementPreference('fast')}
+                  className={`flex items-start gap-3 text-start p-3 rounded-xl border transition-all ${
+                    replacementPreference === 'fast'
+                      ? 'border-[#FF4D00] bg-[#FF4D00]/10'
+                      : 'border-white/12 bg-[#222] hover:border-white/22'
+                  }`}
+                >
+                  <span className={`mt-0.5 flex-shrink-0 w-4 h-4 rounded-full border-2 flex items-center justify-center ${
+                    replacementPreference === 'fast' ? 'border-[#FF4D00]' : 'border-white/30'
+                  }`}>
+                    {replacementPreference === 'fast' && <span className="w-2 h-2 rounded-full bg-[#FF4D00]" />}
+                  </span>
+                  <div>
+                    <div className="text-sm font-semibold">🟢 {t('newMissionModal.replacementPreference.fastTitle')}</div>
+                    <p className="text-xs text-[#AAA] mt-1 leading-relaxed">{t('newMissionModal.replacementPreference.fastDesc')}</p>
+                  </div>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setReplacementPreference('choose')}
+                  className={`flex items-start gap-3 text-start p-3 rounded-xl border transition-all ${
+                    replacementPreference === 'choose'
+                      ? 'border-[#FF4D00] bg-[#FF4D00]/10'
+                      : 'border-white/12 bg-[#222] hover:border-white/22'
+                  }`}
+                >
+                  <span className={`mt-0.5 flex-shrink-0 w-4 h-4 rounded-full border-2 flex items-center justify-center ${
+                    replacementPreference === 'choose' ? 'border-[#FF4D00]' : 'border-white/30'
+                  }`}>
+                    {replacementPreference === 'choose' && <span className="w-2 h-2 rounded-full bg-[#FF4D00]" />}
+                  </span>
+                  <div>
+                    <div className="text-sm font-semibold">🔵 {t('newMissionModal.replacementPreference.chooseTitle')}</div>
+                    <p className="text-xs text-[#AAA] mt-1 leading-relaxed">{t('newMissionModal.replacementPreference.chooseDesc')}</p>
+                  </div>
+                </button>
             </div>
           </div>
 
