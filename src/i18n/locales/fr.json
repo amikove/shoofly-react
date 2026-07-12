@@ -2017,5 +2017,12 @@
         "body": "Les présentes mentions légales sont soumises au droit marocain. Tout litige relève de la compétence exclusive des tribunaux de Rabat."
       }
     }
+  },
+  "ticketRedirect": {
+    "routeTitle": "Cette demande se traite directement ici",
+    "routeCta": "Y aller",
+    "manualTitle": "Traitement manuel par un administrateur",
+    "manualBody": "Aucun processus automatisé n'existe pour cette demande — elle sera traitée manuellement par un administrateur.",
+    "continueAnyway": "Créer quand même un ticket"
   }
 }
