@@ -710,6 +710,13 @@
     "promoApplying": "...",
     "promoApply": "Appliquer",
     "promoAppliedToast": "Code \"{{code}}\" appliqué — {{discount}} MAD de réduction ✓",
+    "replacementPreference": {
+      "label": "En cas d'empêchement de l'Œil",
+      "fastTitle": "Continuité prioritaire (recommandé)",
+      "fastDesc": "Shoofly remplace automatiquement l'Œil par le premier profil qualifié disponible afin d'éviter tout retard.",
+      "chooseTitle": "Je souhaite choisir le remplaçant",
+      "chooseDesc": "Shoofly m'envoie une liste de candidats."
+    },
     "submitLoading": "Envoi en cours...",
     "submitAssign": "Assigner à {{name}} →",
     "submitSend": "Envoyer la mission →",

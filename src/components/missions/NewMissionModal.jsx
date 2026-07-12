@@ -211,6 +211,7 @@ export default function NewMissionModal({ open, onClose, onCreated, preselectedO
   const [subcategory, setSub] = useState('')
   const [loading, setLoading] = useState(false)
   const [form, setForm]   = useState({ title: '', address: '', city: '', quartier: '', price: '', description: '', scheduled_date: '', scheduled_time: ''  })
+  const [replacementPreference, setReplacementPreference] = useState('fast')
   const [showCompliance, setShowCompliance] = useState(false)
   const [promoCode, setPromoCode]     = useState('')
   const [promoResult, setPromoResult] = useState(null)
@@ -290,6 +291,7 @@ if (parseFloat(form.price) < minPrice) {
   const dt = new Date(`${form.scheduled_date}T${form.scheduled_time}`)
   return dt.toISOString()
 })(),
+        replacement_preference: replacementPreference,
       }
       if (preselectedOeil?.id) payload.oeil_id = preselectedOeil.id
       if (promoResult) {
@@ -308,6 +310,7 @@ if (parseFloat(form.price) < minPrice) {
           setSub('')
           setPromoCode('')
           setPromoResult(null)
+          setReplacementPreference('fast')
     } catch (err) {
       toast(err.response?.data?.error || t('newMissionModal.errors.creationError'), 'error')
     } finally {
@@ -511,6 +514,37 @@ if (parseFloat(form.price) < minPrice) {
                 </button>
               </div>
             )}
+          </div>
+
+          {/* Préférence de remplacement en cas d'empêchement */}
+          <div>
+            <label className="label">{t('newMissionModal.replacementPreference.label')}</label>
+            <div className="grid grid-cols-1 gap-2">
+              <button
+                type="button"
+                onClick={() => setReplacementPreference('fast')}
+                className={`text-start p-3 rounded-xl border transition-all ${
+                  replacementPreference === 'fast'
+                    ? 'border-[#FF4D00] bg-[#FF4D00]/10'
+                    : 'border-white/12 bg-[#222] hover:border-white/22'
+                }`}
+              >
+                <div className="text-sm font-semibold">🟢 {t('newMissionModal.replacementPreference.fastTitle')}</div>
+                <p className="text-xs text-[#AAA] mt-1 leading-relaxed">{t('newMissionModal.replacementPreference.fastDesc')}</p>
+              </button>
+              <button
+                type="button"
+                onClick={() => setReplacementPreference('choose')}
+                className={`text-start p-3 rounded-xl border transition-all ${
+                  replacementPreference === 'choose'
+                    ? 'border-[#FF4D00] bg-[#FF4D00]/10'
+                    : 'border-white/12 bg-[#222] hover:border-white/22'
+                }`}
+              >
+                <div className="text-sm font-semibold">🔵 {t('newMissionModal.replacementPreference.chooseTitle')}</div>
+                <p className="text-xs text-[#AAA] mt-1 leading-relaxed">{t('newMissionModal.replacementPreference.chooseDesc')}</p>
+              </button>
+            </div>
           </div>
 
           {/* Actions */}

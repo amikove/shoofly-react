@@ -712,6 +712,13 @@
     "promoApplying": "...",
     "promoApply": "تطبيق",
     "promoAppliedToast": "تم تطبيق الرمز \"{{code}}\" — خصم {{discount}} درهم ✓",
+    "replacementPreference": {
+      "label": "في حالة تعذر العين الميدانية",
+      "fastTitle": "الاستمرارية الفورية (موصى به)",
+      "fastDesc": "تقوم Shoofly تلقائيًا باستبدال العين الميدانية بأول ملف مؤهل متاح لتجنب أي تأخير.",
+      "chooseTitle": "أرغب في اختيار البديل",
+      "chooseDesc": "ترسل لي Shoofly قائمة بالمرشحين."
+    },
     "submitLoading": "جارٍ الإرسال...",
     "submitAssign": "إسناد إلى {{name}} ←",
     "submitSend": "إرسال المهمة ←",
