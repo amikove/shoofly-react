@@ -27,6 +27,7 @@ import AirbnbReportView from './pages/client/AirbnbReportView'
 import AuditReportView from './pages/client/AuditReportView'
 import ClientMessagerie from './pages/shared/Messagerie'
 import ClientMesSignalements from './pages/shared/MesSignalements'
+import ClientMesTickets from './pages/shared/MesTickets'
 
 // Oeil pages
 import OeilDashboard from './pages/oeil/Dashboard'
@@ -36,6 +37,7 @@ import AirbnbReport  from './pages/oeil/AirbnbReport'
 import AuditReport from './pages/oeil/AuditReport'
 import OeilMessagerie from './pages/shared/Messagerie'
 import OeilMesSignalements from './pages/shared/MesSignalements'
+import OeilMesTickets from './pages/shared/MesTickets'
 import OeilGains from './pages/oeil/Gains'
 
 
@@ -55,6 +57,7 @@ import AdminGestion from './pages/admin/AdminGestion'
 import CompteSuspendu from './pages/oeil/CompteSuspendu'
 import AdminFiabilite from './pages/admin/AdminFiabilite'
 import AdminProblemes from './pages/admin/AdminProblemes'
+import AdminTickets from './pages/admin/AdminTickets'
 import AdminFinance from './pages/admin/AdminFinance'
 import UserProfile from './pages/admin/UserProfile'
 
@@ -125,6 +128,7 @@ export default function App() {
       <Route path="/client/compte"    element={<RequireAuth allowedRoles={['client']}><ClientCompte /></RequireAuth>} />
       <Route path="/client/messages"  element={<RequireAuth allowedRoles={['client']}><ClientMessagerie /></RequireAuth>} />
       <Route path="/client/mes-signalements" element={<RequireAuth allowedRoles={['client']}><ClientMesSignalements /></RequireAuth>} />
+      <Route path="/client/tickets" element={<RequireAuth allowedRoles={['client']}><ClientMesTickets /></RequireAuth>} />
       <Route path="/client/missions/:missionId/rapport" element={<RequireAuth allowedRoles={['client']}><AirbnbReportView /></RequireAuth>} />
       <Route path="/client/missions/:missionId/audit" element={<RequireAuth allowedRoles={['client']}><AuditReportView /></RequireAuth>} />
 
@@ -134,6 +138,7 @@ export default function App() {
      <Route path="/oeil/compte"    element={<RequireAuth allowedRoles={['oeil']}><OeilCompte /></RequireAuth>} />
       <Route path="/oeil/messages"  element={<RequireAuth allowedRoles={['oeil']}><OeilMessagerie /></RequireAuth>} />
       <Route path="/oeil/mes-signalements" element={<RequireAuth allowedRoles={['oeil']}><OeilMesSignalements /></RequireAuth>} />
+      <Route path="/oeil/tickets" element={<RequireAuth allowedRoles={['oeil']}><OeilMesTickets /></RequireAuth>} />
       <Route path="/oeil/gains" element={<RequireAuth allowedRoles={['oeil']}><OeilGains /></RequireAuth>} />
       <Route path="/oeil/missions/:missionId/audit" element={<RequireAuth allowedRoles={['oeil']}><AuditReport /></RequireAuth>} />
       <Route path="/oeil/missions/:missionId/rapport" element={<RequireAuth allowedRoles={['oeil']}><AirbnbReport /></RequireAuth>} />
@@ -153,6 +158,7 @@ export default function App() {
       <Route path="/admin/admins" element={<RequireAuth allowedRoles={['admin']}><AdminGestion /></RequireAuth>} />
       <Route path="/admin/fiabilite" element={<RequireAuth allowedRoles={['admin']}><AdminFiabilite /></RequireAuth>} />
       <Route path="/admin/problemes" element={<RequireAuth allowedRoles={['admin']}><AdminProblemes /></RequireAuth>} />
+      <Route path="/admin/tickets" element={<RequireAuth allowedRoles={['admin']}><AdminTickets /></RequireAuth>} />
       <Route path="/admin/finance" element={<RequireAuth allowedRoles={['admin']}><AdminFinance /></RequireAuth>} />
       <Route path="/admin/users/:userId" element={<RequireAuth allowedRoles={['admin']}><UserProfile /></RequireAuth>} />
 

@@ -6,6 +6,8 @@ import { useAuth } from '../../context/AuthContext'
 import { useSocket } from '../../context/SocketContext'
 import { useNotif } from '../../context/NotifContext'
 
+const TICKET_ACTION_TYPES = ['ticket_view', 'admin_urgent_ticket', 'admin_ticket_message']
+
 export default function Topbar({ title, actions }) {
   const { t }       = useTranslation()
   const { user }    = useAuth()
@@ -105,6 +107,15 @@ const handleClick = (n) => {
       setShowNotifs(false)
       navigate('/oeil/verification-identite')
       break
+    case 'ticket_view':
+      setShowNotifs(false)
+      navigate(user?.role === 'oeil' ? '/oeil/tickets' : '/client/tickets', { state: { openTicketId: n.params?.ticketId } })
+      break
+    case 'admin_urgent_ticket':
+    case 'admin_ticket_message':
+      setShowNotifs(false)
+      navigate('/admin/tickets', { state: { openTicketId: n.params?.ticketId } })
+      break
     case 'none':
     default:
       markReadIfNeeded(n)
@@ -158,7 +169,7 @@ const handleClick = (n) => {
                     key={n.id || i}
                     onClick={() => handleClick(n)}
                     className={`flex gap-2.5 px-4 py-3 border-b border-white/10 transition-colors ${
-                      n.mission_id ? 'cursor-pointer hover:bg-[#FF4D00]/5' : ''
+                      (n.mission_id || TICKET_ACTION_TYPES.includes(n.action_type)) ? 'cursor-pointer hover:bg-[#FF4D00]/5' : ''
                     } ${!n.is_read ? 'bg-[#FF4D00]/3' : ''}`}
                   >
                     <span className="text-base flex-shrink-0">

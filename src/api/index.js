@@ -134,3 +134,13 @@ export const reportsAPI = {
   get:    (missionId) => api.get(`/api/reports/${missionId}`),
   save:   (missionId, data, submitted = false) => api.post(`/api/reports/${missionId}`, { data, submitted }),
 }
+
+// TICKETS (support)
+export const ticketsAPI = {
+  create:         (data)         => api.post('/api/tickets', data),
+  mine:           (page = 1, limit = 20) => api.get('/api/tickets/mine', { params: { page, limit } }),
+  get:            (id)            => api.get(`/api/tickets/${id}`),
+  addMessage:     (id, content)   => api.post(`/api/tickets/${id}/messages`, { content }),
+  adminAll:       (params)        => api.get('/api/tickets/admin/all', { params }),
+  adminSetStatus: (id, status)    => api.put(`/api/tickets/admin/${id}/status`, { status }),
+}

@@ -13,6 +13,7 @@ import { useAuth } from '../../context/AuthContext'
 import MissionHistoryModal from '../../components/missions/MissionHistoryModal'
 import MissionSummaryModal from '../../components/missions/MissionSummaryModal'
 import ComplianceModal from '../../components/missions/ComplianceModal'
+import NewTicketModal from '../../components/tickets/NewTicketModal'
 
 const TABS = ['priority', 'available', 'active', 'done']
 const TYPE_ICONS = { immobilier:'🏠', file_attente:'⏳', audit:'🔎', personnalisee:'🎯' }
@@ -39,27 +40,9 @@ export default function OeilMissions() {
   const [transferMission, setTransferMission] = useState(null)
   const [transferReason, setTransferReason] = useState('')
   const [transferring, setTransferring] = useState(false)
-  const [reportMission, setReportMission] = useState(null)
-  const [reportType, setReportType] = useState('')
-  const [reportDesc, setReportDesc] = useState('')
-  const [reporting, setReporting] = useState(false)
   const [assistanceMission, setAssistanceMission] = useState(null)
-  const [assistanceView, setAssistanceView] = useState('choice') // 'choice' | 'problem' | 'transfer'
-
-  const doReport = async () => {
-    if (!reportType) { toast(t('oeilMissions.toasts.selectProblemTypeFull'), 'error'); return }
-    setReporting(true)
-    try {
-      await missionsAPI.reportProblem(reportMission.id, { type: reportType, description: reportDesc })
-      toast(t('oeilMissions.toasts.problemReportedAlert'), 'success')
-      setReportMission(null)
-      setReportType('')
-      setReportDesc('')
-      load(tab)
-    } catch (err) {
-      toast(err.response?.data?.error || t('oeilMissions.toasts.genericError'), 'error')
-    } finally { setReporting(false) }
-  }
+  const [assistanceView, setAssistanceView] = useState('choice') // 'choice' | 'transfer'
+  const [ticketMission, setTicketMission] = useState(null)
 
   const doTransfer = async () => {
     if (!transferReason) { toast(t('oeilMissions.toasts.selectReasonRequired'), 'error'); return }
@@ -502,7 +485,7 @@ try {
                 </div>
                 <div className="space-y-3">
                   <button
-                    onClick={() => { setAssistanceView('problem'); setReportType(''); setReportDesc('') }}
+                    onClick={() => { setTicketMission(assistanceMission); setAssistanceMission(null) }}
                     className="w-full bg-[#222] hover:bg-[#2A2A2A] rounded-xl p-4 text-start transition-colors border border-white/5"
                   >
                     <p className="text-sm font-semibold text-orange-400 mb-1">{t('oeilMissions.assistanceModal.reportProblem.label')}</p>
@@ -517,55 +500,6 @@ try {
                   </button>
                 </div>
                 <button onClick={() => setAssistanceMission(null)} className="btn btn-ghost w-full justify-center mt-4">{t('oeilMissions.assistanceModal.cancel')}</button>
-              </>
-            )}
-
-            {/* Signaler un problème */}
-            {assistanceView === 'problem' && (
-              <>
-                <div className="flex items-center gap-3 mb-4">
-                  <button onClick={() => setAssistanceView('choice')} className="text-[#AAA] hover:text-white">←</button>
-                  <div>
-                    <h2 className="font-bold text-base">{t('oeilMissions.assistanceModal.problemView.title')}</h2>
-                    <p className="text-xs text-[#AAA]">{assistanceMission.title}</p>
-                  </div>
-                </div>
-                <div className="mb-4">
-                  <label className="label">{t('oeilMissions.assistanceModal.problemView.typeLabel')}</label>
-                  <select className="input" value={reportType} onChange={e => setReportType(e.target.value)}>
-                    <option value="">{t('oeilMissions.assistanceModal.problemView.selectPlaceholder')}</option>
-                    <option value="Client irrespectueux / insultant">{t('oeilMissions.assistanceModal.problemView.types.disrespectful')}</option>
-                    <option value="Client injoignable">{t('oeilMissions.assistanceModal.problemView.types.unreachable')}</option>
-                    <option value="Lieu dangereux">{t('oeilMissions.assistanceModal.problemView.types.dangerous')}</option>
-                    <option value="Demande illégale">{t('oeilMissions.assistanceModal.problemView.types.illegal')}</option>
-                    <option value="Autre problème">{t('oeilMissions.assistanceModal.problemView.types.other')}</option>
-                  </select>
-                </div>
-                <div className="mb-5">
-                  <label className="label">{t('oeilMissions.assistanceModal.problemView.descLabel')}</label>
-                  <textarea className="input resize-none h-20 w-full text-sm" placeholder={t('oeilMissions.assistanceModal.problemView.descPlaceholder')} value={reportDesc} onChange={e => setReportDesc(e.target.value)} />
-                </div>
-                <div className="flex gap-3">
-                  <button onClick={() => setAssistanceView('choice')} className="btn btn-ghost flex-1 justify-center">{t('oeilMissions.assistanceModal.problemView.back')}</button>
-                  <button
-                    onClick={async () => {
-                      if (!reportType) { toast(t('oeilMissions.toasts.selectProblemType'), 'error'); return }
-                      setReporting(true)
-                      try {
-                        await missionsAPI.reportProblem(assistanceMission.id, { type: reportType, description: reportDesc })
-                        toast(t('oeilMissions.toasts.problemReportedShort'), 'success')
-                        setAssistanceMission(null)
-                        setAssistanceView('choice')
-                        load(tab)
-                      } catch (err) { toast(err.response?.data?.error || t('oeilMissions.toasts.genericError'), 'error') }
-                      finally { setReporting(false) }
-                    }}
-                    disabled={reporting || !reportType}
-                    className="btn btn-sm flex-1 justify-center bg-orange-500 text-white hover:bg-orange-600 disabled:opacity-50"
-                  >
-                    {reporting ? t('oeilMissions.assistanceModal.problemView.submitting') : t('oeilMissions.assistanceModal.problemView.submit')}
-                  </button>
-                </div>
               </>
             )}
 
@@ -647,6 +581,13 @@ try {
       {chatMission && (
         <ChatModal mission={chatMission} onClose={() => setChatMission(null)} />
       )}
+      <NewTicketModal
+        open={!!ticketMission}
+        onClose={() => setTicketMission(null)}
+        onCreated={() => { setTicketMission(null); load(tab) }}
+        presetMissionId={ticketMission?.id}
+        presetCategory="mission"
+      />
     </AppLayout>
   )
 }

@@ -12,6 +12,7 @@ import { useNotif } from '../../context/NotifContext'
 import { useNavigate } from 'react-router-dom'
 import MissionHistoryModal from '../../components/missions/MissionHistoryModal'
 import InterestsModal from '../../components/missions/InterestsModal'
+import NewTicketModal from '../../components/tickets/NewTicketModal'
 
 const TYPE_ICONS = { immobilier:'🏠', file_attente:'⏳', audit:'🔎', personnalisee:'🎯' }
 
@@ -31,14 +32,6 @@ const TYPE_OPTIONS = [
   { value: 'file_attente', key: 'fileAttente' },
   { value: 'audit', key: 'audit' },
   { value: 'personnalisee', key: 'personnalisee' },
-]
-
-const PROBLEM_TYPE_OPTIONS = [
-  { value: 'Œil ne répond plus', key: 'oeilNoResponse' },
-  { value: "Œil n'est pas sur place", key: 'oeilNotOnSite' },
-  { value: 'Travail insuffisant / non conforme', key: 'workInsufficient' },
-  { value: 'Comportement irrespectueux', key: 'disrespectfulBehavior' },
-  { value: 'Autre problème', key: 'other' },
 ]
 
 
@@ -160,24 +153,6 @@ export default function ClientMissions() {
   const [chatMission, setChatMission]     = useState(null)
   const [reportMission, setReportMission] = useState(null)
   const [problemMission, setProblemMission] = useState(null)
-  const [problemType, setProblemType] = useState('')
-  const [problemDesc, setProblemDesc] = useState('')
-  const [reporting, setReporting] = useState(false)
-
-  const doReportProblem = async () => {
-    if (!problemType) { toast(t('clientMissions.errors.selectProblemType'), 'error'); return }
-    setReporting(true)
-    try {
-      await missionsAPI.reportProblem(problemMission.id, { type: problemType, description: problemDesc })
-      toast(t('clientMissions.problemReportedToast'), 'success')
-      setProblemMission(null)
-      setProblemType('')
-      setProblemDesc('')
-      load()
-    } catch (err) {
-      toast(err.response?.data?.error || t('clientMissions.errors.generic'), 'error')
-    } finally { setReporting(false) }
-  }
   const [interestsMission, setInterestsMission] = useState(null)
   const [claimMission, setClaimMission] = useState(null)
   const [historyMission, setHistoryMission] = useState(null)
@@ -321,7 +296,7 @@ const cancel = async (id) => {
                     className="btn btn-ghost btn-sm" title={t('clientMissions.actions.chatWithOeil')}>💬</button>
                 )}
                 {['assigned','en_route','active'].includes(m.status) && (
-                  <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); setProblemMission(m); setProblemType(''); setProblemDesc('') }}
+                  <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); setProblemMission(m) }}
                     className="btn btn-ghost btn-sm text-orange-400" title={t('clientMissions.actions.reportProblem')}>⚠️</button>
                 )}
                 {m.under_surveillance && (
@@ -511,45 +486,13 @@ const cancel = async (id) => {
     onHired={() => { setInterestsMission(null); load() }}
   />
 )}
-{problemMission && (
-        <div className="fixed inset-0 bg-black/80 z-[70] flex items-center justify-center p-4 backdrop-blur-sm">
-          <div className="bg-[#181818] border border-orange-500/30 rounded-2xl p-6 w-full max-w-md shadow-xl">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 rounded-xl bg-orange-500/10 flex items-center justify-center text-xl">⚠️</div>
-              <div>
-                <h2 className="font-bold text-base">{t('clientMissions.problemModal.title')}</h2>
-                <p className="text-xs text-[#AAA]">{problemMission.title}</p>
-              </div>
-            </div>
-            <div className="mb-4">
-              <label className="label">{t('clientMissions.problemModal.typeLabel')}</label>
-              <select className="input" value={problemType} onChange={e => setProblemType(e.target.value)}>
-                <option value="">{t('clientMissions.problemModal.selectPlaceholder')}</option>
-                {PROBLEM_TYPE_OPTIONS.map(o => <option key={o.key} value={o.value}>{t(`clientMissions.problemModal.types.${o.key}`)}</option>)}
-              </select>
-            </div>
-            <div className="mb-5">
-              <label className="label">{t('clientMissions.problemModal.descLabel')}</label>
-              <textarea
-                className="input resize-none h-20 w-full text-sm"
-                placeholder={t('clientMissions.problemModal.descPlaceholder')}
-                value={problemDesc}
-                onChange={e => setProblemDesc(e.target.value)}
-              />
-            </div>
-            <div className="flex gap-3">
-              <button onClick={() => setProblemMission(null)} className="btn btn-ghost flex-1 justify-center">{t('clientMissions.problemModal.cancel')}</button>
-              <button
-                onClick={doReportProblem}
-                disabled={reporting || !problemType}
-                className="btn btn-sm flex-1 justify-center bg-orange-500 text-white hover:bg-orange-600 disabled:opacity-50"
-              >
-                {reporting ? t('clientMissions.problemModal.sending') : t('clientMissions.problemModal.submit')}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      <NewTicketModal
+        open={!!problemMission}
+        onClose={() => setProblemMission(null)}
+        onCreated={() => { setProblemMission(null); load() }}
+        presetMissionId={problemMission?.id}
+        presetCategory="mission"
+      />
     </AppLayout>
   )
 }
