@@ -15,7 +15,6 @@ const MENUS = {
       { to: '/client/messages',  icon: '💬',  label: 'menu.messages'    },
       { to: '/client/mes-signalements', icon: '🚨', label: 'menu.mesSignalements' },
       { to: '/client/tickets',   icon: '🎫',  label: 'menu.mesTickets'  },
-      { to: '/client/oeils',     icon: '👁️',  label: 'menu.lesOeils'    },
       { to: '/client/compte',    icon: '👤',  label: 'menu.compte'      },
     ],
 

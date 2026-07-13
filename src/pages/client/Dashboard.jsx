@@ -89,78 +89,8 @@ const [interestsMission, setInterestsMission] = useState(null)
         {/* Grille — 1 colonne mobile, 2 desktop */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
 
-          {/* Missions en cours */}
-          <div className="card">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="font-semibold text-sm">{t('clientDashboard.activeMissions.title')}</h2>
-              <a href="/client/missions" className="text-xs text-[#FF4D00]">{t('clientDashboard.activeMissions.viewAll')}</a>
-            </div>
-            {activeMissions.length === 0 ? (
-              <EmptyState icon="📋" title={t('clientDashboard.activeMissions.emptyTitle')} description={t('clientDashboard.activeMissions.emptyDesc')} />
-            ) : activeMissions.map((m) => (
-              <div key={m.id} className="bg-[#222] rounded-xl p-3 mb-3 last:mb-0">
-                <div className="flex items-start justify-between gap-2 mb-2">
-                  <div className="min-w-0 flex-1">
-                    <div className="font-semibold text-sm truncate">{m.title}</div>
-                    <div className="text-xs text-[#AAA] mt-0.5 truncate">
-                      {t('clientDashboard.activeMissions.cityOeil', { city: translateLocation(m.city, i18n.language), oeil: m.oeil_name || t('clientDashboard.activeMissions.notAssigned') })}
-                    </div>
-                  </div>
-                  <div className="flex-shrink-0">
-                    <StatusBadge status={m.status} />
-                  </div>
-                </div>
-                  {m.status === 'pending' ? (
-                    <button onClick={() => setInterestsMission(m)}
-                      className="btn btn-primary btn-sm w-full justify-center">
-                      {t('clientDashboard.activeMissions.viewInterested')}
-                    </button>
-                  ) : (
-                    <a href="/client/missions" className="btn btn-primary btn-sm w-full justify-center">
-                      {t('clientDashboard.activeMissions.viewButton')}
-                    </a>
-                  )}
-              </div>
-            ))}
-          </div>
-
-          {/* Œils disponibles */}
-          <div className="card">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="font-semibold text-sm">{t('clientDashboard.availableOeils.title')}</h2>
-              <a href="/client/oeils" className="text-xs text-[#FF4D00]">{t('clientDashboard.availableOeils.viewAll')}</a>
-            </div>
-            {oeils.length === 0 ? (
-              <EmptyState icon="👁️" title={t('clientDashboard.availableOeils.emptyTitle')} description={t('clientDashboard.availableOeils.emptyDesc')} />
-            ) : oeils.map((o) => (
-              <div key={o.id} className="flex items-center gap-3 py-3 border-b border-white/10 last:border-0">
-                  <div className="cursor-pointer" onClick={() => setProfileOeil(o)}>
-                    <Avatar name={`${o.first_name} ${o.last_name}`} size={36} src={o.avatar_url} />
-                  </div>
-                <div className="flex-1 min-w-0">
-                  <div className="font-semibold text-sm truncate">{o.first_name} {o.last_name}</div>
-                  <div className="flex items-center gap-1 mt-0.5 flex-wrap">
-                    {o.is_new_oeil ? (
-                      <span className="badge badge-blue">{t('clientDashboard.availableOeils.newOeilBadge')}</span>
-                    ) : (
-                      <>
-                        <Stars value={o.rating_avg || 0} />
-                        <span className="text-[11px] text-[#AAA]">
-                          {t('clientDashboard.availableOeils.ratingMissions', { rating: o.rating_avg || '—', count: o.total_missions || 0 })}
-                        </span>
-                      </>
-                    )}
-                  </div>
-                </div>
-                <span className={`badge flex-shrink-0 ${o.is_available ? 'badge-green' : 'badge-gray'}`}>
-                  {o.is_available ? t('clientDashboard.availableOeils.available') : t('clientDashboard.availableOeils.busy')}
-                </span>
-              </div>
-            ))}
-          </div>
-
+     </div>
         </div>
-      </div>
 
       <NewMissionModal open={showNew} onClose={() => setShowNew(false)} onCreated={(m) => {
         setMissions((ms) => [m, ...ms])

@@ -21,7 +21,6 @@ import Verification from './pages/legal/Verification'
 // Client pages
 import ClientDashboard  from './pages/client/Dashboard'
 import ClientMissions   from './pages/client/Missions'
-import ClientOeils      from './pages/client/Oeils'
 import ClientCompte     from './pages/client/Compte'
 import AirbnbReportView from './pages/client/AirbnbReportView'
 import AuditReportView from './pages/client/AuditReportView'
@@ -124,8 +123,7 @@ export default function App() {
       {/* Client */}
       <Route path="/client" element={<RequireAuth allowedRoles={['client']}><ClientDashboard /></RequireAuth>} />
       <Route path="/client/missions" element={<RequireAuth allowedRoles={['client']}><ClientMissions /></RequireAuth>} />
-      <Route path="/client/oeils"    element={<RequireAuth allowedRoles={['client']}><ClientOeils /></RequireAuth>} />
-      <Route path="/client/compte"    element={<RequireAuth allowedRoles={['client']}><ClientCompte /></RequireAuth>} />
+        <Route path="/client/compte"    element={<RequireAuth allowedRoles={['client']}><ClientCompte /></RequireAuth>} />
       <Route path="/client/messages"  element={<RequireAuth allowedRoles={['client']}><ClientMessagerie /></RequireAuth>} />
       <Route path="/client/mes-signalements" element={<RequireAuth allowedRoles={['client']}><ClientMesSignalements /></RequireAuth>} />
       <Route path="/client/tickets" element={<RequireAuth allowedRoles={['client']}><ClientMesTickets /></RequireAuth>} />
