@@ -379,7 +379,10 @@
       "completed": "Complétées",
       "totalSpent": "Total dépensé",
       "wallet": "Portefeuille",
-      "madValue": "{{value}} MAD"
+      "madValue": "{{value}} MAD",
+      "timeSaved": "Temps économisé",
+      "timeSavedValue": "{{hours}} heures économisées",
+      "timeSavedEmpty": "Complétez votre première mission pour voir votre temps économisé"
     },
     "activeMissions": {
       "title": "Missions en cours",
@@ -390,6 +393,24 @@
       "cityOeil": "📍 {{city}} · {{oeil}}",
       "viewInterested": "👁️ Voir les Œils intéressés",
       "viewButton": "Voir →"
+    },
+    "actionsRequired": {
+      "title": "Actions requises",
+      "expired": "Délai expiré",
+      "timeLeft": "{{hours}}h {{minutes}}min restant",
+      "toValidate": {
+        "badge": "À valider",
+        "noDeadline": "Délai non disponible",
+        "button": "Valider la mission"
+      },
+      "toRate": {
+        "badge": "À noter",
+        "button": "Laisser un avis"
+      },
+      "toChooseReplacement": {
+        "badge": "Choisir un remplaçant",
+        "button": "Voir les candidats"
+      }
     },
     "availableOeils": {
       "title": "Œils disponibles",

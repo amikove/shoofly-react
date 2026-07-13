@@ -381,7 +381,10 @@
       "completed": "مكتملة",
       "totalSpent": "إجمالي الإنفاق",
       "wallet": "المحفظة",
-      "madValue": "{{value}} درهم"
+      "madValue": "{{value}} درهم",
+      "timeSaved": "الوقت الموفر",
+      "timeSavedValue": "{{hours}} ساعة موفرة",
+      "timeSavedEmpty": "أكمل مهمتك الأولى لرؤية الوقت الذي وفرته"
     },
     "activeMissions": {
       "title": "المهام الجارية",
@@ -392,6 +395,24 @@
       "cityOeil": "📍 {{city}} · {{oeil}}",
       "viewInterested": "👁️ عرض العيون المهتمة",
       "viewButton": "عرض ←"
+    },
+    "actionsRequired": {
+      "title": "إجراءات مطلوبة",
+      "expired": "انتهت المهلة",
+      "timeLeft": "متبقي {{hours}}س {{minutes}}د",
+      "toValidate": {
+        "badge": "بحاجة للتأكيد",
+        "noDeadline": "المهلة غير متوفرة",
+        "button": "تأكيد المهمة"
+      },
+      "toRate": {
+        "badge": "بحاجة لتقييم",
+        "button": "ترك تقييم"
+      },
+      "toChooseReplacement": {
+        "badge": "اختيار بديل",
+        "button": "عرض المرشحين"
+      }
     },
     "availableOeils": {
       "title": "العيون المتاحة",
