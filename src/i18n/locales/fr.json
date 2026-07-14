@@ -802,10 +802,10 @@
     "missionsCount": "✅ {{count}} missions",
     "newOeilBadge": "🆕 Nouveau",
     "responseTime": {
-      "minutes": "⚡ ~{{count}} min",
-      "hours": "⚡ ~{{count}} h",
-      "notEnoughData": "⚡ Pas assez de données"
-    },
+        "minutes": "⚡ Répond en ~{{count}} min",
+        "hours": "⚡ Répond en ~{{count}} h",
+        "notEnoughData": "⚡ Temps de réponse inconnu"
+      },
     "hiring": "...",
     "hire": "Embaucher",
     "hiredToast": "Œil embauché ! 🎉",
