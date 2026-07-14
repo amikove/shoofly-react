@@ -212,7 +212,7 @@ function AdminTicketDetail({ ticket, messages, currentUserId, onClose, onChanged
             {ticket.mission_id && (
               <button
                 className="text-xs text-[#FF4D00] hover:underline mt-1"
-                onClick={() => navigate('/admin/missions')}
+                onClick={() => navigate('/admin/missions', { state: { search: ticket.mission_id } })}
               >
                 📋 Mission liée
               </button>

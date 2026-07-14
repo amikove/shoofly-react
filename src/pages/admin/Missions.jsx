@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import AppLayout from '../../components/layout/AppLayout'
 import Topbar from '../../components/layout/Topbar'
 import { missionsAPI, adminAPI, usersAPI } from '../../api'
@@ -7,9 +7,10 @@ import { StatusBadge, Spinner, EmptyState, toast, Pagination } from '../../compo
 
 export default function AdminMissions() {
  const navigate = useNavigate()
+ const location = useLocation()
  const [missions, setMissions]       = useState([])
   const [loading, setLoading]         = useState(true)
-  const [search, setSearch]           = useState('')
+  const [search, setSearch]           = useState(location.state?.search || '')
   const [status, setStatus]           = useState('')
   const [tab, setTab]                 = useState('all') // 'all' | 'priority'
   const [assignModal, setAssignModal] = useState(null)
