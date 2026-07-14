@@ -6,6 +6,8 @@ import { toast, Spinner } from '../../components/ui'
 
 export default function AdminParametres() {
   const [params, setParams] = useState({ commission: 20, min_price: 80, urgency_fee: 30, accept_delay: 15 })
+  const [fiveStarBonusActive, setFiveStarBonusActive] = useState(false)
+  const [fiveStarBonusPercent, setFiveStarBonusPercent] = useState(10)
   const [loading, setLoading] = useState(true)
   const [saving, setSaving]   = useState(false)
 
@@ -19,6 +21,8 @@ export default function AdminParametres() {
           urgency_fee:  parseFloat(s.urgency_fee || 0.30) * 100,
           accept_delay: parseFloat(s.accept_delay || 15),
         })
+        setFiveStarBonusActive(s.five_star_bonus_active === 'true')
+        setFiveStarBonusPercent(parseFloat(s.five_star_bonus_percent || 10))
       })
       .catch(() => toast('Erreur chargement', 'error'))
       .finally(() => setLoading(false))
@@ -34,6 +38,8 @@ export default function AdminParametres() {
         min_price:    parseFloat(params.min_price),
         urgency_fee:  parseFloat(params.urgency_fee) / 100,
         accept_delay: parseFloat(params.accept_delay),
+        five_star_bonus_active:  fiveStarBonusActive ? 'true' : 'false',
+        five_star_bonus_percent: parseFloat(fiveStarBonusPercent),
       })
       toast('Paramètres enregistrés ✓', 'success')
     } catch { toast('Erreur sauvegarde', 'error') }
@@ -61,6 +67,22 @@ export default function AdminParametres() {
                 <p className="text-[11px] text-[#555] mt-1">{hint}</p>
               </div>
             ))}
+            <button onClick={save} disabled={saving} className="btn btn-primary mt-2 disabled:opacity-60">
+              {saving ? 'Sauvegarde...' : 'Enregistrer'}
+            </button>
+          </div>
+          <div className="card">
+            <h2 className="font-semibold text-sm mb-4">🎁 Campagne bonus qualité 5 étoiles</h2>
+            <p className="text-[11px] text-[#555] mb-4">Bonus payé par Shoofly (non facturé au client) quand un client note une mission 5/5. Calculé sur le gain de l'Œil, pas sur le prix total de la mission.</p>
+            <label className="flex items-center gap-2 mb-3 cursor-pointer">
+              <input type="checkbox" checked={fiveStarBonusActive} onChange={(e) => setFiveStarBonusActive(e.target.checked)} />
+              <span className="text-sm">{fiveStarBonusActive ? 'Campagne active' : 'Campagne inactive'}</span>
+            </label>
+            <div className="mb-3">
+              <label className="label">Bonus (% du gain de l'Œil)</label>
+              <input type="number" className="input" value={fiveStarBonusPercent} onChange={(e) => setFiveStarBonusPercent(e.target.value)} />
+              <p className="text-[11px] text-[#555] mt-1">Ex: 10 pour 10% du gain de l'Œil</p>
+            </div>
             <button onClick={save} disabled={saving} className="btn btn-primary mt-2 disabled:opacity-60">
               {saving ? 'Sauvegarde...' : 'Enregistrer'}
             </button>
