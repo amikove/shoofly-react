@@ -43,6 +43,9 @@ export default function OeilMissions() {
   const [assistanceMission, setAssistanceMission] = useState(null)
   const [assistanceView, setAssistanceView] = useState('choice') // 'choice' | 'transfer'
   const [ticketMission, setTicketMission] = useState(null)
+  const [bonusCampaign, setBonusCampaign] = useState({ active: false, percent: 0 })
+
+  useEffect(() => { missionsAPI.fiveStarBonus().then(({ data }) => setBonusCampaign(data)).catch(() => {}) }, [])
 
   const doTransfer = async () => {
     if (!transferReason) { toast(t('oeilMissions.toasts.selectReasonRequired'), 'error'); return }
@@ -314,6 +317,11 @@ try {
               {parseFloat(m.oeil_earning || m.price).toFixed(0)} MAD
             </div>
           </div>
+          {bonusCampaign.active && (
+            <div className="text-[11px] text-[#FF4D00] mb-2">
+              {t('oeilDashboard.fiveStarBonusHint', { bonus: (parseFloat(m.oeil_earning || m.price) * bonusCampaign.percent / 100).toFixed(0) })}
+            </div>
+          )}
           <button
             onClick={() => user?.is_verified ? missionsAPI.interest(m.id).then(() => { toast(t('oeilMissions.toasts.interestExpressedShort'), 'success'); load(tab) }).catch(err => toast(err.response?.data?.error || t('oeilMissions.toasts.genericError'), 'error')) : navigate('/oeil/verification-identite')}
             className="btn btn-sm w-full justify-center bg-red-500 text-white hover:bg-red-600"
@@ -388,6 +396,11 @@ try {
 
                     <div className="text-green-400 font-bold text-base">{parseFloat(m.oeil_earning || m.price).toFixed(0)} MAD</div>
                     <div className="text-[11px] text-[#AAA]">{t('oeilMissions.card.yourEarning')}</div>
+                    {tab === 'available' && bonusCampaign.active && (
+                      <div className="text-[11px] text-[#FF4D00] mt-1 max-w-[140px]">
+                        {t('oeilDashboard.fiveStarBonusHint', { bonus: (parseFloat(m.oeil_earning || m.price) * bonusCampaign.percent / 100).toFixed(0) })}
+                      </div>
+                    )}
                   </div>
                 </div>
 

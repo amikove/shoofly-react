@@ -872,6 +872,7 @@
     "missionIgnoredToast": "تم تجاهل المهمة",
     "missionCompletedToast": "اكتملت المهمة! 🎉",
     "statusUpdatedToast": "تم تحديث الحالة ✓",
+    "fiveStarBonusHint": "+{{bonus}} درهم مكافأة إذا منحك العميل 5 نجوم 🎁",
     "advance": {
       "enRoute": "🚗 في الطريق",
       "start": "▶️ ابدأ",
@@ -1704,6 +1705,8 @@
     "reportAvailableBody": "تقرير \"{{missionTitle}}\" جاهز.",
     "newRatingTitle": "تقييم جديد: {{score}}/5 ⭐",
     "newRatingBody": "تم تقييم \"{{missionTitle}}\" من طرف عميل.",
+    "fiveStarBonusTitle": "مكافأة الجودة 5 نجوم 🎁",
+    "fiveStarBonusBody": "+{{amount}} درهم كمكافأة على \"{{missionTitle}}\" — شكراً على عملك الممتاز!",
     "newOeilInterestTitle": "عين ميدانية جديدة مهتمة 👁️",
     "newOeilInterestBody": "عين ميدانية مهتمة : {{missionTitle}}",
     "missionChangeAlertTitle": "⚠️ تغيير في مهمتك",

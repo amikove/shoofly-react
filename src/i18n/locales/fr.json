@@ -870,6 +870,7 @@
     "missionIgnoredToast": "Mission ignorée",
     "missionCompletedToast": "Mission terminée ! 🎉",
     "statusUpdatedToast": "Statut mis à jour ✓",
+    "fiveStarBonusHint": "+{{bonus}} MAD de bonus si le client vous donne 5 étoiles 🎁",
     "advance": {
       "enRoute": "🚗 En route",
       "start": "▶️ Démarrer",
@@ -1702,6 +1703,8 @@
     "reportAvailableBody": "Le rapport de \"{{missionTitle}}\" est prêt.",
     "newRatingTitle": "Nouvelle note: {{score}}/5 ⭐",
     "newRatingBody": "\"{{missionTitle}}\" notée par un client.",
+    "fiveStarBonusTitle": "Bonus qualité 5 étoiles 🎁",
+    "fiveStarBonusBody": "+{{amount}} MAD de bonus pour \"{{missionTitle}}\" — merci pour votre excellent travail !",
     "newOeilInterestTitle": "Nouvel Œil intéressé 👁️",
     "newOeilInterestBody": "Un Œil est intéressé par votre mission : {{missionTitle}}",
     "missionChangeAlertTitle": "⚠️ Changement sur votre mission",

@@ -22,6 +22,7 @@ export default function OeilDashboard() {
   const [transferReason, setTransferReason] = useState('')
   const [transferring, setTransferring] = useState(false)
   const [advancing, setAdvancing] = useState(null)
+  const [bonusCampaign, setBonusCampaign] = useState({ active: false, percent: 0 })
 
   const doTransfer = async () => {
     if (!transferReason) { toast(t('oeilDashboard.selectReasonError'), 'error'); return }
@@ -64,6 +65,7 @@ export default function OeilDashboard() {
   }
 
   useEffect(() => { load() }, [])
+  useEffect(() => { missionsAPI.fiveStarBonus().then(({ data }) => setBonusCampaign(data)).catch(() => {}) }, [])
 
   const interest = async (id) => {
   try {
@@ -225,6 +227,11 @@ const refuse = async (id) => {
                     {parseFloat(m.oeil_earning || m.price).toFixed(0)} MAD
                   </div>
                 </div>
+                {bonusCampaign.active && (
+                  <div className="text-[11px] text-[#FF4D00] mt-1 mb-2">
+                    {t('oeilDashboard.fiveStarBonusHint', { bonus: (parseFloat(m.oeil_earning || m.price) * bonusCampaign.percent / 100).toFixed(0) })}
+                  </div>
+                )}
                 <button
                   onClick={() => user?.is_verified ? interest(m.id) : navigate('/oeil/verification-identite')}
                   disabled={m.interested || m.has_interested}
@@ -270,7 +277,11 @@ const refuse = async (id) => {
                   </div>
 
                 </div>
-                
+                {bonusCampaign.active && (
+                  <div className="text-[11px] text-[#FF4D00] mb-2">
+                    {t('oeilDashboard.fiveStarBonusHint', { bonus: (parseFloat(m.oeil_earning || m.price) * bonusCampaign.percent / 100).toFixed(0) })}
+                  </div>
+                )}
 
                   <div className="flex gap-2">
                   <button
