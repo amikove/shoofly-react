@@ -13,6 +13,7 @@ import { useNavigate } from 'react-router-dom'
 import MissionHistoryModal from '../../components/missions/MissionHistoryModal'
 import InterestsModal from '../../components/missions/InterestsModal'
 import NewTicketModal from '../../components/tickets/NewTicketModal'
+import { Pagination } from '../../components/ui'
 
 const TYPE_ICONS = { immobilier:'🏠', file_attente:'⏳', audit:'🔎', personnalisee:'🎯' }
 
@@ -157,8 +158,10 @@ export default function ClientMissions() {
   const [claimMission, setClaimMission] = useState(null)
   const [historyMission, setHistoryMission] = useState(null)
   const [search, setSearch]               = useState('')
-  const [statusFilter, setStatus]         = useState('')
-  const [typeFilter, setType]             = useState('')
+    const [statusFilter, setStatus]         = useState('')
+    const [typeFilter, setType]             = useState('')
+    const [page, setPage]                   = useState(1)
+    const [totalPages, setTotalPages]       = useState(1)
   const { pendingAction, clearPending } = useNotif()
 
 // Traiter l'action en attente depuis une notification (chat ou intéressés)
@@ -186,12 +189,18 @@ useEffect(() => {
 
 
   const load = useCallback(() => {
-    setLoading(true)
-    return missionsAPI.list({ search, status: statusFilter, type: typeFilter })
-      .then(({ data }) => setMissions(data.missions || []))
-      .catch(() => toast(t('clientMissions.errors.loading'), 'error'))
-      .finally(() => setLoading(false))
-  }, [search, statusFilter, typeFilter])
+      setLoading(true)
+      return missionsAPI.list({ search, status: statusFilter, type: typeFilter, page, limit: 20 })
+        .then(({ data }) => {
+          setMissions(data.missions || [])
+          setTotalPages(data.pages || 1)
+        })
+        .catch(() => toast(t('clientMissions.errors.loading'), 'error'))
+        .finally(() => setLoading(false))
+    }, [search, statusFilter, typeFilter, page])
+
+    // Revenir à la page 1 si un filtre change, pour éviter une page vide hors limites
+    useEffect(() => { setPage(1) }, [search, statusFilter, typeFilter])
 
   useEffect(() => {
     load()
@@ -440,11 +449,12 @@ const cancel = async (id) => {
 
 )}
 </div>
+            <Pagination page={page} pages={totalPages} onPageChange={setPage} />
           </>
         )}
       </div>
-
       <NewMissionModal
+
         open={showNew}
         onClose={() => setShowNew(false)}
         onCreated={() => { load(); toast(t('clientMissions.missionCreatedToast'), 'success') }}
