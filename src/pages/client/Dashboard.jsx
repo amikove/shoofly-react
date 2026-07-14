@@ -32,6 +32,7 @@ const [interestsMission, setInterestsMission] = useState(null)
   const [profileOeil, setProfileOeil] = useState(null)
   const [ratingMission, setRatingMission] = useState(null)
   const [now, setNow] = useState(Date.now())
+  const [validatingIds, setValidatingIds] = useState(new Set())
 
   useEffect(() => {
     const iv = setInterval(() => setNow(Date.now()), 60000)
@@ -82,12 +83,15 @@ const [interestsMission, setInterestsMission] = useState(null)
 
   const validateMission = async (id) => {
     if (!window.confirm(t('clientMissions.validateConfirm'))) return
+    setValidatingIds((prev) => new Set(prev).add(id))
     try {
       await missionsAPI.validate(id)
       toast(t('clientMissions.validatedToast'), 'success')
       loadActionsRequired()
     } catch (err) {
       toast(err.response?.data?.error || t('clientMissions.errors.generic'), 'error')
+    } finally {
+      setValidatingIds((prev) => { const next = new Set(prev); next.delete(id); return next })
     }
   }
 
@@ -121,8 +125,10 @@ const [interestsMission, setInterestsMission] = useState(null)
           <div className="card">
             <h2 className="font-semibold text-sm mb-4">{t('clientDashboard.actionsRequired.title')}</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              {to_validate.map((m) => (
-                <div key={`validate-${m.id}`} className="bg-[#222] border border-orange-500/30 rounded-xl p-3">
+              {to_validate.map((m) => {
+                const expired = m.deadline && (new Date(m.deadline).getTime() - now) <= 0
+                return (
+                <div key={`validate-${m.id}`} className={`bg-[#222] border border-orange-500/30 rounded-xl p-3 ${expired ? 'opacity-50' : ''}`}>
                   <div className="flex items-start justify-between gap-2 mb-2">
                     <div className="min-w-0 flex-1">
                       <span className="badge badge-orange mb-1.5 inline-block">⏳ {t('clientDashboard.actionsRequired.toValidate.badge')}</span>
@@ -132,11 +138,15 @@ const [interestsMission, setInterestsMission] = useState(null)
                       </div>
                     </div>
                   </div>
-                  <button onClick={() => validateMission(m.id)} className="btn btn-primary btn-sm w-full justify-center">
-                    {t('clientDashboard.actionsRequired.toValidate.button')}
+                  <button
+                    onClick={() => validateMission(m.id)}
+                    disabled={validatingIds.has(m.id) || expired}
+                    className="btn btn-primary btn-sm w-full justify-center disabled:opacity-50"
+                  >
+                    {validatingIds.has(m.id) ? '...' : t('clientDashboard.actionsRequired.toValidate.button')}
                   </button>
                 </div>
-              ))}
+              )})}
 
               {to_rate.map((m) => (
                 <div key={`rate-${m.id}`} className="bg-[#222] border border-blue-500/30 rounded-xl p-3">
@@ -153,8 +163,10 @@ const [interestsMission, setInterestsMission] = useState(null)
                 </div>
               ))}
 
-              {to_choose_replacement.map((m) => (
-                <div key={`replacement-${m.id}`} className="bg-[#222] border border-yellow-500/30 rounded-xl p-3">
+              {to_choose_replacement.map((m) => {
+                const expired = m.candidate_window_ends_at && (new Date(m.candidate_window_ends_at).getTime() - now) <= 0
+                return (
+                <div key={`replacement-${m.id}`} className={`bg-[#222] border border-yellow-500/30 rounded-xl p-3 ${expired ? 'opacity-50' : ''}`}>
                   <div className="flex items-start justify-between gap-2 mb-2">
                     <div className="min-w-0 flex-1">
                       <span className="badge badge-yellow mb-1.5 inline-block">🔄 {t('clientDashboard.actionsRequired.toChooseReplacement.badge')}</span>
@@ -164,11 +176,15 @@ const [interestsMission, setInterestsMission] = useState(null)
                       </div>
                     </div>
                   </div>
-                  <button onClick={() => setInterestsMission(m)} className="btn btn-primary btn-sm w-full justify-center">
+                  <button
+                    onClick={() => setInterestsMission(m)}
+                    disabled={expired}
+                    className="btn btn-primary btn-sm w-full justify-center disabled:opacity-50"
+                  >
                     {t('clientDashboard.actionsRequired.toChooseReplacement.button')}
                   </button>
                 </div>
-              ))}
+              )})}
             </div>
           </div>
         )}
