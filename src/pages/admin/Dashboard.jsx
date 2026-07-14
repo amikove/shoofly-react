@@ -747,7 +747,7 @@ export default function AdminDashboard() {
             ) : oeilsData && (
               <>
                 {/* KPIs */}
-                <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6">
+                <div className="grid grid-cols-2 md:grid-cols-6 gap-4 mb-6">
                   <div className="stat-card">
                     <div className="text-xs text-[#AAA] mb-1">Total Œils</div>
                     <div className="text-2xl font-bold text-white">
@@ -776,6 +776,12 @@ export default function AdminDashboard() {
                     <div className="text-xs text-[#AAA] mb-1">Délai moyen d'attribution</div>
                     <div className="text-2xl font-bold text-white">
                       <ComparisonCell current={oeilsData.kpis.avg_assignment_hours} compare={oeilsData.kpisCompare?.avg_assignment_hours} suffix="h" invert hasComparison={!!oeilsData.kpisCompare} />
+                    </div>
+                  </div>
+                  <div className="stat-card">
+                    <div className="text-xs text-[#AAA] mb-1">Œils multi-missions (≥2)</div>
+                    <div className="text-2xl font-bold text-blue-400">
+                      <ComparisonCell current={oeilsData.kpis.taux_oeils_multi_missions} compare={oeilsData.kpisCompare?.taux_oeils_multi_missions} suffix="%" hasComparison={!!oeilsData.kpisCompare} />
                     </div>
                   </div>
                 </div>
