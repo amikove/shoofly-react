@@ -13,15 +13,20 @@ export function AuthProvider({ children }) {
     if (!token) { setLoading(false); return }
 
     authAPI.me()
-      .then(({ data }) => {
-        setUser(data.user)
-      })
-      .catch(() => {
-        localStorage.removeItem('shoofly_token')
-        localStorage.removeItem('shoofly_user')
-      })
-      .finally(() => setLoading(false))
-  }, [])
+        .then(({ data }) => {
+          setUser(data.user)
+        })
+        .catch((err) => {
+          // Ne déconnecter que si le token est vraiment invalide/expiré (401) —
+          // une simple erreur réseau (coupure, changement de connexion) ne doit
+          // jamais effacer la session de l'utilisateur.
+          if (err.response?.status === 401) {
+            localStorage.removeItem('shoofly_token')
+            localStorage.removeItem('shoofly_user')
+          }
+        })
+        .finally(() => setLoading(false))
+    }, [])
 
   const login = async (email, password) => {
     const { data } = await authAPI.login({ email, password })
