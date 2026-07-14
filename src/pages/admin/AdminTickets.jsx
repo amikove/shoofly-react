@@ -68,7 +68,7 @@ export default function AdminTickets() {
     <AppLayout>
       <Topbar title="🎫 Tickets de support" />
       <div className="p-6 space-y-5">
-        <div className="flex gap-1 bg-[#222] rounded-xl p-1 w-fit">
+        <div className="flex gap-1 bg-[#222] rounded-xl p-1 w-fit max-w-full overflow-x-auto">
           {STATUS_TABS.map((s) => (
             <button key={s.id} onClick={() => setTab(s.id)}
               className={`px-4 py-2 rounded-lg text-xs font-medium transition-all ${tab === s.id ? 'bg-[#2A2A2A] text-white' : 'text-[#AAA] hover:text-white'}`}>
