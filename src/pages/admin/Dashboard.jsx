@@ -95,6 +95,8 @@ export default function AdminDashboard() {
   const [funnelRangeB, setFunnelRangeB] = useState({ preset: 'week', ...getPresetRange('week') })
   const [funnelDataA, setFunnelDataA] = useState(null)
   const [funnelDataB, setFunnelDataB] = useState(null)
+  const [funnelKpisA, setFunnelKpisA] = useState(null)
+  const [funnelKpisB, setFunnelKpisB] = useState(null)
   const [loadingFunnel, setLoadingFunnel] = useState(true)
   const [customA, setCustomA] = useState({ from: '', to: '' })
   const [customB, setCustomB] = useState({ from: '', to: '' })
@@ -280,6 +282,8 @@ export default function AdminDashboard() {
       .then(([resA, resB]) => {
         setFunnelDataA(resA.data.steps)
         setFunnelDataB(resB.data.steps)
+        setFunnelKpisA(resA.data.kpis)
+        setFunnelKpisB(resB.data.kpis)
       })
       .catch(() => toast('Erreur chargement funnel', 'error'))
       .finally(() => setLoadingFunnel(false))
@@ -622,6 +626,25 @@ export default function AdminDashboard() {
                     </>
                   )
                 })}
+              </div>
+            )}
+
+            {!loadingFunnel && funnelKpisA && funnelKpisB && (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                <div className="stat-card">
+                  <div className="text-xs text-[#AAA] mb-1">Temps moyen avant 1ère candidature</div>
+                  <div className="flex items-baseline gap-3">
+                    <span className="text-lg font-bold text-[#FF4D00]">{funnelKpisA.temps_moyen_premiere_candidature} min</span>
+                    <span className="text-lg font-bold text-blue-400">{funnelKpisB.temps_moyen_premiere_candidature} min</span>
+                  </div>
+                </div>
+                <div className="stat-card">
+                  <div className="text-xs text-[#AAA] mb-1">Temps moyen jusqu'à sélection de l'Œil</div>
+                  <div className="flex items-baseline gap-3">
+                    <span className="text-lg font-bold text-[#FF4D00]">{funnelKpisA.temps_moyen_selection_oeil} min</span>
+                    <span className="text-lg font-bold text-blue-400">{funnelKpisB.temps_moyen_selection_oeil} min</span>
+                  </div>
+                </div>
               </div>
             )}
           </>
