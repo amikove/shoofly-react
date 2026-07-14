@@ -468,6 +468,8 @@ export default function AdminDashboard() {
                   {[
                     { label: 'Transferts sans remplaçant', value: alertData.current?.transfer_failures ?? 0, compare: alertData.comparison?.transfer_failures, invert: true },
                     { label: 'Taux d\'annulation', value: `${alertData.current?.cancellation_rate ?? 0}%`, raw: alertData.current?.cancellation_rate, compare: alertData.comparison?.cancellation_rate, invert: true },
+                    { label: 'Taux d\'abandon avant travail', value: `${alertData.current?.taux_abandon_avant ?? 0}%`, raw: alertData.current?.taux_abandon_avant, compare: alertData.comparison?.taux_abandon_avant, invert: true },
+                    { label: 'Taux d\'abandon en cours de mission', value: `${alertData.current?.taux_abandon_pendant ?? 0}%`, raw: alertData.current?.taux_abandon_pendant, compare: alertData.comparison?.taux_abandon_pendant, invert: true },
                   ].map((k) => {
                     const d = delta(k.raw !== undefined ? k.raw : k.value, k.compare)
                     const displayDelta = k.invert && d !== null ? -d : d
