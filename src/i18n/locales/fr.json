@@ -2171,7 +2171,9 @@
     "submit": "Créer le ticket",
     "cancel": "Annuler",
     "created": "Ticket {{reference}} créé ✓",
-    "createError": "Erreur lors de la création du ticket"
+    "createError": "Erreur lors de la création du ticket",
+    "missingCategory": "Sélectionnez une catégorie",
+    "missingMessage": "Décrivez votre demande"
   },
   "mesTickets": {
     "title": "Mes tickets",

@@ -2173,7 +2173,9 @@
     "submit": "إنشاء التذكرة",
     "cancel": "إلغاء",
     "created": "تم إنشاء التذكرة {{reference}} ✓",
-    "createError": "خطأ أثناء إنشاء التذكرة"
+    "createError": "خطأ أثناء إنشاء التذكرة",
+    "missingCategory": "اختر فئة",
+    "missingMessage": "صف طلبك"
   },
   "mesTickets": {
     "title": "تذاكري",

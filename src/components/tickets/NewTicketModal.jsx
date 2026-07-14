@@ -161,6 +161,12 @@ export default function NewTicketModal({ open, onClose, onCreated, presetMission
           </div>
         )}
 
+        {!submitting && (!categoryValue || !message.trim()) && (
+          <p className="text-xs text-[#FF4D00]">
+            {!categoryValue ? t('newTicket.missingCategory') : t('newTicket.missingMessage')}
+          </p>
+        )}
+
         <div className="flex gap-2 pt-1">
           <button
             onClick={submit}
