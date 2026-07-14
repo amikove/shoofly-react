@@ -1,4 +1,5 @@
 import { createPortal } from 'react-dom'
+import { useEffect, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 
 // ── Badge ────────────────────────────────────────────
@@ -69,6 +70,35 @@ export function EmptyState({ icon, title, description, action }) {
 
 // ── Modal ──────────────────────────────────────────────────
 export function Modal({ open, onClose, title, subtitle, children, size = 'md' }) {
+  const { t } = useTranslation()
+  const dialogRef = useRef(null)
+  const previouslyFocused = useRef(null)
+
+  // Échap pour fermer + piège de focus (Tab reste dans la modale) + restauration du focus à la fermeture
+  useEffect(() => {
+    if (!open) return
+    previouslyFocused.current = document.activeElement
+    const dialog = dialogRef.current
+    const focusable = dialog?.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])')
+    focusable?.[0]?.focus()
+
+    const handler = (e) => {
+      if (e.key === 'Escape') { onClose(); return }
+      if (e.key !== 'Tab' || !dialog) return
+      const items = dialog.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])')
+      if (!items.length) return
+      const first = items[0]
+      const last = items[items.length - 1]
+      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus() }
+      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus() }
+    }
+    document.addEventListener('keydown', handler)
+    return () => {
+      document.removeEventListener('keydown', handler)
+      previouslyFocused.current?.focus?.()
+    }
+  }, [open])
+
   if (!open) return null
   const sizes = { sm: 'max-w-sm', md: 'max-w-lg', lg: 'max-w-2xl', xl: 'max-w-4xl' }
   return createPortal(
@@ -76,13 +106,19 @@ export function Modal({ open, onClose, title, subtitle, children, size = 'md' })
       className="fixed inset-0 bg-black/80 z-[100] flex items-center justify-center p-4 backdrop-blur-sm"
       onClick={(e) => e.target === e.currentTarget && onClose()}
     >
-      <div className={`bg-[#181818] border border-white/10 rounded-2xl p-6 shadow-xl ${sizes[size]} w-full max-h-[85vh] overflow-y-auto`}>
+      <div
+        ref={dialogRef}
+        role="dialog"
+        aria-modal="true"
+        aria-label={title}
+        className={`bg-[#181818] border border-white/10 rounded-2xl p-6 shadow-xl ${sizes[size]} w-full max-h-[85vh] overflow-y-auto`}
+      >
         <div className="flex items-start justify-between mb-5">
           <div>
             <h2 className="text-base font-bold">{title}</h2>
             {subtitle && <p className="text-xs text-[#AAA] mt-0.5">{subtitle}</p>}
           </div>
-          <button onClick={onClose} className="text-[#AAA] hover:text-white text-lg leading-none ml-4">✕</button>
+          <button onClick={onClose} aria-label={t('common.close')} className="text-[#AAA] hover:text-white text-lg leading-none ms-4">✕</button>
         </div>
         {children}
       </div>

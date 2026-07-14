@@ -1,4 +1,10 @@
 {
+  "common": {
+    "close": "إغلاق",
+    "back": "رجوع",
+    "forward": "التالي",
+    "notifications": "الإشعارات"
+  },
   "joursSemaine": {
     "Lun": "الاثنين",
     "Mar": "الثلاثاء",

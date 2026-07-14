@@ -1,4 +1,10 @@
 {
+  "common": {
+    "close": "Fermer",
+    "back": "Retour",
+    "forward": "Suivant",
+    "notifications": "Notifications"
+  },
   "joursSemaine": {
     "Lun": "Lun",
     "Mar": "Mar",
