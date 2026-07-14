@@ -222,7 +222,7 @@ export default function AdminOeils() {
           onClick={() => setLightbox(null)}
         >
           <img src={lightbox} alt="Document" className="max-w-full max-h-full rounded-xl object-contain" />
-          <button onClick={() => setLightbox(null)} className="absolute top-4 right-4 text-white text-2xl">✕</button>
+          <button onClick={() => setLightbox(null)} aria-label="Fermer" className="absolute top-4 end-4 text-white text-2xl">✕</button>
         </div>
       )}
     </AppLayout>

@@ -471,7 +471,7 @@ const validateAirbnb = () => {
 
       {/* Barre d'actions fixe en bas */}
       {!submitted && (
-        <div className="fixed bottom-20 md:bottom-0 left-0 right-0 md:left-[220px] bg-[#181818] border-t border-white/12 p-4 flex gap-3 z-40">
+        <div className="fixed bottom-20 md:bottom-0 start-0 end-0 md:start-[220px] bg-[#181818] border-t border-white/12 p-4 flex gap-3 z-40">
           <button onClick={save} disabled={saving}
             className="btn btn-ghost flex-1 justify-center disabled:opacity-50">
             {saving ? '...' : t('oeilAirbnbReport.saveButton')}
