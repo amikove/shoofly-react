@@ -1526,6 +1526,8 @@
     "topbarTitle": "Rapport d'audit",
     "pageTitle": "Rapport d'audit mystère",
     "notAvailable": "Rapport non encore disponible",
+    "loadError": "Impossible de charger le rapport — vérifiez votre connexion",
+    "retry": "Réessayer",
     "back": "← Retour",
     "backToMissions": "← Retour aux missions",
     "reportSubmitted": "Rapport soumis",
@@ -1535,6 +1537,8 @@
   },
   "clientAirbnbReportView": {
     "notAvailable": "Rapport non encore disponible",
+    "loadError": "Impossible de charger le rapport — vérifiez votre connexion",
+    "retry": "Réessayer",
     "inProgress": "En cours",
     "disclaimerTitle": "Rapport de visite indépendant",
     "disclaimerPrefix": "Le score est indicatif car les",

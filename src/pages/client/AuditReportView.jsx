@@ -68,20 +68,38 @@ export default function AuditReportView() {
   const [mission, setMission] = useState(null)
   const [report, setReport]   = useState(null)
   const [loading, setLoading] = useState(true)
+  const [loadError, setLoadError] = useState(false)
 
-  useEffect(() => {
+  const load = () => {
+    setLoading(true)
+    setLoadError(false)
     Promise.all([
       missionsAPI.get(missionId),
       reportsAPI.get(missionId),
     ]).then(([mRes, rRes]) => {
       setMission(mRes.data.mission || mRes.data)
       setReport(rRes.data.report || null)
-    }).finally(() => setLoading(false))
-  }, [missionId])
+    }).catch(() => setLoadError(true))
+      .finally(() => setLoading(false))
+  }
+
+  useEffect(load, [missionId])
 
   if (loading) return (
     <AppLayout><Topbar title={t('clientAuditReportView.topbarTitle')} />
       <div className="flex-1 flex items-center justify-center"><Spinner size="lg" /></div>
+    </AppLayout>
+  )
+
+  if (loadError) return (
+    <AppLayout>
+      <Topbar title={t('clientAuditReportView.topbarTitle')} />
+      <div className="flex-1 flex items-center justify-center flex-col gap-3 text-[#AAA]">
+        <div className="text-4xl opacity-30">⚠️</div>
+        <p className="text-sm">{t('clientAuditReportView.loadError')}</p>
+        <button onClick={load} className="btn btn-primary btn-sm mt-2">{t('clientAuditReportView.retry')}</button>
+        <button onClick={() => navigate(-1)} className="btn btn-ghost btn-sm">{t('clientAuditReportView.back')}</button>
+      </div>
     </AppLayout>
   )
 
