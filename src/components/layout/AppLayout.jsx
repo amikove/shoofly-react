@@ -137,7 +137,7 @@ useEffect(() => {
     <div className="flex min-h-screen">
 
       {/* SIDEBAR — desktop uniquement */}
-      <aside className="hidden md:flex w-[220px] flex-shrink-0 bg-[#181818] border-r border-white/20 flex-col fixed top-0 left-0 h-screen z-50">
+      <aside className="hidden md:flex w-[220px] flex-shrink-0 bg-[#181818] border-e border-white/20 flex-col fixed top-0 start-0 h-screen z-50">
         {/* Logo */}
         <div className="px-5 py-4 border-b border-white/20 bg-[#222] flex items-start justify-between gap-2">
           <div>
@@ -227,13 +227,14 @@ useEffect(() => {
               onClick={handleLogout}
               className="text-[#AAA] hover:text-white text-xs px-1.5 py-1 rounded border border-white/12 hover:border-white/22 transition-all"
               title={t('appLayout.logout')}
+              aria-label={t('appLayout.logout')}
             >✕</button>
           </div>
         </div>
       </aside>
 
       {/* MAIN */}
-      <main className="md:ml-[220px] flex-1 flex flex-col min-h-screen pb-[64px] md:pb-0">
+      <main className="md:ms-[220px] flex-1 flex flex-col min-h-screen pb-[64px] md:pb-0">
         {/* Header mobile */}
         <div className="md:hidden flex items-center justify-between px-4 py-3 bg-[#181818] border-b border-white/12 sticky top-0 z-40">
           <div className="font-display font-bold text-lg">
@@ -248,7 +249,7 @@ useEffect(() => {
             >
               {i18n.language === 'ar' ? 'FR' : 'AR'}
             </button>
-            <button onClick={handleLogout} className="text-[#AAA] text-xs px-2 py-1 rounded border border-white/12">✕</button>
+            <button onClick={handleLogout} aria-label={t('appLayout.logout')} className="text-[#AAA] text-xs px-2 py-1 rounded border border-white/12">✕</button>
           </div>
         </div>
 
