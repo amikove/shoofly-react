@@ -788,7 +788,12 @@
     "noReviews": "لا توجد تقييمات حالياً",
     "noComment": "لا يوجد تعليق",
     "orderThisOeil": "طلب هذه العين الميدانية ←",
-    "close": "إغلاق"
+    "close": "إغلاق",
+    "responseTime": {
+      "minutes": "يرد عادةً خلال {{count}} د",
+      "hours": "يرد عادةً خلال {{count}} س",
+      "notEnoughData": "لا توجد بيانات كافية بعد"
+    }
   },
   "interestsModal": {
     "title": "العيون المهتمة",
@@ -798,6 +803,11 @@
     "ratingReviews": "⭐ {{rating}}/5 ({{count}} تقييم)",
     "missionsCount": "✅ {{count}} مهمة",
     "newOeilBadge": "🆕 جديد",
+    "responseTime": {
+      "minutes": "⚡ ~{{count}} د",
+      "hours": "⚡ ~{{count}} س",
+      "notEnoughData": "⚡ بيانات غير كافية"
+    },
     "hiring": "...",
     "hire": "توظيف",
     "hiredToast": "تم توظيف العين الميدانية! 🎉",

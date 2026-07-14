@@ -786,7 +786,12 @@
     "noReviews": "Aucun avis pour le moment",
     "noComment": "Aucun commentaire",
     "orderThisOeil": "Commander cet Œil →",
-    "close": "Fermer"
+    "close": "Fermer",
+    "responseTime": {
+      "minutes": "Répond généralement en {{count}} min",
+      "hours": "Répond généralement en {{count}} h",
+      "notEnoughData": "Pas encore assez de données"
+    }
   },
   "interestsModal": {
     "title": "Œils intéressés",
@@ -796,6 +801,11 @@
     "ratingReviews": "⭐ {{rating}}/5 ({{count}} avis)",
     "missionsCount": "✅ {{count}} missions",
     "newOeilBadge": "🆕 Nouveau",
+    "responseTime": {
+      "minutes": "⚡ ~{{count}} min",
+      "hours": "⚡ ~{{count}} h",
+      "notEnoughData": "⚡ Pas assez de données"
+    },
     "hiring": "...",
     "hire": "Embaucher",
     "hiredToast": "Œil embauché ! 🎉",

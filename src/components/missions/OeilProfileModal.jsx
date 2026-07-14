@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { usersAPI } from '../../api'
 import { Modal, Avatar, Stars, Spinner, Badge } from '../ui'
 import { translateLocation } from '../../constants/villesTranslations'
+import { getResponseTimeDisplay } from '../../utils/responseTime'
 
 export default function OeilProfileModal({ oeil, onClose, onCommander }) {
   const { t, i18n } = useTranslation()
@@ -90,6 +91,19 @@ export default function OeilProfileModal({ oeil, onClose, onCommander }) {
               </div>
             </div>
           )}
+
+          {/* Temps de réponse moyen */}
+          {(() => {
+            const rt = getResponseTimeDisplay(profile.avg_response_minutes)
+            return (
+              <div className="flex items-center gap-2 rounded-xl px-3 py-2 mb-5 bg-[#222] border border-white/10">
+                <span className="text-base">⚡</span>
+                <p className="text-xs font-semibold text-white">
+                  {rt.hasData ? t(`oeilProfileModal.responseTime.${rt.unit}`, { count: rt.value }) : t('oeilProfileModal.responseTime.notEnoughData')}
+                </p>
+              </div>
+            )
+          })()}
 
           {/* Onglets */}
           <div className="flex gap-1 bg-[#222] rounded-xl p-1 mb-5">

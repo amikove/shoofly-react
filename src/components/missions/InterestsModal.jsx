@@ -3,10 +3,10 @@ import { useTranslation } from 'react-i18next'
 import OeilProfileModal from './OeilProfileModal'
 import { missionsAPI } from '../../api'
 import { Spinner, toast, Avatar } from '../ui'
-import { translateLocation } from '../../constants/villesTranslations'
+import { getResponseTimeDisplay } from '../../utils/responseTime'
 
 export default function InterestsModal({ mission, onClose, onHired }) {
-  const { t, i18n } = useTranslation()
+  const { t } = useTranslation()
   const [interests, setInterests] = useState([])
   const [loading, setLoading]     = useState(true)
   const [hiring, setHiring]       = useState(null)
@@ -62,7 +62,10 @@ export default function InterestsModal({ mission, onClose, onHired }) {
                 <div className="flex-1 min-w-0">
                   <div className="font-semibold text-sm">{o.first_name} {o.last_name}</div>
                   <div className="text-xs text-[#AAA] flex gap-3 mt-0.5 flex-wrap">
-                    <span>📍 {o.city ? translateLocation(o.city, i18n.language) : '—'}</span>
+                    <span>{(() => {
+                      const rt = getResponseTimeDisplay(o.avg_response_minutes)
+                      return rt.hasData ? t(`interestsModal.responseTime.${rt.unit}`, { count: rt.value }) : t('interestsModal.responseTime.notEnoughData')
+                    })()}</span>
                     {o.is_new_oeil
                       ? <span className="badge badge-blue">{t('interestsModal.newOeilBadge')}</span>
                       : <span>{t('interestsModal.ratingReviews', { rating: o.rating_avg || '0', count: o.rating_count || 0 })}</span>
