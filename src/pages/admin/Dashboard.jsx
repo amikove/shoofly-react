@@ -702,6 +702,34 @@ export default function AdminDashboard() {
                 </div>
               </div>
             )}
+
+            {!loadingGeo && geoData?.zones?.length > 0 && (
+              <>
+                <p className="text-sm font-semibold mb-3 mt-6">🧭 Réutilisation clients &amp; candidatures par zone</p>
+                <div className="card p-0">
+                  <div className="table-wrap">
+                    <table>
+                      <thead>
+                        <tr>
+                          <th>Ville / Quartier</th>
+                          <th>Taux de réutilisation clients</th>
+                          <th>Candidatures moyennes / mission</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {geoData.zones.map((z) => (
+                          <tr key={`${z.city}-${z.quartier || ''}`}>
+                            <td className="font-medium">📍 {z.city}{z.quartier ? ` — ${z.quartier}` : ''}</td>
+                            <td>{z.taux_reutilisation_clients !== null ? `${z.taux_reutilisation_clients}%` : '—'}</td>
+                            <td>{z.candidatures_moyennes_par_mission !== null ? z.candidatures_moyennes_par_mission : '—'}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </>
+            )}
           </>
         )}
 
