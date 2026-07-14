@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import { usersAPI } from '../../api'
@@ -16,7 +16,16 @@ export default function Topbar({ title, actions }) {
   const [notifs, setNotifs]       = useState([])
   const [unread, setUnread]       = useState(0)
   const [showNotifs, setShowNotifs] = useState(false)
+  const notifRef = useRef(null)
   const { setPending } = useNotif()
+
+  // Ferme le panneau au clic en dehors (bouton cloche + dropdown)
+  useEffect(() => {
+    if (!showNotifs) return
+    const handler = (e) => { if (notifRef.current && !notifRef.current.contains(e.target)) setShowNotifs(false) }
+    document.addEventListener('mousedown', handler)
+    return () => document.removeEventListener('mousedown', handler)
+  }, [showNotifs])
 
   const loadNotifs = useCallback(() => {
     usersAPI.notifications()
@@ -44,6 +53,19 @@ export default function Topbar({ title, actions }) {
     await usersAPI.markRead({})
     setUnread(0)
     setNotifs((n) => n.map((x) => ({ ...x, is_read: true })))
+  }
+
+  // À l'ouverture du panneau, marque comme lues les notifications visibles (top 10 affichées)
+  const toggleNotifs = () => {
+    if (!showNotifs) {
+      const visibleUnreadIds = notifs.slice(0, 10).filter((n) => !n.is_read).map((n) => n.id)
+      if (visibleUnreadIds.length) {
+        usersAPI.markRead({ ids: visibleUnreadIds }).catch(() => {})
+        setNotifs((prev) => prev.map((n) => (visibleUnreadIds.includes(n.id) ? { ...n, is_read: true } : n)))
+        setUnread((u) => Math.max(0, u - visibleUnreadIds.length))
+      }
+    }
+    setShowNotifs((v) => !v)
   }
 
 
@@ -135,9 +157,9 @@ const handleClick = (n) => {
 
       <div className="flex items-center gap-2">
         {/* Notifications */}
-        <div className="relative">
+        <div className="relative" ref={notifRef}>
           <button
-            onClick={() => setShowNotifs((v) => !v)}
+            onClick={toggleNotifs}
             className="relative p-2 border border-white/12 rounded-lg text-[#AAA] hover:text-white hover:border-white/22 transition-all"
           >
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
