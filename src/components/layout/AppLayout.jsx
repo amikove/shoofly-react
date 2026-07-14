@@ -234,7 +234,7 @@ useEffect(() => {
       </aside>
 
       {/* MAIN */}
-      <main className="md:ms-[220px] flex-1 flex flex-col min-h-screen pb-[64px] md:pb-0">
+      <main className="md:ms-[220px] flex-1 min-w-0 flex flex-col min-h-screen pb-[64px] md:pb-0">
         {/* Header mobile */}
         <div className="md:hidden flex items-center justify-between px-4 py-3 bg-[#181818] border-b border-white/12 sticky top-0 z-40">
           <div className="font-display font-bold text-lg">
