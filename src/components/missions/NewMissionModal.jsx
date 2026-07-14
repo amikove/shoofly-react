@@ -342,7 +342,7 @@ if (parseFloat(form.price) < minPrice) {
                 : t('newMissionModal.subtitleVisible')}
             </p>
           </div>
-          <button onClick={onClose} className="text-[#AAA] hover:text-white text-lg">✕</button>
+          <button onClick={onClose} aria-label={t('common.close')} className="text-[#AAA] hover:text-white text-lg">✕</button>
         </div>
 
         {/* Bannière Œil pré-sélectionné */}

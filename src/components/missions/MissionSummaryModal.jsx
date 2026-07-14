@@ -69,7 +69,7 @@ export default function MissionSummaryModal({ mission, onClose }) {
             <h2 className="font-semibold text-sm">{mission.title}</h2>
             <p className="text-xs text-[#AAA] mt-0.5">📍 {translateLocation(mission.city, i18n.language)} {mission.quartier ? `· ${translateLocation(mission.quartier, i18n.language)}` : ''}</p>
           </div>
-          <button onClick={onClose} className="text-[#AAA] hover:text-white text-lg">✕</button>
+          <button onClick={onClose} aria-label={t('common.close')} className="text-[#AAA] hover:text-white text-lg">✕</button>
         </div>
 
         <div className="flex-1 overflow-y-auto space-y-4">

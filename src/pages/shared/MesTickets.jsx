@@ -149,7 +149,7 @@ function TicketThread({ ticket, messages, currentUserId, onClose, onSent }) {
               <span className={STATUS_VARIANT[ticket.status]}>{t(`mesTickets.status.${ticket.status}`)}</span>
             </div>
           </div>
-          <button onClick={onClose} className="text-[#AAA] hover:text-white text-lg">✕</button>
+          <button onClick={onClose} aria-label={t('common.close')} className="text-[#AAA] hover:text-white text-lg">✕</button>
         </div>
 
         <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-2">

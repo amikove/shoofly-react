@@ -157,7 +157,7 @@ const send = async () => {
               }
             </div>
           </div>
-          <button onClick={onClose} className="text-[#AAA] hover:text-white text-lg">✕</button>
+          <button onClick={onClose} aria-label={t('common.close')} className="text-[#AAA] hover:text-white text-lg">✕</button>
         </div>
 
         {/* Messages */}

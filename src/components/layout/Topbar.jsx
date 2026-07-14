@@ -150,8 +150,8 @@ const handleClick = (n) => {
   return (
     <header className="h-[54px] bg-[#181818] border-b border-white/20 flex items-center justify-between px-6 sticky top-0 z-40 shadow-[0_2px_8px_rgba(0,0,0,0.3)]">
       <div className="flex items-center gap-3">
-        <button onClick={() => navigate(-1)} className="text-[#AAA] hover:text-white text-sm px-2 py-1 rounded border border-white/12 hover:border-white/22 transition-all">←</button>
-        <button onClick={() => navigate(1)}  className="text-[#AAA] hover:text-white text-sm px-2 py-1 rounded border border-white/12 hover:border-white/22 transition-all">→</button>
+        <button onClick={() => navigate(-1)} aria-label={t('common.back')} className="text-[#AAA] hover:text-white text-sm px-2 py-1 rounded border border-white/12 hover:border-white/22 transition-all">←</button>
+        <button onClick={() => navigate(1)}  aria-label={t('common.forward')} className="text-[#AAA] hover:text-white text-sm px-2 py-1 rounded border border-white/12 hover:border-white/22 transition-all">→</button>
         <h1 className="font-display font-semibold text-[15px]">{title}</h1>
       </div>
 
@@ -160,6 +160,7 @@ const handleClick = (n) => {
         <div className="relative" ref={notifRef}>
           <button
             onClick={toggleNotifs}
+            aria-label={t('common.notifications')}
             className="relative p-2 border border-white/12 rounded-lg text-[#AAA] hover:text-white hover:border-white/22 transition-all"
           >
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">

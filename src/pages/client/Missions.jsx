@@ -56,7 +56,7 @@ function ReportViewer({ mission, onClose }) {
             <h2 className="font-display font-bold text-base">{t('clientMissions.reportViewer.title')}</h2>
             <p className="text-xs text-[#AAA] mt-0.5">{mission.title}</p>
           </div>
-          <button onClick={onClose} className="text-[#AAA] hover:text-white text-lg">✕</button>
+          <button onClick={onClose} aria-label={t('common.close')} className="text-[#AAA] hover:text-white text-lg">✕</button>
         </div>
         {loading ? (
           <div className="flex justify-center py-12"><Spinner size="lg" /></div>

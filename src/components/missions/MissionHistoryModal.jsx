@@ -52,7 +52,7 @@ export default function MissionHistoryModal({ mission, onClose }) {
             <h2 className="font-semibold text-sm">{t('missionHistoryModal.title')}</h2>
             <p className="text-xs text-[#AAA] mt-0.5">{mission.title}</p>
           </div>
-          <button onClick={onClose} className="text-[#AAA] hover:text-white text-lg">✕</button>
+          <button onClick={onClose} aria-label={t('common.close')} className="text-[#AAA] hover:text-white text-lg">✕</button>
         </div>
 
         <div className="flex-1 overflow-y-auto">
