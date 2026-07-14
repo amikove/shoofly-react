@@ -1208,11 +1208,15 @@ export default function AdminDashboard() {
                         ) : expenses.map((e) => (
                           <tr key={e.id}>
                             <td className="text-xs text-[#AAA]">{new Date(e.expense_date).toLocaleDateString('fr-FR')}</td>
-                            <td>{e.category}</td>
+                            <td>
+                              <span className={`badge ${e.category === 'Marketing' ? 'badge-orange' : e.category === 'Promotions' ? 'badge-blue' : 'badge-gray'}`}>
+                                {e.category}
+                              </span>
+                            </td>
                             <td className="text-[#AAA] text-xs">{e.description || '—'}</td>
                             <td className="text-red-400 font-semibold">{parseFloat(e.amount).toFixed(0)} MAD</td>
                             <td className="text-xs text-[#AAA]">
-                              {e.first_name ? `${e.first_name} ${e.last_name}` : e.category === 'Promotions' ? '🤖 Système (Promo)' : '—'}
+                              {e.first_name ? `${e.first_name} ${e.last_name}` : e.category === 'Promotions' ? '🤖 Système (Promo)' : e.category === 'Marketing' ? '🤖 Système (Bonus 5★)' : '—'}
                             </td>
                             <td>
                               <button onClick={() => removeExpense(e.id)} className="text-[#555] hover:text-red-400 text-xs">✕</button>
