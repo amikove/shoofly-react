@@ -18,6 +18,7 @@ const MAIN_TABS = [
   { id: 'fileattente', label: '⏳ File d\'attente' },
   { id: 'financier',   label: '💰 Financier' },
   { id: 'campagnes',   label: '🔗 Campagnes' },
+  { id: 'experience',  label: '💬 Expérience Utilisateur' },
   { id: 'claims',      label: '📋 Réclamations' },
 ]
 
@@ -100,6 +101,10 @@ export default function AdminDashboard() {
   const [loadingFunnel, setLoadingFunnel] = useState(true)
   const [customA, setCustomA] = useState({ from: '', to: '' })
   const [customB, setCustomB] = useState({ from: '', to: '' })
+
+  // ── Expérience Utilisateur ──
+  const [experienceData, setExperienceData] = useState(null)
+  const [loadingExperience, setLoadingExperience] = useState(true)
 
   // ── Réclamations (inchangé) ──
   const [claims, setClaims] = useState([])
@@ -301,6 +306,20 @@ export default function AdminDashboard() {
       .then(({ data }) => setServicesData(data))
       .catch(() => toast('Erreur chargement services', 'error'))
       .finally(() => setLoadingServices(false))
+  }, [tab, range, compareRange])
+
+  useEffect(() => {
+    if (tab !== 'experience' || !range?.from || !range?.to) return
+    setLoadingExperience(true)
+    const params = {
+      date_from: range.from.toISOString(),
+      date_to: range.to.toISOString(),
+      ...(compareRange ? { compare_from: compareRange.from.toISOString(), compare_to: compareRange.to.toISOString() } : {}),
+    }
+    adminAPI.dashboardExperienceUtilisateur(params)
+      .then(({ data }) => setExperienceData(data))
+      .catch(() => toast('Erreur chargement expérience utilisateur', 'error'))
+      .finally(() => setLoadingExperience(false))
   }, [tab, range, compareRange])
 
   const resolve = async (claimId, missionId, decision) => {
@@ -1274,6 +1293,103 @@ export default function AdminDashboard() {
         )}
 
         
+
+        {tab === 'experience' && (
+          <>
+            <DateRangeFilter
+              range={range}
+              onChange={setRange}
+              compareRange={compareRange}
+              onCompareChange={setCompareRange}
+            />
+
+            {loadingExperience ? (
+              <div className="flex justify-center py-20"><Spinner size="lg" /></div>
+            ) : experienceData && (
+              <>
+                {/* Satisfaction client (NPS) */}
+                <p className="text-sm font-semibold mb-1">😊 Satisfaction client</p>
+                <p className="text-[11px] text-[#555] mb-3">
+                  Notes sur une échelle de 1 à 5 (pas un NPS classique 0-10) · basé sur {experienceData.nps.current.nb_evaluations} évaluation(s) ayant renseigné ces champs
+                  {experienceData.nps.comparison ? ` (vs ${experienceData.nps.comparison.nb_evaluations} sur la période comparée)` : ''}
+                </p>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                  <div className="stat-card">
+                    <div className="text-xs text-[#AAA] mb-1">Facilité</div>
+                    <div className="text-2xl font-bold text-blue-400">
+                      <ComparisonCell current={experienceData.nps.current.avg_facilite} compare={experienceData.nps.comparison?.avg_facilite} suffix=" / 5" hasComparison={!!experienceData.nps.comparison} />
+                    </div>
+                  </div>
+                  <div className="stat-card">
+                    <div className="text-xs text-[#AAA] mb-1">Réactivité</div>
+                    <div className="text-2xl font-bold text-blue-400">
+                      <ComparisonCell current={experienceData.nps.current.avg_reactivite} compare={experienceData.nps.comparison?.avg_reactivite} suffix=" / 5" hasComparison={!!experienceData.nps.comparison} />
+                    </div>
+                  </div>
+                  <div className="stat-card">
+                    <div className="text-xs text-[#AAA] mb-1">Utilité</div>
+                    <div className="text-2xl font-bold text-blue-400">
+                      <ComparisonCell current={experienceData.nps.current.avg_utilite} compare={experienceData.nps.comparison?.avg_utilite} suffix=" / 5" hasComparison={!!experienceData.nps.comparison} />
+                    </div>
+                  </div>
+                  <div className="stat-card">
+                    <div className="text-xs text-[#AAA] mb-1">Recommandation</div>
+                    <div className="text-2xl font-bold text-blue-400">
+                      <ComparisonCell current={experienceData.nps.current.avg_recommandation} compare={experienceData.nps.comparison?.avg_recommandation} suffix=" / 5" hasComparison={!!experienceData.nps.comparison} />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Tickets de support */}
+                <p className="text-sm font-semibold mb-3">🎫 Tickets de support</p>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+                  <div className="stat-card">
+                    <div className="text-xs text-[#AAA] mb-1">Temps moyen de résolution</div>
+                    <div className="text-2xl font-bold text-white">
+                      <ComparisonCell current={experienceData.tickets.current.temps_moyen_resolution} compare={experienceData.tickets.comparison?.temps_moyen_resolution} suffix="h" invert hasComparison={!!experienceData.tickets.comparison} />
+                    </div>
+                  </div>
+                  <div className="stat-card">
+                    <div className="text-xs text-[#AAA] mb-1">Taux d'auto-résolution</div>
+                    <div className="text-2xl font-bold text-green-400">
+                      <ComparisonCell current={experienceData.tickets.current.taux_auto_resolution} compare={experienceData.tickets.comparison?.taux_auto_resolution} suffix="%" hasComparison={!!experienceData.tickets.comparison} />
+                    </div>
+                    <div className="text-[10px] text-[#555] mt-1">Résolu automatiquement par le cron 72h (pas une valeur manquante)</div>
+                  </div>
+                  <div className="stat-card">
+                    <div className="text-xs text-[#AAA] mb-1">Ouverts actuellement</div>
+                    <div className="text-2xl font-bold text-orange-400">{experienceData.tickets_ouverts_actuellement.open}</div>
+                  </div>
+                  <div className="stat-card">
+                    <div className="text-xs text-[#AAA] mb-1">En cours actuellement</div>
+                    <div className="text-2xl font-bold text-amber-400">{experienceData.tickets_ouverts_actuellement.in_progress}</div>
+                  </div>
+                </div>
+
+                <p className="text-sm font-semibold mb-3">📂 Répartition des tickets par catégorie</p>
+                <div className="card p-0">
+                  <div className="table-wrap">
+                    <table>
+                      <thead>
+                        <tr><th>Catégorie</th><th>Tickets</th></tr>
+                      </thead>
+                      <tbody>
+                        {experienceData.tickets.current.par_categorie.length === 0 ? (
+                          <tr><td colSpan={2} className="text-center text-[#AAA] py-6">Aucun ticket sur cette période</td></tr>
+                        ) : experienceData.tickets.current.par_categorie.map((c) => (
+                          <tr key={c.category}>
+                            <td className="font-medium">{c.category}</td>
+                            <td>{c.n}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </>
+            )}
+          </>
+        )}
 
         {tab === 'claims' && (
           <div className="space-y-3">

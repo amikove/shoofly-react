@@ -79,6 +79,7 @@ export const adminAPI = {
   dashboardFileAttente: (params) => api.get('/api/users/admin/dashboard/fileattente', { params }),
     dashboardFinancier: (params) => api.get('/api/users/admin/dashboard/financier', { params }),
     dashboardCampagnes: (params) => api.get('/api/users/admin/dashboard/campagnes', { params }),
+    dashboardExperienceUtilisateur: (params) => api.get('/api/users/admin/dashboard/experience-utilisateur', { params }),
     addExpense: (data) => api.post('/api/users/admin/expenses', data),
     listExpenses: (params) => api.get('/api/users/admin/expenses', { params }),
     deleteExpense: (id) => api.delete(`/api/users/admin/expenses/${id}`),
