@@ -512,6 +512,7 @@ export default function AdminDashboard() {
                         <th>CA</th>
                         <th>Commission</th>
                         <th>Note moyenne</th>
+                        <th>Délai moyen validation</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -529,6 +530,9 @@ export default function AdminDashboard() {
                             <td className="text-[#FF4D00]"><ComparisonCell current={parseFloat(s.commission).toFixed(0)} compare={cmp ? parseFloat(cmp.commission).toFixed(0) : undefined} suffix=" MAD" hasComparison={!!servicesData.comparison} /></td>
                             <td className="text-yellow-400">
                               {s.avg_rating > 0 ? `${s.avg_rating} ★` : '—'}
+                            </td>
+                            <td className={parseFloat(s.delai_moyen_validation) > 12 ? 'text-red-400' : 'text-white'}>
+                              <ComparisonCell current={s.delai_moyen_validation} compare={cmp?.delai_moyen_validation} suffix="h" invert hasComparison={!!servicesData.comparison} />
                             </td>
                           </tr>
                         )
