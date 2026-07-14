@@ -120,74 +120,7 @@ const [interestsMission, setInterestsMission] = useState(null)
 
       <div className="p-4 md:p-6 space-y-4 md:space-y-6">
 
-        {/* Actions requises — visible seulement si au moins une action est en attente */}
-        {hasActionsRequired && (
-          <div className="card">
-            <h2 className="font-semibold text-sm mb-4">{t('clientDashboard.actionsRequired.title')}</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              {to_validate.map((m) => {
-                const expired = m.deadline && (new Date(m.deadline).getTime() - now) <= 0
-                return (
-                <div key={`validate-${m.id}`} className={`bg-[#222] border border-orange-500/30 rounded-xl p-3 ${expired ? 'opacity-50' : ''}`}>
-                  <div className="flex items-start justify-between gap-2 mb-2">
-                    <div className="min-w-0 flex-1">
-                      <span className="badge badge-orange mb-1.5 inline-block">⏳ {t('clientDashboard.actionsRequired.toValidate.badge')}</span>
-                      <div className="font-semibold text-sm truncate">{m.title}</div>
-                      <div className="text-xs text-[#AAA] mt-0.5">
-                        {m.deadline ? formatTimeLeft(t, m.deadline, now) : t('clientDashboard.actionsRequired.toValidate.noDeadline')}
-                      </div>
-                    </div>
-                  </div>
-                  <button
-                    onClick={() => validateMission(m.id)}
-                    disabled={validatingIds.has(m.id) || expired}
-                    className="btn btn-primary btn-sm w-full justify-center disabled:opacity-50"
-                  >
-                    {validatingIds.has(m.id) ? '...' : t('clientDashboard.actionsRequired.toValidate.button')}
-                  </button>
-                </div>
-              )})}
 
-              {to_rate.map((m) => (
-                <div key={`rate-${m.id}`} className="bg-[#222] border border-blue-500/30 rounded-xl p-3">
-                  <div className="flex items-start justify-between gap-2 mb-2">
-                    <div className="min-w-0 flex-1">
-                      <span className="badge badge-blue mb-1.5 inline-block">⭐ {t('clientDashboard.actionsRequired.toRate.badge')}</span>
-                      <div className="font-semibold text-sm truncate">{m.title}</div>
-                      <div className="text-xs text-[#AAA] mt-0.5 truncate">{m.oeil_name}</div>
-                    </div>
-                  </div>
-                  <button onClick={() => setRatingMission(m)} className="btn btn-primary btn-sm w-full justify-center">
-                    {t('clientDashboard.actionsRequired.toRate.button')}
-                  </button>
-                </div>
-              ))}
-
-              {to_choose_replacement.map((m) => {
-                const expired = m.candidate_window_ends_at && (new Date(m.candidate_window_ends_at).getTime() - now) <= 0
-                return (
-                <div key={`replacement-${m.id}`} className={`bg-[#222] border border-yellow-500/30 rounded-xl p-3 ${expired ? 'opacity-50' : ''}`}>
-                  <div className="flex items-start justify-between gap-2 mb-2">
-                    <div className="min-w-0 flex-1">
-                      <span className="badge badge-yellow mb-1.5 inline-block">🔄 {t('clientDashboard.actionsRequired.toChooseReplacement.badge')}</span>
-                      <div className="font-semibold text-sm truncate">{m.title}</div>
-                      <div className="text-xs text-[#AAA] mt-0.5">
-                        {formatTimeLeft(t, m.candidate_window_ends_at, now)}
-                      </div>
-                    </div>
-                  </div>
-                  <button
-                    onClick={() => setInterestsMission(m)}
-                    disabled={expired}
-                    className="btn btn-primary btn-sm w-full justify-center disabled:opacity-50"
-                  >
-                    {t('clientDashboard.actionsRequired.toChooseReplacement.button')}
-                  </button>
-                </div>
-              )})}
-            </div>
-          </div>
-        )}
 
         {/* Stats — 2 colonnes mobile, 4 desktop */}
         <div className="grid grid-cols-2 md:grid-cols-5 gap-3 md:gap-4">
@@ -214,11 +147,77 @@ const [interestsMission, setInterestsMission] = useState(null)
             </div>
           ) : (
             <div className="text-xs text-[#AAA] mt-1">{t('clientDashboard.stats.timeSavedEmpty')}</div>
-          )}
-        </div>
+            )}
+          </div>
 
-        {/* Grille — 1 colonne mobile, 2 desktop */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+          {/* Actions requises — visible seulement si au moins une action est en attente */}
+          {hasActionsRequired && (
+            <div className="card">
+              <h2 className="font-semibold text-sm mb-4">{t('clientDashboard.actionsRequired.title')}</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                {to_validate.map((m) => {
+                  const expired = m.deadline && (new Date(m.deadline).getTime() - now) <= 0
+                  return (
+                  <div key={`validate-${m.id}`} className={`bg-[#222] border border-orange-500/30 rounded-xl p-3 ${expired ? 'opacity-50' : ''}`}>
+                    <div className="flex items-start justify-between gap-2 mb-2">
+                      <div className="min-w-0 flex-1">
+                        <span className="badge badge-orange mb-1.5 inline-block">⏳ {t('clientDashboard.actionsRequired.toValidate.badge')}</span>
+                        <div className="font-semibold text-sm truncate">{m.title}</div>
+                        <div className="text-xs text-[#AAA] mt-0.5">
+                          {m.deadline ? formatTimeLeft(t, m.deadline, now) : t('clientDashboard.actionsRequired.toValidate.noDeadline')}
+                        </div>
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => validateMission(m.id)}
+                      disabled={validatingIds.has(m.id) || expired}
+                      className="btn btn-primary btn-sm w-full justify-center disabled:opacity-50"
+                    >
+                      {validatingIds.has(m.id) ? '...' : t('clientDashboard.actionsRequired.toValidate.button')}
+                    </button>
+                  </div>
+                )})}
+                {to_rate.map((m) => (
+                  <div key={`rate-${m.id}`} className="bg-[#222] border border-blue-500/30 rounded-xl p-3">
+                    <div className="flex items-start justify-between gap-2 mb-2">
+                      <div className="min-w-0 flex-1">
+                        <span className="badge badge-blue mb-1.5 inline-block">⭐ {t('clientDashboard.actionsRequired.toRate.badge')}</span>
+                        <div className="font-semibold text-sm truncate">{m.title}</div>
+                        <div className="text-xs text-[#AAA] mt-0.5 truncate">{m.oeil_name}</div>
+                      </div>
+                    </div>
+                    <button onClick={() => setRatingMission(m)} className="btn btn-primary btn-sm w-full justify-center">
+                      {t('clientDashboard.actionsRequired.toRate.button')}
+                    </button>
+                  </div>
+                ))}
+                {to_choose_replacement.map((m) => {
+                  const expired = m.candidate_window_ends_at && (new Date(m.candidate_window_ends_at).getTime() - now) <= 0
+                  return (
+                  <div key={`replacement-${m.id}`} className={`bg-[#222] border border-yellow-500/30 rounded-xl p-3 ${expired ? 'opacity-50' : ''}`}>
+                    <div className="flex items-start justify-between gap-2 mb-2">
+                      <div className="min-w-0 flex-1">
+                        <span className="badge badge-yellow mb-1.5 inline-block">🔄 {t('clientDashboard.actionsRequired.toChooseReplacement.badge')}</span>
+                        <div className="text-xs text-[#AAA] mt-0.5">
+                          {formatTimeLeft(t, m.candidate_window_ends_at, now)}
+                        </div>
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => setInterestsMission(m)}
+                      disabled={expired}
+                      className="btn btn-primary btn-sm w-full justify-center disabled:opacity-50"
+                    >
+                    {t('clientDashboard.actionsRequired.toChooseReplacement.button')}
+                    </button>
+                  </div>
+                )})}
+              </div>
+            </div>
+          )}
+
+          {/* Grille — 1 colonne mobile, 2 desktop */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
 
           {/* Missions en cours */}
           <div className="card">
