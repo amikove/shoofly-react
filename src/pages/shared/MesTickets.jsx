@@ -160,7 +160,7 @@ function TicketThread({ ticket, messages, currentUserId, onClose, onSent }) {
               ) : (
                 <>
                   <div className={`max-w-[75%] px-3 py-2 rounded-xl text-xs leading-relaxed ${
-                    isMine(m) ? 'bg-[#FF4D00] text-white rounded-br-sm' : 'bg-[#2A2A2A] text-white rounded-bl-sm'
+                    isMine(m) ? 'bg-[#FF4D00] text-white rounded-ee-sm' : 'bg-[#2A2A2A] text-white rounded-es-sm'
                   }`}>
                     {m.content}
                   </div>

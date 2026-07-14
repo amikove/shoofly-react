@@ -179,8 +179,8 @@ const send = async () => {
               ) : (
                 <div className={`max-w-[75%] px-3 py-2 rounded-xl text-xs leading-relaxed ${
                   isMe(m)
-                    ? 'bg-[#FF4D00] text-white rounded-br-sm'
-                    : 'bg-[#2A2A2A] text-white rounded-bl-sm'
+                    ? 'bg-[#FF4D00] text-white rounded-ee-sm'
+                    : 'bg-[#2A2A2A] text-white rounded-es-sm'
                 }`}>
                     {m.media_url ? (
                       m.media_url.match(/\.(mp4|mov)$/i) ? (
