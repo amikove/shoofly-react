@@ -804,8 +804,8 @@
     "missionsCount": "✅ {{count}} مهمة",
     "newOeilBadge": "🆕 جديد",
     "responseTime": {
-      "minutes": "⚡ ~{{count}} د",
-      "hours": "⚡ ~{{count}} س",
+      "minutes": "يرد عادةً خلال ~{{count}} د",
+      "hours": "يرد عادةً خلال ~{{count}} س",
       "notEnoughData": "⚡ بيانات غير كافية"
     },
     "hiring": "...",
