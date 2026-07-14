@@ -51,7 +51,7 @@ export default function AdminMessagesSuspects() {
                 </div>
                 <div className="text-xs text-[#AAA] mt-0.5">
                   Envoyé par <span className="text-white">{m.sender_name}</span>
-                  <span className="ml-1 text-[#555]">({m.sender_role})</span>
+                  <span className="ms-1 text-[#555]">({m.sender_role})</span>
                   {' '}dans <span className="text-white">{m.mission_title}</span>
                 </div>
               </div>

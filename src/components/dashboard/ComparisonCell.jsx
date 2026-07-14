@@ -12,7 +12,7 @@ export function DeltaBadge({ value }) {
   if (value === null || value === undefined) return null
   const positive = value >= 0
   return (
-    <span className={`text-[11px] font-semibold ml-2 ${positive ? 'text-green-400' : 'text-red-400'}`}>
+    <span className={`text-[11px] font-semibold ms-2 ${positive ? 'text-green-400' : 'text-red-400'}`}>
       {positive ? '▲' : '▼'} {Math.abs(value)}%
     </span>
   )

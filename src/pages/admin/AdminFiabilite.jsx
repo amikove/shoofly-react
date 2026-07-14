@@ -230,7 +230,7 @@ function RequestsTab() {
                 }`}>
                   <div className="flex items-center justify-between mb-1">
                     <span className="text-white/80 font-medium">{e.reason}</span>
-                    <span className={`font-bold whitespace-nowrap ml-2 ${e.points >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                    <span className={`font-bold whitespace-nowrap ms-2 ${e.points >= 0 ? 'text-green-400' : 'text-red-400'}`}>
                       {e.points >= 0 ? '+' : ''}{e.points}
                     </span>
                   </div>

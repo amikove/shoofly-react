@@ -482,7 +482,7 @@ if (parseFloat(form.price) < minPrice) {
                 <div className="flex items-center justify-between">
                   <div>
                     <span className="text-sm font-semibold text-green-400">{promoResult.code}</span>
-                    <span className="text-xs text-[#AAA] ml-2">{t('newMissionModal.promoDiscount', { amount: promoResult.discount })}</span>
+                    <span className="text-xs text-[#AAA] ms-2">{t('newMissionModal.promoDiscount', { amount: promoResult.discount })}</span>
                   </div>
                   <div className="flex items-center gap-3">
                     <span className="text-sm font-bold text-white">{promoResult.final_price} MAD</span>

@@ -21,7 +21,7 @@ function StarRating({ value, onChange, label, disabled }) {
               ★
             </button>
           ))}
-          {value && <span className="text-xs text-[#AAA] ml-1 self-center">{value}/5</span>}
+          {value && <span className="text-xs text-[#AAA] ms-1 self-center">{value}/5</span>}
         </div>
       </div>
     </div>
@@ -42,7 +42,7 @@ function CritereNote({ label, noteKey, remarqueKey, data, set, disabled }) {
               ★
             </button>
           ))}
-          {data[noteKey] && <span className="text-xs text-[#AAA] ml-1 self-center">{data[noteKey]}/5</span>}
+          {data[noteKey] && <span className="text-xs text-[#AAA] ms-1 self-center">{data[noteKey]}/5</span>}
         </div>
       </div>
       <input

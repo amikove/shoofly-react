@@ -119,7 +119,7 @@ export default function AdminTickets() {
                         onClick={() => openTicket(tk.id)}
                       >
                         <td className="text-xs">
-                          {tk.is_urgent && <span className="text-[#E11D2E] mr-1">🆘</span>}
+                          {tk.is_urgent && <span className="text-[#E11D2E] me-1">🆘</span>}
                           {tk.reference}
                         </td>
                         <td className="font-medium">

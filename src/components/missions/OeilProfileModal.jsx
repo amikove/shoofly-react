@@ -108,7 +108,7 @@ export default function OeilProfileModal({ oeil, onClose, onCommander }) {
               }`}
             >
               {t('oeilProfileModal.tabs.avis')} {reviews.length > 0 && (
-                <span className="ml-1 bg-[#FF4D00]/20 text-[#FF4D00] px-1.5 py-0.5 rounded-full text-[10px]">
+                <span className="ms-1 bg-[#FF4D00]/20 text-[#FF4D00] px-1.5 py-0.5 rounded-full text-[10px]">
                   {reviews.length}
                 </span>
               )}

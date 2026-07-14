@@ -155,7 +155,7 @@ export default function AdminPromos() {
                       </td>
                       <td className="text-[#AAA]">
                         {p.used_count} / {p.max_uses || '∞'}
-                        <span className="text-xs text-[#555] ml-1">(max {p.max_uses_per_user}×/client)</span>
+                        <span className="text-xs text-[#555] ms-1">(max {p.max_uses_per_user}×/client)</span>
                       </td>
                       <td className="text-[#AAA]">
                         {p.expires_at ? new Date(p.expires_at).toLocaleDateString('fr-FR') : '—'}

@@ -209,7 +209,7 @@ const doAssign = async (overrideWarning = false) => {
                     <tr key={m.id}>
                       <td className="text-[#AAA] text-xs">
                         #{String(m.id).slice(-6).toUpperCase()}
-                        {m.is_priority && <span className="ml-1 text-[9px] bg-red-500 text-white px-1 py-0.5 rounded font-bold">PRIORITÉ</span>}
+                        {m.is_priority && <span className="ms-1 text-[9px] bg-red-500 text-white px-1 py-0.5 rounded font-bold">PRIORITÉ</span>}
                       </td>
                       <td className="font-medium">{m.title}</td>
                       <td className="text-[#AAA]">
@@ -299,7 +299,7 @@ const doAssign = async (overrideWarning = false) => {
             <div className="mb-4">
               <label className="label">
                 Œils disponibles
-                {assignModal?.city && <span className="ml-2 text-[#FF4D00] text-xs">📍 {assignModal.city} en priorité</span>}
+                {assignModal?.city && <span className="ms-2 text-[#FF4D00] text-xs">📍 {assignModal.city} en priorité</span>}
               </label>
               <input
                 className="input mb-2"

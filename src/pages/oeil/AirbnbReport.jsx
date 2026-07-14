@@ -20,7 +20,7 @@ function StarRating({ value, onChange, label }) {
             ★
           </button>
         ))}
-        {value && <span className="text-xs text-[#AAA] ml-2 self-center">{value}/5</span>}
+        {value && <span className="text-xs text-[#AAA] ms-2 self-center">{value}/5</span>}
       </div>
     </div>
   )

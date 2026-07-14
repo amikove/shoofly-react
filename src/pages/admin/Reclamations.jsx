@@ -49,7 +49,7 @@ export default function AdminReclamations() {
               <div>
                   <div className="font-semibold text-sm">
                     {c.mission_title}
-                    <span className="text-[#555] font-normal ml-2 text-xs">#{String(c.mission_id).slice(-6).toUpperCase()}</span>
+                    <span className="text-[#555] font-normal ms-2 text-xs">#{String(c.mission_id).slice(-6).toUpperCase()}</span>
                   </div>
                   <div className="text-xs text-[#AAA] mt-0.5">
                     Client :{' '}

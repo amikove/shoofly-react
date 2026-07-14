@@ -184,14 +184,14 @@ const refuse = async (id) => {
             <div className="text-xs text-[#AAA] mb-1">{t('oeilDashboard.stats.earnings')}</div>
             <div className="text-2xl font-bold">
               {stats?.earnings?.toFixed(0) || 0}
-              <span className="text-sm text-[#AAA] ml-1">{t('oeilDashboard.stats.madUnit')}</span>
+              <span className="text-sm text-[#AAA] ms-1">{t('oeilDashboard.stats.madUnit')}</span>
             </div>
           </div>
           <div className="stat-card">
             <div className="text-xs text-[#AAA] mb-1">{t('oeilDashboard.stats.balance')}</div>
             <div className="text-2xl font-bold text-green-400">
               {stats?.balance?.toFixed(0) || 0}
-              <span className="text-sm ml-1">{t('oeilDashboard.stats.madUnit')}</span>
+              <span className="text-sm ms-1">{t('oeilDashboard.stats.madUnit')}</span>
             </div>
           </div>
         </div>
@@ -244,7 +244,7 @@ const refuse = async (id) => {
             <div className="flex items-center justify-between mb-4">
               <h2 className="font-semibold text-sm">
                 {t('oeilDashboard.available.title')}
-                <span className="ml-2 text-xs bg-[#FF4D00]/15 text-[#FF4D00] px-2 py-0.5 rounded-full">
+                <span className="ms-2 text-xs bg-[#FF4D00]/15 text-[#FF4D00] px-2 py-0.5 rounded-full">
                   {pending.length}
                 </span>
               </h2>
@@ -298,7 +298,7 @@ const refuse = async (id) => {
             <div className="flex items-center justify-between mb-4">
               <h2 className="font-semibold text-sm">
                 {t('oeilDashboard.active.title')}
-                <span className="ml-2 text-xs bg-blue-500/15 text-blue-400 px-2 py-0.5 rounded-full">
+                <span className="ms-2 text-xs bg-blue-500/15 text-blue-400 px-2 py-0.5 rounded-full">
                   {active.length}
                 </span>
               </h2>

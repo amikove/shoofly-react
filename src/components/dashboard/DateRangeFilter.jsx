@@ -84,7 +84,7 @@ export default function DateRangeFilter({ range, onChange, compareRange, onCompa
         ))}
 
         {range?.preset === 'custom' && (
-          <div className="flex items-center gap-2 ml-1">
+          <div className="flex items-center gap-2 ms-1">
             <input type="date" className="input py-1.5 text-xs max-w-[140px]" value={customFrom} onChange={(e) => setCustomFrom(e.target.value)} />
             <span className="text-xs text-[#555]">→</span>
             <input type="date" className="input py-1.5 text-xs max-w-[140px]" value={customTo} onChange={(e) => setCustomTo(e.target.value)} />

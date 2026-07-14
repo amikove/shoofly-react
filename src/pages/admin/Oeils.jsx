@@ -79,7 +79,7 @@ export default function AdminOeils() {
           >
             🕐 En attente
             {requests.length > 0 && (
-              <span className="ml-1.5 bg-orange-500 text-white px-1.5 py-0.5 rounded-full text-[10px]">{requests.length}</span>
+              <span className="ms-1.5 bg-orange-500 text-white px-1.5 py-0.5 rounded-full text-[10px]">{requests.length}</span>
             )}
           </button>
         </div>
