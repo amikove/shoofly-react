@@ -380,7 +380,7 @@
     "newMissionButtonShort": "+",
     "errorLoading": "Erreur de chargement",
     "whatsappOptIn": {
-      "toastText": "Mission créée ✓ — Redirection vers WhatsApp pour être informé des mises à jour...",
+      "toastText": "Mission créée ✓ — Appuyez ici pour suivre la mission par WhatsApp",
       "message": "Bonjour, je viens de créer une mission sur Shoofly. Je voudrais être informé par WhatsApp quand des Œils postulent."
     },
     "stats": {
