@@ -258,10 +258,14 @@ const [interestsMission, setInterestsMission] = useState(null)
         </div>
 
       <NewMissionModal open={showNew} onClose={() => setShowNew(false)} onCreated={(m) => {
-        setMissions((ms) => [m, ...ms])
-        setStats((s) => ({ ...s, total: s.total + 1 }))
-        toast(t('clientDashboard.missionCreatedToast'), 'success')
-      }} />
+          setMissions((ms) => [m, ...ms])
+          setStats((s) => ({ ...s, total: s.total + 1 }))
+          toast(t('clientDashboard.whatsappOptIn.toastText'), 'success')
+          const waMessage = encodeURIComponent(t('clientDashboard.whatsappOptIn.message'))
+          setTimeout(() => {
+            window.location.href = `https://wa.me/212661064492?text=${waMessage}`
+          }, 4000)
+        }} />
 
 
       {interestsMission && (

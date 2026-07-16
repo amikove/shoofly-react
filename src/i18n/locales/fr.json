@@ -379,6 +379,10 @@
     "newMissionButton": "+ Nouvelle mission",
     "newMissionButtonShort": "+",
     "errorLoading": "Erreur de chargement",
+    "whatsappOptIn": {
+      "toastText": "Mission créée ✓ — Redirection vers WhatsApp pour être informé des mises à jour...",
+      "message": "Bonjour, je viens de créer une mission sur Shoofly. Je voudrais être informé par WhatsApp quand des Œils postulent."
+    },
     "stats": {
       "total": "Missions totales",
       "active": "En cours",
@@ -389,6 +393,7 @@
       "timeSaved": "Temps économisé",
       "timeSavedValue": "{{hours}} heures économisées",
       "timeSavedEmpty": "Complétez votre première mission pour voir votre temps économisé"
+      
     },
     "activeMissions": {
       "title": "Missions en cours",
@@ -429,6 +434,7 @@
       "busy": "Occupé"
     },
     "missionCreatedToast": "Mission créée ! 🎉"
+    
   },
   "clientMissions": {
     "title": "Mes missions",
