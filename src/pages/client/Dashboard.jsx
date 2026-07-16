@@ -264,7 +264,7 @@ const [interestsMission, setInterestsMission] = useState(null)
           const waMessage = encodeURIComponent(t('clientDashboard.whatsappOptIn.message'))
           setTimeout(() => {
             window.location.href = `https://wa.me/212661064492?text=${waMessage}`
-          }, 4000)
+          }, 2000)
         }} />
 
 

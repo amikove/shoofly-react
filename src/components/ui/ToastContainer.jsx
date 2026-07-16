@@ -24,7 +24,8 @@ export default function ToastContainer() {
   const dismiss = (id) => setToasts((t) => t.filter((x) => x.id !== id))
 
   return (
-    <div className="fixed bottom-6 end-6 z-[999] flex flex-col gap-2">
+    <div className="fixed inset-0 z-[999] flex items-center justify-center pointer-events-none px-4">
+      <div className="flex flex-col gap-2 pointer-events-auto">
       {toasts.map((toast) => (
         <div
           key={toast.id}
@@ -40,6 +41,7 @@ export default function ToastContainer() {
           >✕</button>
         </div>
       ))}
+      </div>
     </div>
   )
 }
