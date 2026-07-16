@@ -6,6 +6,7 @@ import { missionsAPI, usersAPI } from '../../api'
 import { StatusBadge, Spinner, EmptyState, Avatar, Stars, toast } from '../../components/ui'
 import { useAuth } from '../../context/AuthContext'
 import NewMissionModal from '../../components/missions/NewMissionModal'
+import MissionCreatedModal from '../../components/missions/MissionCreatedModal'
 import InterestsModal from '../../components/missions/InterestsModal'
 import OeilProfileModal from '../../components/missions/OeilProfileModal'
 import RateModal from '../../components/missions/RateModal'
@@ -28,7 +29,8 @@ export default function ClientDashboard() {
   const [actionsRequired, setActionsRequired] = useState({ to_validate: [], to_rate: [], to_choose_replacement: [] })
   const [loading, setLoading]   = useState(true)
   const [showNew, setShowNew]   = useState(false)
-const [interestsMission, setInterestsMission] = useState(null)
+  const [missionCreatedModal, setMissionCreatedModal] = useState(false)
+  const [interestsMission, setInterestsMission] = useState(null)
   const [profileOeil, setProfileOeil] = useState(null)
   const [ratingMission, setRatingMission] = useState(null)
   const [now, setNow] = useState(Date.now())
@@ -260,13 +262,18 @@ const [interestsMission, setInterestsMission] = useState(null)
       <NewMissionModal open={showNew} onClose={() => setShowNew(false)} onCreated={(m) => {
           setMissions((ms) => [m, ...ms])
           setStats((s) => ({ ...s, total: s.total + 1 }))
-          const waMessage = encodeURIComponent(t('clientDashboard.whatsappOptIn.message'))
-          toast(t('clientDashboard.whatsappOptIn.toastText'), 'success', {
-            onClick: () => {
-              window.location.href = `https://wa.me/212661064492?text=${waMessage}`
-            }
-          })
+          setMissionCreatedModal(true)
         }} />
+        {missionCreatedModal && (
+          <MissionCreatedModal
+            onWhatsApp={() => {
+              setMissionCreatedModal(false)
+              const waMessage = encodeURIComponent(t('clientDashboard.whatsappOptIn.message'))
+              window.location.href = `https://wa.me/212661064492?text=${waMessage}`
+            }}
+            onClose={() => setMissionCreatedModal(false)}
+          />
+        )}
 
 
       {interestsMission && (

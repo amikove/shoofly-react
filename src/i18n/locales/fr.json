@@ -1587,6 +1587,15 @@
     "acceptNotice": "En continuant, vous acceptez de respecter cette règle. Tout contournement de la plateforme entraîne la suspension du compte.",
     "continueButton": "J'ai compris, je continue →"
   },
+
+  "missionCreatedModal": {
+  "title": "Mission créée avec succès",
+  "description": "Souhaitez-vous être informé instantanément par WhatsApp dès qu'un Œil se manifeste pour votre mission ?",
+  "whatsappButton": "Oui, me tenir informé sur WhatsApp",
+  "laterButton": "Non merci"
+  },
+
+
   "complianceModalOeil": {
     "title": "Rappel avant démarrage",
     "photos": {
