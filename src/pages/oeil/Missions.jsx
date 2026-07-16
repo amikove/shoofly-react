@@ -18,6 +18,22 @@ import NewTicketModal from '../../components/tickets/NewTicketModal'
 const TABS = ['priority', 'available', 'active', 'done']
 const TYPE_ICONS = { immobilier:'🏠', file_attente:'⏳', audit:'🔎', personnalisee:'🎯' }
 
+const EDIT_FIELD_LABELS = {
+  title: 'title', description: 'description', address: 'address',
+  city: 'city', quartier: 'quartier', scheduled_at: 'scheduledAt',
+  duration_est: 'duration', replacement_preference: 'replacementPreference',
+}
+
+function formatEditFieldValue(key, value, t) {
+  if (value === null || value === undefined || value === '') return '—'
+  if (key === 'scheduled_at') {
+    return `${new Date(value).toLocaleDateString('fr-FR', { day:'numeric', month:'short' })} ${t('oeilMissions.editRequest.at')} ${new Date(value).toLocaleTimeString('fr-FR', { hour:'2-digit', minute:'2-digit' })}`
+  }
+  if (key === 'duration_est') return `${value} min`
+  if (key === 'replacement_preference') return value === 'fast' ? t('oeilMissions.editRequest.replacementFast') : t('oeilMissions.editRequest.replacementChoose')
+  return String(value)
+}
+
 
 export default function OeilMissions() {
   const { t, i18n } = useTranslation()
@@ -148,6 +164,27 @@ const load = useCallback((t) => {
 
   useEffect(() => { load(tab) }, [tab, load])
 
+
+  const approveEditRequest = async (editRequestId) => {
+    try {
+      await missionsAPI.approveEditRequest(editRequestId)
+      toast(t('oeilMissions.editRequest.approvedToast'), 'success')
+      load(tab)
+    } catch (err) {
+      toast(err.response?.data?.error || t('oeilMissions.toasts.genericError'), 'error')
+    }
+  }
+
+  const rejectEditRequest = async (editRequestId) => {
+    if (!window.confirm(t('oeilMissions.editRequest.rejectConfirm'))) return
+    try {
+      await missionsAPI.rejectEditRequest(editRequestId)
+      toast(t('oeilMissions.editRequest.rejectedToast'), 'info')
+      load(tab)
+    } catch (err) {
+      toast(err.response?.data?.error || t('oeilMissions.toasts.genericError'), 'error')
+    }
+  }
 
   const refuse = async (id, isAvailable = false) => {
     try {
@@ -404,8 +441,37 @@ try {
                   </div>
                 </div>
 
+                {tab === 'active' && m.pending_edit_request && (
+                  <div className="mt-3 bg-[#FF4D00]/5 border border-[#FF4D00]/20 rounded-xl p-3">
+                    <div className="flex items-center justify-between gap-2 mb-2 flex-wrap">
+                      <span className="text-xs font-semibold text-[#FF4D00]">✏️ {t('oeilMissions.editRequest.banner')}</span>
+                      <span className="text-[11px] text-[#AAA]">
+                        {t('oeilMissions.editRequest.expiresAt', { time: new Date(m.pending_edit_request.expires_at).toLocaleTimeString('fr-FR', { hour:'2-digit', minute:'2-digit' }) })}
+                      </span>
+                    </div>
+                    <div className="space-y-1.5 mb-3">
+                      {Object.entries(m.pending_edit_request.proposed_changes).map(([key, value]) => (
+                        <div key={key} className="text-xs">
+                          <span className="text-[#AAA]">{t(`oeilMissions.editRequest.fields.${EDIT_FIELD_LABELS[key] || key}`)}: </span>
+                          <span className="text-white/50 line-through">{formatEditFieldValue(key, m[key], t)}</span>
+                          <span className="text-[#AAA] mx-1">→</span>
+                          <span className="text-[#FF4D00] font-medium">{formatEditFieldValue(key, value, t)}</span>
+                        </div>
+                      ))}
+                    </div>
+                    <div className="flex gap-2">
+                      <button onClick={() => approveEditRequest(m.pending_edit_request.id)} className="btn btn-sm flex-1 justify-center bg-green-500 text-white hover:bg-green-600">
+                        {t('oeilMissions.editRequest.accept')}
+                      </button>
+                      <button onClick={() => rejectEditRequest(m.pending_edit_request.id)} className="btn btn-sm flex-1 justify-center bg-red-500 text-white hover:bg-red-600">
+                        {t('oeilMissions.editRequest.refuse')}
+                      </button>
+                    </div>
+                  </div>
+                )}
+
                 <div className="flex gap-2 mt-4 pt-3 border-t border-white/10">
-                  
+
                   {tab === 'available' && (
                       <>
                         <button
