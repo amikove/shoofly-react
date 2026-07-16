@@ -172,22 +172,48 @@ export default function EditMissionModal({ mission, onClose, onSaved }) {
           </div>
 
           <div>
-            <label className="label">{t('editMissionModal.replacementPreferenceLabel')}</label>
-            <div className="grid grid-cols-2 gap-2">
-              <button type="button" onClick={() => setVal('replacement_preference')('fast')}
-                className={`p-2.5 rounded-xl border text-xs font-medium transition-all ${
-                  form.replacement_preference === 'fast' ? 'border-[#FF4D00] bg-[#FF4D00]/10' : 'border-white/12 bg-[#222] text-[#AAA]'
-                }`}>
-                🟢 {t('editMissionModal.replacementPreferenceFast')}
-              </button>
-              <button type="button" onClick={() => setVal('replacement_preference')('choose')}
-                className={`p-2.5 rounded-xl border text-xs font-medium transition-all ${
-                  form.replacement_preference === 'choose' ? 'border-[#FF4D00] bg-[#FF4D00]/10' : 'border-white/12 bg-[#222] text-[#AAA]'
-                }`}>
-                🔵 {t('editMissionModal.replacementPreferenceChoose')}
-              </button>
+              <label className="label">{t('newMissionModal.replacementPreference.label')}</label>
+              <div className="grid grid-cols-1 gap-2">
+                <button
+                  type="button"
+                  onClick={() => setVal('replacement_preference')('fast')}
+                  className={`flex items-start gap-3 text-start p-3 rounded-xl border transition-all ${
+                    form.replacement_preference === 'fast'
+                      ? 'border-[#FF4D00] bg-[#FF4D00]/10'
+                      : 'border-white/12 bg-[#222] hover:border-white/22'
+                  }`}
+                >
+                  <span className={`mt-0.5 flex-shrink-0 w-4 h-4 rounded-full border-2 flex items-center justify-center ${
+                    form.replacement_preference === 'fast' ? 'border-[#FF4D00]' : 'border-white/30'
+                  }`}>
+                    {form.replacement_preference === 'fast' && <span className="w-2 h-2 rounded-full bg-[#FF4D00]" />}
+                  </span>
+                  <div>
+                    <div className="text-sm font-semibold">🟢 {t('newMissionModal.replacementPreference.fastTitle')}</div>
+                    <p className="text-xs text-[#AAA] mt-1 leading-relaxed">{t('newMissionModal.replacementPreference.fastDesc')}</p>
+                  </div>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setVal('replacement_preference')('choose')}
+                  className={`flex items-start gap-3 text-start p-3 rounded-xl border transition-all ${
+                    form.replacement_preference === 'choose'
+                      ? 'border-[#FF4D00] bg-[#FF4D00]/10'
+                      : 'border-white/12 bg-[#222] hover:border-white/22'
+                  }`}
+                >
+                  <span className={`mt-0.5 flex-shrink-0 w-4 h-4 rounded-full border-2 flex items-center justify-center ${
+                    form.replacement_preference === 'choose' ? 'border-[#FF4D00]' : 'border-white/30'
+                  }`}>
+                    {form.replacement_preference === 'choose' && <span className="w-2 h-2 rounded-full bg-[#FF4D00]" />}
+                  </span>
+                  <div>
+                    <div className="text-sm font-semibold">🔵 {t('newMissionModal.replacementPreference.chooseTitle')}</div>
+                    <p className="text-xs text-[#AAA] mt-1 leading-relaxed">{t('newMissionModal.replacementPreference.chooseDesc')}</p>
+                  </div>
+                </button>
+              </div>
             </div>
-          </div>
 
           <div className="flex gap-3 pt-2">
             <button type="submit" disabled={loading} className="btn btn-primary btn-lg flex-1 justify-center disabled:opacity-60">
