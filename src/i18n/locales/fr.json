@@ -496,7 +496,9 @@
       "rate": "⭐ Noter",
       "validate": "Valider",
       "claim": "Réclamer",
-      "cancel": "Annuler"
+      "cancel": "Annuler",
+      "edit": "Modifier",
+      "editPendingTooltip": "Une demande de modification est déjà en attente de réponse de l'Œil"
     },
     "mobile": {
       "interested": "👁️ Intéressés",
@@ -508,6 +510,7 @@
       "rate": "⭐ Noter",
       "validate": "✅ Valider",
       "claim": "🚨 Réclamer",
+      "edit": "✏️ Modifier",
       "notAssigned": "Non assigné"
     },
     "reportViewer": {
@@ -545,6 +548,39 @@
       "cancel": "Annuler",
       "sending": "...",
       "submit": "Signaler →"
+    }
+  },
+  "editMissionModal": {
+    "title": "Modifier la mission",
+    "assignedNotice": "Cette mission est déjà assignée à un Œil : vos modifications lui seront envoyées pour approbation avant d'être appliquées.",
+    "titleLabel": "Titre",
+    "cityLabel": "Ville",
+    "cityPlaceholder": "Rechercher une ville...",
+    "quartierLabel": "Quartier",
+    "quartierPlaceholder": "Rechercher un quartier...",
+    "quartierPlaceholderDisabled": "Choisissez d'abord une ville",
+    "addressLabel": "Adresse complète",
+    "addressPlaceholder": "Numéro, rue, complément...",
+    "descriptionLabel": "Instructions / description",
+    "dateLabel": "Date",
+    "timeLabel": "Heure",
+    "durationLabel": "Durée estimée (minutes)",
+    "durationPlaceholder": "Ex: 60",
+    "replacementPreferenceLabel": "Préférence de remplacement en cas d'empêchement",
+    "replacementPreferenceFast": "Rapide",
+    "replacementPreferenceChoose": "Au choix",
+    "submitLoading": "Envoi...",
+    "submitApply": "Enregistrer",
+    "submitRequest": "Envoyer la demande à l'Œil",
+    "cancel": "Annuler",
+    "appliedToast": "Mission modifiée ✓",
+    "pendingApprovalToast": "{{message}}",
+    "errors": {
+      "titleTooShort": "Le titre doit contenir au moins 6 caractères",
+      "cityQuartierRequired": "Ville et quartier requis",
+      "dateTimeRequired": "Date et heure requises",
+      "noChanges": "Aucun changement à enregistrer",
+      "generic": "Erreur lors de la modification"
     }
   },
   "clientOeils": {
@@ -1071,6 +1107,28 @@
         "back": "Retour",
         "confirm": "Confirmer →",
         "confirming": "..."
+      }
+    },
+    "editRequest": {
+      "banner": "Modification proposée par le client",
+      "expiresAt": "⏱️ Expire à {{time}}",
+      "at": "à",
+      "accept": "✓ Accepter",
+      "refuse": "✕ Refuser",
+      "rejectConfirm": "Refuser cette modification ? La mission repassera en recherche d'un nouvel Œil, sans aucune pénalité pour vous.",
+      "approvedToast": "Modification acceptée ✓",
+      "rejectedToast": "Modification refusée — mission remise en recherche",
+      "replacementFast": "Rapide",
+      "replacementChoose": "Au choix",
+      "fields": {
+        "title": "Titre",
+        "description": "Description",
+        "address": "Adresse",
+        "city": "Ville",
+        "quartier": "Quartier",
+        "scheduledAt": "Date/heure",
+        "duration": "Durée",
+        "replacementPreference": "Préférence de remplacement"
       }
     }
   },

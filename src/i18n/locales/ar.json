@@ -497,7 +497,9 @@
       "rate": "⭐ تقييم",
       "validate": "تصديق",
       "claim": "مطالبة",
-      "cancel": "إلغاء"
+      "cancel": "إلغاء",
+      "edit": "تعديل",
+      "editPendingTooltip": "يوجد طلب تعديل قيد انتظار رد العين الميدانية"
     },
     "mobile": {
       "interested": "👁️ المهتمون",
@@ -509,6 +511,7 @@
       "rate": "⭐ تقييم",
       "validate": "✅ تصديق",
       "claim": "🚨 مطالبة",
+      "edit": "✏️ تعديل",
       "notAssigned": "غير مُسندة"
     },
     "reportViewer": {
@@ -546,6 +549,39 @@
       "cancel": "إلغاء",
       "sending": "...",
       "submit": "إبلاغ ←"
+    }
+  },
+  "editMissionModal": {
+    "title": "تعديل المهمة",
+    "assignedNotice": "هذه المهمة مُسندة بالفعل إلى عين ميدانية: سيتم إرسال تعديلاتك إليها للموافقة قبل تطبيقها.",
+    "titleLabel": "العنوان",
+    "cityLabel": "المدينة",
+    "cityPlaceholder": "ابحث عن مدينة...",
+    "quartierLabel": "الحي",
+    "quartierPlaceholder": "ابحث عن حي...",
+    "quartierPlaceholderDisabled": "اختر مدينة أولاً",
+    "addressLabel": "العنوان الكامل",
+    "addressPlaceholder": "الرقم، الشارع، تفاصيل إضافية...",
+    "descriptionLabel": "التعليمات / الوصف",
+    "dateLabel": "التاريخ",
+    "timeLabel": "الوقت",
+    "durationLabel": "المدة المقدرة (دقائق)",
+    "durationPlaceholder": "مثال: 60",
+    "replacementPreferenceLabel": "تفضيل الاستبدال في حالة وجود مانع",
+    "replacementPreferenceFast": "سريع",
+    "replacementPreferenceChoose": "بالاختيار",
+    "submitLoading": "جارٍ الإرسال...",
+    "submitApply": "حفظ",
+    "submitRequest": "إرسال الطلب إلى العين الميدانية",
+    "cancel": "إلغاء",
+    "appliedToast": "تم تعديل المهمة ✓",
+    "pendingApprovalToast": "{{message}}",
+    "errors": {
+      "titleTooShort": "يجب أن يتكون العنوان من 6 أحرف على الأقل",
+      "cityQuartierRequired": "المدينة والحي مطلوبان",
+      "dateTimeRequired": "التاريخ والوقت مطلوبان",
+      "noChanges": "لا توجد تغييرات لحفظها",
+      "generic": "خطأ أثناء التعديل"
     }
   },
   "clientOeils": {
@@ -1072,6 +1108,28 @@
         "back": "رجوع",
         "confirm": "تأكيد ←",
         "confirming": "..."
+      }
+    },
+    "editRequest": {
+      "banner": "تعديل مقترح من طرف العميل",
+      "expiresAt": "⏱️ ينتهي في {{time}}",
+      "at": "الساعة",
+      "accept": "✓ قبول",
+      "refuse": "✕ رفض",
+      "rejectConfirm": "رفض هذا التعديل؟ ستعود المهمة للبحث عن عين ميدانية جديدة، دون أي عقوبة عليك.",
+      "approvedToast": "تم قبول التعديل ✓",
+      "rejectedToast": "تم رفض التعديل — المهمة أُعيدت إلى البحث",
+      "replacementFast": "سريع",
+      "replacementChoose": "بالاختيار",
+      "fields": {
+        "title": "العنوان",
+        "description": "الوصف",
+        "address": "العنوان الكامل",
+        "city": "المدينة",
+        "quartier": "الحي",
+        "scheduledAt": "التاريخ/الوقت",
+        "duration": "المدة",
+        "replacementPreference": "تفضيل الاستبدال"
       }
     }
   },
