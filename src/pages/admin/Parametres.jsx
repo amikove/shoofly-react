@@ -5,7 +5,7 @@ import { adminAPI } from '../../api'
 import { toast, Spinner } from '../../components/ui'
 
 export default function AdminParametres() {
-  const [params, setParams] = useState({ commission: 20, min_price: 80, urgency_fee: 30, accept_delay: 15 })
+  const [params, setParams] = useState({ commission: 20, min_price: 80 })
   const [fiveStarBonusActive, setFiveStarBonusActive] = useState(false)
   const [fiveStarBonusPercent, setFiveStarBonusPercent] = useState(10)
   const [loading, setLoading] = useState(true)
@@ -18,8 +18,6 @@ export default function AdminParametres() {
         setParams({
           commission:   parseFloat(s.commission || 0.20) * 100,
           min_price:    parseFloat(s.min_price   || 80),
-          urgency_fee:  parseFloat(s.urgency_fee || 0.30) * 100,
-          accept_delay: parseFloat(s.accept_delay || 15),
         })
         setFiveStarBonusActive(s.five_star_bonus_active === 'true')
         setFiveStarBonusPercent(parseFloat(s.five_star_bonus_percent || 10))
@@ -36,8 +34,6 @@ export default function AdminParametres() {
       await adminAPI.saveSettings({
         commission:   parseFloat(params.commission) / 100,
         min_price:    parseFloat(params.min_price),
-        urgency_fee:  parseFloat(params.urgency_fee) / 100,
-        accept_delay: parseFloat(params.accept_delay),
         five_star_bonus_active:  fiveStarBonusActive ? 'true' : 'false',
         five_star_bonus_percent: parseFloat(fiveStarBonusPercent),
       })
@@ -58,8 +54,6 @@ export default function AdminParametres() {
             {[
               ['Commission SHOOFLY (%)', 'commission', 'Ex: 20 pour 20%'],
               ['Tarif minimum (MAD)',    'min_price',   'Ex: 80'],
-              ['Frais urgence (%)',      'urgency_fee', 'Ex: 30 pour 30%'],
-              ['Délai acceptation (min)','accept_delay','Ex: 15'],
             ].map(([label, key, hint]) => (
               <div key={key} className="mb-3">
                 <label className="label">{label}</label>
