@@ -5,6 +5,7 @@ import Topbar from '../../components/layout/Topbar'
 import { missionsAPI } from '../../api'
 import { StatusBadge, Spinner, EmptyState, toast } from '../../components/ui'
 import NewMissionModal from '../../components/missions/NewMissionModal'
+import EditMissionModal from '../../components/missions/EditMissionModal'
 import RateModal from '../../components/missions/RateModal'
 import ChatModal from '../../components/missions/ChatModal'
 import { useAuth } from '../../context/AuthContext'
@@ -150,6 +151,7 @@ export default function ClientMissions() {
   const [missions, setMissions]           = useState([])
   const [loading, setLoading]             = useState(true)
   const [showNew, setShowNew]             = useState(false)
+  const [editingMission, setEditingMission] = useState(null)
   const [ratingMission, setRatingMission] = useState(null)
   const [chatMission, setChatMission]     = useState(null)
   const [reportMission, setReportMission] = useState(null)
@@ -360,6 +362,16 @@ const cancel = async (id) => {
                     )}
 
                     {['pending','assigned'].includes(m.status) && (
+                      m.pending_edit_request ? (
+                        <button disabled title={t('clientMissions.actions.editPendingTooltip')}
+                          className="btn btn-ghost btn-sm opacity-50 cursor-not-allowed">{t('clientMissions.actions.edit')}</button>
+                      ) : (
+                        <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); setEditingMission(m); }}
+                          className="btn btn-ghost btn-sm">{t('clientMissions.actions.edit')}</button>
+                      )
+                    )}
+
+                    {['pending','assigned'].includes(m.status) && (
                       <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); cancel(m.id); }}
                         className="btn btn-ghost btn-sm text-red-400">{t('clientMissions.actions.cancel')}</button>
                     )}
@@ -396,6 +408,14 @@ const cancel = async (id) => {
         )}
         {['assigned','en_route','active'].includes(m.status) && (
           <button onClick={() => setChatMission(m)} className="btn btn-ghost btn-sm">{t('clientMissions.mobile.chat')}</button>
+        )}
+        {['pending','assigned'].includes(m.status) && (
+          m.pending_edit_request ? (
+            <button disabled title={t('clientMissions.actions.editPendingTooltip')}
+              className="btn btn-ghost btn-sm opacity-50 cursor-not-allowed">{t('clientMissions.mobile.edit')}</button>
+          ) : (
+            <button onClick={() => setEditingMission(m)} className="btn btn-ghost btn-sm">{t('clientMissions.mobile.edit')}</button>
+          )
         )}
           {m.status === 'completed' && (
             <>
@@ -459,6 +479,14 @@ const cancel = async (id) => {
         onClose={() => setShowNew(false)}
         onCreated={() => { load(); toast(t('clientMissions.missionCreatedToast'), 'success') }}
       />
+
+      {editingMission && (
+        <EditMissionModal
+          mission={editingMission}
+          onClose={() => setEditingMission(null)}
+          onSaved={() => load()}
+        />
+      )}
 
       {ratingMission && (
         <RateModal
