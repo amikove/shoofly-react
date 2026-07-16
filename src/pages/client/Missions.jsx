@@ -11,7 +11,7 @@ import ChatModal from '../../components/missions/ChatModal'
 import { useAuth } from '../../context/AuthContext'
 import { useNotif } from '../../context/NotifContext'
 import { useNavigate } from 'react-router-dom'
-import MissionHistoryModal from '../../components/missions/MissionHistoryModal'
+import MissionDetailModal from '../../components/missions/MissionDetailModal'
 import InterestsModal from '../../components/missions/InterestsModal'
 import NewTicketModal from '../../components/tickets/NewTicketModal'
 import { Pagination } from '../../components/ui'
@@ -158,7 +158,7 @@ export default function ClientMissions() {
   const [problemMission, setProblemMission] = useState(null)
   const [interestsMission, setInterestsMission] = useState(null)
   const [claimMission, setClaimMission] = useState(null)
-  const [historyMission, setHistoryMission] = useState(null)
+  const [detailMission, setDetailMission] = useState(null)
   const [search, setSearch]               = useState('')
     const [statusFilter, setStatus]         = useState('')
     const [typeFilter, setType]             = useState('')
@@ -334,8 +334,8 @@ const cancel = async (id) => {
                 >📋</button>
               )}
 
-                    <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); setHistoryMission(m); }}
-                      className="btn btn-ghost btn-sm" title={t('clientMissions.actions.history')}>🕐</button>
+                    <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); setDetailMission(m); }}
+                      className="btn btn-ghost btn-sm" title={t('clientMissions.actions.viewDetails')}>🔍</button>
 
 
                         {m.status === 'completed' && m.validated_at && (
@@ -434,7 +434,7 @@ const cancel = async (id) => {
               className="btn btn-ghost btn-sm"
             >{t('clientMissions.mobile.visite')}</button>
           )}
-          <button onClick={() => setHistoryMission(m)} className="btn btn-ghost btn-sm">{t('clientMissions.mobile.history')}</button>
+          <button onClick={() => setDetailMission(m)} className="btn btn-ghost btn-sm">{t('clientMissions.mobile.details')}</button>
 
           {m.status === 'completed' && m.validated_at && (
             m.rating_score ? (
@@ -500,8 +500,8 @@ const cancel = async (id) => {
   <ClaimModal mission={claimMission} onClose={() => setClaimMission(null)} onClaimed={() => { setClaimMission(null); load() }} />
 )}
 
-{historyMission && (
-  <MissionHistoryModal mission={historyMission} onClose={() => setHistoryMission(null)} />
+{detailMission && (
+  <MissionDetailModal mission={detailMission} onClose={() => setDetailMission(null)} />
 )}
 
       {chatMission && (

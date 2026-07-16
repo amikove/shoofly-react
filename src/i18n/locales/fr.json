@@ -491,7 +491,7 @@
       "visitReport": "Rapport de visite",
       "auditReport": "Rapport d'audit",
       "airbnbVisitReport": "Rapport de visite Airbnb",
-      "history": "Historique",
+      "viewDetails": "Consulter",
       "rateOeil": "Noter l'Œil",
       "rate": "⭐ Noter",
       "validate": "Valider",
@@ -506,7 +506,7 @@
       "report": "📄 Rapport",
       "audit": "📋 Audit",
       "visite": "📋 Visite",
-      "history": "🕐 Historique",
+      "details": "🔍 Consulter",
       "rate": "⭐ Noter",
       "validate": "✅ Valider",
       "claim": "🚨 Réclamer",
@@ -1713,6 +1713,25 @@
       "validated": "Validée par le client",
       "cancelled": "Mission annulée",
       "sousReclamation": "Réclamation client"
+    }
+  },
+  "missionDetailModal": {
+    "title": "Détails de la mission",
+    "close": "Fermer",
+    "historyTitle": "Historique",
+    "notSpecified": "Non précisée",
+    "noDescription": "Aucune description",
+    "durationValue": "{{count}} min",
+    "fields": {
+      "title": "Titre",
+      "type": "Type de mission",
+      "subcategory": "Sous-catégorie",
+      "address": "Adresse",
+      "scheduledAt": "Date et heure prévues",
+      "duration": "Durée estimée",
+      "description": "Description",
+      "price": "Prix",
+      "replacementPreference": "Préférence de remplacement"
     }
   },
   "notificationBanner": {

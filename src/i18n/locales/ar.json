@@ -492,7 +492,7 @@
       "visitReport": "تقرير الزيارة",
       "auditReport": "تقرير التدقيق",
       "airbnbVisitReport": "تقرير زيارة Airbnb",
-      "history": "السجل",
+      "viewDetails": "الاطلاع على التفاصيل",
       "rateOeil": "تقييم العين الميدانية",
       "rate": "⭐ تقييم",
       "validate": "تصديق",
@@ -507,7 +507,7 @@
       "report": "📄 تقرير",
       "audit": "📋 تدقيق",
       "visite": "📋 زيارة",
-      "history": "🕐 السجل",
+      "details": "🔍 التفاصيل",
       "rate": "⭐ تقييم",
       "validate": "✅ تصديق",
       "claim": "🚨 مطالبة",
@@ -1712,6 +1712,25 @@
       "validated": "صادق عليها العميل",
       "cancelled": "تم إلغاء المهمة",
       "sousReclamation": "🚨 تحت المراجعة "
+    }
+  },
+  "missionDetailModal": {
+    "title": "تفاصيل المهمة",
+    "close": "إغلاق",
+    "historyTitle": "السجل",
+    "notSpecified": "غير محددة",
+    "noDescription": "لا يوجد وصف",
+    "durationValue": "{{count}} دقيقة",
+    "fields": {
+      "title": "العنوان",
+      "type": "نوع المهمة",
+      "subcategory": "الفئة الفرعية",
+      "address": "العنوان الكامل",
+      "scheduledAt": "التاريخ والوقت المحددان",
+      "duration": "المدة المقدرة",
+      "description": "الوصف",
+      "price": "السعر",
+      "replacementPreference": "تفضيل الاستبدال"
     }
   },
   "notificationBanner": {

@@ -1,44 +1,8 @@
-import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
-import { missionsAPI } from '../../api'
-import { Spinner } from '../ui'
-
-function useStatusConfig() {
-  const { t } = useTranslation()
-  return {
-    pending:          { icon: '📋', label: t('missionHistoryModal.status.pending'),   color: 'text-yellow-400'  },
-    assigned:         { icon: '🤝', label: t('missionHistoryModal.status.assigned'),  color: 'text-blue-400'    },
-    en_route:         { icon: '🚗', label: t('missionHistoryModal.status.enRoute'),   color: 'text-blue-400'    },
-    active:           { icon: '▶️', label: t('missionHistoryModal.status.active'),     color: 'text-[#FF4D00]'   },
-    completed:        { icon: '✅', label: t('missionHistoryModal.status.completed'), color: 'text-green-400'   },
-    validated:        { icon: '💰', label: t('missionHistoryModal.status.validated'), color: 'text-green-400'   },
-    cancelled:        { icon: '❌', label: t('missionHistoryModal.status.cancelled'), color: 'text-red-400'     },
-    sous_reclamation: { icon: '🚨', label: t('missionHistoryModal.status.sousReclamation'), color: 'text-orange-400'  },
-  }
-}
-
-function formatDate(dateStr) {
-  if (!dateStr) return ''
-  const d = new Date(dateStr)
-  return d.toLocaleDateString('fr-FR', {
-    day: 'numeric', month: 'short', year: 'numeric',
-    hour: '2-digit', minute: '2-digit'
-  })
-}
+import MissionHistoryTimeline from './MissionHistoryTimeline'
 
 export default function MissionHistoryModal({ mission, onClose }) {
   const { t } = useTranslation()
-  const STATUS_CONFIG = useStatusConfig()
-  const [history, setHistory] = useState([])
-  const [loading, setLoading] = useState(true)
-
-  useEffect(() => {
-    if (!mission?.id) return
-    missionsAPI.history(mission.id)
-      .then(({ data }) => setHistory(data.history || []))
-      .catch(() => setHistory([]))
-      .finally(() => setLoading(false))
-  }, [mission?.id])
 
   if (!mission) return null
 
@@ -56,38 +20,7 @@ export default function MissionHistoryModal({ mission, onClose }) {
         </div>
 
         <div className="flex-1 overflow-y-auto">
-          {loading ? (
-            <div className="flex justify-center py-8"><Spinner size="md" /></div>
-          ) : history.length === 0 ? (
-            <div className="text-center py-8 text-[#AAA] text-sm">{t('missionHistoryModal.empty')}</div>
-          ) : (
-            <div className="relative">
-              {/* Ligne verticale */}
-              <div className="absolute start-4 top-0 bottom-0 w-px bg-white/10" />
-              <div className="space-y-4">
-                {history.map((h, i) => {
-                  const cfg = STATUS_CONFIG[h.status] || { icon: '•', label: h.status, color: 'text-white' }
-                  return (
-                    <div key={h.id} className="flex gap-3 relative">
-                      <div className={`w-8 h-8 rounded-full bg-[#222] border border-white/20 flex items-center justify-center text-sm flex-shrink-0 z-10 ${i === history.length - 1 ? 'border-[#FF4D00]' : ''}`}>
-                        {cfg.icon}
-                      </div>
-                      <div className="flex-1 pb-1">
-                        <div className={`text-sm font-medium ${cfg.color}`}>{cfg.label}</div>
-                        {h.note && <div className="text-xs text-[#AAA] mt-0.5">{h.note}</div>}
-                        {h.changed_by_name && (
-                          <div className="text-xs text-[#555] mt-0.5">
-                            {t('missionHistoryModal.by', { name: h.changed_by_name })}
-                          </div>
-                        )}
-                        <div className="text-xs text-[#555] mt-0.5">{formatDate(h.created_at)}</div>
-                      </div>
-                    </div>
-                  )
-                })}
-              </div>
-            </div>
-          )}
+          <MissionHistoryTimeline missionId={mission.id} />
         </div>
 
         <button onClick={onClose} className="btn btn-ghost btn-sm mt-4 flex-shrink-0 w-full justify-center">
