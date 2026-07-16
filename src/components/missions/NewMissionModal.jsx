@@ -1,6 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
-import ComplianceModal from './ComplianceModalClient'
 import { missionsAPI, usersAPI } from '../../api'
 import { VILLES, VILLES_LIST } from '../../constants/villes'
 import { translateLocation } from '../../constants/villesTranslations'
@@ -212,7 +211,6 @@ export default function NewMissionModal({ open, onClose, onCreated, preselectedO
   const [loading, setLoading] = useState(false)
   const [form, setForm]   = useState({ title: '', address: '', city: '', quartier: '', price: '', description: '', scheduled_date: '', scheduled_time: ''  })
   const [replacementPreference, setReplacementPreference] = useState('fast')
-  const [showCompliance, setShowCompliance] = useState(false)
   const [promoCode, setPromoCode]     = useState('')
   const [promoResult, setPromoResult] = useState(null)
   const [promoLoading, setPromoLoading] = useState(false)
@@ -242,9 +240,7 @@ export default function NewMissionModal({ open, onClose, onCreated, preselectedO
   const quartiersDispos = VILLES[form.city] || VILLES_LIST
 
 const submit = async (e) => {
-    e.preventDefault()
-
-    if (!e._bypassed) { setShowCompliance(true); return }
+      e.preventDefault()
 
 if (!form.title || !form.city || !form.price) {
       toast(t('newMissionModal.errors.titleCityBudgetRequired'), 'error')
@@ -570,12 +566,6 @@ if (parseFloat(form.price) < minPrice) {
             <button type="button" onClick={onClose} className="btn btn-ghost btn-lg">{t('newMissionModal.cancel')}</button>
           </div>
 
-          {showCompliance && (
-            <ComplianceModal onAccept={() => {
-              setShowCompliance(false)
-              setTimeout(() => submit({ preventDefault: () => {}, _bypassed: true }), 100)
-            }} />
-          )}
         </form>
       </div>
     </div>
