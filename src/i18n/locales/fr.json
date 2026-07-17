@@ -501,18 +501,19 @@
       "editPendingTooltip": "Une demande de modification est déjà en attente de réponse de l'Œil"
     },
     "mobile": {
-      "interested": "👁️ Intéressés",
-      "chat": "💬 Chat",
-      "report": "📄 Rapport",
-      "audit": "📋 Audit",
-      "visite": "📋 Visite",
-      "details": "🔍 Consulter",
-      "rate": "⭐ Noter",
-      "validate": "✅ Valider",
-      "claim": "🚨 Réclamer",
-      "edit": "✏️ Modifier",
-      "notAssigned": "Non assigné"
-    },
+        "interested": "👁️ Intéressés",
+        "chat": "💬 Chat",
+        "report": "📄 Rapport",
+        "audit": "📋 Audit",
+        "visite": "📋 Visite",
+        "details": "🔍 Consulter",
+        "rate": "⭐ Noter",
+        "validate": "✅ Valider",
+        "claim": "🚨 Réclamer",
+        "edit": "✏️ Modifier",
+        "cancel": "❌ Annuler",
+        "notAssigned": "Non assigné"
+      },
     "reportViewer": {
       "title": "Rapport de mission",
       "errorLoading": "Erreur chargement rapport",

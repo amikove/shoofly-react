@@ -410,13 +410,16 @@ const cancel = async (id) => {
           <button onClick={() => setChatMission(m)} className="btn btn-ghost btn-sm">{t('clientMissions.mobile.chat')}</button>
         )}
         {['pending','assigned'].includes(m.status) && (
-          m.pending_edit_request ? (
-            <button disabled title={t('clientMissions.actions.editPendingTooltip')}
-              className="btn btn-ghost btn-sm opacity-50 cursor-not-allowed">{t('clientMissions.mobile.edit')}</button>
-          ) : (
-            <button onClick={() => setEditingMission(m)} className="btn btn-ghost btn-sm">{t('clientMissions.mobile.edit')}</button>
-          )
-        )}
+            m.pending_edit_request ? (
+              <button disabled title={t('clientMissions.actions.editPendingTooltip')}
+                className="btn btn-ghost btn-sm opacity-50 cursor-not-allowed">{t('clientMissions.mobile.edit')}</button>
+            ) : (
+              <button onClick={() => setEditingMission(m)} className="btn btn-ghost btn-sm">{t('clientMissions.mobile.edit')}</button>
+            )
+          )}
+          {['pending','assigned'].includes(m.status) && (
+            <button onClick={() => cancel(m.id)} className="btn btn-ghost btn-sm text-red-400">{t('clientMissions.mobile.cancel')}</button>
+          )}
           {m.status === 'completed' && (
             <>
               {['airbnb','booking'].some(s => m.subcategory?.toLowerCase().includes(s.toLowerCase())) && (

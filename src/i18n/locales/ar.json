@@ -446,7 +446,7 @@
     "missionCreatedToast": "تم إنشاء المهمة! 🎉",
     "problemReportedToast": "تم الإبلاغ عن المشكلة — تم تنبيه فريق Shoofly ✓",
     "cancelledToast": "تم إلغاء المهمة",
-    "validatedToast": "تم التصديق على المهمة ✅ تم تحويل الدفع إلى العين الميدانية",
+    "validatedToast": "تمت الموافقة على المهمة ✅ تم تحويل الدفع إلى العين الميدانية",
     "validateConfirm": "هل تؤكد أن المهمة أُنجزت بشكل جيد؟ سيتم تحويل الدفع إلى العين الميدانية.",
     "ratingDisplay": "⭐ {{score}}/5",
     "ratingDisplayWithComment": "⭐ {{score}}/5 · \"{{comment}}\"",
@@ -495,8 +495,8 @@
       "viewDetails": "الاطلاع على التفاصيل",
       "rateOeil": "تقييم العين الميدانية",
       "rate": "⭐ تقييم",
-      "validate": "تصديق",
-      "claim": "مطالبة",
+      "validate": "موافقة",
+      "claim": "اعتراض",
       "cancel": "إلغاء",
       "edit": "تعديل",
       "editPendingTooltip": "يوجد طلب تعديل قيد انتظار رد العين الميدانية"
@@ -509,9 +509,10 @@
       "visite": "📋 زيارة",
       "details": "🔍 التفاصيل",
       "rate": "⭐ تقييم",
-      "validate": "✅ تصديق",
-      "claim": "🚨 مطالبة",
+      "validate": "✅ موافقة",
+      "claim": "🚨 اعتراض",
       "edit": "✏️ تعديل",
+      "cancel": "❌ إلغاء",
       "notAssigned": "غير مُسندة"
     },
     "reportViewer": {
@@ -523,14 +524,14 @@
       "riskPoints": "نقاط اليقظة"
     },
     "claimModal": {
-      "title": "🚨 المطالبة بهذه المهمة",
-      "subtitle": "\"{{title}}\" — اشرح سبب اعتراضك على التصديق.",
+      "title": "🚨 الاعتراض بهذه المهمة",
+      "subtitle": "\"{{title}}\" — اشرح سبب اعتراضك على الموافقة.",
       "placeholder": "صف المشكلة بالتفصيل...",
       "cancel": "إلغاء",
       "sending": "جارٍ الإرسال...",
-      "submit": "إرسال المطالبة",
+      "submit": "إرسال الاعتراض",
       "commentRequired": "التعليق إلزامي",
-      "sentToast": "تم إرسال المطالبة 🚨",
+      "sentToast": "تم إرسال الاعتراض 🚨",
       "genericError": "خطأ"
     },
     "problemModal": {
@@ -1677,7 +1678,7 @@
   "missionSummaryModal": {
     "statusLabel": "الحالة",
     "earningLabel": "أرباحك",
-    "awaitingValidation": "بانتظار تصديق العميل",
+    "awaitingValidation": "بانتظار تأكيد العميل",
     "missionDate": "تاريخ المهمة",
     "completedOn": "أُنجزت في",
     "validatedOn": "صُودق عليها في",
@@ -1685,7 +1686,7 @@
     "notRatedYet": "لم يتم تقييمك من طرف العميل بعد",
     "viewReport": "عرض التقرير المُقدَّم",
     "history": "السجل",
-    "awaitingClientValidation": "بانتظار تصديق العميل",
+    "awaitingClientValidation": "بانتظار تأكيد العميل",
     "close": "إغلاق",
     "status": {
       "pending": "قيد الانتظار",
@@ -1772,16 +1773,16 @@
     "partialPaymentReceivedBody": "تم إضافة {{amount}} درهم — نصيبك من تحويل \"{{missionTitle}}\".",
     "paymentReceivedOeilTitle": "💰 تم استلام الدفع!",
     "paymentReceivedOeilBody": "صادق العميل على \"{{missionTitle}}\". تم إضافة {{amount}} درهم.",
-    "missionValidatedClientTitle": "✅ تم التصديق على المهمة",
+    "missionValidatedClientTitle": "✅ تمت الموافقة على المهمة",
     "missionValidatedClientBody": "لقد صادقت على \"{{missionTitle}}\".",
-    "newClaimAdminTitle": "🚨 مطالبة جديدة",
+    "newClaimAdminTitle": "🚨 اعتراض جديد",
     "newClaimAdminBody": "المهمة \"{{missionTitle}}\" محل اعتراض من العميل.",
-    "claimResolvedOeilWinTitle": "✅ تم حل المطالبة",
-    "claimResolvedOeilWinBody": "تم حل المطالبة لصالحك. تم إضافة دفعتك.",
-    "claimResolvedClientLoseTitle": "تم حل المطالبة",
-    "claimResolvedClientLoseBody": "تمت دراسة المطالبة وحلها لصالح العين الميدانية.",
+    "claimResolvedOeilWinTitle": "✅ تم حل الاعتراض",
+    "claimResolvedOeilWinBody": "تم حل الشكوى  لصالحك. تم إضافة دفعتك.",
+    "claimResolvedClientLoseTitle": "تم حل الاعتراض",
+    "claimResolvedClientLoseBody": "تمت دراسة الاعتراض وحله لصالح العين الميدانية.",
     "claimResolvedClientWinBody": "تم إضافة {{amount}} درهم إلى محفظتك.",
-    "claimResolvedOeilLoseBody": "تم حل المطالبة لصالح العميل.",
+    "claimResolvedOeilLoseBody": "تم حل الاعتراض لصالح العميل.",
     "newMissionAvailableTitle": "مهمة جديدة",
     "newMissionUrgentTitle": "مهمة جديدة 🚨 عاجلة",
     "newMissionBody": "{{missionTitle}} — {{city}} · {{price}} درهم",
@@ -1797,7 +1798,7 @@
     "fullRefundTitle": "💰 استرجاع كامل",
     "fullRefundBody": "تم إضافة {{amount}} درهم إلى محفظتك.",
     "missionCompletedClientTitle": "انتهت المهمة ✅",
-    "missionCompletedClientBody": "انتهت \"{{missionTitle}}\". لديك 12 ساعة للمطالبة إذا لزم الأمر.",
+    "missionCompletedClientBody": "انتهت \"{{missionTitle}}\". لديك 12 ساعة للاعتراض إذا لزم الأمر.",
     "missionCompletedOeilTitle": "انتهت المهمة",
     "missionCompletedOeilBody": "تم وضع علامة \"منتهية\" على \"{{missionTitle}}\". الدفع في انتظار المصادقة.",
     "reportAvailableTitle": "📄 التقرير متاح",
@@ -1899,7 +1900,7 @@
     "sousReclamation": "🚨 تحت المراجعة ",
     "completed": "مكتملة",
     "missionTerminee": "✅ المهمة منتهية",
-    "attenteValidation": "⏳ بانتظار التصديق"
+    "attenteValidation": "⏳ بانتظار التأكيد"
   },
   "legal": {
     "cgv": {
