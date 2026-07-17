@@ -2305,5 +2305,108 @@
       "resolved": "Résolu",
       "dismissed": "Classé sans suite"
     }
+  },
+  "adminAdvancedSettings": {
+    "sectionTitle": "Réglages avancés",
+    "sectionIntro": "Délais et seuils internes de la plateforme. À modifier avec précaution : impact direct sur les missions en cours.",
+    "save": "Enregistrer",
+    "saving": "Sauvegarde...",
+    "categories": {
+      "missions": "Missions & délais",
+      "reliability": "Fiabilité",
+      "support": "Support",
+      "dashboard": "Dashboard"
+    },
+    "groups": {
+      "transferGrace": {
+        "title": "Délai de grâce après transfert",
+        "note": "Temps laissé pour trouver un remplaçant avant que la mission ne soit annulée faute de prestataire."
+      },
+      "candidateWindow": {
+        "title": "Fenêtre de candidature",
+        "note": "Durée pendant laquelle les Œils intéressés peuvent postuler, avant sélection automatique du meilleur candidat."
+      },
+      "missionEdit": {
+        "title": "Modification de mission — délai de réponse de l'Œil",
+        "note": "Le délai standard est réduit automatiquement si la mission a lieu avant le seuil ci-dessous."
+      },
+      "clientValidation": {
+        "title": "Validation client & paiement",
+        "note": "⚠️ Cette valeur est utilisée à 3 endroits qui doivent rester synchronisés : fenêtre de réclamation, délai affiché au client, et déclenchement du paiement automatique de l'Œil."
+      },
+      "scheduleConflict": {
+        "title": "Conflit de créneau",
+        "note": "Écart minimum requis entre deux missions d'un même Œil pour éviter un chevauchement."
+      },
+      "cooldowns": {
+        "title": "Cooldown après transfert ou abandon",
+        "note": "Empêche l'Œil d'accepter une nouvelle mission immédiatement après avoir transféré/refusé une mission (délai court) ou abandonné une mission déjà en cours (délai aggravé, sans remplaçant trouvé)."
+      },
+      "staleMission": {
+        "title": "Mission sans prestataire trouvé",
+        "note": "L'admin est alerté si la mission attend depuis le premier délai ET que son créneau est encore éloigné d'au moins le second délai."
+      },
+      "overdue": {
+        "title": "Mission active trop longtemps"
+      },
+      "lateStart": {
+        "title": "Retard au démarrage",
+        "note": "Séquence liée : alerte à l'Œil/l'admin au premier délai, puis transfert automatique au second (qui doit rester supérieur au premier)."
+      },
+      "reminders": {
+        "title": "Rappels avant mission",
+        "note": "Notifications envoyées à l'Œil avant le début de sa mission (marge de ±10 min autour de chaque valeur)."
+      },
+      "refund": {
+        "title": "Remboursement à l'annulation",
+        "note": "Si le client annule après assignation à plus du seuil ci-dessous avant la mission → remboursement partiel au taux indiqué ; sinon aucun remboursement."
+      },
+      "newOeil": {
+        "title": "Badge \"Nouveau\""
+      },
+      "reactivation": {
+        "title": "Réintégration après suspension"
+      },
+      "ticketResolve": {
+        "title": "Auto-résolution des tickets"
+      },
+      "responseTime": {
+        "title": "Calcul du temps de réponse",
+        "note": "Filtre le bruit : ignore les délais de réponse trop longs ou les Œils avec trop peu d'échanges pour être significatifs."
+      },
+      "dashboardAlerts": {
+        "title": "Alertes du dashboard admin"
+      }
+    },
+    "fields": {
+      "transfer_grace_minutes_queue": "File d'attente (min)",
+      "transfer_grace_minutes_other": "Autres types de mission (min)",
+      "candidate_window_minutes_fast": "Mode \"Continuité prioritaire\" (min)",
+      "candidate_window_minutes_choose_queue": "Mode \"Je choisis\" — file d'attente (min)",
+      "candidate_window_minutes_choose_other": "Mode \"Je choisis\" — autres types (min)",
+      "mission_edit_approval_minutes": "Délai standard (min)",
+      "mission_edit_approval_minutes_urgent": "Délai réduit si urgent (min)",
+      "mission_edit_urgent_threshold_hours": "Seuil de bascule \"urgent\" (h avant la mission)",
+      "client_validation_hours": "Délai avant auto-validation (h)",
+      "schedule_conflict_window_hours": "Fenêtre de conflit (h)",
+      "transfer_cooldown_hours": "Cooldown transfert/refus (h)",
+      "abandon_during_mission_cooldown_hours": "Cooldown abandon en cours de mission (h)",
+      "stale_mission_hours": "Ancienneté avant alerte (h)",
+      "stale_mission_min_lead_hours": "Marge minimum avant le créneau (h)",
+      "mission_overdue_verification_hours": "Seuil d'alerte vérification (h)",
+      "late_start_alert_window_minutes": "Alerte après (min)",
+      "late_start_auto_transfer_minutes": "Transfert automatique après (min)",
+      "reminder_before_mission_minutes_early": "Rappel tôt (min avant la mission)",
+      "reminder_before_mission_minutes_late": "Rappel tardif (min avant la mission)",
+      "refund_partial_threshold_hours": "Seuil (h avant la mission)",
+      "refund_partial_rate": "Taux de remboursement partiel (%)",
+      "new_oeil_mission_threshold": "Sous ce nombre de missions",
+      "reactivation_default_score": "Score par défaut si non précisé",
+      "ticket_auto_resolve_hours": "Inactivité admin avant résolution (h)",
+      "response_time_max_valid_minutes": "Délai maximum valide (min)",
+      "response_time_min_turns": "Nombre minimum de tours d'échange",
+      "dashboard_stuck_pending_hours": "Missions \"bloquées\" après (h)",
+      "dashboard_low_reliability_threshold": "Seuil \"Œil à risque\" (score <)"
+    }
   }
 }
