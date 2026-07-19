@@ -1807,6 +1807,8 @@
     "fiveStarBonusBody": "+{{amount}} درهم كمكافأة على \"{{missionTitle}}\" — شكراً على عملك الممتاز!",
     "newOeilInterestTitle": "عين ميدانية جديدة مهتمة 👁️",
     "newOeilInterestBody": "عين ميدانية مهتمة : {{missionTitle}}",
+    "candidateConfirmRequestTitle": "🎯 أكد توفرك",
+    "candidateConfirmRequestBody": "أنت من ضمن المرشحين الأعلى تصنيفاً لمهمة \"{{missionTitle}}\". أكد توفرك خلال {{minutes}} دقيقة لتبقى ضمن المرشحين.",
     "missionChangeAlertTitle": "⚠️ تغيير في مهمتك",
     "missionChangeAlertBody": "أبلغت عينك الميدانية عن مانع بخصوص \"{{missionTitle}}\". نبحث عن بديل بشكل عاجل.",
     "missionAssignedByAdminTitle": "📋 تم إسناد المهمة من طرف الإدارة",

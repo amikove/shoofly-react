@@ -1808,6 +1808,8 @@
     "fiveStarBonusBody": "+{{amount}} MAD de bonus pour \"{{missionTitle}}\" — merci pour votre excellent travail !",
     "newOeilInterestTitle": "Nouvel Œil intéressé 👁️",
     "newOeilInterestBody": "Un Œil est intéressé par votre mission : {{missionTitle}}",
+    "candidateConfirmRequestTitle": "🎯 Confirmez votre disponibilité",
+    "candidateConfirmRequestBody": "Vous êtes parmi les candidats les mieux classés pour \"{{missionTitle}}\". Confirmez votre disponibilité sous {{minutes}} min pour être considéré.",
     "missionChangeAlertTitle": "⚠️ Changement sur votre mission",
     "missionChangeAlertBody": "Votre Œil a signalé un empêchement pour \"{{missionTitle}}\". Nous recherchons un remplaçant en urgence.",
     "missionAssignedByAdminTitle": "📋 Mission assignée par admin",
