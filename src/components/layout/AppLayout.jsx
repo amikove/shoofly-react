@@ -5,6 +5,7 @@ import { useAuth } from '../../context/AuthContext'
 import { Avatar } from '../ui'
 import { useNotifications } from '../../hooks/useNotifications'
 import NotificationBanner from '../ui/NotificationBanner'
+import PresenceConfirmationBanner from '../missions/PresenceConfirmationBanner'
 import { useState, useEffect } from 'react'
 import { missionsAPI, adminAPI } from '../../api'
 
@@ -292,6 +293,7 @@ useEffect(() => {
       </nav>
 
       <NotificationBanner />
+      <PresenceConfirmationBanner />
     </div>
   )
 }

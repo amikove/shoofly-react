@@ -40,6 +40,8 @@ export const missionsAPI = {
   history:  (id) => api.get(`/api/missions/${id}/history`),
   actionsRequired: () => api.get('/api/missions/actions-required'),
   fiveStarBonus: () => api.get('/api/missions/campaign/five-star-bonus'),
+  pendingConfirmations: () => api.get('/api/missions/pending-confirmations'),
+  confirmPresence: (id) => api.post(`/api/missions/${id}/confirm-presence`),
 }
 
 // USERS

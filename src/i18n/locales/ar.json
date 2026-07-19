@@ -1726,6 +1726,18 @@
     "allow": "تفعيل",
     "later": "لاحقًا"
   },
+  "presenceConfirmation": {
+    "text": "أؤكد مهمة {{clientName}} التي ستجري {{day}} الساعة {{time}}",
+    "today": "اليوم",
+    "tomorrow": "غدًا",
+    "confirmButton": "أؤكد حضوري",
+    "confirming": "جارٍ التأكيد...",
+    "confirmedToast": "تم تأكيد الحضور ✓",
+    "errorToast": "خطأ أثناء التأكيد",
+    "previous": "السابق",
+    "next": "التالي",
+    "counter": "{{current}}/{{total}}"
+  },
   "notifications": {
     "title": "الإشعارات",
     "markAllRead": "قراءة الكل",

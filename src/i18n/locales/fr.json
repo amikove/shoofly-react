@@ -1727,6 +1727,18 @@
     "allow": "Activer",
     "later": "Plus tard"
   },
+  "presenceConfirmation": {
+    "text": "Je confirme la mission de {{clientName}} qui se déroulera {{day}} à {{time}}",
+    "today": "aujourd'hui",
+    "tomorrow": "demain",
+    "confirmButton": "Je confirme ma présence",
+    "confirming": "Confirmation...",
+    "confirmedToast": "Présence confirmée ✓",
+    "errorToast": "Erreur lors de la confirmation",
+    "previous": "Précédent",
+    "next": "Suivant",
+    "counter": "{{current}}/{{total}}"
+  },
   "notifications": {
     "title": "Notifications",
     "markAllRead": "Tout lire",
