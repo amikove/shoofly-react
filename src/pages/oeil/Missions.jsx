@@ -21,7 +21,7 @@ const TYPE_ICONS = { immobilier:'🏠', file_attente:'⏳', audit:'🔎', person
 const EDIT_FIELD_LABELS = {
   title: 'title', description: 'description', address: 'address',
   city: 'city', quartier: 'quartier', scheduled_at: 'scheduledAt',
-  duration_est: 'duration', replacement_preference: 'replacementPreference',
+  duration_est: 'duration',
 }
 
 function formatEditFieldValue(key, value, t) {
@@ -30,7 +30,6 @@ function formatEditFieldValue(key, value, t) {
     return `${new Date(value).toLocaleDateString('fr-FR', { day:'numeric', month:'short' })} ${t('oeilMissions.editRequest.at')} ${new Date(value).toLocaleTimeString('fr-FR', { hour:'2-digit', minute:'2-digit' })}`
   }
   if (key === 'duration_est') return `${value} min`
-  if (key === 'replacement_preference') return value === 'fast' ? t('oeilMissions.editRequest.replacementFast') : t('oeilMissions.editRequest.replacementChoose')
   return String(value)
 }
 

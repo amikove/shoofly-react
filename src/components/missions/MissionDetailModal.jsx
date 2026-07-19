@@ -24,10 +24,6 @@ export default function MissionDetailModal({ mission, onClose }) {
   const quartierLabel = mission.quartier ? translateLocation(mission.quartier, i18n.language) : null
   const addressParts = [quartierLabel, cityLabel, mission.address].filter(Boolean)
 
-  const replacementKey = mission.replacement_preference === 'choose' ? 'choose' : 'fast'
-  const replacementTitle = t(`newMissionModal.replacementPreference.${replacementKey}Title`)
-  const replacementDesc = t(`newMissionModal.replacementPreference.${replacementKey}Desc`)
-
   return (
     <div className="fixed inset-0 bg-black/75 z-[60] flex items-center justify-center p-4 backdrop-blur-sm"
          onClick={(e) => e.target === e.currentTarget && onClose()}>
@@ -71,12 +67,6 @@ export default function MissionDetailModal({ mission, onClose }) {
             />
 
             <Field label={t('missionDetailModal.fields.price')} value={`${parseFloat(mission.price).toFixed(0)} MAD`} />
-
-            <div>
-              <div className="text-[11px] text-[#AAA] mb-0.5">{t('missionDetailModal.fields.replacementPreference')}</div>
-              <div className="text-sm text-white font-medium">{replacementTitle}</div>
-              <div className="text-xs text-[#AAA] mt-0.5 leading-relaxed">{replacementDesc}</div>
-            </div>
           </div>
 
           {/* Historique */}

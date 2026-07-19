@@ -568,9 +568,6 @@
     "timeLabel": "الوقت",
     "durationLabel": "المدة المقدرة (دقائق)",
     "durationPlaceholder": "مثال: 60",
-    "replacementPreferenceLabel": "تفضيل الاستبدال في حالة وجود مانع",
-    "replacementPreferenceFast": "سريع",
-    "replacementPreferenceChoose": "بالاختيار",
     "submitLoading": "جارٍ الإرسال...",
     "submitApply": "حفظ",
     "submitRequest": "إرسال الطلب إلى العين الميدانية",
@@ -782,13 +779,6 @@
     "promoApplying": "...",
     "promoApply": "تطبيق",
     "promoAppliedToast": "تم تطبيق الرمز \"{{code}}\" — خصم {{discount}} درهم ✓",
-    "replacementPreference": {
-      "label": "في حالة تعذر العين الميدانية",
-      "fastTitle": "الاستمرارية الفورية (موصى به)",
-      "fastDesc": "تقوم Shoofly تلقائيًا باستبدال العين الميدانية بأول ملف مؤهل متاح لتجنب أي تأخير.",
-      "chooseTitle": "أرغب في اختيار البديل",
-      "chooseDesc": "ترسل شوفلي قائمة بالمرشحين. في حال عدم اتخاذ قراركم خلال 10 دقائق، تقوم شوفلي تلقائياً بتعيين أفضل شخص متاح لضمان استمرارية مهمتكم دون تأخير ."
-    },
     "submitLoading": "جارٍ الإرسال...",
     "submitAssign": "إسناد إلى {{name}} ←",
     "submitSend": "إرسال المهمة ←",
@@ -1120,8 +1110,6 @@
       "rejectConfirm": "رفض هذا التعديل؟ ستعود المهمة للبحث عن عين ميدانية جديدة، دون أي عقوبة عليك.",
       "approvedToast": "تم قبول التعديل ✓",
       "rejectedToast": "تم رفض التعديل — المهمة أُعيدت إلى البحث",
-      "replacementFast": "سريع",
-      "replacementChoose": "بالاختيار",
       "fields": {
         "title": "العنوان",
         "description": "الوصف",
@@ -1129,8 +1117,7 @@
         "city": "المدينة",
         "quartier": "الحي",
         "scheduledAt": "التاريخ/الوقت",
-        "duration": "المدة",
-        "replacementPreference": "تفضيل الاستبدال"
+        "duration": "المدة"
       }
     }
   },
@@ -1730,8 +1717,7 @@
       "scheduledAt": "التاريخ والوقت المحددان",
       "duration": "المدة المقدرة",
       "description": "الوصف",
-      "price": "السعر",
-      "replacementPreference": "تفضيل الاستبدال"
+      "price": "السعر"
     }
   },
   "notificationBanner": {
@@ -2322,10 +2308,6 @@
         "title": "مهلة السماح بعد التحويل",
         "note": "الوقت المتاح لإيجاد بديل قبل إلغاء المهمة لعدم توفر مزود خدمة."
       },
-      "candidateWindow": {
-        "title": "نافذة الترشح",
-        "note": "المدة التي يمكن خلالها للعيون المهتمين تقديم ترشحهم، قبل الاختيار التلقائي لأفضل مرشح."
-      },
       "missionEdit": {
         "title": "تعديل المهمة — مهلة رد العين",
         "note": "المهلة القياسية تُختصر تلقائيًا إذا كانت المهمة قريبة (دون العتبة أدناه)."
@@ -2381,9 +2363,6 @@
     "fields": {
       "transfer_grace_minutes_queue": "قائمة الانتظار (دقيقة)",
       "transfer_grace_minutes_other": "أنواع المهام الأخرى (دقيقة)",
-      "candidate_window_minutes_fast": "وضع \"الأولوية المستمرة\" (دقيقة)",
-      "candidate_window_minutes_choose_queue": "وضع \"أنا أختار\" — قائمة الانتظار (دقيقة)",
-      "candidate_window_minutes_choose_other": "وضع \"أنا أختار\" — أنواع أخرى (دقيقة)",
       "mission_edit_approval_minutes": "المهلة القياسية (دقيقة)",
       "mission_edit_approval_minutes_urgent": "المهلة المختصرة عند الاستعجال (دقيقة)",
       "mission_edit_urgent_threshold_hours": "عتبة التحول إلى \"مستعجل\" (ساعة قبل المهمة)",

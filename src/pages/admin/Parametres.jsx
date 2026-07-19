@@ -12,9 +12,6 @@ const ADVANCED_DEFAULTS = {
   transfer_grace_minutes_other: 60,
   transfer_cooldown_hours: 4,
   abandon_during_mission_cooldown_hours: 48,
-  candidate_window_minutes_fast: 10,
-  candidate_window_minutes_choose_queue: 5,
-  candidate_window_minutes_choose_other: 10,
   mission_edit_approval_minutes: 120,
   mission_edit_approval_minutes_urgent: 30,
   mission_edit_urgent_threshold_hours: 4,
@@ -44,7 +41,6 @@ const PERCENT_FIELDS = ['refund_partial_rate']
 const ADVANCED_GROUPS = [
   { key: 'transferGrace',    category: 'missions',    fields: ['transfer_grace_minutes_queue', 'transfer_grace_minutes_other'] },
   { key: 'cooldowns',        category: 'missions',    fields: ['transfer_cooldown_hours', 'abandon_during_mission_cooldown_hours'] },
-  { key: 'candidateWindow',  category: 'missions',    fields: ['candidate_window_minutes_fast', 'candidate_window_minutes_choose_queue', 'candidate_window_minutes_choose_other'] },
   { key: 'missionEdit',      category: 'missions',    fields: ['mission_edit_approval_minutes', 'mission_edit_approval_minutes_urgent', 'mission_edit_urgent_threshold_hours'] },
   { key: 'clientValidation', category: 'missions',    fields: ['client_validation_hours'] },
   { key: 'scheduleConflict', category: 'missions',    fields: ['schedule_conflict_window_hours'] },

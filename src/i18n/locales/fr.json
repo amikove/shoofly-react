@@ -567,9 +567,6 @@
     "timeLabel": "Heure",
     "durationLabel": "Durée estimée (minutes)",
     "durationPlaceholder": "Ex: 60",
-    "replacementPreferenceLabel": "Préférence de remplacement en cas d'empêchement",
-    "replacementPreferenceFast": "Rapide",
-    "replacementPreferenceChoose": "Au choix",
     "submitLoading": "Envoi...",
     "submitApply": "Enregistrer",
     "submitRequest": "Envoyer la demande à l'Œil",
@@ -781,13 +778,6 @@
     "promoApplying": "...",
     "promoApply": "Appliquer",
     "promoAppliedToast": "Code \"{{code}}\" appliqué — {{discount}} MAD de réduction ✓",
-    "replacementPreference": {
-      "label": "En cas d'empêchement de l'Œil",
-      "fastTitle": "Continuité prioritaire (recommandé)",
-      "fastDesc": "Shoofly remplace automatiquement l'Œil par le premier profil qualifié disponible afin d'éviter tout retard.",
-      "chooseTitle": "Je souhaite choisir le remplaçant",
-      "chooseDesc": "Shoofly m'envoie une liste de candidats. Passé un délai de 10 minutes sans votre décision, Shoofly recrute automatiquement le meilleur profil disponible pour assurer la continuité de votre mission sans retard."
-    },
     "submitLoading": "Envoi en cours...",
     "submitAssign": "Assigner à {{name}} →",
     "submitSend": "Envoyer la mission →",
@@ -1119,8 +1109,6 @@
       "rejectConfirm": "Refuser cette modification ? La mission repassera en recherche d'un nouvel Œil, sans aucune pénalité pour vous.",
       "approvedToast": "Modification acceptée ✓",
       "rejectedToast": "Modification refusée — mission remise en recherche",
-      "replacementFast": "Rapide",
-      "replacementChoose": "Au choix",
       "fields": {
         "title": "Titre",
         "description": "Description",
@@ -1128,8 +1116,7 @@
         "city": "Ville",
         "quartier": "Quartier",
         "scheduledAt": "Date/heure",
-        "duration": "Durée",
-        "replacementPreference": "Préférence de remplacement"
+        "duration": "Durée"
       }
     }
   },
@@ -1731,8 +1718,7 @@
       "scheduledAt": "Date et heure prévues",
       "duration": "Durée estimée",
       "description": "Description",
-      "price": "Prix",
-      "replacementPreference": "Préférence de remplacement"
+      "price": "Prix"
     }
   },
   "notificationBanner": {
@@ -2323,10 +2309,6 @@
         "title": "Délai de grâce après transfert",
         "note": "Temps laissé pour trouver un remplaçant avant que la mission ne soit annulée faute de prestataire."
       },
-      "candidateWindow": {
-        "title": "Fenêtre de candidature",
-        "note": "Durée pendant laquelle les Œils intéressés peuvent postuler, avant sélection automatique du meilleur candidat."
-      },
       "missionEdit": {
         "title": "Modification de mission — délai de réponse de l'Œil",
         "note": "Le délai standard est réduit automatiquement si la mission a lieu avant le seuil ci-dessous."
@@ -2382,9 +2364,6 @@
     "fields": {
       "transfer_grace_minutes_queue": "File d'attente (min)",
       "transfer_grace_minutes_other": "Autres types de mission (min)",
-      "candidate_window_minutes_fast": "Mode \"Continuité prioritaire\" (min)",
-      "candidate_window_minutes_choose_queue": "Mode \"Je choisis\" — file d'attente (min)",
-      "candidate_window_minutes_choose_other": "Mode \"Je choisis\" — autres types (min)",
       "mission_edit_approval_minutes": "Délai standard (min)",
       "mission_edit_approval_minutes_urgent": "Délai réduit si urgent (min)",
       "mission_edit_urgent_threshold_hours": "Seuil de bascule \"urgent\" (h avant la mission)",

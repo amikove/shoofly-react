@@ -26,7 +26,6 @@ export default function EditMissionModal({ mission, onClose, onSaved }) {
     scheduled_date: toDateInput(mission.scheduled_at),
     scheduled_time: toTimeInput(mission.scheduled_at),
     duration_est: mission.duration_est ?? '',
-    replacement_preference: mission.replacement_preference || 'fast',
   })
 
   const set = (k) => (e) => setForm((f) => ({ ...f, [k]: e.target.value }))
@@ -61,7 +60,6 @@ export default function EditMissionModal({ mission, onClose, onSaved }) {
     if (scheduledAt !== new Date(mission.scheduled_at).toISOString()) changes.scheduled_at = scheduledAt
     const durationValue = form.duration_est === '' ? null : parseInt(form.duration_est, 10)
     if (durationValue !== (mission.duration_est ?? null)) changes.duration_est = durationValue
-    if (form.replacement_preference !== (mission.replacement_preference || 'fast')) changes.replacement_preference = form.replacement_preference
 
     if (Object.keys(changes).length === 0) {
       toast(t('editMissionModal.errors.noChanges'), 'error')
@@ -170,50 +168,6 @@ export default function EditMissionModal({ mission, onClose, onSaved }) {
             <input type="number" min="0" className="input" value={form.duration_est} onChange={set('duration_est')}
               placeholder={t('editMissionModal.durationPlaceholder')} />
           </div>
-
-          <div>
-              <label className="label">{t('newMissionModal.replacementPreference.label')}</label>
-              <div className="grid grid-cols-1 gap-2">
-                <button
-                  type="button"
-                  onClick={() => setVal('replacement_preference')('fast')}
-                  className={`flex items-start gap-3 text-start p-3 rounded-xl border transition-all ${
-                    form.replacement_preference === 'fast'
-                      ? 'border-[#FF4D00] bg-[#FF4D00]/10'
-                      : 'border-white/12 bg-[#222] hover:border-white/22'
-                  }`}
-                >
-                  <span className={`mt-0.5 flex-shrink-0 w-4 h-4 rounded-full border-2 flex items-center justify-center ${
-                    form.replacement_preference === 'fast' ? 'border-[#FF4D00]' : 'border-white/30'
-                  }`}>
-                    {form.replacement_preference === 'fast' && <span className="w-2 h-2 rounded-full bg-[#FF4D00]" />}
-                  </span>
-                  <div>
-                    <div className="text-sm font-semibold">🟢 {t('newMissionModal.replacementPreference.fastTitle')}</div>
-                    <p className="text-xs text-[#AAA] mt-1 leading-relaxed">{t('newMissionModal.replacementPreference.fastDesc')}</p>
-                  </div>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setVal('replacement_preference')('choose')}
-                  className={`flex items-start gap-3 text-start p-3 rounded-xl border transition-all ${
-                    form.replacement_preference === 'choose'
-                      ? 'border-[#FF4D00] bg-[#FF4D00]/10'
-                      : 'border-white/12 bg-[#222] hover:border-white/22'
-                  }`}
-                >
-                  <span className={`mt-0.5 flex-shrink-0 w-4 h-4 rounded-full border-2 flex items-center justify-center ${
-                    form.replacement_preference === 'choose' ? 'border-[#FF4D00]' : 'border-white/30'
-                  }`}>
-                    {form.replacement_preference === 'choose' && <span className="w-2 h-2 rounded-full bg-[#FF4D00]" />}
-                  </span>
-                  <div>
-                    <div className="text-sm font-semibold">🔵 {t('newMissionModal.replacementPreference.chooseTitle')}</div>
-                    <p className="text-xs text-[#AAA] mt-1 leading-relaxed">{t('newMissionModal.replacementPreference.chooseDesc')}</p>
-                  </div>
-                </button>
-              </div>
-            </div>
 
           <div className="flex gap-3 pt-2">
             <button type="submit" disabled={loading} className="btn btn-primary btn-lg flex-1 justify-center disabled:opacity-60">
