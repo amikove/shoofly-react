@@ -14,7 +14,7 @@ export function AuthProvider({ children }) {
 
     authAPI.me()
         .then(({ data }) => {
-          setUser(data.user)
+          setUser({ ...data.user, ...data.profile })
         })
         .catch((err) => {
           // Ne déconnecter que si le token est vraiment invalide/expiré (401) —
@@ -30,10 +30,11 @@ export function AuthProvider({ children }) {
 
   const login = async (email, password) => {
     const { data } = await authAPI.login({ email, password })
+    const mergedUser = { ...data.user, ...data.profile }
     localStorage.setItem('shoofly_token', data.token)
-    localStorage.setItem('shoofly_user', JSON.stringify(data.user))
-    setUser(data.user)
-    return data.user
+    localStorage.setItem('shoofly_user', JSON.stringify(mergedUser))
+    setUser(mergedUser)
+    return mergedUser
   }
 
   const logout = () => {

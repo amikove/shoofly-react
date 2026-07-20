@@ -1150,7 +1150,12 @@
       "balanceLabel": "الرصيد المتاح",
       "readyToTransfer": "جاهز للتحويل",
       "zeroBalance": "0 درهم",
-      "withdrawButton": "طلب تحويل ←"
+      "withdrawButton": "طلب تحويل ←",
+      "bankAccountLabel": "الحساب البنكي",
+      "noBankAccountLabel": "ليس لدي حساب بنكي بعد",
+      "bankAccountAnsweredBadge": "✓ تمت الإجابة",
+      "bankAccountSavedToast": "تم حفظ إجابتك ✓",
+      "alBaridInfo": "ليس لديك حساب بنكي؟ حساب البريد بنك مقبول — يمكن فتحه بسرعة وهو متوفر في جميع أنحاء المغرب."
     },
     "availability": {
       "title": "أوقات التوفر",

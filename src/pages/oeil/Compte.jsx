@@ -43,6 +43,8 @@ export default function OeilCompte() {
   const [savingDispo, setSavingDispo] = useState(false)
   const [isAvailable, setIsAvailable] = useState(user?.is_available || false)
   const [togglingDispo, setTogglingDispo] = useState(false)
+  const [hasBankAccount, setHasBankAccount] = useState(user?.has_bank_account ?? null)
+  const [savingBankAccount, setSavingBankAccount] = useState(false)
   const [form, setForm] = useState({
     first_name: user?.first_name || '',
     last_name:  user?.last_name  || '',
@@ -98,6 +100,17 @@ const [dispo, setDispo] = useState(() => parseDispo(user?.disponibilites))
   } catch { toast(t('oeilCompte.genericError'), 'error') }
   finally { setTogglingDispo(false) }
 }
+
+  const saveBankAccount = async (value) => {
+    setSavingBankAccount(true)
+    try {
+      await authAPI.update({ has_bank_account: value })
+      setHasBankAccount(value)
+      updateUser({ has_bank_account: value })
+      toast(t('oeilCompte.payments.bankAccountSavedToast'), 'success')
+    } catch { toast(t('oeilCompte.genericError'), 'error') }
+    finally { setSavingBankAccount(false) }
+  }
 
   const requestWithdraw = () => toast(t('oeilCompte.withdrawComingSoonToast'), 'info')
 
@@ -171,6 +184,30 @@ const [dispo, setDispo] = useState(() => parseDispo(user?.disponibilites))
                 <div className="text-xl font-bold text-green-400">{t('oeilCompte.payments.zeroBalance')}</div>
               </div>
               <button onClick={requestWithdraw} className="btn btn-primary w-full justify-center">{t('oeilCompte.payments.withdrawButton')}</button>
+
+              <div className="border-t border-white/10 mt-4 pt-4">
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="label !mb-0">{t('oeilCompte.payments.bankAccountLabel')}</span>
+                  {hasBankAccount !== null && (
+                    <span className="text-green-400 text-xs font-semibold">{t('oeilCompte.payments.bankAccountAnsweredBadge')}</span>
+                  )}
+                </div>
+                <label className="flex items-start gap-2.5 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={hasBankAccount === false}
+                    disabled={savingBankAccount}
+                    onChange={(e) => saveBankAccount(!e.target.checked)}
+                    className="mt-0.5 w-4 h-4 shrink-0 accent-[#FF4D00]"
+                  />
+                  <span className="text-sm text-[#DDD]">{t('oeilCompte.payments.noBankAccountLabel')}</span>
+                </label>
+                {hasBankAccount === false && (
+                  <div className="mt-3 p-3 bg-yellow-500/10 border border-yellow-500/20 rounded-lg text-xs text-yellow-400">
+                    {t('oeilCompte.payments.alBaridInfo')}
+                  </div>
+                )}
+              </div>
             </div>
 
             {/* Disponibilités */}

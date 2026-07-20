@@ -1149,7 +1149,12 @@
       "balanceLabel": "Solde disponible",
       "readyToTransfer": "Prêt à virer",
       "zeroBalance": "0 MAD",
-      "withdrawButton": "Demander un virement →"
+      "withdrawButton": "Demander un virement →",
+      "bankAccountLabel": "Compte bancaire",
+      "noBankAccountLabel": "Je n'ai pas encore de compte bancaire",
+      "bankAccountAnsweredBadge": "✓ Répondu",
+      "bankAccountSavedToast": "Réponse enregistrée ✓",
+      "alBaridInfo": "Vous n'avez pas de compte bancaire ? Un compte Al Barid Bank (La Poste) est accepté — ouverture rapide et accessible partout au Maroc."
     },
     "availability": {
       "title": "Disponibilités",
