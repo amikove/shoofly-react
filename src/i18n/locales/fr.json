@@ -2313,7 +2313,9 @@
     "title": "Confirmation du paiement",
     "polling": {
       "title": "Vérification de votre paiement...",
-      "message": "Merci de patienter quelques secondes, ne fermez pas cette page."
+      "message": "Merci de patienter quelques secondes, ne fermez pas cette page.",
+      "cancelledTitle": "Paiement annulé",
+      "cancelledMessage": "Nous vérifions tout de même le statut auprès de votre banque, par précaution. Merci de patienter quelques secondes."
     },
     "success": {
       "title": "Paiement confirmé !",
@@ -2326,6 +2328,11 @@
       "errorTitle": "Erreur de paiement",
       "errorMessage": "Une erreur est survenue pendant le traitement de votre paiement. Aucune mission n'a été créée.",
       "button": "Voir mes paiements échoués"
+    },
+    "cancelled": {
+      "title": "Paiement annulé",
+      "message": "Vous avez annulé ce paiement. Aucune mission n'a été créée.",
+      "button": "Voir mes paiements"
     },
     "timeout": {
       "title": "Ça prend plus de temps que prévu",

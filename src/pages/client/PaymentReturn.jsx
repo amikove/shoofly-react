@@ -19,6 +19,9 @@ export default function PaymentReturn() {
   const [searchParams] = useSearchParams()
   const { setPending } = useNotif()
   const attemptId = searchParams.get('attemptId')
+  // Indice UX uniquement : sert à adapter le message affiché pendant l'attente, jamais à
+  // décider du résultat du paiement — voir le commentaire au-dessus du composant.
+  const isCancelHint = searchParams.get('result') === 'cancel'
 
   const [phase, setPhase] = useState('polling') // polling | charged | declined | error | timeout | invalid
   const [result, setResult] = useState(null)
@@ -75,8 +78,12 @@ export default function PaymentReturn() {
           {phase === 'polling' && (
             <>
               <div className="flex justify-center mb-4"><Spinner size="lg" /></div>
-              <h2 className="font-bold text-base mb-2">{t('paymentReturn.polling.title')}</h2>
-              <p className="text-sm text-[#AAA]">{t('paymentReturn.polling.message')}</p>
+              <h2 className="font-bold text-base mb-2">
+                {t(isCancelHint ? 'paymentReturn.polling.cancelledTitle' : 'paymentReturn.polling.title')}
+              </h2>
+              <p className="text-sm text-[#AAA]">
+                {t(isCancelHint ? 'paymentReturn.polling.cancelledMessage' : 'paymentReturn.polling.message')}
+              </p>
             </>
           )}
 
@@ -91,7 +98,18 @@ export default function PaymentReturn() {
             </>
           )}
 
-          {(phase === 'declined' || phase === 'error') && (
+          {isCancelHint && (phase === 'declined' || phase === 'error' || phase === 'timeout') && (
+            <>
+              <div className="w-12 h-12 rounded-xl bg-gray-500/10 flex items-center justify-center text-2xl mx-auto mb-4">🚫</div>
+              <h2 className="font-bold text-base mb-2">{t('paymentReturn.cancelled.title')}</h2>
+              <p className="text-sm text-[#AAA] mb-5">{t('paymentReturn.cancelled.message')}</p>
+              <button onClick={() => navigate('/client/paiements')} className="btn btn-primary w-full justify-center">
+                {t('paymentReturn.cancelled.button')}
+              </button>
+            </>
+          )}
+
+          {!isCancelHint && (phase === 'declined' || phase === 'error') && (
             <>
               <div className="w-12 h-12 rounded-xl bg-red-500/10 flex items-center justify-center text-2xl mx-auto mb-4">❌</div>
               <h2 className="font-bold text-base mb-2">{t(`paymentReturn.failure.${phase}Title`)}</h2>
@@ -102,7 +120,7 @@ export default function PaymentReturn() {
             </>
           )}
 
-          {phase === 'timeout' && (
+          {!isCancelHint && phase === 'timeout' && (
             <>
               <div className="w-12 h-12 rounded-xl bg-yellow-500/10 flex items-center justify-center text-2xl mx-auto mb-4">⏳</div>
               <h2 className="font-bold text-base mb-2">{t('paymentReturn.timeout.title')}</h2>
