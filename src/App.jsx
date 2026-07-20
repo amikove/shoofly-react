@@ -27,6 +27,8 @@ import AuditReportView from './pages/client/AuditReportView'
 import ClientMessagerie from './pages/shared/Messagerie'
 import ClientMesSignalements from './pages/shared/MesSignalements'
 import ClientMesTickets from './pages/shared/MesTickets'
+import ClientPaiements from './pages/client/Paiements'
+import PaymentReturn from './pages/client/PaymentReturn'
 
 // Oeil pages
 import OeilDashboard from './pages/oeil/Dashboard'
@@ -129,6 +131,10 @@ export default function App() {
       <Route path="/client/tickets" element={<RequireAuth allowedRoles={['client']}><ClientMesTickets /></RequireAuth>} />
       <Route path="/client/missions/:missionId/rapport" element={<RequireAuth allowedRoles={['client']}><AirbnbReportView /></RequireAuth>} />
       <Route path="/client/missions/:missionId/audit" element={<RequireAuth allowedRoles={['client']}><AuditReportView /></RequireAuth>} />
+      <Route path="/client/paiements" element={<RequireAuth allowedRoles={['client']}><ClientPaiements /></RequireAuth>} />
+
+      {/* Retour PayZone — successUrl/failureUrl/cancelUrl construites côté backend (src/services/payzone.js) */}
+      <Route path="/payment/return" element={<RequireAuth allowedRoles={['client']}><PaymentReturn /></RequireAuth>} />
 
       {/* Oeil */}
       <Route path="/oeil"           element={<RequireAuth allowedRoles={['oeil']}><OeilDashboard /></RequireAuth>} />

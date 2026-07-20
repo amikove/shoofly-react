@@ -176,6 +176,7 @@ useEffect(() => {
   const openWith = (mission) => {
     if (type === 'chat') setChatMission(mission)
     else if (type === 'interests_modal') setInterestsMission(mission)
+    else if (type === 'mission_detail') setDetailMission(mission)
   }
 
   if (found) {

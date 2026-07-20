@@ -1,9 +1,10 @@
 import { useState, useRef, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
-import { missionsAPI, usersAPI } from '../../api'
+import { missionsAPI, usersAPI, paymentsAPI } from '../../api'
 import { VILLES, VILLES_LIST } from '../../constants/villes'
 import { toast } from '../ui'
 import { useAuth } from '../../context/AuthContext'
+import { redirectToPaywall } from '../../utils/payzone'
 import Autocomplete from './Autocomplete'
 
 const MIN_PRICES = {
@@ -241,14 +242,22 @@ if (parseFloat(form.price) < minPrice) {
         if (promoResult.platform_amount) payload.platform_amount = promoResult.platform_amount
       }
 
-      const { data } = await missionsAPI.create(payload)
-      onCreated?.(data.mission)
-      onClose()
-    setForm({ title: '', address: '', city: '', quartier: '', price: '', description: '' })
-          setType('immobilier')
-          setSub('')
-          setPromoCode('')
-          setPromoResult(null)
+      // Prix résolu à 0 (code promo gratuit à 100%) : rien à payer, flux direct inchangé.
+      // Sinon : paiement réel requis, on passe par PayZone au lieu de créer la mission tout de suite.
+      if (Number(payload.price) === 0) {
+        const { data } = await missionsAPI.create(payload)
+        onCreated?.(data.mission)
+        onClose()
+        setForm({ title: '', address: '', city: '', quartier: '', price: '', description: '' })
+        setType('immobilier')
+        setSub('')
+        setPromoCode('')
+        setPromoResult(null)
+      } else {
+        const { data } = await paymentsAPI.init(payload)
+        redirectToPaywall(data.paywallUrl, data.payload, data.signature)
+        // Pas de reset/onClose ici : la page va être remplacée par la redirection vers le paywall PayZone.
+      }
     } catch (err) {
       toast(err.response?.data?.error || t('newMissionModal.errors.creationError'), 'error')
     } finally {

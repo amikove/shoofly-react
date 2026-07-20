@@ -20,6 +20,7 @@
     "messages": "Messages",
     "mesSignalements": "Mes signalements",
     "mesTickets": "Mes tickets",
+    "paiements": "Paiements",
     "lesOeils": "Les Œils",
     "compte": "Compte",
     "mesGains": "Mes gains",
@@ -791,7 +792,8 @@
       "quartierRequired": "Quartier obligatoire",
       "dateTimeRequired": "Date et heure de la mission obligatoires",
       "subcategoryRequired": "Veuillez sélectionner une sous-catégorie",
-      "creationError": "Erreur lors de la création"
+      "creationError": "Erreur lors de la création",
+      "paymentInitError": "Erreur lors de l'initialisation du paiement"
     }
   },
   "oeilProfileModal": {
@@ -2305,6 +2307,49 @@
       "in_progress": "En cours",
       "resolved": "Résolu",
       "dismissed": "Classé sans suite"
+    }
+  },
+  "paymentReturn": {
+    "title": "Confirmation du paiement",
+    "polling": {
+      "title": "Vérification de votre paiement...",
+      "message": "Merci de patienter quelques secondes, ne fermez pas cette page."
+    },
+    "success": {
+      "title": "Paiement confirmé !",
+      "message": "Votre paiement a été validé et votre mission a été créée avec succès.",
+      "button": "Voir ma mission"
+    },
+    "failure": {
+      "declinedTitle": "Paiement refusé",
+      "declinedMessage": "Votre paiement a été refusé par votre banque ou le prestataire de paiement. Aucune mission n'a été créée.",
+      "errorTitle": "Erreur de paiement",
+      "errorMessage": "Une erreur est survenue pendant le traitement de votre paiement. Aucune mission n'a été créée.",
+      "button": "Voir mes paiements échoués"
+    },
+    "timeout": {
+      "title": "Ça prend plus de temps que prévu",
+      "message": "La confirmation de votre paiement met plus de temps que d'habitude. Réessayez un peu plus tard depuis vos paiements échoués.",
+      "button": "Voir mes paiements"
+    },
+    "invalid": {
+      "title": "Paiement introuvable",
+      "message": "Nous n'avons pas pu retrouver cette tentative de paiement.",
+      "button": "Retour à l'accueil"
+    }
+  },
+  "paiements": {
+    "title": "Paiements échoués",
+    "emptyTitle": "Aucun paiement échoué",
+    "emptyDesc": "Toutes vos tentatives de paiement ont abouti. Rien à réessayer ici.",
+    "loadError": "Erreur lors du chargement de vos paiements",
+    "retryButton": "Réessayer le paiement",
+    "retrying": "Redirection...",
+    "retryError": "Erreur lors de la relance du paiement",
+    "status": {
+      "created": "Abandonné",
+      "declined": "Refusé",
+      "error": "Erreur"
     }
   },
   "adminAdvancedSettings": {

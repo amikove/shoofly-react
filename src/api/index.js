@@ -44,6 +44,14 @@ export const missionsAPI = {
   confirmPresence: (id) => api.post(`/api/missions/${id}/confirm-presence`),
 }
 
+// PAYMENTS (PayZone)
+export const paymentsAPI = {
+  init:           (data)       => api.post('/api/payments/payzone/init', data),
+  status:         (attemptId)  => api.get(`/api/payments/payzone/status/${attemptId}`),
+  failedAttempts: ()           => api.get('/api/payments/payzone/failed-attempts'),
+  retry:          (attemptId)  => api.post(`/api/payments/payzone/retry/${attemptId}`),
+}
+
 // USERS
 export const usersAPI = {
     oeils:            (params) => api.get('/api/users/oeils', { params }),
