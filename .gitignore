@@ -24,3 +24,7 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Rapports/scripts d'audit ad-hoc (même convention que backend/_audit/)
+_audit
+.claude/
