@@ -2400,6 +2400,10 @@
         "title": "Mission sans prestataire trouvé",
         "note": "L'admin est alerté si la mission attend depuis le premier délai ET que son créneau est encore éloigné d'au moins le second délai."
       },
+      "urgentWhatsappWaves": {
+        "title": "Notifications WhatsApp — missions urgentes",
+        "note": "Si la mission urgente n'a toujours pas d'Œil, une nouvelle vague de candidats est contactée par WhatsApp après ce délai, jusqu'à épuisement des Œils disponibles dans la ville."
+      },
       "overdue": {
         "title": "Mission active trop longtemps"
       },
@@ -2457,7 +2461,9 @@
       "response_time_max_valid_minutes": "Délai maximum valide (min)",
       "response_time_min_turns": "Nombre minimum de tours d'échange",
       "dashboard_stuck_pending_hours": "Missions \"bloquées\" après (h)",
-      "dashboard_low_reliability_threshold": "Seuil \"Œil à risque\" (score <)"
+      "dashboard_low_reliability_threshold": "Seuil \"Œil à risque\" (score <)",
+      "urgent_mission_whatsapp_batch_size": "Nombre d'Œils contactés par vague",
+      "urgent_mission_whatsapp_batch_delay_minutes": "Délai avant la vague suivante (min)"
     }
   }
 }

@@ -33,6 +33,8 @@ const ADVANCED_DEFAULTS = {
   response_time_min_turns: 3,
   dashboard_stuck_pending_hours: 24,
   dashboard_low_reliability_threshold: 70,
+  urgent_mission_whatsapp_batch_size: 10,
+  urgent_mission_whatsapp_batch_delay_minutes: 30,
 }
 
 // rate stockée en base comme fraction (0.5) — affichée en % dans le formulaire
@@ -45,6 +47,7 @@ const ADVANCED_GROUPS = [
   { key: 'clientValidation', category: 'missions',    fields: ['client_validation_hours'] },
   { key: 'scheduleConflict', category: 'missions',    fields: ['schedule_conflict_window_hours'] },
   { key: 'staleMission',     category: 'missions',    fields: ['stale_mission_hours', 'stale_mission_min_lead_hours'] },
+  { key: 'urgentWhatsappWaves', category: 'missions', fields: ['urgent_mission_whatsapp_batch_size', 'urgent_mission_whatsapp_batch_delay_minutes'] },
   { key: 'overdue',          category: 'missions',    fields: ['mission_overdue_verification_hours'] },
   { key: 'lateStart',        category: 'missions',    fields: ['late_start_alert_window_minutes', 'late_start_auto_transfer_minutes'] },
   { key: 'reminders',        category: 'missions',    fields: ['reminder_before_mission_minutes_early', 'reminder_before_mission_minutes_late'] },
