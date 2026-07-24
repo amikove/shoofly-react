@@ -138,13 +138,13 @@ export default function AdminParametres() {
           <div className="card">
             <h2 className="font-semibold text-sm mb-4">Tarification plateforme</h2>
             {[
-              ['Commission SHOOFLY (%)', 'commission', 'Ex: 20 pour 20%'],
-              ['Tarif minimum (MAD)',    'min_price',   'Ex: 80'],
-            ].map(([label, key, hint]) => (
+              ['Commission SHOOFLY (%)', 'commission'],
+              ['Tarif minimum (MAD)',    'min_price'],
+            ].map(([label, key]) => (
               <div key={key} className="mb-3">
                 <label className="label">{label}</label>
                 <input type="number" className="input" value={params[key]} onChange={set(key)} />
-                <p className="text-[11px] text-[#555] mt-1">{hint}</p>
+                <p className="text-[10px] text-[#FF4D00] mt-1">{t(`adminAdvancedSettings.basicExplanations.${key}`)}</p>
               </div>
             ))}
             <button onClick={save} disabled={saving} className="btn btn-primary mt-2 disabled:opacity-60">
@@ -153,7 +153,7 @@ export default function AdminParametres() {
           </div>
           <div className="card">
             <h2 className="font-semibold text-sm mb-4">🎁 Campagne bonus qualité 5 étoiles</h2>
-            <p className="text-[11px] text-[#555] mb-4">Bonus payé par Shoofly (non facturé au client) quand un client note une mission 5/5. Calculé sur le gain de l'Œil, pas sur le prix total de la mission.</p>
+            <p className="text-[10px] text-[#FF4D00] mb-4">{t('adminAdvancedSettings.basicExplanations.five_star_bonus_active')}</p>
             <label className="flex items-center gap-2 mb-3 cursor-pointer">
               <input type="checkbox" checked={fiveStarBonusActive} onChange={(e) => setFiveStarBonusActive(e.target.checked)} />
               <span className="text-sm">{fiveStarBonusActive ? 'Campagne active' : 'Campagne inactive'}</span>
@@ -161,7 +161,7 @@ export default function AdminParametres() {
             <div className="mb-3">
               <label className="label">Bonus (% du gain de l'Œil)</label>
               <input type="number" className="input" value={fiveStarBonusPercent} onChange={(e) => setFiveStarBonusPercent(e.target.value)} />
-              <p className="text-[11px] text-[#555] mt-1">Ex: 10 pour 10% du gain de l'Œil</p>
+              <p className="text-[10px] text-[#FF4D00] mt-1">{t('adminAdvancedSettings.basicExplanations.five_star_bonus_percent')}</p>
             </div>
             <button onClick={save} disabled={saving} className="btn btn-primary mt-2 disabled:opacity-60">
               {saving ? 'Sauvegarde...' : 'Enregistrer'}
@@ -193,7 +193,7 @@ export default function AdminParametres() {
                   <div key={group.key} className="mb-5 pb-5 border-b border-[#eee] last:border-b-0 last:mb-0 last:pb-0">
                     <h4 className="text-[12px] font-semibold mb-1">{t(`adminAdvancedSettings.groups.${group.key}.title`)}</h4>
                     {t(`adminAdvancedSettings.groups.${group.key}.note`, { defaultValue: '' }) && (
-                      <p className="text-[11px] text-[#555] mb-2">{t(`adminAdvancedSettings.groups.${group.key}.note`)}</p>
+                      <p className="text-[10px] text-[#FF4D00] mb-2">{t(`adminAdvancedSettings.groups.${group.key}.note`)}</p>
                     )}
                     <div className={group.fields.length > 1 ? 'grid grid-cols-2 gap-3' : ''}>
                       {group.fields.map((key) => (
@@ -206,6 +206,7 @@ export default function AdminParametres() {
                             value={advanced[key]}
                             onChange={setAdvancedField(key)}
                           />
+                          <p className="text-[10px] text-[#FF4D00] mt-1">{t(`adminAdvancedSettings.fieldExplanations.${key}`)}</p>
                         </div>
                       ))}
                     </div>

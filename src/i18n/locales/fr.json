@@ -2378,46 +2378,46 @@
     "groups": {
       "transferGrace": {
         "title": "Délai de grâce après transfert",
-        "note": "Temps laissé pour trouver un remplaçant avant que la mission ne soit annulée faute de prestataire."
+        "note": "Temps laissé pour trouver un remplaçant avant que la mission ne soit annulée faute de prestataire. Ex : 45 min pour une mission \"file d'attente\", 60 min pour les autres types."
       },
       "missionEdit": {
         "title": "Modification de mission — délai de réponse de l'Œil",
-        "note": "Le délai standard est réduit automatiquement si la mission a lieu avant le seuil ci-dessous."
+        "note": "Le délai standard est réduit automatiquement si la mission a lieu avant le seuil ci-dessous. Ex : mission dans 3h (< 4h) → 30 min pour répondre au lieu de 120."
       },
       "clientValidation": {
         "title": "Validation client & paiement",
-        "note": "⚠️ Cette valeur est utilisée à 3 endroits qui doivent rester synchronisés : fenêtre de réclamation, délai affiché au client, et déclenchement du paiement automatique de l'Œil."
+        "note": "⚠️ Cette valeur est utilisée à 3 endroits qui doivent rester synchronisés : fenêtre de réclamation, délai affiché au client, et déclenchement du paiement automatique de l'Œil. Ex : mission terminée à 9h → paiement automatique et fin de la fenêtre de réclamation à 21h si rien n'est signalé."
       },
       "scheduleConflict": {
         "title": "Conflit de créneau",
-        "note": "Écart minimum requis entre deux missions d'un même Œil pour éviter un chevauchement."
+        "note": "Écart minimum requis entre deux missions d'un même Œil pour éviter un chevauchement. Ex : une mission à 14h bloque toute autre mission du même Œil entre 10h et 18h."
       },
       "cooldowns": {
         "title": "Cooldown après transfert ou abandon",
-        "note": "Empêche l'Œil d'accepter une nouvelle mission immédiatement après avoir transféré/refusé une mission (délai court) ou abandonné une mission déjà en cours (délai aggravé, sans remplaçant trouvé)."
+        "note": "Empêche l'Œil d'accepter une nouvelle mission immédiatement après avoir transféré/refusé une mission (délai court) ou abandonné une mission déjà en cours (délai aggravé, sans remplaçant trouvé). Ex : 4h après un refus, 48h après un abandon en cours de mission."
       },
       "staleMission": {
         "title": "Mission sans prestataire trouvé",
-        "note": "L'admin est alerté si la mission attend depuis le premier délai ET que son créneau est encore éloigné d'au moins le second délai."
+        "note": "L'admin est alerté si la mission attend depuis le premier délai ET que son créneau est encore éloigné d'au moins le second délai. Ex : mission créée il y a 12h, toujours sans Œil, et dont le créneau est encore à plus de 4h."
       },
       "urgentWhatsappWaves": {
         "title": "Notifications WhatsApp — missions urgentes",
-        "note": "Si la mission urgente n'a toujours pas d'Œil, une nouvelle vague de candidats est contactée par WhatsApp après ce délai, jusqu'à épuisement des Œils disponibles dans la ville."
+        "note": "Si la mission urgente n'a toujours pas d'Œil, une nouvelle vague de candidats est contactée par WhatsApp après ce délai, jusqu'à épuisement des Œils disponibles dans la ville. Ex : 15 Œils éligibles → les 10 mieux classés contactés immédiatement, les 5 restants 30 min plus tard si la mission est toujours sans Œil."
       },
       "overdue": {
         "title": "Mission active trop longtemps"
       },
       "lateStart": {
         "title": "Retard au démarrage",
-        "note": "Séquence liée : alerte à l'Œil/l'admin au premier délai, puis transfert automatique au second (qui doit rester supérieur au premier)."
+        "note": "Séquence liée : alerte à l'Œil/l'admin au premier délai, puis transfert automatique au second (qui doit rester supérieur au premier). Ex : alerte à 30 min de retard, transfert automatique et pénalité à 60 min."
       },
       "reminders": {
         "title": "Rappels avant mission",
-        "note": "Notifications envoyées à l'Œil avant le début de sa mission (marge de ±10 min autour de chaque valeur)."
+        "note": "Notifications envoyées à l'Œil avant le début de sa mission (marge de ±10 min autour de chaque valeur). Ex : mission à 14h → rappels vers 12h puis 13h30."
       },
       "refund": {
         "title": "Remboursement à l'annulation",
-        "note": "Si le client annule après assignation à plus du seuil ci-dessous avant la mission → remboursement partiel au taux indiqué ; sinon aucun remboursement."
+        "note": "Si un client annule une mission de 300 MAD plus de 2h avant l'heure prévue, il est remboursé de 150 MAD (50%) ; moins de 2h avant, aucun remboursement."
       },
       "newOeil": {
         "title": "Badge \"Nouveau\""
@@ -2430,7 +2430,7 @@
       },
       "responseTime": {
         "title": "Calcul du temps de réponse",
-        "note": "Filtre le bruit : ignore les délais de réponse trop longs ou les Œils avec trop peu d'échanges pour être significatifs."
+        "note": "Filtre le bruit : ignore les délais de réponse trop longs ou les Œils avec trop peu d'échanges pour être significatifs. Ex : un délai de plus de 24h est ignoré, et sous 3 échanges aucune moyenne n'est affichée."
       },
       "dashboardAlerts": {
         "title": "Alertes du dashboard admin"
@@ -2464,6 +2464,41 @@
       "dashboard_low_reliability_threshold": "Seuil \"Œil à risque\" (score <)",
       "urgent_mission_whatsapp_batch_size": "Nombre d'Œils contactés par vague",
       "urgent_mission_whatsapp_batch_delay_minutes": "Délai avant la vague suivante (min)"
+    },
+    "fieldExplanations": {
+      "transfer_grace_minutes_queue": "Pour une mission \"file d'attente\" transférée, la cascade a 45 min pour trouver un remplaçant avant annulation et remboursement intégral du client.",
+      "transfer_grace_minutes_other": "Pour les autres types de mission, ce délai est de 60 min avant annulation automatique.",
+      "transfer_cooldown_hours": "Un Œil qui refuse une mission déjà assignée ne peut candidater à aucune autre pendant 4h.",
+      "abandon_during_mission_cooldown_hours": "Un Œil qui abandonne une mission déjà commencée (sans remplaçant trouvé) perd 100 MAD, 70 points de fiabilité, et ne peut candidater pendant 48h.",
+      "mission_edit_approval_minutes": "Si la mission a lieu dans plus de 4h, l'Œil a 120 min pour accepter ou refuser la modification du client.",
+      "mission_edit_approval_minutes_urgent": "Si la mission a lieu dans moins de 4h, ce délai de réponse tombe à 30 min.",
+      "mission_edit_urgent_threshold_hours": "En dessous de 4h avant le créneau, le délai réduit (30 min) s'applique au lieu du délai standard (120 min).",
+      "client_validation_hours": "Si le client ne réclame rien dans les 12h suivant la fin de la mission, l'Œil est payé automatiquement et la réclamation n'est plus possible.",
+      "schedule_conflict_window_hours": "Deux missions du même Œil prévues à moins de 4h d'écart sont bloquées comme conflit de créneau.",
+      "stale_mission_hours": "Une mission publiée depuis plus de 12h sans aucun Œil positionné déclenche une alerte admin.",
+      "stale_mission_min_lead_hours": "L'alerte n'est envoyée que si le créneau est encore à plus de 4h — inutile d'alerter pour une mission sur le point de commencer.",
+      "mission_overdue_verification_hours": "Une mission jamais marquée terminée alors que son créneau prévu date de plus de 24h déclenche une alerte \"à vérifier\".",
+      "late_start_alert_window_minutes": "30 min après l'heure prévue sans démarrage, l'Œil et l'admin reçoivent une alerte — sans pénalité à ce stade.",
+      "late_start_auto_transfer_minutes": "60 min après l'heure prévue, la mission est retirée à l'Œil (-100 MAD, -20 points de fiabilité) et relancée.",
+      "reminder_before_mission_minutes_early": "Pour une mission à 14h, ce rappel arrive vers 12h (marge ±10 min).",
+      "reminder_before_mission_minutes_late": "Pour la même mission, un second rappel arrive vers 13h30.",
+      "refund_partial_threshold_hours": "Une annulation client plus de 2h avant le créneau ouvre droit à un remboursement partiel ; en dessous, aucun remboursement.",
+      "refund_partial_rate": "Sur une mission à 300 MAD annulée à temps par le client, 150 MAD (50%) lui sont remboursés.",
+      "new_oeil_mission_threshold": "Sous 10 missions réalisées, l'Œil affiche le badge \"Nouveau\" : son score et sa note sont masqués aux clients (visibles par lui et l'admin).",
+      "reactivation_default_score": "Un Œil réintégré après suspension repart avec un score de 70 par défaut (un plancher de 55 s'applique de toute façon sous 10 missions).",
+      "ticket_auto_resolve_hours": "Un ticket non urgent sans réponse du client 72h après le dernier message de l'admin est clôturé automatiquement.",
+      "response_time_max_valid_minutes": "Un délai de réponse de plus de 24h (1440 min) — ex : un Œil qui répond après 3 jours — n'est pas compté dans sa moyenne.",
+      "response_time_min_turns": "Sous 3 échanges au total, le temps de réponse moyen de l'Œil n'est pas affiché, faute de données suffisantes.",
+      "dashboard_stuck_pending_hours": "Compte les missions encore sans Œil depuis plus de 24h, affiché comme alerte sur le dashboard admin.",
+      "dashboard_low_reliability_threshold": "Compte les Œils actifs dont le score de fiabilité est sous 70, affiché comme alerte sur le dashboard admin.",
+      "urgent_mission_whatsapp_batch_size": "Les 10 Œils les mieux classés (fiabilité puis note) de la ville sont contactés par WhatsApp dès la création de la mission urgente.",
+      "urgent_mission_whatsapp_batch_delay_minutes": "Si la mission urgente n'a toujours pas d'Œil 30 min après une vague, la vague suivante contacte les Œils restants."
+    },
+    "basicExplanations": {
+      "commission": "Ex: 20 pour 20% — sur une mission à 300 MAD, Shoofly prélève 60 MAD et l'Œil reçoit 240 MAD. Calcul figé à la création : changer ce taux n'affecte pas les missions déjà créées.",
+      "min_price": "Ex: 80 — ⚠️ réglage actuellement sans effet réel : le serveur n'impose aucun minimum, seul un prix ≥ 0 MAD est vérifié.",
+      "five_star_bonus_active": "Active ou coupe le bonus pour toutes les nouvelles notes 5★, immédiatement. Calculé sur le gain de l'Œil, pas sur le prix total de la mission. Désactivé par défaut.",
+      "five_star_bonus_percent": "Ex: 10 pour 10% du gain de l'Œil — sur un gain de 240 MAD, un Œil noté 5★ reçoit 24 MAD de bonus, payé par Shoofly."
     }
   }
 }
