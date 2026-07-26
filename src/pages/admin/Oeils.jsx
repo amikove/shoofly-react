@@ -120,8 +120,8 @@ export default function AdminOeils() {
                         </td>
                         <td>
                           <div className="flex gap-1">
-                            <button onClick={() => toggle(o.id)} className={`btn btn-ghost btn-sm ${o.is_active ? 'text-red-400' : 'text-green-400'}`}>
-                              {o.is_active ? 'Suspendre' : 'Activer'}
+                            <button onClick={() => toggle(o.id)} className={`btn btn-ghost btn-sm ${o.is_suspended ? 'text-green-400' : 'text-red-400'}`}>
+                              {o.is_suspended ? 'Activer' : 'Suspendre'}
                             </button>
                           </div>
                         </td>
