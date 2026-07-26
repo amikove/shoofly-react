@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, lazy, Suspense } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import { useAuth } from './context/AuthContext'
@@ -44,23 +44,26 @@ import OeilGains from './pages/oeil/Gains'
 
 
 
-// Admin pages
-import AdminDashboard  from './pages/admin/Dashboard'
-import AdminMissions   from './pages/admin/Missions'
-import AdminOeils      from './pages/admin/Oeils'
-import AdminClients    from './pages/admin/Clients'
-import AdminFraude     from './pages/admin/Fraude'
-import AdminReclamations from './pages/admin/Reclamations'
-import AdminMessagesSuspects from './pages/admin/MessagesSuspects'
-import AdminParametres from './pages/admin/Parametres'
-import AdminPromos from './pages/admin/AdminPromos'
-import AdminGestion from './pages/admin/AdminGestion'
 import CompteSuspendu from './pages/oeil/CompteSuspendu'
-import AdminFiabilite from './pages/admin/AdminFiabilite'
-import AdminProblemes from './pages/admin/AdminProblemes'
-import AdminTickets from './pages/admin/AdminTickets'
-import AdminFinance from './pages/admin/AdminFinance'
-import UserProfile from './pages/admin/UserProfile'
+
+// Admin pages — lazy-loaded : ces 15 pages (dont AdminDashboard, qui embarque toute la librairie
+// de graphiques `recharts`) ne sont jamais utilisées par un client/oeil, inutile de les faire
+// télécharger à tout le monde (audit perf 2026-07-26 — voir backend/_audit/RAPPORT_AUDIT_PERFORMANCE.md).
+const AdminDashboard  = lazy(() => import('./pages/admin/Dashboard'))
+const AdminMissions   = lazy(() => import('./pages/admin/Missions'))
+const AdminOeils      = lazy(() => import('./pages/admin/Oeils'))
+const AdminClients    = lazy(() => import('./pages/admin/Clients'))
+const AdminFraude     = lazy(() => import('./pages/admin/Fraude'))
+const AdminReclamations = lazy(() => import('./pages/admin/Reclamations'))
+const AdminMessagesSuspects = lazy(() => import('./pages/admin/MessagesSuspects'))
+const AdminParametres = lazy(() => import('./pages/admin/Parametres'))
+const AdminPromos = lazy(() => import('./pages/admin/AdminPromos'))
+const AdminGestion = lazy(() => import('./pages/admin/AdminGestion'))
+const AdminFiabilite = lazy(() => import('./pages/admin/AdminFiabilite'))
+const AdminProblemes = lazy(() => import('./pages/admin/AdminProblemes'))
+const AdminTickets = lazy(() => import('./pages/admin/AdminTickets'))
+const AdminFinance = lazy(() => import('./pages/admin/AdminFinance'))
+const UserProfile = lazy(() => import('./pages/admin/UserProfile'))
 
 
 // Route guard
@@ -110,6 +113,7 @@ export default function App() {
   return (
     <>
       <RouteTracker />
+      <Suspense fallback={<div className="min-h-screen flex items-center justify-center"><Spinner size="lg" /></div>}>
       <Routes>
       {/* Public */}
 
@@ -169,6 +173,7 @@ export default function App() {
 
       <Route path="*" element={<Navigate to="/" replace />} />
 </Routes>
+      </Suspense>
     </>
   )
 }
