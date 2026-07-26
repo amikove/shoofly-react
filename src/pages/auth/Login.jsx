@@ -23,15 +23,17 @@ export default function Login() {
   const { login } = useAuth()
   const navigate   = useNavigate()
   const [role, setRole]     = useState('client')
-  const [email, setEmail]   = useState('karim@gmail.com')
-  const [pwd, setPwd]       = useState('client123')
+  const [email, setEmail]   = useState(import.meta.env.DEV ? DEMO.client.email : '')
+  const [pwd, setPwd]       = useState(import.meta.env.DEV ? DEMO.client.pw : '')
   const [error, setError]   = useState('')
   const [loading, setLoading] = useState(false)
 
   const selectRole = (r) => {
     setRole(r)
-    setEmail(DEMO[r].email)
-    setPwd(DEMO[r].pw)
+    if (import.meta.env.DEV) {
+      setEmail(DEMO[r].email)
+      setPwd(DEMO[r].pw)
+    }
     setError('')
   }
 
@@ -133,13 +135,15 @@ export default function Login() {
             </Link>
           </div>
 
-          {/* Demo hint */}
-          <div className="mt-4 p-3 bg-[#222] rounded-lg text-[11px] text-[#AAA] leading-relaxed">
-            <strong className="text-white block mb-1">{t('login.demo.title')}</strong>
-            {t('login.demo.client', { email: DEMO.client.email, pw: DEMO.client.pw })}<br/>
-            {t('login.demo.oeil', { email: DEMO.oeil.email, pw: DEMO.oeil.pw })}<br/>
-            {t('login.demo.admin', { email: DEMO.admin.email, pw: DEMO.admin.pw })}
-          </div>
+          {/* Demo hint — dev only, never expose real/demo credentials in production */}
+          {import.meta.env.DEV && (
+            <div className="mt-4 p-3 bg-[#222] rounded-lg text-[11px] text-[#AAA] leading-relaxed">
+              <strong className="text-white block mb-1">{t('login.demo.title')}</strong>
+              {t('login.demo.client', { email: DEMO.client.email, pw: DEMO.client.pw })}<br/>
+              {t('login.demo.oeil', { email: DEMO.oeil.email, pw: DEMO.oeil.pw })}<br/>
+              {t('login.demo.admin', { email: DEMO.admin.email, pw: DEMO.admin.pw })}
+            </div>
+          )}
         </div>
       </div>
     </div>
