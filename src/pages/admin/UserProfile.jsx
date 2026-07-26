@@ -17,6 +17,14 @@ const fmtDate = (d, opts) => d ? new Date(d).toLocaleDateString('fr-FR', opts ||
 const fmtDateTime = (d) => d ? new Date(d).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : '—'
 const val = (v) => (v === null || v === undefined || v === '') ? 'Non renseigné' : v
 
+// Pour un Œil, is_active ne reflète plus que le blocage anti-fraude (POST /anti-fraud/block) —
+// la suspension admin/score passe désormais par is_suspended (reliability.is_suspended), qui
+// prime dans l'affichage pour éviter un badge "Actif" contradictoire avec "Suspendu".
+const statusBadge = (user, isOeil, reliability) => {
+  if (isOeil && reliability?.is_suspended) return { label: 'Suspendu', variant: 'red' }
+  return user.is_active ? { label: 'Actif', variant: 'green' } : { label: 'Inactif', variant: 'gray' }
+}
+
 const CLAIM_STATUS = {
   pending:         { label: 'En attente',                variant: 'yellow' },
   resolved_oeil:   { label: 'Résolue en faveur de l\'Œil', variant: 'green'  },
@@ -70,6 +78,7 @@ export default function UserProfile() {
   const { user, production, financial, problems, reliability } = data
   const isOeil = user.role === 'oeil'
   const tabs = isOeil ? [...TABS_BASE, TAB_FIABILITE] : TABS_BASE
+  const status = statusBadge(user, isOeil, reliability)
 
   return (
     <AppLayout>
@@ -83,8 +92,7 @@ export default function UserProfile() {
             <div className="flex items-center gap-2 flex-wrap">
               <h2 className="text-lg font-bold">{user.first_name} {user.last_name}</h2>
               <Badge variant={isOeil ? 'orange' : 'blue'}>{isOeil ? 'Œil' : 'Client'}</Badge>
-              <Badge variant={user.is_active ? 'green' : 'gray'}>{user.is_active ? 'Actif' : 'Inactif'}</Badge>
-              {isOeil && reliability?.is_suspended && <Badge variant="red">Suspendu</Badge>}
+              <Badge variant={status.variant}>{status.label}</Badge>
             </div>
             <p className="text-xs text-[#AAA] mt-1">
               📍 {val(user.city)}{user.quartier ? ` · ${user.quartier}` : ''} · {user.email}
@@ -104,7 +112,7 @@ export default function UserProfile() {
           ))}
         </div>
 
-        {tab === 'infos' && <InfosTab user={user} isOeil={isOeil} />}
+        {tab === 'infos' && <InfosTab user={user} isOeil={isOeil} reliability={reliability} />}
         {tab === 'production' && <ProductionTab production={production} isOeil={isOeil} page={page} setPage={setPage} />}
         {tab === 'financier' && <FinancierTab financial={financial} isOeil={isOeil} />}
         {tab === 'problemes' && <ProblemesTab problems={problems} />}
@@ -115,7 +123,8 @@ export default function UserProfile() {
 }
 
 // ═══ Onglet Infos personnelles ═══
-function InfosTab({ user, isOeil }) {
+function InfosTab({ user, isOeil, reliability }) {
+  const status = statusBadge(user, isOeil, reliability)
   return (
     <div className="card grid grid-cols-1 md:grid-cols-2 gap-4">
       <Field label="Prénom" value={user.first_name} />
@@ -126,7 +135,7 @@ function InfosTab({ user, isOeil }) {
       <Field label="Quartier" value={val(user.quartier)} />
       <Field label="Date de naissance" value={fmtDate(user.birth_date)} />
       <Field label="Date d'inscription" value={fmtDate(user.created_at)} />
-      <Field label="Statut" value={user.is_active ? 'Actif' : 'Inactif'} />
+      <Field label="Statut" value={status.label} />
       {!isOeil && <Field label="Profil" value={val(user.profil)} />}
       {isOeil && <Field label="Situation" value={val(user.situation)} />}
       {isOeil && <Field label="Motivation" value={val(user.motivation)} />}
