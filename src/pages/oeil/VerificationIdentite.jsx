@@ -52,7 +52,7 @@ export default function VerificationIdentite() {
           <div className="text-5xl mb-4">⏳</div>
           <h2 className="font-bold text-xl mb-2">{t('verificationIdentite.successTitle')}</h2>
           <p className="text-[#AAA] text-sm max-w-xs">{t('verificationIdentite.successDesc')}</p>
-          <button onClick={() => navigate('/oeil/dashboard')} className="btn btn-primary mt-6">{t('verificationIdentite.backToDashboard')}</button>
+          <button onClick={() => navigate('/oeil')} className="btn btn-primary mt-6">{t('verificationIdentite.backToDashboard')}</button>
         </div>
       </AppLayout>
     )
