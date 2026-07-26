@@ -62,9 +62,12 @@ export default function AppLayout({ children }) {
 
   const toggleLang = () => i18n.changeLanguage(i18n.language === 'ar' ? 'fr' : 'ar')
 
-  if (user?.role === 'oeil' && user?.is_suspended && location !== '/oeil/suspendu') {
-    navigate('/oeil/suspendu')
-  }
+  useEffect(() => {
+    if (user?.role === 'oeil' && user?.is_suspended && location !== '/oeil/suspendu') {
+      navigate('/oeil/suspendu')
+    }
+  }, [user?.role, user?.is_suspended, location, navigate])
+
   const [isAvail, setIsAvail] = useState(true)
 
   const [unreadCount, setUnreadCount] = useState(0)
