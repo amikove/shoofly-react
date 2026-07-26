@@ -5,6 +5,12 @@ import Topbar from '../../components/layout/Topbar'
 import { reliabilityAPI } from '../../api'
 import { Spinner, toast } from '../../components/ui'
 
+// Seule raison ecrite par le backend pour une suspension automatique liee au score
+// (reliabilityScore.js, checkAndUpdateSuspension). Tout suspended_reason different
+// (aujourd'hui uniquement 'Suspension administrative', users.js toggle-active) vient
+// d'une decision admin sans rapport avec le score.
+const SCORE_SUSPENSION_REASON = 'Score de fiabilité inférieur à 50%'
+
 export default function CompteSuspendu() {
   const { t } = useTranslation()
   const [data, setData]       = useState(null)
@@ -42,6 +48,8 @@ export default function CompteSuspendu() {
     </AppLayout>
   )
 
+  const isScoreSuspension = data?.suspended_reason === SCORE_SUSPENSION_REASON
+
   return (
     <AppLayout>
       <Topbar title={t('compteSuspendu.title')} />
@@ -51,41 +59,55 @@ export default function CompteSuspendu() {
           <div className="flex items-center gap-3 mb-4">
             <div className="w-12 h-12 rounded-xl bg-red-500/10 flex items-center justify-center text-2xl">🔴</div>
             <div>
-              <p className="font-bold text-base">{t('compteSuspendu.heading')}</p>
-              <p className="text-xs text-[#AAA]">{t('compteSuspendu.reliabilityScore', { score: data?.score })}</p>
+              <p className="font-bold text-base">{isScoreSuspension ? t('compteSuspendu.heading') : t('compteSuspendu.adminHeading')}</p>
+              {isScoreSuspension && (
+                <p className="text-xs text-[#AAA]">{t('compteSuspendu.reliabilityScore', { score: data?.score })}</p>
+              )}
             </div>
           </div>
-          <div className="bg-[#222] rounded-xl p-3">
-            <p className="text-xs text-[#AAA]">
-              {t('compteSuspendu.scoreBelowThreshold')}
-              {data?.suspended_at && ` ${t('compteSuspendu.suspendedSince', { date: new Date(data.suspended_at).toLocaleDateString('fr-FR') })}`}
-            </p>
-          </div>
-        </div>
-
-        {/* Historique détaillé */}
-        <div className="card mb-6">
-          <p className="font-semibold text-sm mb-3">{t('compteSuspendu.historySummary')}</p>
-          {data?.events?.length === 0 ? (
-            <p className="text-xs text-[#555] text-center py-4">{t('compteSuspendu.noEvents')}</p>
+          {isScoreSuspension ? (
+            <div className="bg-[#222] rounded-xl p-3">
+              <p className="text-xs text-[#AAA]">
+                {t('compteSuspendu.scoreBelowThreshold')}
+                {data?.suspended_at && ` ${t('compteSuspendu.suspendedSince', { date: new Date(data.suspended_at).toLocaleDateString('fr-FR') })}`}
+              </p>
+            </div>
           ) : (
-            <div className="space-y-2 max-h-64 overflow-y-auto">
-              {data?.events?.map((e, i) => (
-                <div key={i} className={`flex items-start justify-between gap-3 p-2.5 rounded-xl ${
-                  e.is_grave ? 'bg-red-500/5 border border-red-500/10' : 'bg-[#222]'
-                }`}>
-                  <div>
-                    <p className="text-xs text-white/80">{e.reason}</p>
-                    <p className="text-[10px] text-[#555] mt-0.5">{new Date(e.created_at).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' })}</p>
-                  </div>
-                  <span className={`text-xs font-bold whitespace-nowrap ${e.points >= 0 ? 'text-green-400' : 'text-red-400'}`}>
-                    {t('compteSuspendu.pointsValue', { value: `${e.points >= 0 ? '+' : ''}${e.points}` })}
-                  </span>
-                </div>
-              ))}
+            <div className="bg-[#222] rounded-xl p-3">
+              <p className="text-[10px] text-[#777] mb-1">{t('compteSuspendu.adminReasonLabel')}</p>
+              <p className="text-xs text-white/80">{data?.suspended_reason}</p>
+              {data?.suspended_at && (
+                <p className="text-xs text-[#AAA] mt-2">{t('compteSuspendu.suspendedSince', { date: new Date(data.suspended_at).toLocaleDateString('fr-FR') })}</p>
+              )}
             </div>
           )}
         </div>
+
+        {/* Historique détaillé — n'a de sens que pour une suspension liée au score */}
+        {isScoreSuspension && (
+          <div className="card mb-6">
+            <p className="font-semibold text-sm mb-3">{t('compteSuspendu.historySummary')}</p>
+            {data?.events?.length === 0 ? (
+              <p className="text-xs text-[#555] text-center py-4">{t('compteSuspendu.noEvents')}</p>
+            ) : (
+              <div className="space-y-2 max-h-64 overflow-y-auto">
+                {data?.events?.map((e, i) => (
+                  <div key={i} className={`flex items-start justify-between gap-3 p-2.5 rounded-xl ${
+                    e.is_grave ? 'bg-red-500/5 border border-red-500/10' : 'bg-[#222]'
+                  }`}>
+                    <div>
+                      <p className="text-xs text-white/80">{e.reason}</p>
+                      <p className="text-[10px] text-[#555] mt-0.5">{new Date(e.created_at).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' })}</p>
+                    </div>
+                    <span className={`text-xs font-bold whitespace-nowrap ${e.points >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                      {t('compteSuspendu.pointsValue', { value: `${e.points >= 0 ? '+' : ''}${e.points}` })}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
 
         {/* Demandes précédentes avec réponses admin */}
         {data?.review_requests?.length > 0 && (
