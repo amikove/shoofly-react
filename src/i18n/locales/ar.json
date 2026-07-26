@@ -1215,7 +1215,7 @@
     "messageTooShortError": "فصّل وضعيتك (10 أحرف على الأقل)",
     "requestSentToast": "تم إرسال الطلب ✓",
     "genericError": "خطأ",
-    "heading": "حسابك الإداري — حساب معلّق",
+    "heading": "حساب معلّق",
     "adminHeading": "تعليق إداري",
     "reliabilityScore": "درجة الموثوقية: {{score}}%",
     "scoreBelowThreshold": "انخفضت درجة موثوقيتك دون الحد الأدنى المطلوب لقبول المهام.",
@@ -1249,7 +1249,7 @@
       "loadError": "خطأ في التحميل",
       "saved": "تم الحفظ ✓",
       "saveError": "خطأ في الحفظ",
-      "missingFields": "⚠️ حقول ناقصة ({{count}}) — مرر لأسفل لإكمال الجميع",
+      "missingFields": "⚠️ {{count}} حقول ناقصة — الأقسام المطلوب إكمالها: {{sections}}",
       "submitted": "تم إرسال التقرير ✅",
       "submitError": "خطأ في الإرسال"
     },
@@ -1439,7 +1439,7 @@
       "loadError": "خطأ في التحميل",
       "saved": "تم الحفظ ✓",
       "saveError": "خطأ في الحفظ",
-      "missingFields": "⚠️ حقول ناقصة ({{count}}) — مرر لأسفل لإكمال الجميع",
+      "missingFields": "⚠️ {{count}} حقول ناقصة — الأقسام المطلوب إكمالها: {{sections}}",
       "submitted": "تم إرسال التقرير! 🎉",
       "submitError": "خطأ في الإرسال"
     },

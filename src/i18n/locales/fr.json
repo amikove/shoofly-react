@@ -1248,7 +1248,7 @@
       "loadError": "Erreur chargement",
       "saved": "Sauvegardé ✓",
       "saveError": "Erreur sauvegarde",
-      "missingFields": "⚠️ Champs manquants ({{count}}) — faites défiler pour tout compléter",
+      "missingFields": "⚠️ {{count}} champs manquants — sections à compléter : {{sections}}",
       "submitted": "Rapport soumis ✅",
       "submitError": "Erreur soumission"
     },
@@ -1438,7 +1438,7 @@
       "loadError": "Erreur chargement",
       "saved": "Sauvegardé ✓",
       "saveError": "Erreur sauvegarde",
-      "missingFields": "⚠️ Champs manquants ({{count}}) — faites défiler pour tout compléter",
+      "missingFields": "⚠️ {{count}} champs manquants — sections à compléter : {{sections}}",
       "submitted": "Rapport soumis ! 🎉",
       "submitError": "Erreur soumission"
     },
@@ -1917,7 +1917,7 @@
     "assignedByAdmin": "{{oeilName}} a été assigné par l'admin."
   },
   "statusBadge": {
-    "active": "Live",
+    "active": "En cours",
     "assigned": "Assigné",
     "enRoute": "En route",
     "pending": "En attente",

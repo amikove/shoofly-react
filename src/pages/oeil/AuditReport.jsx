@@ -287,7 +287,8 @@ export default function AuditReport() {
   const submit = async () => {
     const missing = validateForm()
     if (missing.length > 0) {
-      toast(t('oeilAuditReport.toasts.missingFields', { count: missing.length }), 'error')
+      const sections = [...new Set(missing.map((m) => m.match(/^S(\d+)/)?.[1]).filter(Boolean))]
+      toast(t('oeilAuditReport.toasts.missingFields', { count: missing.length, sections: sections.join(', ') }), 'error')
       return
     }
     if (!window.confirm(t('oeilAuditReport.confirmSubmit'))) return
