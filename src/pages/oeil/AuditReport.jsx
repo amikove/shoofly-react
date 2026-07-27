@@ -212,10 +212,20 @@ export default function AuditReport() {
       .finally(() => setLoading(false))
   }, [missionId])
 
+  // Sauvegarde automatique toutes les 30s — revérifie le statut réel côté serveur avant
+  // chaque tick : si une vraie soumission a eu lieu ailleurs (autre onglet/appareil) pendant
+  // que cet onglet restait sur submitted=false, on ne doit jamais renvoyer submitted:false
+  // par-dessus (le backend fait un UPDATE inconditionnel, il n'y a pas de "conserver la
+  // valeur existante" côté serveur si le champ est omis).
   useEffect(() => {
     if (submitted) return
     const interval = setInterval(() => {
-      reportsAPI.save(missionId, data, false).catch(() => {})
+      reportsAPI.get(missionId)
+        .then(({ data: current }) => {
+          if (current.report?.submitted) { setSubmitted(true); return }
+          return reportsAPI.save(missionId, data, false)
+        })
+        .catch(() => {})
     }, 30000)
     return () => clearInterval(interval)
   }, [data, missionId, submitted])
