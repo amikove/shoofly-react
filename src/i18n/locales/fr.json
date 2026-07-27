@@ -1905,7 +1905,19 @@
     "staleMissionAdminTitle": "⏳ Mission sans Œil depuis 12h",
     "staleMissionAdminBody": "Aucun Œil n'a encore été trouvé pour \"{{missionTitle}}\", en attente depuis plus de 12h.",
     "staleMissionClientTitle": "💡 Toujours aucun Œil pour votre mission",
-    "staleMissionClientBody": "Votre mission \"{{missionTitle}}\" n'a pas encore trouvé d'Œil après 12h. Augmenter le budget peut attirer plus de candidats. Consultez votre mission pour l'ajuster."
+    "staleMissionClientBody": "Votre mission \"{{missionTitle}}\" n'a pas encore trouvé d'Œil après 12h. Augmenter le budget peut attirer plus de candidats. Consultez votre mission pour l'ajuster.",
+    "editRequestPendingOeilTitle": "✏️ Modification proposée",
+    "editRequestPendingOeilBody": "Le client propose une modification sur \"{{missionTitle}}\". Vous avez {{delayLabel}} pour répondre.",
+    "editRequestApprovedClientTitle": "✅ Modification acceptée",
+    "editRequestApprovedClientBody": "L'Œil a accepté votre demande de modification sur \"{{missionTitle}}\".",
+    "editRequestRejectedClientTitle": "Mission remise en recherche",
+    "editRequestRejectedClientBody": "L'Œil n'a pas pu donner suite à votre demande de modification sur \"{{missionTitle}}\". Nous recherchons un nouvel Œil, sans frais ni pénalité pour vous.",
+    "editRequestExpiredClientTitle": "Mission remise en recherche",
+    "editRequestExpiredClientBody": "L'Œil n'a pas répondu à temps à votre demande de modification sur \"{{missionTitle}}\". Nous recherchons un nouvel Œil, sans frais ni pénalité pour vous.",
+    "missionUrgentBroadenedTitle": "🔎 Recherche élargie",
+    "missionUrgentBroadenedBody": "Nous élargissons la recherche d'un remplaçant pour \"{{missionTitle}}\" à tous les Œils disponibles.",
+    "replacementConfirmedClientTitle": "✅ Remplaçant trouvé",
+    "replacementConfirmedClientBody": "Un remplaçant a confirmé sa disponibilité pour \"{{missionTitle}}\"."
   },
   "systemMessage": {
     "oeilAccepted": "{{oeilName}} a accepté la mission.",
@@ -2209,6 +2221,7 @@
       "verification": "Vérification",
       "securite": "Sécurité",
       "assistanceTechnique": "Assistance technique",
+      "assistance_technique": "Assistance technique",
       "reclamation": "Réclamation",
       "suggestion": "Suggestions",
       "autre": "Autre"
@@ -2346,6 +2359,7 @@
     "retryError": "Erreur lors de la relance du paiement",
     "status": {
       "created": "Abandonné",
+      "charged": "Payé",
       "declined": "Refusé",
       "error": "Erreur"
     }

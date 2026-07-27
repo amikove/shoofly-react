@@ -1904,7 +1904,19 @@
     "staleMissionAdminTitle": "⏳ مهمة بدون عين منذ 12 ساعة",
     "staleMissionAdminBody": "لم يُعثر بعد على عين لمهمة \"{{missionTitle}}\"، وهي في الانتظار منذ أكثر من 12 ساعة.",
     "staleMissionClientTitle": "💡 لا تزال مهمتك بدون عين",
-    "staleMissionClientBody": "مهمتك \"{{missionTitle}}\" لم تجد بعد عينًا بعد مرور 12 ساعة. زيادة الميزانية قد تجذب المزيد من المرشحين. تحقق من مهمتك لتعديلها."
+    "staleMissionClientBody": "مهمتك \"{{missionTitle}}\" لم تجد بعد عينًا بعد مرور 12 ساعة. زيادة الميزانية قد تجذب المزيد من المرشحين. تحقق من مهمتك لتعديلها.",
+    "editRequestPendingOeilTitle": "✏️ تم اقتراح تعديل",
+    "editRequestPendingOeilBody": "اقترح العميل تعديلاً على مهمة \"{{missionTitle}}\". أمامك {{delayLabel}} للرد.",
+    "editRequestApprovedClientTitle": "✅ تم قبول التعديل",
+    "editRequestApprovedClientBody": "قبلت العين الميدانية طلب التعديل الخاص بمهمة \"{{missionTitle}}\".",
+    "editRequestRejectedClientTitle": "إعادة البحث عن عين ميدانية",
+    "editRequestRejectedClientBody": "لم تتمكن العين الميدانية من تلبية طلب التعديل الخاص بمهمة \"{{missionTitle}}\". نبحث عن عين ميدانية جديدة، دون أي تكلفة أو غرامة عليك.",
+    "editRequestExpiredClientTitle": "إعادة البحث عن عين ميدانية",
+    "editRequestExpiredClientBody": "لم ترد العين الميدانية في الوقت المحدد على طلب التعديل الخاص بمهمة \"{{missionTitle}}\". نبحث عن عين ميدانية جديدة، دون أي تكلفة أو غرامة عليك.",
+    "missionUrgentBroadenedTitle": "🔎 توسيع نطاق البحث",
+    "missionUrgentBroadenedBody": "نقوم بتوسيع نطاق البحث عن بديل لمهمة \"{{missionTitle}}\" ليشمل جميع العيون الميدانية المتاحة.",
+    "replacementConfirmedClientTitle": "✅ تم إيجاد بديل",
+    "replacementConfirmedClientBody": "أكد بديل توفره لمهمة \"{{missionTitle}}\"."
   },
   "systemMessage": {
     "oeilAccepted": "قبل {{oeilName}} المهمة.",
@@ -2208,6 +2220,7 @@
       "verification": "التحقق",
       "securite": "الأمان",
       "assistanceTechnique": "الدعم التقني",
+      "assistance_technique": "الدعم التقني",
       "reclamation": "شكوى",
       "suggestion": "اقتراحات",
       "autre": "أخرى"
@@ -2345,6 +2358,7 @@
     "retryError": "خطأ أثناء إعادة محاولة الدفع",
     "status": {
       "created": "متروكة",
+      "charged": "مدفوعة",
       "declined": "مرفوضة",
       "error": "خطأ"
     }
