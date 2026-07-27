@@ -32,8 +32,17 @@ export default function AdminOeils() {
 
   useEffect(() => { load() }, [])
 
-  const toggle = async (id) => {
-    try { await adminAPI.toggleActive(id); load(); toast('Statut modifié', 'info') }
+  const toggle = async (id, isSuspended) => {
+    let reason
+    if (!isSuspended) {
+      // Suspension (pas réactivation) : demande la raison. Annulation de la popup = on
+      // n'envoie aucune requête, aucune suspension. Texte vide = requête envoyée quand même,
+      // sans le champ reason (le backend applique son repli par défaut).
+      const input = window.prompt('Pourquoi suspendez-vous ce compte ?')
+      if (input === null) return
+      reason = input.trim() || undefined
+    }
+    try { await adminAPI.toggleActive(id, reason ? { reason } : undefined); load(); toast('Statut modifié', 'info') }
     catch { toast('Erreur', 'error') }
   }
 
@@ -120,7 +129,7 @@ export default function AdminOeils() {
                         </td>
                         <td>
                           <div className="flex gap-1">
-                            <button onClick={() => toggle(o.id)} className={`btn btn-ghost btn-sm ${o.is_suspended ? 'text-green-400' : 'text-red-400'}`}>
+                            <button onClick={() => toggle(o.id, o.is_suspended)} className={`btn btn-ghost btn-sm ${o.is_suspended ? 'text-green-400' : 'text-red-400'}`}>
                               {o.is_suspended ? 'Activer' : 'Suspendre'}
                             </button>
                           </div>
