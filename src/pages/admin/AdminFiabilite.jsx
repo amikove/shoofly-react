@@ -397,9 +397,11 @@ function ScoresTab() {
                       </span>
                     </td>
                     <td>
-                      {o.is_suspended
-                        ? <span className="badge badge-red">Suspendu</span>
-                        : <span className="badge badge-green">Actif</span>}
+                      {!o.is_active
+                        ? <span className="badge badge-red">🚫 Bloqué (anti-fraude)</span>
+                        : o.is_suspended
+                          ? <span className="badge badge-red">Suspendu</span>
+                          : <span className="badge badge-green">Actif</span>}
                     </td>
                   </tr>
                 ))}
