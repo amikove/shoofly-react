@@ -2340,8 +2340,12 @@
     },
     "timeout": {
       "title": "Ça prend plus de temps que prévu",
-      "message": "La confirmation de votre paiement met plus de temps que d'habitude. Réessayez un peu plus tard depuis vos paiements échoués.",
-      "button": "Voir mes paiements"
+      "message": "Nous n'avons pas pu confirmer votre paiement à temps. Cela ne veut pas dire qu'il a échoué : vérifiez vos missions, ou contactez le support si besoin.",
+      "button": "Voir mes paiements",
+      "missionsButton": "Voir mes missions",
+      "recheckButton": "Vérifier à nouveau",
+      "stillPending": "Toujours pas de confirmation pour le moment. Réessayez un peu plus tard.",
+      "recheckError": "Impossible de vérifier pour le moment. Réessayez."
     },
     "invalid": {
       "title": "Paiement introuvable",

@@ -4,7 +4,7 @@ import { useSearchParams, useNavigate } from 'react-router-dom'
 import AppLayout from '../../components/layout/AppLayout'
 import Topbar from '../../components/layout/Topbar'
 import { paymentsAPI } from '../../api'
-import { Spinner } from '../../components/ui'
+import { Spinner, toast } from '../../components/ui'
 import { useNotif } from '../../context/NotifContext'
 
 const POLL_INTERVAL_MS = 3000
@@ -25,6 +25,7 @@ export default function PaymentReturn() {
 
   const [phase, setPhase] = useState('polling') // polling | charged | declined | error | timeout | invalid
   const [result, setResult] = useState(null)
+  const [rechecking, setRechecking] = useState(false)
 
   useEffect(() => {
     if (!attemptId) { setPhase('invalid'); return }
@@ -69,6 +70,25 @@ export default function PaymentReturn() {
     navigate('/client/missions')
   }
 
+  // Re-vérification manuelle depuis l'état "timeout" : le webhook PayZone peut arriver après
+  // la fenêtre de polling (90s) sans que ça veuille dire que le paiement a échoué — seul un
+  // nouvel appel à /status fait foi, jamais une supposition basée sur l'attente écoulée.
+  const recheck = () => {
+    if (!attemptId || rechecking) return
+    setRechecking(true)
+    paymentsAPI.status(attemptId)
+      .then(({ data }) => {
+        if (data.status === 'charged' || data.status === 'declined' || data.status === 'error') {
+          setResult(data)
+          setPhase(data.status)
+        } else {
+          toast(t('paymentReturn.timeout.stillPending'), 'info')
+        }
+      })
+      .catch(() => toast(t('paymentReturn.timeout.recheckError'), 'error'))
+      .finally(() => setRechecking(false))
+  }
+
   return (
     <AppLayout>
       <Topbar title={t('paymentReturn.title')} />
@@ -98,7 +118,7 @@ export default function PaymentReturn() {
             </>
           )}
 
-          {isCancelHint && (phase === 'declined' || phase === 'error' || phase === 'timeout') && (
+          {isCancelHint && (phase === 'declined' || phase === 'error') && (
             <>
               <div className="w-12 h-12 rounded-xl bg-gray-500/10 flex items-center justify-center text-2xl mx-auto mb-4">🚫</div>
               <h2 className="font-bold text-base mb-2">{t('paymentReturn.cancelled.title')}</h2>
@@ -120,14 +140,26 @@ export default function PaymentReturn() {
             </>
           )}
 
-          {!isCancelHint && phase === 'timeout' && (
+          {/* Statut jamais confirmé après 90s de polling — le webhook peut encore arriver,
+              ne jamais affirmer qu'aucune mission n'a été créée. S'applique que le client ait
+              ou non tenté d'annuler côté PayZone (isCancelHint) : dans les deux cas la vraie
+              réponse serveur reste inconnue à ce stade. */}
+          {phase === 'timeout' && (
             <>
               <div className="w-12 h-12 rounded-xl bg-yellow-500/10 flex items-center justify-center text-2xl mx-auto mb-4">⏳</div>
               <h2 className="font-bold text-base mb-2">{t('paymentReturn.timeout.title')}</h2>
               <p className="text-sm text-[#AAA] mb-5">{t('paymentReturn.timeout.message')}</p>
-              <button onClick={() => navigate('/client/paiements')} className="btn btn-primary w-full justify-center">
-                {t('paymentReturn.timeout.button')}
-              </button>
+              <div className="flex flex-col gap-2">
+                <button onClick={recheck} disabled={rechecking} className="btn btn-primary w-full justify-center disabled:opacity-50">
+                  {rechecking ? '...' : t('paymentReturn.timeout.recheckButton')}
+                </button>
+                <button onClick={() => navigate('/client/missions')} className="btn btn-ghost w-full justify-center">
+                  {t('paymentReturn.timeout.missionsButton')}
+                </button>
+                <button onClick={() => navigate('/client/paiements')} className="btn btn-ghost w-full justify-center">
+                  {t('paymentReturn.timeout.button')}
+                </button>
+              </div>
             </>
           )}
 
