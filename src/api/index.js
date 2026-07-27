@@ -17,6 +17,7 @@ export const missionsAPI = {
   accept:   (id)     => api.post(`/api/missions/${id}/accept`),
   interest:  (id)    => api.post(`/api/missions/${id}/interest`),
   interests: (id)    => api.get(`/api/missions/${id}/interests`),
+  assignableOeils: (id) => api.get(`/api/missions/${id}/assignable-oeils`),
   hire:      (id, oeilId)   => api.post(`/api/missions/${id}/hire/${oeilId}`),
   refuse:   (id, ignore = false) => api.post(`/api/missions/${id}/refuse`, { ignore }),
   status:   (id, data) => api.post(`/api/missions/${id}/status`, data),

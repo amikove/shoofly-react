@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import AppLayout from '../../components/layout/AppLayout'
 import Topbar from '../../components/layout/Topbar'
-import { missionsAPI, adminAPI, usersAPI } from '../../api'
+import { missionsAPI, adminAPI } from '../../api'
 import { StatusBadge, Spinner, EmptyState, toast, Pagination } from '../../components/ui'
 
 export default function AdminMissions() {
@@ -19,7 +19,7 @@ export default function AdminMissions() {
     const [assigning, setAssigning]     = useState(false)
     const [cancelModal, setCancelModal] = useState(null)
     const [cancelling, setCancelling]   = useState(false)
-    const [overrideWarningModal, setOverrideWarningModal] = useState(null) // message à confirmer avant affectation forcée
+    const [overrideWarningModal, setOverrideWarningModal] = useState(null) // { message, reason } à confirmer avant affectation forcée (suspendu/bloqué proactif, ou 409 réactif ex. cooldown de transfert)
 
     const doCancel = async (clientAtFault) => {
       setCancelling(true)
@@ -75,28 +75,65 @@ export default function AdminMissions() {
     setSelectedOeil('')
     setOeilSearch('')
     try {
-      const { data } = await usersAPI.oeils({ verified: true, limit: 50 })
+      const { data } = await missionsAPI.assignableOeils(mission.id)
       setOeils(data.oeils || [])
     } catch { toast('Erreur chargement Œils', 'error') }
   }
 
-const doAssign = async (overrideWarning = false) => {
+const doAssign = async (overrideWarning = false, overrideReason = '') => {
       if (!selectedOeil) { toast('Sélectionnez un Œil', 'error'); return }
       setAssigning(true)
       try {
-        await missionsAPI.assignAdmin(assignModal.id, { oeil_id: selectedOeil, override_warning: overrideWarning })
+        await missionsAPI.assignAdmin(assignModal.id, {
+          oeil_id: selectedOeil,
+          override_warning: overrideWarning,
+          override_reason: overrideReason || undefined,
+        })
         toast('Mission assignée ✓', 'success')
         setAssignModal(null)
         load()
       } catch (err) {
         if (err.response?.status === 409 && err.response?.data?.requires_confirmation) {
           setAssigning(false)
-          setOverrideWarningModal(err.response.data.error)
+          setOverrideWarningModal({ message: err.response.data.error, reason: overrideReason })
           return
         }
       console.error('Assign error:', err)
       toast(err.response?.data?.error || err.message || 'Erreur', 'error')
     } finally { setAssigning(false) }
+  }
+
+  // Priorité d'affichage (état le plus sévère en premier), même logique que le badge
+  // déjà ajouté dans AdminFiabilite.jsx (commit 0684179) : is_active=false > is_suspended >
+  // is_verified=false > is_available=false > conflit de créneau > éligible. Les 2 premiers
+  // sont overridable (confirmation admin) ; les 3 suivants ne le sont jamais (bouton désactivé).
+  const oeilEligibility = (o) => {
+    if (!o.is_active) return { severity: 'blocked', badgeClass: 'badge-red', label: '🚫 Bloqué (anti-fraude)' }
+    if (o.is_suspended) return { severity: 'blocked', badgeClass: 'badge-red', label: 'Suspendu', reason: o.suspended_reason }
+    if (!o.is_verified) return { severity: 'ineligible', badgeClass: 'badge-yellow', label: 'Non vérifié', explain: "Cet Œil n'est pas encore vérifié — impossible de l'assigner." }
+    if (!o.is_available) return { severity: 'ineligible', badgeClass: 'badge-yellow', label: 'Indisponible', explain: "Cet Œil n'est pas disponible actuellement — impossible de l'assigner." }
+    if (o.has_schedule_conflict) return { severity: 'ineligible', badgeClass: 'badge-yellow', label: 'Conflit de créneau', explain: 'Cet Œil a déjà une mission sur ce créneau — impossible de l\'assigner.' }
+    return { severity: 'ok', badgeClass: 'badge-green', label: 'Disponible' }
+  }
+
+  // Message de confirmation proactif (avant tout appel réseau) — même style que les phrases
+  // jointes côté serveur pour le 409 réactif (missions.js, POST /:id/assign-admin).
+  const buildOverrideMessage = (o) => {
+    const reasons = []
+    if (!o.is_active) reasons.push('bloqué pour anti-fraude')
+    if (o.is_suspended) reasons.push(o.suspended_reason ? `suspendu (raison : ${o.suspended_reason})` : 'suspendu')
+    return `Cet Œil est ${reasons.join(' et ')}. Assigner quand même ?`
+  }
+
+  const handleAssignClick = () => {
+    if (!selectedOeil) { toast('Sélectionnez un Œil', 'error'); return }
+    const o = oeils.find(x => x.id === selectedOeil)
+    const elig = o ? oeilEligibility(o) : null
+    if (elig?.severity === 'blocked') {
+      setOverrideWarningModal({ message: buildOverrideMessage(o), reason: '' })
+      return
+    }
+    doAssign(false)
   }
 
   const filteredOeils = oeils.filter(o => {
@@ -107,6 +144,8 @@ const doAssign = async (overrideWarning = false) => {
 
   const sameCity = oeils.filter(o => o.city === assignModal?.city)
   const otherCity = oeils.filter(o => o.city !== assignModal?.city)
+  const selectedOeilData = oeils.find(o => o.id === selectedOeil)
+  const selectedElig = selectedOeilData ? oeilEligibility(selectedOeilData) : null
 
   return (
     <AppLayout>
@@ -314,7 +353,9 @@ const doAssign = async (overrideWarning = false) => {
                 )}
                 {sameCity
                   .filter(o => `${o.first_name} ${o.last_name}`.toLowerCase().includes(oeilSearch.toLowerCase()))
-                  .map(o => (
+                  .map(o => {
+                    const elig = oeilEligibility(o)
+                    return (
                   <div
                     key={o.id}
                     onClick={() => setSelectedOeil(o.id)}
@@ -325,18 +366,25 @@ const doAssign = async (overrideWarning = false) => {
                     }`}
                   >
                     <div>
-                      <div className="text-sm font-medium">{o.first_name} {o.last_name}</div>
+                      <div className="text-sm font-medium flex items-center gap-2 flex-wrap">
+                        <span>{o.first_name} {o.last_name}</span>
+                        <span className={`badge ${elig.badgeClass}`}>{elig.label}</span>
+                      </div>
                       <div className="text-xs text-[#AAA]">📍 {o.city} · ⭐ {o.rating_avg || '—'} · {o.total_missions || 0} missions</div>
+                      {elig.reason && <div className="text-[10px] text-[#777] mt-0.5">Raison : {elig.reason}</div>}
                     </div>
                     {selectedOeil === o.id && <span className="text-[#FF4D00] text-sm">✓</span>}
                   </div>
-                ))}
+                    )
+                  })}
 
                 {/* Autres villes */}
                 {oeilSearch === '' && otherCity.length > 0 && (
                   <>
                     <p className="text-[10px] text-[#555] uppercase tracking-wider px-1 mt-2 mb-1">Autres villes</p>
-                    {otherCity.map(o => (
+                    {otherCity.map(o => {
+                      const elig = oeilEligibility(o)
+                      return (
                       <div
                         key={o.id}
                         onClick={() => setSelectedOeil(o.id)}
@@ -347,12 +395,17 @@ const doAssign = async (overrideWarning = false) => {
                         }`}
                       >
                         <div>
-                          <div className="text-sm font-medium">{o.first_name} {o.last_name}</div>
+                          <div className="text-sm font-medium flex items-center gap-2 flex-wrap">
+                            <span>{o.first_name} {o.last_name}</span>
+                            <span className={`badge ${elig.badgeClass}`}>{elig.label}</span>
+                          </div>
                           <div className="text-xs text-[#AAA]">📍 {o.city} · ⭐ {o.rating_avg || '—'} · {o.total_missions || 0} missions</div>
+                          {elig.reason && <div className="text-[10px] text-[#777] mt-0.5">Raison : {elig.reason}</div>}
                         </div>
                         {selectedOeil === o.id && <span className="text-[#FF4D00] text-sm">✓</span>}
                       </div>
-                    ))}
+                      )
+                    })}
                   </>
                 )}
 
@@ -365,13 +418,17 @@ const doAssign = async (overrideWarning = false) => {
             <div className="flex gap-3">
               <button onClick={() => setAssignModal(null)} className="btn btn-ghost flex-1 justify-center">Annuler</button>
               <button
-                onClick={() => doAssign(false)}
-                disabled={assigning || !selectedOeil}
+                onClick={handleAssignClick}
+                disabled={assigning || !selectedOeil || selectedElig?.severity === 'ineligible'}
+                title={selectedElig?.severity === 'ineligible' ? selectedElig.explain : undefined}
                 className="btn btn-primary flex-1 justify-center disabled:opacity-50"
               >
                 {assigning ? '...' : 'Affecter cet Œil →'}
               </button>
             </div>
+            {selectedElig?.severity === 'ineligible' && (
+              <p className="text-xs text-[#F5C842] mt-2">{selectedElig.explain}</p>
+            )}
           </div>
         </div>
       )}
@@ -419,10 +476,20 @@ const doAssign = async (overrideWarning = false) => {
               <span className="text-2xl">⚠️</span>
               <h2 className="font-bold text-base">Confirmation requise</h2>
             </div>
-            <p className="text-sm text-white/80 mb-6">{overrideWarningModal}</p>
+            <p className="text-sm text-white/80 mb-4">{overrideWarningModal.message}</p>
+            <div className="mb-5">
+              <label className="label">Raison de l'override (optionnel)</label>
+              <textarea
+                className="input"
+                rows={2}
+                value={overrideWarningModal.reason}
+                onChange={(e) => setOverrideWarningModal(m => ({ ...m, reason: e.target.value }))}
+                placeholder="Ex : mission urgente, aucun autre candidat disponible..."
+              />
+            </div>
             <div className="flex gap-2">
               <button
-                onClick={() => { setOverrideWarningModal(null); doAssign(true) }}
+                onClick={() => { const reason = overrideWarningModal.reason; setOverrideWarningModal(null); doAssign(true, reason) }}
                 className="btn btn-primary flex-1 justify-center"
               >
                 Confirmer quand même
