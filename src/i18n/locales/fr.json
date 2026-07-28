@@ -1000,9 +1000,9 @@
       "problemReportedAlert": "Problème signalé — l'équipe Shoofly a été alertée",
       "problemReportedShort": "Problème signalé — Shoofly a été alerté ✓",
       "genericError": "Erreur",
-      "selectReasonRequired": "Veuillez sélectionner une raison",
       "selectReasonShort": "Sélectionnez une raison",
-      "transferReported": "Empêchement signalé — mission remise en priorité",
+      "assistanceUrgenceSent": "🔎 Recherche d'un autre Œil en cours...",
+      "assistanceMissionSent": "⏳ Envoyé — en attente de validation du client",
       "loadingError": "Erreur de chargement",
       "missionIgnored": "Mission ignorée",
       "missionRefused": "Mission refusée",
@@ -1054,51 +1054,33 @@
     },
     "assistanceModal": {
       "title": "Demander assistance",
-      "reportProblem": {
-        "label": "⚠️ Signaler un problème",
-        "desc": "Client irrespectueux, lieu dangereux, demande illégale..."
-      },
-      "majorImpediment": {
-        "label": "🚨 Empêchement majeur",
-        "desc": "Je ne peux pas effectuer cette mission"
-      },
       "cancel": "Annuler",
-      "problemView": {
-        "title": "Signaler un problème",
-        "typeLabel": "Type de problème *",
-        "selectPlaceholder": "Sélectionner...",
-        "types": {
-          "disrespectful": "Client irrespectueux / insultant",
-          "unreachable": "Client injoignable",
-          "dangerous": "Lieu dangereux",
-          "illegal": "Demande illégale",
-          "other": "Autre problème"
+      "categoryChoice": {
+        "urgence": {
+          "label": "🚨 Urgence",
+          "desc": "Accident, agression, hospitalisation, situation dangereuse — recherche immédiate d'un remplaçant"
         },
-        "descLabel": "Description (optionnel)",
-        "descPlaceholder": "Décrivez la situation...",
-        "back": "Retour",
-        "submit": "Signaler →",
-        "submitting": "..."
+        "mission": {
+          "label": "📋 Problème sur la mission",
+          "desc": "Client absent, mauvaise adresse, mission différente — soumis à validation du client"
+        }
       },
-      "transferView": {
-        "title": "Empêchement en cours de mission",
-        "warning": "Cette action est irréversible et réservée aux situations d'urgence réelle.",
+      "reasonLabel": "Motif",
+      "reasonPlaceholder": "Sélectionner un motif",
+      "back": "Retour",
+      "urgenceView": {
+        "title": "Urgence",
+        "warning": "Cette action est irréversible : un remplaçant est recherché immédiatement, sans validation préalable.",
         "consequencesLabel": "Conséquences :",
-        "noPay": "• Vous ne recevrez aucune rémunération",
-        "halfPay": "• Vous recevrez 50% si un remplaçant est trouvé",
-        "cooldown": "• Cooldown 4 heures",
-        "noted": "• Cet incident sera noté sur votre profil",
-        "reasonLabel": "Raison (obligatoire)",
-        "reasonPlaceholder": "Sélectionner une raison",
-        "reasons": {
-          "medical": "Urgence médicale",
-          "accident": "Accident / incident sur place",
-          "security": "Problème de sécurité",
-          "family": "Empêchement familial grave",
-          "other": "Autre cas de force majeure"
-        },
-        "back": "Retour",
-        "confirm": "Confirmer →",
+        "consequenceBefore": "• Pénalité de fiabilité légère (non grave)",
+        "consequenceDuring": "• Cooldown de 4 heures avant de pouvoir accepter une nouvelle mission",
+        "confirm": "Confirmer l'urgence →",
+        "confirming": "..."
+      },
+      "missionView": {
+        "title": "Problème sur la mission",
+        "warning": "Le client va être notifié et devra valider ou contester votre déclaration. La mission est mise en attente ; vous êtes payé intégralement si le client valide (ou en l'absence de réponse de sa part).",
+        "confirm": "Envoyer au client →",
         "confirming": "..."
       }
     },
@@ -1730,6 +1712,25 @@
       "price": "Prix"
     }
   },
+  "assistanceRequestPanel": {
+    "title": "🆘 Votre Œil signale un problème",
+    "reasonLabel": "Motif déclaré",
+    "hint": "Confirmez si vous validez cette déclaration.",
+    "validate": "✅ Valider",
+    "dispute": "🚨 Contester",
+    "validateConfirm": "Valider la déclaration de l'Œil ? La mission sera clôturée et l'Œil payé intégralement.",
+    "validating": "Validation...",
+    "validatedToast": "Déclaration validée — l'Œil a été payé intégralement.",
+    "disputeCommentLabel": "Expliquez votre version",
+    "disputeCommentPlaceholder": "Décrivez ce qui s'est réellement passé...",
+    "disputeCommentRequired": "Un commentaire est requis pour contester.",
+    "disputeSubmit": "Envoyer la contestation",
+    "disputeSubmitting": "Envoi...",
+    "disputedToast": "Contestation envoyée (réf. {{reference}}) — un admin va trancher.",
+    "cancel": "Annuler",
+    "genericError": "Erreur, veuillez réessayer.",
+    "alreadyDisputedNotice": "🚨 Vous avez contesté cette déclaration. Un admin va trancher — vous serez notifié de la décision."
+  },
   "notificationBanner": {
     "title": "Activer les notifications",
     "desc": "Recevez une alerte quand vous avez un nouveau message ou une nouvelle mission.",
@@ -1795,6 +1796,20 @@
     "missionValidatedClientBody": "Vous avez validé \"{{missionTitle}}\".",
     "newClaimAdminTitle": "🚨 Nouvelle réclamation",
     "newClaimAdminBody": "Mission \"{{missionTitle}}\" contestée par le client.",
+    "assistanceUrgenceClientTitle": "🚨 Urgence signalée sur votre mission",
+    "assistanceUrgenceClientBody": "Votre Œil a signalé une urgence sur \"{{missionTitle}}\". Nous recherchons immédiatement un remplaçant.",
+    "assistanceMissionRequestClientTitle": "🆘 Votre Œil signale un problème",
+    "assistanceMissionRequestClientBody": "Votre Œil a signalé : \"{{reason}}\" sur la mission \"{{missionTitle}}\". Merci de confirmer si vous validez sa déclaration (vous avez {{hours}}h).",
+    "assistanceValidatedOeilTitle": "💰 Paiement reçu !",
+    "assistanceValidatedOeilBody": "Le client a validé votre déclaration d'assistance sur \"{{missionTitle}}\". {{amount}} MAD crédités.",
+    "assistanceValidatedClientTitle": "✅ Confirmé",
+    "assistanceValidatedClientBody": "Vous avez validé la déclaration de l'Œil pour \"{{missionTitle}}\".",
+    "assistanceDisputedOeilTitle": "Déclaration contestée",
+    "assistanceDisputedOeilBody": "Le client a contesté votre déclaration sur \"{{missionTitle}}\". Un litige a été ouvert, un admin va trancher.",
+    "assistanceAutoValidatedOeilTitle": "💰 Paiement reçu !",
+    "assistanceAutoValidatedOeilBody": "Délai écoulé sans réponse du client — \"{{missionTitle}}\" clôturée, {{amount}} MAD crédités.",
+    "assistanceAutoValidatedClientTitle": "Mission clôturée automatiquement",
+    "assistanceAutoValidatedClientBody": "Vous n'avez pas répondu à temps concernant \"{{missionTitle}}\" — la déclaration de l'Œil a été considérée comme acceptée.",
     "claimResolvedOeilWinTitle": "✅ Réclamation résolue",
     "claimResolvedOeilWinBody": "La réclamation a été résolue en votre faveur. Votre paiement a été crédité.",
     "claimResolvedClientLoseTitle": "Réclamation résolue",
@@ -1926,7 +1941,9 @@
     "missionCompleted": "Mission terminée avec succès.",
     "missionCancelled": "Mission annulée.",
     "missionImpediment": "L'Œil a signalé un empêchement. Mission remise en priorité.",
-    "assignedByAdmin": "{{oeilName}} a été assigné par l'admin."
+    "assignedByAdmin": "{{oeilName}} a été assigné par l'admin.",
+    "assistanceUrgenceSystemMessage": "L'Œil a signalé une urgence. Recherche d'un remplaçant en cours.",
+    "assistanceMissionRequestSystemMessage": "L'Œil signale : {{reason}}. En attente de votre confirmation."
   },
   "statusBadge": {
     "active": "En cours",
@@ -2211,6 +2228,15 @@
     "manualTitle": "Traitement manuel par un administrateur",
     "manualBody": "Aucun processus automatisé n'existe pour cette demande — elle sera traitée manuellement par un administrateur.",
     "continueAnyway": "Créer quand même un ticket"
+  },
+  "assistanceReasons": {
+    "Accident pendant la mission": "Accident pendant la mission",
+    "Agression, vol ou menace": "Agression, vol ou menace",
+    "Hospitalisation": "Hospitalisation",
+    "Situation dangereuse": "Situation dangereuse",
+    "Client absent ou injoignable": "Client absent ou injoignable",
+    "Mauvaise adresse": "Mauvaise adresse",
+    "Mission différente de la description": "Mission différente de la description"
   },
   "ticketCategories": {
     "categories": {

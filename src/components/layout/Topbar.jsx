@@ -93,6 +93,12 @@ const handleClick = (n) => {
       break
     case 'mission_view':
       setShowNotifs(false)
+      // Déclaration MISSION du flux "Demander assistance" en attente de validation client —
+      // ouvre directement l'écran de validation (MissionDetailModal) au lieu de la simple
+      // liste, en réutilisant le pendingAction 'mission_detail' déjà câblé côté ClientMissions.
+      if (n.title_key === 'assistanceMissionRequestClientTitle') {
+        setPending('mission_detail', n.mission_id)
+      }
       navigate(missionsRoute)
       break
     case 'admin_missions':

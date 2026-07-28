@@ -13,7 +13,7 @@ import { useAuth } from '../../context/AuthContext'
 import MissionHistoryModal from '../../components/missions/MissionHistoryModal'
 import MissionSummaryModal from '../../components/missions/MissionSummaryModal'
 import ComplianceModal from '../../components/missions/ComplianceModal'
-import NewTicketModal from '../../components/tickets/NewTicketModal'
+import { URGENCE_REASONS, MISSION_REASONS } from '../../constants/assistanceReasons'
 
 const TABS = ['priority', 'available', 'active', 'done']
 const TYPE_ICONS = { immobilier:'🏠', file_attente:'⏳', audit:'🔎', personnalisee:'🎯' }
@@ -52,28 +52,30 @@ export default function OeilMissions() {
   const { pendingAction, clearPending } = useNotif()
   const { user } = useAuth()
   const [historyMission, setHistoryMission] = useState(null)
-  const [transferMission, setTransferMission] = useState(null)
-  const [transferReason, setTransferReason] = useState('')
-  const [transferring, setTransferring] = useState(false)
   const [assistanceMission, setAssistanceMission] = useState(null)
-  const [assistanceView, setAssistanceView] = useState('choice') // 'choice' | 'transfer'
-  const [ticketMission, setTicketMission] = useState(null)
+  const [assistanceView, setAssistanceView] = useState('choice') // 'choice' | 'urgence' | 'mission'
+  const [assistanceReason, setAssistanceReason] = useState('')
+  const [submittingAssistance, setSubmittingAssistance] = useState(false)
   const [bonusCampaign, setBonusCampaign] = useState({ active: false, percent: 0 })
 
   useEffect(() => { missionsAPI.fiveStarBonus().then(({ data }) => setBonusCampaign(data)).catch(() => {}) }, [])
 
-  const doTransfer = async () => {
-    if (!transferReason) { toast(t('oeilMissions.toasts.selectReasonRequired'), 'error'); return }
-    setTransferring(true)
+  const submitAssistance = async (category) => {
+    if (!assistanceReason) { toast(t('oeilMissions.toasts.selectReasonShort'), 'error'); return }
+    setSubmittingAssistance(true)
     try {
-      await missionsAPI.transfer(transferMission.id, { reason: transferReason })
-      toast(t('oeilMissions.toasts.transferReported'), 'info')
-      setTransferMission(null)
-      setTransferReason('')
-      load()
+      await missionsAPI.assistance(assistanceMission.id, { category, reason: assistanceReason })
+      toast(
+        category === 'urgence' ? t('oeilMissions.toasts.assistanceUrgenceSent') : t('oeilMissions.toasts.assistanceMissionSent'),
+        'info'
+      )
+      setAssistanceMission(null)
+      setAssistanceView('choice')
+      setAssistanceReason('')
+      load(tab)
     } catch (err) {
       toast(err.response?.data?.error || t('oeilMissions.toasts.genericError'), 'error')
-    } finally { setTransferring(false) }
+    } finally { setSubmittingAssistance(false) }
   }
   const [summaryMission, setSummaryMission] = useState(null)
 
@@ -551,7 +553,7 @@ try {
         <div className="fixed inset-0 bg-black/80 z-[70] flex items-center justify-center p-4 backdrop-blur-sm">
           <div className="bg-[#181818] border border-orange-500/30 rounded-2xl p-6 w-full max-w-md shadow-xl max-h-[85vh] overflow-y-auto">
 
-            {/* Choix initial */}
+            {/* Choix initial : URGENCE ou MISSION — pas de redirection vers la liste générale de tickets */}
             {assistanceView === 'choice' && (
               <>
                 <div className="flex items-center gap-3 mb-6">
@@ -563,78 +565,117 @@ try {
                 </div>
                 <div className="space-y-3">
                   <button
-                    onClick={() => { setTicketMission(assistanceMission); setAssistanceMission(null) }}
+                    onClick={() => { setAssistanceView('urgence'); setAssistanceReason('') }}
                     className="w-full bg-[#222] hover:bg-[#2A2A2A] rounded-xl p-4 text-start transition-colors border border-white/5"
                   >
-                    <p className="text-sm font-semibold text-orange-400 mb-1">{t('oeilMissions.assistanceModal.reportProblem.label')}</p>
-                    <p className="text-xs text-[#AAA]">{t('oeilMissions.assistanceModal.reportProblem.desc')}</p>
+                    <p className="text-sm font-semibold text-red-400 mb-1">{t('oeilMissions.assistanceModal.categoryChoice.urgence.label')}</p>
+                    <p className="text-xs text-[#AAA]">{t('oeilMissions.assistanceModal.categoryChoice.urgence.desc')}</p>
                   </button>
                   <button
-                    onClick={() => { setAssistanceView('transfer'); setTransferReason('') }}
+                    onClick={() => { setAssistanceView('mission'); setAssistanceReason('') }}
                     className="w-full bg-[#222] hover:bg-[#2A2A2A] rounded-xl p-4 text-start transition-colors border border-white/5"
                   >
-                    <p className="text-sm font-semibold text-red-400 mb-1">{t('oeilMissions.assistanceModal.majorImpediment.label')}</p>
-                    <p className="text-xs text-[#AAA]">{t('oeilMissions.assistanceModal.majorImpediment.desc')}</p>
+                    <p className="text-sm font-semibold text-orange-400 mb-1">{t('oeilMissions.assistanceModal.categoryChoice.mission.label')}</p>
+                    <p className="text-xs text-[#AAA]">{t('oeilMissions.assistanceModal.categoryChoice.mission.desc')}</p>
                   </button>
                 </div>
                 <button onClick={() => setAssistanceMission(null)} className="btn btn-ghost w-full justify-center mt-4">{t('oeilMissions.assistanceModal.cancel')}</button>
               </>
             )}
 
-            {/* Empêchement majeur */}
-            {assistanceView === 'transfer' && (
+            {/* URGENCE — aucune validation requise, remplacement recherché immédiatement */}
+            {assistanceView === 'urgence' && (
               <>
                 <div className="flex items-center gap-3 mb-4">
-                  <button onClick={() => setAssistanceView('choice')} className="text-[#AAA] hover:text-white">←</button>
+                  <button onClick={() => { setAssistanceView('choice'); setAssistanceReason('') }} className="text-[#AAA] hover:text-white">←</button>
                   <div>
-                    <h2 className="font-bold text-base">{t('oeilMissions.assistanceModal.transferView.title')}</h2>
+                    <h2 className="font-bold text-base">{t('oeilMissions.assistanceModal.urgenceView.title')}</h2>
                     <p className="text-xs text-[#AAA]">{assistanceMission.title}</p>
                   </div>
                 </div>
                 <div className="bg-red-500/5 border border-red-500/20 rounded-xl p-4 mb-4">
-                  <p className="text-xs text-white/80">{t('oeilMissions.assistanceModal.transferView.warning')}</p>
+                  <p className="text-xs text-white/80">{t('oeilMissions.assistanceModal.urgenceView.warning')}</p>
                 </div>
                 <div className="bg-[#222] rounded-xl p-3 mb-4 space-y-1">
-                  <p className="text-xs text-[#AAA]">{t('oeilMissions.assistanceModal.transferView.consequencesLabel')}</p>
-                  {assistanceMission.status === 'assigned'
-                    ? <p className="text-xs text-white/70">{t('oeilMissions.assistanceModal.transferView.noPay')}</p>
-                    : <>
-                        <p className="text-xs text-white/70">{t('oeilMissions.assistanceModal.transferView.halfPay')}</p>
-                        <p className="text-xs text-white/70">{t('oeilMissions.assistanceModal.transferView.cooldown')}</p>
-                      </>
-                  }
-                  <p className="text-xs text-white/70">{t('oeilMissions.assistanceModal.transferView.noted')}</p>
+                  <p className="text-xs text-[#AAA]">{t('oeilMissions.assistanceModal.urgenceView.consequencesLabel')}</p>
+                  <p className="text-xs text-white/70">
+                    {assistanceMission.status === 'assigned'
+                      ? t('oeilMissions.assistanceModal.urgenceView.consequenceBefore')
+                      : t('oeilMissions.assistanceModal.urgenceView.consequenceDuring')}
+                  </p>
                 </div>
                 <div className="mb-5">
-                  <label className="label">{t('oeilMissions.assistanceModal.transferView.reasonLabel')}</label>
-                  <select className="input" value={transferReason} onChange={e => setTransferReason(e.target.value)}>
-                    <option value="">{t('oeilMissions.assistanceModal.transferView.reasonPlaceholder')}</option>
-                    <option value="Urgence médicale">{t('oeilMissions.assistanceModal.transferView.reasons.medical')}</option>
-                    <option value="Accident / incident">{t('oeilMissions.assistanceModal.transferView.reasons.accident')}</option>
-                    <option value="Problème de sécurité">{t('oeilMissions.assistanceModal.transferView.reasons.security')}</option>
-                    <option value="Empêchement familial grave">{t('oeilMissions.assistanceModal.transferView.reasons.family')}</option>
-                    <option value="Autre cas de force majeure">{t('oeilMissions.assistanceModal.transferView.reasons.other')}</option>
-                  </select>
+                  <label className="label">{t('oeilMissions.assistanceModal.reasonLabel')}</label>
+                  <div className="space-y-2 mt-1">
+                    {URGENCE_REASONS.map((r) => (
+                      <button
+                        key={r}
+                        type="button"
+                        onClick={() => setAssistanceReason(r)}
+                        className={`w-full text-start px-3 py-2.5 rounded-xl text-xs font-medium border transition-colors ${
+                          assistanceReason === r
+                            ? 'bg-red-500/20 border-red-500 text-white'
+                            : 'bg-[#222] border-white/12 text-[#AAA] hover:text-white hover:border-white/22'
+                        }`}
+                      >
+                        {t(`assistanceReasons.${r}`, r)}
+                      </button>
+                    ))}
+                  </div>
                 </div>
                 <div className="flex gap-3">
-                  <button onClick={() => setAssistanceView('choice')} className="btn btn-ghost flex-1 justify-center">{t('oeilMissions.assistanceModal.transferView.back')}</button>
+                  <button onClick={() => { setAssistanceView('choice'); setAssistanceReason('') }} className="btn btn-ghost flex-1 justify-center">{t('oeilMissions.assistanceModal.back')}</button>
                   <button
-                    onClick={async () => {
-                      if (!transferReason) { toast(t('oeilMissions.toasts.selectReasonShort'), 'error'); return }
-                      setTransferring(true)
-                      try {
-                        await missionsAPI.transfer(assistanceMission.id, { reason: transferReason })
-                        toast(t('oeilMissions.toasts.transferReported'), 'info')
-                        setAssistanceMission(null)
-                        setAssistanceView('choice')
-                        load(tab)
-                      } catch (err) { toast(err.response?.data?.error || t('oeilMissions.toasts.genericError'), 'error') }
-                      finally { setTransferring(false) }
-                    }}
-                    disabled={transferring || !transferReason}
+                    onClick={() => submitAssistance('urgence')}
+                    disabled={submittingAssistance || !assistanceReason}
                     className="btn btn-sm flex-1 justify-center bg-red-500 text-white hover:bg-red-600 disabled:opacity-50"
                   >
-                    {transferring ? t('oeilMissions.assistanceModal.transferView.confirming') : t('oeilMissions.assistanceModal.transferView.confirm')}
+                    {submittingAssistance ? t('oeilMissions.assistanceModal.urgenceView.confirming') : t('oeilMissions.assistanceModal.urgenceView.confirm')}
+                  </button>
+                </div>
+              </>
+            )}
+
+            {/* MISSION — gèle la mission en attente de la réponse du client (valider/contester) */}
+            {assistanceView === 'mission' && (
+              <>
+                <div className="flex items-center gap-3 mb-4">
+                  <button onClick={() => { setAssistanceView('choice'); setAssistanceReason('') }} className="text-[#AAA] hover:text-white">←</button>
+                  <div>
+                    <h2 className="font-bold text-base">{t('oeilMissions.assistanceModal.missionView.title')}</h2>
+                    <p className="text-xs text-[#AAA]">{assistanceMission.title}</p>
+                  </div>
+                </div>
+                <div className="bg-orange-500/5 border border-orange-500/20 rounded-xl p-4 mb-4">
+                  <p className="text-xs text-white/80">{t('oeilMissions.assistanceModal.missionView.warning')}</p>
+                </div>
+                <div className="mb-5">
+                  <label className="label">{t('oeilMissions.assistanceModal.reasonLabel')}</label>
+                  <div className="space-y-2 mt-1">
+                    {MISSION_REASONS.map((r) => (
+                      <button
+                        key={r}
+                        type="button"
+                        onClick={() => setAssistanceReason(r)}
+                        className={`w-full text-start px-3 py-2.5 rounded-xl text-xs font-medium border transition-colors ${
+                          assistanceReason === r
+                            ? 'bg-orange-500/20 border-orange-500 text-white'
+                            : 'bg-[#222] border-white/12 text-[#AAA] hover:text-white hover:border-white/22'
+                        }`}
+                      >
+                        {t(`assistanceReasons.${r}`, r)}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                <div className="flex gap-3">
+                  <button onClick={() => { setAssistanceView('choice'); setAssistanceReason('') }} className="btn btn-ghost flex-1 justify-center">{t('oeilMissions.assistanceModal.back')}</button>
+                  <button
+                    onClick={() => submitAssistance('mission')}
+                    disabled={submittingAssistance || !assistanceReason}
+                    className="btn btn-sm flex-1 justify-center bg-orange-500 text-white hover:bg-orange-600 disabled:opacity-50"
+                  >
+                    {submittingAssistance ? t('oeilMissions.assistanceModal.missionView.confirming') : t('oeilMissions.assistanceModal.missionView.confirm')}
                   </button>
                 </div>
               </>
@@ -659,13 +700,6 @@ try {
       {chatMission && (
         <ChatModal mission={chatMission} onClose={() => setChatMission(null)} />
       )}
-      <NewTicketModal
-        open={!!ticketMission}
-        onClose={() => setTicketMission(null)}
-        onCreated={() => { setTicketMission(null); load(tab) }}
-        presetMissionId={ticketMission?.id}
-        presetCategory="mission"
-      />
     </AppLayout>
   )
 }

@@ -505,7 +505,7 @@ const cancel = async (id) => {
 )}
 
 {detailMission && (
-  <MissionDetailModal mission={detailMission} onClose={() => setDetailMission(null)} />
+  <MissionDetailModal mission={detailMission} onClose={() => setDetailMission(null)} onUpdated={load} />
 )}
 
       {chatMission && (

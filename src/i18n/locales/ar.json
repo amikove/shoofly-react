@@ -1001,9 +1001,9 @@
       "problemReportedAlert": "تم الإبلاغ عن المشكلة — تم تنبيه فريق Shoofly",
       "problemReportedShort": "تم الإبلاغ عن المشكلة — تم تنبيه Shoofly ✓",
       "genericError": "خطأ",
-      "selectReasonRequired": "يرجى اختيار سبب",
       "selectReasonShort": "اختر سببًا",
-      "transferReported": "تم الإبلاغ عن المانع — أعيدت المهمة إلى قائمة الأولوية",
+      "assistanceUrgenceSent": "🔎 البحث عن عين أخرى جارٍ...",
+      "assistanceMissionSent": "⏳ تم الإرسال — في انتظار تأكيد العميل",
       "loadingError": "خطأ في التحميل",
       "missionIgnored": "تم تجاهل المهمة",
       "missionRefused": "تم رفض المهمة",
@@ -1055,51 +1055,33 @@
     },
     "assistanceModal": {
       "title": "طلب المساعدة",
-      "reportProblem": {
-        "label": "⚠️ الإبلاغ عن مشكلة",
-        "desc": "عميل غير محترم، مكان خطير، طلب غير قانوني..."
-      },
-      "majorImpediment": {
-        "label": "🚨 مانع كبير",
-        "desc": "لا يمكنني تنفيذ هذه المهمة"
-      },
       "cancel": "إلغاء",
-      "problemView": {
-        "title": "الإبلاغ عن مشكلة",
-        "typeLabel": "نوع المشكلة *",
-        "selectPlaceholder": "اختر...",
-        "types": {
-          "disrespectful": "عميل غير محترم / مهين",
-          "unreachable": "تعذر الوصول إلى العميل",
-          "dangerous": "مكان خطير",
-          "illegal": "طلب غير قانوني",
-          "other": "مشكلة أخرى"
+      "categoryChoice": {
+        "urgence": {
+          "label": "🚨 حالة طارئة",
+          "desc": "حادث، اعتداء، دخول للمستشفى، وضع خطير — البحث فورًا عن بديل"
         },
-        "descLabel": "الوصف (اختياري)",
-        "descPlaceholder": "صف الوضع...",
-        "back": "رجوع",
-        "submit": "إبلاغ ←",
-        "submitting": "..."
+        "mission": {
+          "label": "📋 مشكلة في المهمة",
+          "desc": "غياب العميل، عنوان خاطئ، مهمة مختلفة — يخضع لتأكيد العميل"
+        }
       },
-      "transferView": {
-        "title": "مانع أثناء تنفيذ المهمة",
-        "warning": "هذا الإجراء لا رجعة فيه ومخصص لحالات الطوارئ الحقيقية فقط.",
+      "reasonLabel": "السبب",
+      "reasonPlaceholder": "اختر سببًا",
+      "back": "رجوع",
+      "urgenceView": {
+        "title": "حالة طارئة",
+        "warning": "هذا الإجراء لا رجعة فيه: سيتم البحث عن بديل فورًا، دون تأكيد مسبق.",
         "consequencesLabel": "العواقب:",
-        "noPay": "• لن تحصل على أي أجر",
-        "halfPay": "• ستحصل على 50% إذا تم إيجاد بديل",
-        "cooldown": "• فترة انتظار 4 ساعات",
-        "noted": "• سيتم تسجيل هذا الحادث في ملفك الشخصي",
-        "reasonLabel": "السبب (إلزامي)",
-        "reasonPlaceholder": "اختر سببًا",
-        "reasons": {
-          "medical": "حالة طبية طارئة",
-          "accident": "حادث / واقعة في الموقع",
-          "security": "مشكلة أمنية",
-          "family": "عائق عائلي خطير",
-          "other": "قوة قاهرة أخرى"
-        },
-        "back": "رجوع",
-        "confirm": "تأكيد ←",
+        "consequenceBefore": "• عقوبة موثوقية خفيفة (غير جسيمة)",
+        "consequenceDuring": "• فترة انتظار 4 ساعات قبل قبول مهمة جديدة",
+        "confirm": "تأكيد الحالة الطارئة ←",
+        "confirming": "..."
+      },
+      "missionView": {
+        "title": "مشكلة في المهمة",
+        "warning": "سيتم إخطار العميل وعليه التحقق من تصريحك أو الاعتراض عليه. المهمة موضوعة في الانتظار؛ ستُدفع لك كامل الأجرة إذا وافق العميل (أو في حال عدم رده).",
+        "confirm": "إرسال إلى العميل ←",
         "confirming": "..."
       }
     },
@@ -1729,6 +1711,25 @@
       "price": "السعر"
     }
   },
+  "assistanceRequestPanel": {
+    "title": "🆘 العين الخاصة بك تبلغ عن مشكلة",
+    "reasonLabel": "السبب المصرح به",
+    "hint": "أكّد ما إذا كنت توافق على هذا التصريح.",
+    "validate": "✅ موافقة",
+    "dispute": "🚨 اعتراض",
+    "validateConfirm": "الموافقة على تصريح العين؟ سيتم إغلاق المهمة ودفع كامل الأجرة للعين.",
+    "validating": "جارٍ التأكيد...",
+    "validatedToast": "تمت الموافقة على التصريح — تم دفع كامل الأجرة للعين.",
+    "disputeCommentLabel": "اشرح وجهة نظرك",
+    "disputeCommentPlaceholder": "صف ما حدث فعلاً...",
+    "disputeCommentRequired": "التعليق مطلوب للاعتراض.",
+    "disputeSubmit": "إرسال الاعتراض",
+    "disputeSubmitting": "جارٍ الإرسال...",
+    "disputedToast": "تم إرسال الاعتراض (مرجع {{reference}}) — سيفصل فيه أحد المسؤولين.",
+    "cancel": "إلغاء",
+    "genericError": "خطأ، يرجى المحاولة مرة أخرى.",
+    "alreadyDisputedNotice": "🚨 لقد اعترضت على هذا التصريح. سيفصل فيه أحد المسؤولين — سيتم إخطارك بالقرار."
+  },
   "notificationBanner": {
     "title": "فعّل الإشعارات",
     "desc": "تلقَّ تنبيهًا عند وصول رسالة جديدة أو مهمة جديدة.",
@@ -1794,6 +1795,20 @@
     "missionValidatedClientBody": "لقد صادقت على \"{{missionTitle}}\".",
     "newClaimAdminTitle": "🚨 اعتراض جديد",
     "newClaimAdminBody": "المهمة \"{{missionTitle}}\" محل اعتراض من العميل.",
+    "assistanceUrgenceClientTitle": "🚨 تم الإبلاغ عن حالة طارئة في مهمتك",
+    "assistanceUrgenceClientBody": "أبلغت العين الخاصة بك عن حالة طارئة في \"{{missionTitle}}\". نحن نبحث فورًا عن بديل.",
+    "assistanceMissionRequestClientTitle": "🆘 العين الخاصة بك تبلغ عن مشكلة",
+    "assistanceMissionRequestClientBody": "أبلغت العين: \"{{reason}}\" بخصوص المهمة \"{{missionTitle}}\". يرجى تأكيد ما إذا كنت توافق على تصريحها (لديك {{hours}} ساعة).",
+    "assistanceValidatedOeilTitle": "💰 تم استلام الدفع!",
+    "assistanceValidatedOeilBody": "وافق العميل على تصريح المساعدة الخاص بك في \"{{missionTitle}}\". تم إيداع {{amount}} درهم.",
+    "assistanceValidatedClientTitle": "✅ تم التأكيد",
+    "assistanceValidatedClientBody": "لقد وافقت على تصريح العين بخصوص \"{{missionTitle}}\".",
+    "assistanceDisputedOeilTitle": "تم الاعتراض على التصريح",
+    "assistanceDisputedOeilBody": "اعترض العميل على تصريحك بخصوص \"{{missionTitle}}\". تم فتح نزاع، سيفصل فيه أحد المسؤولين.",
+    "assistanceAutoValidatedOeilTitle": "💰 تم استلام الدفع!",
+    "assistanceAutoValidatedOeilBody": "انتهت المهلة دون رد من العميل — تم إغلاق \"{{missionTitle}}\"، وتم إيداع {{amount}} درهم.",
+    "assistanceAutoValidatedClientTitle": "تم إغلاق المهمة تلقائيًا",
+    "assistanceAutoValidatedClientBody": "لم ترد في الوقت المحدد بخصوص \"{{missionTitle}}\" — تم اعتبار تصريح العين مقبولاً.",
     "claimResolvedOeilWinTitle": "✅ تم حل الاعتراض",
     "claimResolvedOeilWinBody": "تم حل الشكوى  لصالحك. تم إضافة دفعتك.",
     "claimResolvedClientLoseTitle": "تم حل الاعتراض",
@@ -1925,7 +1940,9 @@
     "missionCompleted": "اكتملت المهمة بنجاح.",
     "missionCancelled": "تم إلغاء المهمة.",
     "missionImpediment": "أبلغت العين الميدانية عن مانع. أعيدت المهمة إلى قائمة الأولوية.",
-    "assignedByAdmin": "أسندت الإدارة المهمة إلى {{oeilName}}."
+    "assignedByAdmin": "أسندت الإدارة المهمة إلى {{oeilName}}.",
+    "assistanceUrgenceSystemMessage": "أبلغت العين عن حالة طارئة. البحث عن بديل جارٍ.",
+    "assistanceMissionRequestSystemMessage": "العين تبلغ: {{reason}}. في انتظار تأكيدك."
   },
   "statusBadge": {
     "active": "مباشر",
@@ -2210,6 +2227,15 @@
     "manualTitle": "معالجة يدوية من طرف مسؤول",
     "manualBody": "لا توجد عملية آلية لهذا النوع من الطلبات — سيتم معالجتها يدوياً من طرف أحد المسؤولين.",
     "continueAnyway": "إنشاء تذكرة رغم ذلك"
+  },
+  "assistanceReasons": {
+    "Accident pendant la mission": "حادث أثناء المهمة",
+    "Agression, vol ou menace": "اعتداء أو سرقة أو تهديد",
+    "Hospitalisation": "دخول المستشفى",
+    "Situation dangereuse": "وضعية خطيرة",
+    "Client absent ou injoignable": "العميل غائب أو يتعذر الوصول إليه",
+    "Mauvaise adresse": "عنوان خاطئ",
+    "Mission différente de la description": "المهمة مختلفة عن الوصف"
   },
   "ticketCategories": {
     "categories": {

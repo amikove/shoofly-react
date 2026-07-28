@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next'
 import MissionHistoryTimeline from './MissionHistoryTimeline'
+import AssistanceRequestPanel from './AssistanceRequestPanel'
 import { formatHistoryDate } from '../../utils/missionHistoryFormat'
 import { translateLocation } from '../../constants/villesTranslations'
 
@@ -15,7 +16,7 @@ function Field({ label, value }) {
   )
 }
 
-export default function MissionDetailModal({ mission, onClose }) {
+export default function MissionDetailModal({ mission, onClose, onUpdated }) {
   const { t, i18n } = useTranslation()
 
   if (!mission) return null
@@ -38,6 +39,8 @@ export default function MissionDetailModal({ mission, onClose }) {
         </div>
 
         <div className="flex-1 overflow-y-auto space-y-5">
+
+          <AssistanceRequestPanel mission={mission} onUpdated={onUpdated} />
 
           {/* Détails de la mission */}
           <div className="bg-[#222] rounded-xl p-4 space-y-3">
