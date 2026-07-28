@@ -1006,7 +1006,6 @@
       "assistanceMissionSent": "⏳ تم الإرسال — في انتظار تأكيد العميل",
       "loadingError": "خطأ في التحميل",
       "missionIgnored": "تم تجاهل المهمة",
-      "missionRefused": "تم رفض المهمة",
       "interestExpressed": "تم إبداء الاهتمام 👁️ سيتواصل معك العميل.",
       "interestExpressedShort": "تم إبداء الاهتمام ✓",
       "invalidStatus": "حالة غير صالحة",
@@ -1049,7 +1048,6 @@
       "reportButton": "📋 تقرير",
       "auditButton": "📋 تدقيق",
       "photosButton": "📸 صور",
-      "refuse": "✕ رفض",
       "askAssistance": "🆘 طلب المساعدة",
       "summaryButton": "📄 ملخص"
     },

@@ -187,11 +187,11 @@ const load = useCallback((t) => {
     }
   }
 
-  const refuse = async (id, isAvailable = false) => {
+  const refuse = async (id) => {
     try {
-      await missionsAPI.refuse(id, isAvailable)
+      await missionsAPI.refuse(id, true)
       setMissions((prev) => prev.filter((m) => m.id !== id))
-      toast(isAvailable ? t('oeilMissions.toasts.missionIgnored') : t('oeilMissions.toasts.missionRefused'), 'info')
+      toast(t('oeilMissions.toasts.missionIgnored'), 'info')
     } catch {
       toast(t('oeilMissions.toasts.genericError'), 'error')
     }
@@ -483,7 +483,7 @@ try {
                           {(m.interested || m.has_interested) ? t('oeilMissions.card.requestSent') : t('oeilMissions.card.interested')}
                         </button>
                         <button
-                        onClick={() => refuse(m.id, true)}
+                        onClick={() => refuse(m.id)}
                         className="btn btn-sm flex-1 justify-center bg-red-500 text-white hover:bg-red-600"
                       >
                         {t('oeilMissions.card.ignore')}
@@ -516,11 +516,6 @@ try {
                       {advanceLabel[m.status] && (
                         <button onClick={() => advance(m)} className="btn btn-primary btn-sm flex-1 justify-center">
                           {advanceLabel[m.status]}
-                        </button>
-                      )}
-                      {m.status === 'assigned' && (
-                        <button onClick={() => refuse(m.id)} className="btn btn-ghost btn-sm text-red-400">
-                          {t('oeilMissions.card.refuse')}
                         </button>
                       )}
                     </>

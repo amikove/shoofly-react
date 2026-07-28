@@ -1005,7 +1005,6 @@
       "assistanceMissionSent": "⏳ Envoyé — en attente de validation du client",
       "loadingError": "Erreur de chargement",
       "missionIgnored": "Mission ignorée",
-      "missionRefused": "Mission refusée",
       "interestExpressed": "Intérêt exprimé 👁️ Le client va vous contacter.",
       "interestExpressedShort": "Intérêt exprimé ✓",
       "invalidStatus": "Statut invalide",
@@ -1048,7 +1047,6 @@
       "reportButton": "📋 Rapport",
       "auditButton": "📋 Audit",
       "photosButton": "📸 Photos",
-      "refuse": "✕ Refuser",
       "askAssistance": "🆘 Demander assistance",
       "summaryButton": "📄 Résumé"
     },
