@@ -1,5 +1,5 @@
 import ChatModal from '../../components/missions/ChatModal'
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import AppLayout from '../../components/layout/AppLayout'
 import { VILLES } from '../../constants/villes'
@@ -37,6 +37,11 @@ function formatEditFieldValue(key, value, t) {
 export default function OeilMissions() {
   const { t, i18n } = useTranslation()
   const [complianceMission, setComplianceMission] = useState(null)
+  // Garde anti-double-clic pour la candidature ("Je suis intéressé", onglets normal + priorité) :
+  // le ref est vérifié de façon synchrone (avant tout re-render) pour bloquer un 2e clic
+  // pendant la requête en vol ; le Set en state pilote juste l'affichage désactivé/label.
+  const submittingInterestRef = useRef(new Set())
+  const [submittingInterestIds, setSubmittingInterestIds] = useState(() => new Set())
   const [tab, setTab]             = useState('available')
   const [missions, setMissions]   = useState([])
   const [priorityMissions, setPriorityMissions] = useState([])
@@ -165,6 +170,15 @@ const load = useCallback((t) => {
 
   useEffect(() => { load(tab) }, [tab, load])
 
+  // Réconciliation au retour en ligne (scope limité à cet écran, voir RAPPORT_DIAGNOSTIC
+  // §2d/recommandation 5) : recharge la liste de l'onglet actif quand le navigateur
+  // redevient en ligne, sans attendre une action manuelle de l'Œil.
+  useEffect(() => {
+    const handleOnline = () => load(tab)
+    window.addEventListener('online', handleOnline)
+    return () => window.removeEventListener('online', handleOnline)
+  }, [tab, load])
+
 
   const approveEditRequest = async (editRequestId) => {
     try {
@@ -197,15 +211,94 @@ const load = useCallback((t) => {
     }
   }
 
-const interest = async (id) => {
+  const setInterestSubmitting = (id, submitting) => {
+    if (submitting) submittingInterestRef.current.add(id)
+    else submittingInterestRef.current.delete(id)
+    setSubmittingInterestIds((prev) => {
+      const next = new Set(prev)
+      if (submitting) next.add(id); else next.delete(id)
+      return next
+    })
+  }
+
+  // Recharge l'état réel d'UNE mission précise (pas toute la liste) après une erreur qui
+  // pourrait masquer un succès serveur (RAPPORT_DIAGNOSTIC §2c) : si son statut a bougé,
+  // on retire la carte et on informe l'Œil du vrai résultat plutôt que de le laisser deviner.
+  const reconcileMission = useCallback((id) => {
+    missionsAPI.get(id).then(({ data }) => {
+      const fresh = data.mission || data
+      if (fresh.status === 'pending') return // toujours candidatable : rien à corriger à l'écran
+      const gotIt = fresh.oeil_id === user?.id
+      setMissions((prev) => prev.filter((m) => m.id !== id))
+      setPriorityMissions((prev) => prev.filter((m) => m.id !== id))
+      toast(
+        gotIt ? t('oeilMissions.toasts.missionReconciledAssignedToYou') : t('oeilMissions.toasts.missionReconciledGone'),
+        gotIt ? 'success' : 'info'
+      )
+    }).catch((err) => {
+      // 403 (assignée à quelqu'un d'autre) / 404 (introuvable) : même verdict que "plus pending"
+      if (err.response?.status === 403 || err.response?.status === 404) {
+        setMissions((prev) => prev.filter((m) => m.id !== id))
+        setPriorityMissions((prev) => prev.filter((m) => m.id !== id))
+        toast(t('oeilMissions.toasts.missionReconciledGone'), 'info')
+      }
+    })
+  }, [user, t])
+
+  // "Mission non disponible"/"Mission plus disponible" peut vouloir dire "attribuée
+  // entretemps" (à vous ou à un autre Œil) autant qu'un vrai rejet — ce n'est jamais un
+  // rejet de VOTRE candidature en tant que telle, donc on le traite comme un conflit d'état.
+  const isStateConflictError = (err) => {
+    if (!err.response) return false
+    const msg = err.response.data?.error
+    return err.response.status === 409 || msg === 'Mission non disponible' || msg === 'Mission plus disponible'
+  }
+
+  const handleInterestError = (err, id) => {
+    if (!err.response) {
+      // Timeout/coupure réseau : le serveur a peut-être terminé le traitement malgré tout
+      // (RAPPORT_DIAGNOSTIC §2c) — message neutre en attendant la vérification plutôt
+      // qu'une erreur affirmée à tort.
+      toast(t('oeilMissions.toasts.networkErrorReconciling'), 'info')
+      reconcileMission(id)
+    } else if (isStateConflictError(err)) {
+      // Pas de toast générique ici : reconcileMission affiche le verdict définitif, plus
+      // rassurant qu'un texte d'erreur brut sur un cas qui n'est pas forcément un échec.
+      reconcileMission(id)
+    } else {
+      toast(err.response?.data?.error || t('oeilMissions.toasts.genericError'), 'error')
+    }
+  }
+
+  const interest = async (id) => {
     if (!complianceMission) { setComplianceMission(id); return }
-    setComplianceMission(null)
+    if (submittingInterestRef.current.has(id)) return
+    setInterestSubmitting(id, true)
     try {
       await missionsAPI.interest(id)
       setMissions((prev) => prev.map((m) => m.id === id ? { ...m, interested: true } : m))
       toast(t('oeilMissions.toasts.interestExpressed'), 'success')
     } catch (err) {
-      toast(err.response?.data?.error || t('oeilMissions.toasts.genericError'), 'error')
+      handleInterestError(err, id)
+    } finally {
+      setComplianceMission(null)
+      setInterestSubmitting(id, false)
+    }
+  }
+
+  // Équivalent de interest() pour l'onglet "priorité" (transferts) : pas de ComplianceModal
+  // sur ce flux (déjà acceptée une première fois par l'Œil précédent), appel réseau direct.
+  const interestPriority = async (id) => {
+    if (submittingInterestRef.current.has(id)) return
+    setInterestSubmitting(id, true)
+    try {
+      await missionsAPI.interest(id)
+      toast(t('oeilMissions.toasts.interestExpressedShort'), 'success')
+      load(tab)
+    } catch (err) {
+      handleInterestError(err, id)
+    } finally {
+      setInterestSubmitting(id, false)
     }
   }
 
@@ -361,10 +454,11 @@ try {
             </div>
           )}
           <button
-            onClick={() => user?.is_verified ? missionsAPI.interest(m.id).then(() => { toast(t('oeilMissions.toasts.interestExpressedShort'), 'success'); load(tab) }).catch(err => toast(err.response?.data?.error || t('oeilMissions.toasts.genericError'), 'error')) : navigate('/oeil/verification-identite')}
-            className="btn btn-sm w-full justify-center bg-red-500 text-white hover:bg-red-600"
+            onClick={() => user?.is_verified ? interestPriority(m.id) : navigate('/oeil/verification-identite')}
+            disabled={submittingInterestIds.has(m.id)}
+            className="btn btn-sm w-full justify-center bg-red-500 text-white hover:bg-red-600 disabled:opacity-50"
           >
-            {t('oeilMissions.priorityBanner.interestButton')}
+            {submittingInterestIds.has(m.id) ? t('oeilMissions.priorityBanner.interestButtonSending') : t('oeilMissions.priorityBanner.interestButton')}
           </button>
         </div>
       ))}
@@ -477,10 +571,14 @@ try {
                       <>
                         <button
                           onClick={() => interest(m.id)}
-                          disabled={m.interested || m.has_interested}
+                          disabled={m.interested || m.has_interested || submittingInterestIds.has(m.id)}
                           className="btn btn-sm flex-1 justify-center disabled:opacity-50 bg-green-500 text-white hover:bg-green-600"
                         >
-                          {(m.interested || m.has_interested) ? t('oeilMissions.card.requestSent') : t('oeilMissions.card.interested')}
+                          {(m.interested || m.has_interested)
+                            ? t('oeilMissions.card.requestSent')
+                            : submittingInterestIds.has(m.id)
+                              ? t('oeilMissions.card.interestedSending')
+                              : t('oeilMissions.card.interested')}
                         </button>
                         <button
                         onClick={() => refuse(m.id)}
@@ -689,7 +787,14 @@ try {
     <ComplianceModal onAccept={() => interest(complianceMission)} />
   )}
   {complianceAdvance && (
-    <ComplianceModal onAccept={() => { const m = complianceAdvance; setComplianceAdvance(null); advance(m, true) }} />
+    <ComplianceModal onAccept={async () => {
+      const m = complianceAdvance
+      try {
+        await advance(m, true)
+      } finally {
+        setComplianceAdvance(null)
+      }
+    }} />
   )}
 
       {chatMission && (

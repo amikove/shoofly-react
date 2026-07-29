@@ -1,7 +1,21 @@
+import { useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 export default function ComplianceModal({ onAccept }) {
   const { t } = useTranslation()
+  // Anti-double-clic : le ref bloque un 2e appel synchrone (avant le re-render qui
+  // désactive le bouton) ; le state pilote juste l'affichage. Le composant est démonté par
+  // le parent une fois la promesse d'onAccept résolue, donc pas besoin de remettre à false.
+  const submittingRef = useRef(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+
+  const handleAccept = () => {
+    if (submittingRef.current) return
+    submittingRef.current = true
+    setIsSubmitting(true)
+    onAccept()
+  }
+
   return (
     <div className="fixed inset-0 bg-black/80 z-[70] flex items-center justify-center p-4 backdrop-blur-sm">
       <div className="bg-[#181818] border border-orange-500/30 rounded-2xl p-6 w-full max-w-md shadow-xl max-h-[85vh] overflow-y-auto">
@@ -53,10 +67,11 @@ export default function ComplianceModal({ onAccept }) {
         </div>
 
         <button
-          onClick={onAccept}
-          className="btn btn-primary w-full justify-center"
+          onClick={handleAccept}
+          disabled={isSubmitting}
+          className="btn btn-primary w-full justify-center disabled:opacity-50"
         >
-          {t('complianceModalOeil.continueButton')}
+          {isSubmitting ? t('complianceModalOeil.continueButtonSending') : t('complianceModalOeil.continueButton')}
         </button>
       </div>
     </div>

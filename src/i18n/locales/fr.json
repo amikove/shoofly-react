@@ -1009,7 +1009,10 @@
       "interestExpressedShort": "Intérêt exprimé ✓",
       "invalidStatus": "Statut invalide",
       "reportRequiredBeforeComplete": "Vous devez soumettre le rapport avant de terminer la mission 📋",
-      "cannotVerifyReport": "Impossible de vérifier le rapport"
+      "cannotVerifyReport": "Impossible de vérifier le rapport",
+      "networkErrorReconciling": "Connexion interrompue — vérification de votre candidature en cours...",
+      "missionReconciledAssignedToYou": "Bonne nouvelle : cette mission vous a été attribuée ! Retrouvez-la dans l'onglet « En cours » 🎉",
+      "missionReconciledGone": "Cette mission n'est plus disponible."
     },
     "advanceStatusLabels": {
       "enRoute": "En route vers la mission ✓",
@@ -1031,7 +1034,8 @@
       "text": "🔴 Ces missions nécessitent un Œil de toute urgence",
       "subtext": "L'Œil précédent a signalé un empêchement — postulez rapidement.",
       "badge": "PRIORITÉ",
-      "interestButton": "⚡ Je prends cette mission →"
+      "interestButton": "⚡ Je prends cette mission →",
+      "interestButtonSending": "..."
     },
     "filters": {
       "allQuartiers": "Tous les quartiers"
@@ -1042,6 +1046,7 @@
       "underSurveillanceBadge": "⚠️ Sous surveillance",
       "requestSent": "✅ Demande envoyée",
       "interested": "👁️ Je suis intéressé",
+      "interestedSending": "...",
       "ignore": "✕ Ignorer",
       "chat": "💬 Chat",
       "reportButton": "📋 Rapport",
@@ -1650,7 +1655,8 @@
     "antiContactStrong": "strictement interdit",
     "antiContactSuffix": "et entraîne la suspension du compte.",
     "acceptNotice": "En continuant, vous acceptez ces conditions. Tout manquement peut entraîner un avertissement ou la suspension de votre compte.",
-    "continueButton": "J'ai compris, je démarre →"
+    "continueButton": "J'ai compris, je démarre →",
+    "continueButtonSending": "..."
   },
   "missionSummaryModal": {
     "statusLabel": "Statut",

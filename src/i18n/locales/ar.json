@@ -1010,7 +1010,10 @@
       "interestExpressedShort": "تم إبداء الاهتمام ✓",
       "invalidStatus": "حالة غير صالحة",
       "reportRequiredBeforeComplete": "يجب عليك تقديم التقرير قبل إنهاء المهمة 📋",
-      "cannotVerifyReport": "تعذر التحقق من التقرير"
+      "cannotVerifyReport": "تعذر التحقق من التقرير",
+      "networkErrorReconciling": "انقطع الاتصال — جارٍ التحقق من طلبك...",
+      "missionReconciledAssignedToYou": "خبر سار: تم إسناد هذه المهمة إليك! ستجدها في تبويب «جارية» 🎉",
+      "missionReconciledGone": "هذه المهمة لم تعد متاحة."
     },
     "advanceStatusLabels": {
       "enRoute": "في الطريق إلى المهمة ✓",
@@ -1032,7 +1035,8 @@
       "text": "🔴 تحتاج هذه المهام إلى عين بشكل عاجل جدًا",
       "subtext": "أبلغت العين السابقة عن مانع — قدّم طلبك بسرعة.",
       "badge": "أولوية",
-      "interestButton": "⚡ سأتولى هذه المهمة ←"
+      "interestButton": "⚡ سأتولى هذه المهمة ←",
+      "interestButtonSending": "..."
     },
     "filters": {
       "allQuartiers": "جميع الأحياء"
@@ -1043,6 +1047,7 @@
       "underSurveillanceBadge": "⚠️ تحت المراقبة",
       "requestSent": "✅ تم إرسال الطلب",
       "interested": "👁️ أنا مهتم",
+      "interestedSending": "...",
       "ignore": "✕ تجاهل",
       "chat": "💬 محادثة",
       "reportButton": "📋 تقرير",
@@ -1649,7 +1654,8 @@
     "antiContactStrong": "ممنوع منعاً كلياً",
     "antiContactSuffix": "ويؤدي إلى تعليق الحساب.",
     "acceptNotice": "بمتابعتك، فإنك توافق على هذه الشروط. أي إخلال بها قد يؤدي إلى تحذير أو تعليق حسابك.",
-    "continueButton": "فهمت، أبدأ ←"
+    "continueButton": "فهمت، أبدأ ←",
+    "continueButtonSending": "..."
   },
   "missionSummaryModal": {
     "statusLabel": "الحالة",

@@ -91,7 +91,7 @@ export function useNotifications({ onChatOpen } = {}) {
 // Écouter les notifications directes (message reçu hors chat ouvert)
 const unsubNotif = onEvent('notification', (notif) => {
   
-  if (notif.type === 'message' || notif.title === 'Nouveau message' || notif.title === '📸 Médias reçus') {
+  if (notif.type === 'message' || notif.title === 'Nouveau message' || notif.title === '📸 Médias reçus' || notif.title === 'Œil assigné 👁️') {
     toast(`💬 ${notif.body}`, 'info')
 
     sendPushNotification(
