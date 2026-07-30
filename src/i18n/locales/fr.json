@@ -907,8 +907,6 @@
   },
   "oeilDashboard": {
     "title": "Tableau de bord",
-    "selectReasonError": "Veuillez sélectionner une raison",
-    "transferReportedToast": "Empêchement signalé — mission remise en priorité",
     "genericError": "Erreur",
     "loadingError": "Erreur de chargement",
     "interestExpressedToast": "Intérêt exprimé 👁️ Le client va vous contacter.",
@@ -961,29 +959,7 @@
       "title": "Mes missions en cours",
       "emptyTitle": "Aucune mission en cours",
       "emptyDesc": "Acceptez une mission pour commencer.",
-      "chat": "💬 Chat",
-      "reportImpediment": "Signaler un empêchement majeur"
-    },
-    "transferModal": {
-      "title": "Empêchement en cours de mission",
-      "warning": "Cette action est irréversible et réservée aux situations d'urgence réelle. Le client a planifié ce rendez-vous — votre départ impacte directement sa mission.",
-      "consequencesLabel": "Conséquences :",
-      "consequenceNoPay": "• Vous ne recevrez aucune rémunération pour cette mission",
-      "consequenceHalfPay": "• Vous recevrez 50% de la rémunération si un remplaçant est trouvé",
-      "consequenceNoApply": "• Vous ne pourrez pas postuler pendant 4 heures",
-      "consequenceNoted": "• Cet incident sera noté sur votre profil",
-      "reasonLabel": "Raison (obligatoire)",
-      "reasonPlaceholder": "Sélectionner une raison",
-      "reasons": {
-        "medical": "Urgence médicale",
-        "accident": "Accident / incident sur place",
-        "security": "Problème de sécurité",
-        "family": "Empêchement familial grave",
-        "other": "Autre cas de force majeure"
-      },
-      "back": "Retour",
-      "confirmButton": "Confirmer l'empêchement →",
-      "confirming": "..."
+      "chat": "💬 Chat"
     }
   },
   "oeilMissions": {
@@ -2238,6 +2214,8 @@
     "Agression, vol ou menace": "Agression, vol ou menace",
     "Hospitalisation": "Hospitalisation",
     "Situation dangereuse": "Situation dangereuse",
+    "Empêchement familial grave": "Empêchement familial grave",
+    "Autre cas de force majeure": "Autre cas de force majeure",
     "Client absent ou injoignable": "Client absent ou injoignable",
     "Mauvaise adresse": "Mauvaise adresse",
     "Mission différente de la description": "Mission différente de la description"

@@ -7,6 +7,7 @@ import { StatusBadge, Spinner, EmptyState, toast } from '../../components/ui'
 import { useAuth } from '../../context/AuthContext'
 import { useNavigate } from 'react-router-dom'
 import ChatModal from '../../components/missions/ChatModal'
+import AssistanceModal from '../../components/missions/AssistanceModal'
 import { translateLocation } from '../../constants/villesTranslations'
 
 export default function OeilDashboard() {
@@ -18,25 +19,9 @@ export default function OeilDashboard() {
   const [stats, setStats]             = useState(null)
   const [loading, setLoading]         = useState(true)
   const [chatMission, setChatMission] = useState(null)
-  const [transferMission, setTransferMission] = useState(null)
-  const [transferReason, setTransferReason] = useState('')
-  const [transferring, setTransferring] = useState(false)
+  const [assistanceMission, setAssistanceMission] = useState(null)
   const [advancing, setAdvancing] = useState(null)
   const [bonusCampaign, setBonusCampaign] = useState({ active: false, percent: 0 })
-
-  const doTransfer = async () => {
-    if (!transferReason) { toast(t('oeilDashboard.selectReasonError'), 'error'); return }
-    setTransferring(true)
-    try {
-      await missionsAPI.transfer(transferMission.id, { reason: transferReason })
-      toast(t('oeilDashboard.transferReportedToast'), 'info')
-      setTransferMission(null)
-      setTransferReason('')
-      load()
-    } catch (err) {
-      toast(err.response?.data?.error || t('oeilDashboard.genericError'), 'error')
-    } finally { setTransferring(false) }
-  }
 
   const load = () => {
     setLoading(true)
@@ -352,10 +337,10 @@ const refuse = async (id) => {
                 </div>
                 {['assigned','en_route','active'].includes(m.status) && (
                   <button
-                    onClick={() => { setTransferMission(m); setTransferReason('') }}
-                    className="text-xs text-[#555] hover:text-red-400 transition-colors mt-2 w-full text-center"
+                    onClick={() => setAssistanceMission(m)}
+                    className="text-xs text-[#555] hover:text-orange-400 transition-colors mt-2 w-full text-center"
                   >
-                    {t('oeilDashboard.active.reportImpediment')}
+                    {t('oeilMissions.card.askAssistance')}
                   </button>
                 )}
 
@@ -371,50 +356,12 @@ const refuse = async (id) => {
 
 {chatMission && <ChatModal mission={chatMission} onClose={() => setChatMission(null)} />}
 
-      {transferMission && (
-        <div className="fixed inset-0 bg-black/80 z-[70] flex items-center justify-center p-4 backdrop-blur-sm">
-          <div className="bg-[#181818] border border-red-500/30 rounded-2xl p-6 w-full max-w-md shadow-xl">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 rounded-xl bg-red-500/10 flex items-center justify-center text-xl flex-shrink-0">🚨</div>
-              <h2 className="font-bold text-base">{t('oeilDashboard.transferModal.title')}</h2>
-            </div>
-            <div className="bg-red-500/5 border border-red-500/20 rounded-xl p-4 mb-4 space-y-1.5">
-              <p className="text-xs text-white/80">{t('oeilDashboard.transferModal.warning')}</p>
-            </div>
-            <div className="bg-[#222] rounded-xl p-3 mb-4 space-y-1">
-              <p className="text-xs text-[#AAA]">{t('oeilDashboard.transferModal.consequencesLabel')}</p>
-              {['assigned'].includes(transferMission.status)
-                ? <p className="text-xs text-white/70">{t('oeilDashboard.transferModal.consequenceNoPay')}</p>
-                : <>
-                    <p className="text-xs text-white/70">{t('oeilDashboard.transferModal.consequenceHalfPay')}</p>
-                    <p className="text-xs text-white/70">{t('oeilDashboard.transferModal.consequenceNoApply')}</p>
-                  </>
-              }
-              <p className="text-xs text-white/70">{t('oeilDashboard.transferModal.consequenceNoted')}</p>
-            </div>
-            <div className="mb-5">
-              <label className="label">{t('oeilDashboard.transferModal.reasonLabel')}</label>
-              <select className="input" value={transferReason} onChange={e => setTransferReason(e.target.value)}>
-                <option value="">{t('oeilDashboard.transferModal.reasonPlaceholder')}</option>
-                <option value="Urgence médicale">{t('oeilDashboard.transferModal.reasons.medical')}</option>
-                <option value="Accident / incident">{t('oeilDashboard.transferModal.reasons.accident')}</option>
-                <option value="Problème de sécurité">{t('oeilDashboard.transferModal.reasons.security')}</option>
-                <option value="Empêchement familial grave">{t('oeilDashboard.transferModal.reasons.family')}</option>
-                <option value="Autre cas de force majeure">{t('oeilDashboard.transferModal.reasons.other')}</option>
-              </select>
-            </div>
-            <div className="flex gap-3">
-              <button onClick={() => setTransferMission(null)} className="btn btn-ghost flex-1 justify-center">{t('oeilDashboard.transferModal.back')}</button>
-              <button
-                onClick={doTransfer}
-                disabled={transferring || !transferReason}
-                className="btn btn-sm flex-1 justify-center bg-red-500 text-white hover:bg-red-600 disabled:opacity-50"
-              >
-                {transferring ? t('oeilDashboard.transferModal.confirming') : t('oeilDashboard.transferModal.confirmButton')}
-              </button>
-            </div>
-          </div>
-        </div>
+      {assistanceMission && (
+        <AssistanceModal
+          mission={assistanceMission}
+          onClose={() => setAssistanceMission(null)}
+          onSuccess={() => { setAssistanceMission(null); load() }}
+        />
       )}
     </AppLayout>
   )

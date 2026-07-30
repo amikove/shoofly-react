@@ -908,8 +908,6 @@
   },
   "oeilDashboard": {
     "title": "لوحة التحكم",
-    "selectReasonError": "يرجى اختيار سبب",
-    "transferReportedToast": "تم الإبلاغ عن المانع — أعيدت المهمة إلى قائمة الأولوية",
     "genericError": "خطأ",
     "loadingError": "خطأ في التحميل",
     "interestExpressedToast": "تم إبداء الاهتمام 👁️ سيتواصل معك العميل.",
@@ -962,29 +960,7 @@
       "title": "مهامي الجارية",
       "emptyTitle": "لا توجد مهمة جارية",
       "emptyDesc": "اقبل مهمة للبدء.",
-      "chat": "💬 محادثة",
-      "reportImpediment": "الإبلاغ عن مانع كبير"
-    },
-    "transferModal": {
-      "title": "مانع أثناء تنفيذ المهمة",
-      "warning": "هذا الإجراء لا رجعة فيه ومخصص لحالات الطوارئ الحقيقية فقط. لقد خطط العميل لهذا الموعد — مغادرتك تؤثر مباشرة على مهمته.",
-      "consequencesLabel": "العواقب:",
-      "consequenceNoPay": "• لن تحصل على أي أجر مقابل هذه المهمة",
-      "consequenceHalfPay": "• ستحصل على 50% من الأجر إذا تم إيجاد بديل",
-      "consequenceNoApply": "• لن تتمكن من التقدم لمهام أخرى لمدة 4 ساعات",
-      "consequenceNoted": "• سيتم تسجيل هذا الحادث في ملفك الشخصي",
-      "reasonLabel": "السبب (إلزامي)",
-      "reasonPlaceholder": "اختر سببًا",
-      "reasons": {
-        "medical": "حالة طبية طارئة",
-        "accident": "حادث / واقعة في الموقع",
-        "security": "مشكلة أمنية",
-        "family": "عائق عائلي خطير",
-        "other": "قوة قاهرة أخرى"
-      },
-      "back": "رجوع",
-      "confirmButton": "تأكيد المانع ←",
-      "confirming": "..."
+      "chat": "💬 محادثة"
     }
   },
   "oeilMissions": {
@@ -2237,6 +2213,8 @@
     "Agression, vol ou menace": "اعتداء أو سرقة أو تهديد",
     "Hospitalisation": "دخول المستشفى",
     "Situation dangereuse": "وضعية خطيرة",
+    "Empêchement familial grave": "عائق عائلي خطير",
+    "Autre cas de force majeure": "قوة قاهرة أخرى",
     "Client absent ou injoignable": "العميل غائب أو يتعذر الوصول إليه",
     "Mauvaise adresse": "عنوان خاطئ",
     "Mission différente de la description": "المهمة مختلفة عن الوصف"

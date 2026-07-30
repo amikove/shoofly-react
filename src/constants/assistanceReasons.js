@@ -12,6 +12,8 @@ export const URGENCE_REASONS = [
   'Agression, vol ou menace',
   'Hospitalisation',
   'Situation dangereuse',
+  'Empêchement familial grave',
+  'Autre cas de force majeure',
 ]
 
 export const MISSION_REASONS = [
