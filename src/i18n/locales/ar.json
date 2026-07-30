@@ -474,7 +474,8 @@
       "selectProblemType": "اختر نوع المشكلة",
       "loadingMission": "خطأ في تحميل المهمة",
       "loading": "خطأ في التحميل",
-      "generic": "خطأ"
+      "generic": "خطأ",
+      "chatClosed": "هذه المهمة مغلقة، المحادثة لم تعد متاحة."
     },
     "table": {
       "mission": "المهمة",
@@ -637,6 +638,7 @@
     "emptyTitle": "لا توجد محادثة",
     "emptyDesc": "ستظهر هنا محادثاتك مع العيون الميدانية.",
     "noMessage": "لا توجد رسالة",
+    "chatClosedTag": "مغلقة",
     "status": {
       "pending": "قيد الانتظار",
       "assigned": "مُسندة",
@@ -989,7 +991,8 @@
       "cannotVerifyReport": "تعذر التحقق من التقرير",
       "networkErrorReconciling": "انقطع الاتصال — جارٍ التحقق من طلبك...",
       "missionReconciledAssignedToYou": "خبر سار: تم إسناد هذه المهمة إليك! ستجدها في تبويب «جارية» 🎉",
-      "missionReconciledGone": "هذه المهمة لم تعد متاحة."
+      "missionReconciledGone": "هذه المهمة لم تعد متاحة.",
+      "chatClosed": "هذه المهمة مغلقة، المحادثة لم تعد متاحة."
     },
     "advanceStatusLabels": {
       "enRoute": "في الطريق إلى المهمة ✓",

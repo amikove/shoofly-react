@@ -174,7 +174,13 @@ useEffect(() => {
 
   const found = missions.find((m) => m.id === missionId)
   const openWith = (mission) => {
-    if (type === 'chat') setChatMission(mission)
+    if (type === 'chat') {
+      if (['completed', 'cancelled'].includes(mission.status)) {
+        toast(t('clientMissions.errors.chatClosed'), 'info')
+        return
+      }
+      setChatMission(mission)
+    }
     else if (type === 'interests_modal') setInterestsMission(mission)
     else if (type === 'mission_detail') setDetailMission(mission)
   }

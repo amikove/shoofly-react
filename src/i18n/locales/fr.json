@@ -473,7 +473,8 @@
       "selectProblemType": "Sélectionnez un type de problème",
       "loadingMission": "Erreur chargement mission",
       "loading": "Erreur de chargement",
-      "generic": "Erreur"
+      "generic": "Erreur",
+      "chatClosed": "Cette mission est clôturée, le chat n'est plus disponible."
     },
     "table": {
       "mission": "Mission",
@@ -636,6 +637,7 @@
     "emptyTitle": "Aucune conversation",
     "emptyDesc": "Vos échanges avec les Œils apparaîtront ici.",
     "noMessage": "Aucun message",
+    "chatClosedTag": "Clôturée",
     "status": {
         "pending": "En attente",
         "assigned": "Assignée",
@@ -988,7 +990,8 @@
       "cannotVerifyReport": "Impossible de vérifier le rapport",
       "networkErrorReconciling": "Connexion interrompue — vérification de votre candidature en cours...",
       "missionReconciledAssignedToYou": "Bonne nouvelle : cette mission vous a été attribuée ! Retrouvez-la dans l'onglet « En cours » 🎉",
-      "missionReconciledGone": "Cette mission n'est plus disponible."
+      "missionReconciledGone": "Cette mission n'est plus disponible.",
+      "chatClosed": "Cette mission est clôturée, le chat n'est plus disponible."
     },
     "advanceStatusLabels": {
       "enRoute": "En route vers la mission ✓",

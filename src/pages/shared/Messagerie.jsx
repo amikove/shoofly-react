@@ -74,11 +74,13 @@ export default function Messagerie() {
               const st = STATUS_LABEL_KEY[m.status] || { key: null, color: 'text-[#AAA]' }
               const statusLabel = st.key ? t(`messagerie.status.${st.key}`) : m.status
               const otherName = user?.role === 'client' ? m.oeil_name : m.client_name
+              const isClosed = ['completed', 'cancelled'].includes(m.status)
               return (
                 <button
                   key={m.id}
                   onClick={() => openChat(m)}
-                  className={`w-full flex items-center gap-3 px-4 py-3 hover:bg-white/5 transition-colors text-start ${i < inbox.length - 1 ? 'border-b border-white/10' : ''}`}
+                  disabled={isClosed}
+                  className={`w-full flex items-center gap-3 px-4 py-3 transition-colors text-start ${isClosed ? 'opacity-50 cursor-not-allowed' : 'hover:bg-white/5'} ${i < inbox.length - 1 ? 'border-b border-white/10' : ''}`}
                 >
                   {/* Icône type */}
                   <div className="text-2xl shrink-0">{TYPE_ICON[m.type] || '📌'}</div>
@@ -98,7 +100,9 @@ export default function Messagerie() {
                   {/* Droite */}
                   <div className="flex flex-col items-end gap-1 shrink-0">
                     <span className="text-[11px] text-[#555]">{timeAgo(m.last_message_at, t)}</span>
-                    {m.unread_count > 0 && (
+                    {isClosed ? (
+                      <span className="text-[10px] text-[#666]">🔒 {t('messagerie.chatClosedTag')}</span>
+                    ) : m.unread_count > 0 && (
                       <span className="bg-[#FF4D00] text-white text-[11px] font-bold rounded-full w-5 h-5 flex items-center justify-center">
                         {m.unread_count > 9 ? '9+' : m.unread_count}
                       </span>

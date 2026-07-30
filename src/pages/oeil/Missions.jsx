@@ -75,13 +75,20 @@ useEffect(() => {
   if (!id) { clearPending(); return }
 
   setTab('active')
+  const openChat = (mission) => {
+    if (['completed', 'cancelled'].includes(mission.status)) {
+      toast(t('oeilMissions.toasts.chatClosed'), 'info')
+      return
+    }
+    setChatMission(mission)
+  }
   const found = missions.find((m) => m.id === id) || priorityMissions.find((m) => m.id === id)
   if (found) {
-    setChatMission(found)
+    openChat(found)
     clearPending()
   } else {
     missionsAPI.get(id)
-      .then(({ data }) => setChatMission(data.mission || data))
+      .then(({ data }) => openChat(data.mission || data))
       .catch(() => {})
       .finally(() => clearPending())
   }
