@@ -15,6 +15,7 @@ import MissionDetailModal from '../../components/missions/MissionDetailModal'
 import InterestsModal from '../../components/missions/InterestsModal'
 import NewTicketModal from '../../components/tickets/NewTicketModal'
 import { Pagination } from '../../components/ui'
+import { getChatAccessState } from '../../utils/chatAccess'
 
 const TYPE_ICONS = { immobilier:'🏠', file_attente:'⏳', audit:'🔎', personnalisee:'🎯' }
 
@@ -175,7 +176,7 @@ useEffect(() => {
   const found = missions.find((m) => m.id === missionId)
   const openWith = (mission) => {
     if (type === 'chat') {
-      if (['completed', 'cancelled'].includes(mission.status)) {
+      if (getChatAccessState(mission) === 'expired') {
         toast(t('clientMissions.errors.chatClosed'), 'info')
         return
       }

@@ -6,10 +6,22 @@ import ComplianceModal from './ComplianceModalClient'
 import { toast, Spinner } from '../ui'
 import { useSocket } from '../../context/SocketContext'
 import { useAuth } from '../../context/AuthContext'
+import { getChatAccessState } from '../../utils/chatAccess'
+
+const CASABLANCA_TZ = 'Africa/Casablanca'
+
+function formatGraceDeadline(iso) {
+  if (!iso) return ''
+  return new Date(iso).toLocaleString('fr-FR', {
+    timeZone: CASABLANCA_TZ,
+    day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit',
+  })
+}
 
 export default function ChatModal({ mission, onClose }) {
   const { t } = useTranslation()
   const { user }              = useAuth()
+  const isReadOnly = getChatAccessState(mission, user?.role === 'admin') === 'grace'
   const { onEvent, sendMessage, joinMission, leaveMission } = useSocket()
   const [messages, setMessages] = useState([])
   const [msg, setMsg]           = useState('')
@@ -160,6 +172,16 @@ const send = async () => {
           <button onClick={onClose} aria-label={t('common.close')} className="text-[#AAA] hover:text-white text-lg">✕</button>
         </div>
 
+        {/* Bandeau lecture seule (délai de grâce 24h après clôture) */}
+        {isReadOnly && (
+          <div className="mx-4 mt-3 bg-[#FF4D00]/10 border border-[#FF4D00]/30 rounded-xl px-3 py-2.5 flex items-start gap-2 flex-shrink-0">
+            <span className="text-base leading-none flex-shrink-0">🔒</span>
+            <p className="text-xs text-white/80 leading-relaxed">
+              {t('chatModal.readOnlyBanner', { date: formatGraceDeadline(mission.chat_access_expires_at) })}
+            </p>
+          </div>
+        )}
+
         {/* Messages */}
         <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-2">
           {loading ? (
@@ -204,52 +226,54 @@ const send = async () => {
           <div ref={bottomRef} />
         </div>
 
-        {/* Input */}
-        <div className="flex items-center gap-2 p-3 border-t border-white/10 flex-shrink-0">
-          {/* Bouton fichier */}
-          <input
-            ref={fileRef}
-            type="file"
-            accept="image/*,video/*"
-            className="hidden"
-            onChange={(e) => sendFile(e.target.files[0])}
-          />
-          <button
-            onClick={() => fileRef.current?.click()}
-            disabled={uploading}
-            className="w-8 h-8 flex items-center justify-center rounded-lg bg-[#222] border border-white/12 text-[#AAA] hover:text-white hover:border-white/22 transition-all disabled:opacity-50 text-sm flex-shrink-0"
-            title={t('chatModal.sendPhotoVideo')}
-          >
-            {uploading ? '⏳' : '📎'}
-          </button>
+        {/* Input — masqué en lecture seule (délai de grâce) */}
+        {!isReadOnly && (
+          <div className="flex items-center gap-2 p-3 border-t border-white/10 flex-shrink-0">
+            {/* Bouton fichier */}
+            <input
+              ref={fileRef}
+              type="file"
+              accept="image/*,video/*"
+              className="hidden"
+              onChange={(e) => sendFile(e.target.files[0])}
+            />
+            <button
+              onClick={() => fileRef.current?.click()}
+              disabled={uploading}
+              className="w-8 h-8 flex items-center justify-center rounded-lg bg-[#222] border border-white/12 text-[#AAA] hover:text-white hover:border-white/22 transition-all disabled:opacity-50 text-sm flex-shrink-0"
+              title={t('chatModal.sendPhotoVideo')}
+            >
+              {uploading ? '⏳' : '📎'}
+            </button>
 
-          {/* Input texte */}
-          <input
-            className="flex-1 bg-[#222] border border-white/20 rounded-lg px-3 py-2 text-sm text-white outline-none placeholder:text-white/20 focus:border-[#FF4D00]/50 transition-colors"
-            placeholder={t('chatModal.messagePlaceholder')}
-            value={msg}
-            onChange={(e) => setMsg(e.target.value)}
-            onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && send()}
-            disabled={sending}
-          />
+            {/* Input texte */}
+            <input
+              className="flex-1 bg-[#222] border border-white/20 rounded-lg px-3 py-2 text-sm text-white outline-none placeholder:text-white/20 focus:border-[#FF4D00]/50 transition-colors"
+              placeholder={t('chatModal.messagePlaceholder')}
+              value={msg}
+              onChange={(e) => setMsg(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && send()}
+              disabled={sending}
+            />
 
-          {/* Bouton envoyer */}
-            {showCompliance && (
-              <ComplianceModal onAccept={() => {
-                setShowCompliance(false)
-                setComplianceAccepted(true)
-                localStorage.setItem(`compliance_${mission?.id}`, 'true')
-                setTimeout(() => send(), 100)
-              }} />
-            )}
-          <button
-            onClick={send}
-            disabled={sending || !msg.trim()}
-            className="w-8 h-8 flex items-center justify-center rounded-lg bg-[#FF4D00] text-white disabled:opacity-50 hover:opacity-90 transition-all flex-shrink-0"
-          >
-            {sending ? '⏳' : '→'}
-          </button>
-        </div>
+            {/* Bouton envoyer */}
+              {showCompliance && (
+                <ComplianceModal onAccept={() => {
+                  setShowCompliance(false)
+                  setComplianceAccepted(true)
+                  localStorage.setItem(`compliance_${mission?.id}`, 'true')
+                  setTimeout(() => send(), 100)
+                }} />
+              )}
+            <button
+              onClick={send}
+              disabled={sending || !msg.trim()}
+              className="w-8 h-8 flex items-center justify-center rounded-lg bg-[#FF4D00] text-white disabled:opacity-50 hover:opacity-90 transition-all flex-shrink-0"
+            >
+              {sending ? '⏳' : '→'}
+            </button>
+          </div>
+        )}
       </div>
     </div>
   )

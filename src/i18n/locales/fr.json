@@ -1562,7 +1562,8 @@
     "clientLabel": "Client : {{name}}",
     "noMessages": "Aucun message. Commencez la conversation.",
     "sendPhotoVideo": "Envoyer une photo ou vidéo",
-    "messagePlaceholder": "Votre message..."
+    "messagePlaceholder": "Votre message...",
+    "readOnlyBanner": "Ce chat sera fermé le {{date}} — sauvegardez vos photos avant cette date."
   },
   "clientAuditReportView": {
     "topbarTitle": "Rapport d'audit",

@@ -6,6 +6,7 @@ import { missionsAPI } from '../../api'
 import { Spinner, EmptyState, toast } from '../../components/ui'
 import ChatModal from '../../components/missions/ChatModal'
 import { useAuth } from '../../context/AuthContext'
+import { getChatAccessState } from '../../utils/chatAccess'
 
 const STATUS_LABEL_KEY = {
   pending:          { key: 'pending',         color: 'text-yellow-400' },
@@ -74,7 +75,7 @@ export default function Messagerie() {
               const st = STATUS_LABEL_KEY[m.status] || { key: null, color: 'text-[#AAA]' }
               const statusLabel = st.key ? t(`messagerie.status.${st.key}`) : m.status
               const otherName = user?.role === 'client' ? m.oeil_name : m.client_name
-              const isClosed = ['completed', 'cancelled'].includes(m.status)
+              const isClosed = getChatAccessState(m) === 'expired'
               return (
                 <button
                   key={m.id}

@@ -14,6 +14,7 @@ import MissionHistoryModal from '../../components/missions/MissionHistoryModal'
 import MissionSummaryModal from '../../components/missions/MissionSummaryModal'
 import ComplianceModal from '../../components/missions/ComplianceModal'
 import AssistanceModal from '../../components/missions/AssistanceModal'
+import { getChatAccessState } from '../../utils/chatAccess'
 
 const TABS = ['priority', 'available', 'active', 'done']
 const TYPE_ICONS = { immobilier:'🏠', file_attente:'⏳', audit:'🔎', personnalisee:'🎯' }
@@ -76,7 +77,7 @@ useEffect(() => {
 
   setTab('active')
   const openChat = (mission) => {
-    if (['completed', 'cancelled'].includes(mission.status)) {
+    if (getChatAccessState(mission) === 'expired') {
       toast(t('oeilMissions.toasts.chatClosed'), 'info')
       return
     }

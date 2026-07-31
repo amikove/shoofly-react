@@ -1563,7 +1563,8 @@
     "clientLabel": "العميل: {{name}}",
     "noMessages": "لا توجد رسائل. ابدأ المحادثة.",
     "sendPhotoVideo": "إرسال صورة أو فيديو",
-    "messagePlaceholder": "رسالتك..."
+    "messagePlaceholder": "رسالتك...",
+    "readOnlyBanner": "ستُغلق هذه المحادثة نهائيًا في {{date}} — احفظ صورك قبل هذا الموعد."
   },
   "clientAuditReportView": {
     "topbarTitle": "تقرير التدقيق",
