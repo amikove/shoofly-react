@@ -42,6 +42,7 @@ const MENUS = {
     { to: '/admin/problemes',    icon: '🚨',  label: 'Problèmes',    section: 'Gestion',     permission: 'moderation', badge: 'problems' },
     { to: '/admin/tickets',      icon: '🎫',  label: 'Tickets',      section: 'Gestion',     permission: 'moderation' },
     { to: '/admin/finance',      icon: '💰',  label: 'Finance',      section: 'Gestion',     permission: 'finance' },
+    { to: '/admin/wallet-reconciliation', icon: '⚖️', label: 'Réconciliation', section: 'Gestion', permission: 'finance' },
     { to: '/admin/promos',       icon: '🎟️',  label: 'Codes Promo',  section: 'Système',     permission: 'finance'    },
     { to: '/admin/parametres',   icon: '⚙️',  label: 'Paramètres',   section: 'Système',     permission: 'settings'   },
     { to: '/admin/admins',       icon: '👑',  label: 'Admins',       section: 'Système',     superAdminOnly: true     },

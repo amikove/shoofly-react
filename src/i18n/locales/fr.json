@@ -1916,7 +1916,32 @@
     "missionUrgentBroadenedTitle": "🔎 Recherche élargie",
     "missionUrgentBroadenedBody": "Nous élargissons la recherche d'un remplaçant pour \"{{missionTitle}}\" à tous les Œils disponibles.",
     "replacementConfirmedClientTitle": "✅ Remplaçant trouvé",
-    "replacementConfirmedClientBody": "Un remplaçant a confirmé sa disponibilité pour \"{{missionTitle}}\"."
+    "replacementConfirmedClientBody": "Un remplaçant a confirmé sa disponibilité pour \"{{missionTitle}}\".",
+    "walletReconciliationAlertAdminTitle": "⚠️ Écart de réconciliation détecté",
+    "walletReconciliationAlertAdminBody": "{{userName}} ({{userTypeLabel}}, {{userId}}) — solde {{storedBalance}} MAD vs ledger {{ledgerBalance}} MAD (écart {{discrepancy}} MAD). Alerte #{{alertId}}."
+  },
+  "walletReconciliation": {
+    "title": "⚖️ Réconciliation Wallet",
+    "tabs": {
+      "unresolved": "Non résolues",
+      "resolved": "Résolues",
+      "all": "Toutes"
+    },
+    "table": {
+      "user": "Utilisateur",
+      "type": "Type",
+      "storedBalance": "Solde stocké",
+      "ledgerBalance": "Solde ledger",
+      "discrepancy": "Écart",
+      "detectedAt": "Détecté le",
+      "status": "Statut"
+    },
+    "resolve": "Résoudre",
+    "resolvedLabel": "Résolue le",
+    "empty": "Aucune alerte de réconciliation",
+    "loadError": "Erreur de chargement",
+    "resolveSuccess": "Alerte résolue ✓",
+    "resolveError": "Erreur lors de la résolution"
   },
   "systemMessage": {
     "oeilAccepted": "{{oeilName}} a accepté la mission.",

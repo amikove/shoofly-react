@@ -46,7 +46,7 @@ import OeilGains from './pages/oeil/Gains'
 
 import CompteSuspendu from './pages/oeil/CompteSuspendu'
 
-// Admin pages — lazy-loaded : ces 15 pages (dont AdminDashboard, qui embarque toute la librairie
+// Admin pages — lazy-loaded : ces 16 pages (dont AdminDashboard, qui embarque toute la librairie
 // de graphiques `recharts`) ne sont jamais utilisées par un client/oeil, inutile de les faire
 // télécharger à tout le monde (audit perf 2026-07-26 — voir backend/_audit/RAPPORT_AUDIT_PERFORMANCE.md).
 const AdminDashboard  = lazy(() => import('./pages/admin/Dashboard'))
@@ -63,6 +63,7 @@ const AdminFiabilite = lazy(() => import('./pages/admin/AdminFiabilite'))
 const AdminProblemes = lazy(() => import('./pages/admin/AdminProblemes'))
 const AdminTickets = lazy(() => import('./pages/admin/AdminTickets'))
 const AdminFinance = lazy(() => import('./pages/admin/AdminFinance'))
+const AdminWalletReconciliation = lazy(() => import('./pages/admin/WalletReconciliation'))
 const UserProfile = lazy(() => import('./pages/admin/UserProfile'))
 
 
@@ -168,6 +169,7 @@ export default function App() {
       <Route path="/admin/problemes" element={<RequireAuth allowedRoles={['admin']}><AdminProblemes /></RequireAuth>} />
       <Route path="/admin/tickets" element={<RequireAuth allowedRoles={['admin']}><AdminTickets /></RequireAuth>} />
       <Route path="/admin/finance" element={<RequireAuth allowedRoles={['admin']}><AdminFinance /></RequireAuth>} />
+      <Route path="/admin/wallet-reconciliation" element={<RequireAuth allowedRoles={['admin']}><AdminWalletReconciliation /></RequireAuth>} />
       <Route path="/admin/users/:userId" element={<RequireAuth allowedRoles={['admin']}><UserProfile /></RequireAuth>} />
 
 

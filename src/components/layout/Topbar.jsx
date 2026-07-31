@@ -6,7 +6,7 @@ import { useAuth } from '../../context/AuthContext'
 import { useSocket } from '../../context/SocketContext'
 import { useNotif } from '../../context/NotifContext'
 
-const TICKET_ACTION_TYPES = ['ticket_view', 'admin_urgent_ticket', 'admin_ticket_message']
+const CLICKABLE_ACTION_TYPES = ['ticket_view', 'admin_urgent_ticket', 'admin_ticket_message', 'admin_wallet_reconciliation']
 
 export default function Topbar({ title, actions }) {
   const { t }       = useTranslation()
@@ -117,6 +117,10 @@ const handleClick = (n) => {
       setShowNotifs(false)
       navigate('/admin/fiabilite')
       break
+    case 'admin_wallet_reconciliation':
+      setShowNotifs(false)
+      navigate('/admin/wallet-reconciliation', { state: { openAlertId: n.params?.alertId } })
+      break
     case 'mes_signalements':
       setShowNotifs(false)
       navigate(user?.role === 'oeil' ? '/oeil/mes-signalements' : '/client/mes-signalements')
@@ -191,14 +195,17 @@ const handleClick = (n) => {
                   <div className="py-8 text-center text-xs text-[#AAA]">{t('notifications.empty')}</div>
                 ) : notifs.slice(0, 10).map((n, i) => {
                   const params = n.params || {}
-                  const displayTitle = n.title_key ? t(`notif.${n.title_key}`, params) : n.title
-                  const displayBody = n.body_key ? t(`notif.${n.body_key}`, params) : n.body
+                  const displayParams = n.action_type === 'admin_wallet_reconciliation'
+                    ? { ...params, userTypeLabel: t(`login.roles.${params.userType}`) }
+                    : params
+                  const displayTitle = n.title_key ? t(`notif.${n.title_key}`, displayParams) : n.title
+                  const displayBody = n.body_key ? t(`notif.${n.body_key}`, displayParams) : n.body
                   return (
                   <div
                     key={n.id || i}
                     onClick={() => handleClick(n)}
                     className={`flex gap-2.5 px-4 py-3 border-b border-white/10 transition-colors ${
-                      (n.mission_id || TICKET_ACTION_TYPES.includes(n.action_type)) ? 'cursor-pointer hover:bg-[#FF4D00]/5' : ''
+                      (n.mission_id || CLICKABLE_ACTION_TYPES.includes(n.action_type)) ? 'cursor-pointer hover:bg-[#FF4D00]/5' : ''
                     } ${!n.is_read ? 'bg-[#FF4D00]/3' : ''}`}
                   >
                     <span className="text-base flex-shrink-0">
@@ -207,7 +214,7 @@ const handleClick = (n) => {
                     <div className="flex-1 min-w-0">
                       <div className="text-xs font-medium">{displayTitle}</div>
                       <div className="text-[11px] text-[#AAA] leading-relaxed">{displayBody}</div>
-                      {n.mission_id && (
+                      {(n.mission_id || CLICKABLE_ACTION_TYPES.includes(n.action_type)) && (
                         <div className="text-[10px] text-[#FF4D00] mt-0.5">{t('notifications.clickToOpen')}</div>
                       )}
                     </div>

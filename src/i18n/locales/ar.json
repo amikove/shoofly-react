@@ -1915,7 +1915,32 @@
     "missionUrgentBroadenedTitle": "🔎 توسيع نطاق البحث",
     "missionUrgentBroadenedBody": "نقوم بتوسيع نطاق البحث عن بديل لمهمة \"{{missionTitle}}\" ليشمل جميع العيون الميدانية المتاحة.",
     "replacementConfirmedClientTitle": "✅ تم إيجاد بديل",
-    "replacementConfirmedClientBody": "أكد بديل توفره لمهمة \"{{missionTitle}}\"."
+    "replacementConfirmedClientBody": "أكد بديل توفره لمهمة \"{{missionTitle}}\".",
+    "walletReconciliationAlertAdminTitle": "⚠️ تم اكتشاف فارق في التسوية",
+    "walletReconciliationAlertAdminBody": "{{userName}} ({{userTypeLabel}}، {{userId}}) — الرصيد المسجل {{storedBalance}} درهم مقابل دفتر الحسابات {{ledgerBalance}} درهم (الفارق {{discrepancy}} درهم). التنبيه رقم {{alertId}}."
+  },
+  "walletReconciliation": {
+    "title": "⚖️ تسوية المحفظة",
+    "tabs": {
+      "unresolved": "غير محلولة",
+      "resolved": "محلولة",
+      "all": "الكل"
+    },
+    "table": {
+      "user": "المستخدم",
+      "type": "النوع",
+      "storedBalance": "الرصيد المسجل",
+      "ledgerBalance": "رصيد دفتر الحسابات",
+      "discrepancy": "الفارق",
+      "detectedAt": "تاريخ الاكتشاف",
+      "status": "الحالة"
+    },
+    "resolve": "حل المشكلة",
+    "resolvedLabel": "تم الحل في",
+    "empty": "لا توجد تنبيهات تسوية",
+    "loadError": "خطأ في التحميل",
+    "resolveSuccess": "تم حل التنبيه ✓",
+    "resolveError": "خطأ أثناء الحل"
   },
   "systemMessage": {
     "oeilAccepted": "قبل {{oeilName}} المهمة.",
