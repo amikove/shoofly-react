@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
+import { useState, useEffect, useRef } from 'react'
+import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import AppLayout from '../../components/layout/AppLayout'
 import Topbar from '../../components/layout/Topbar'
 import { adminAPI } from '../../api'
@@ -16,6 +16,17 @@ const TAB_FIABILITE = { id: 'fiabilite', label: '🛡️ Fiabilité' }
 const fmtDate = (d, opts) => d ? new Date(d).toLocaleDateString('fr-FR', opts || { day: 'numeric', month: 'short', year: 'numeric' }) : 'Non renseigné'
 const fmtDateTime = (d) => d ? new Date(d).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : '—'
 const val = (v) => (v === null || v === undefined || v === '') ? 'Non renseigné' : v
+
+// YYYY-MM-DD (pour <input type="date">), decale de `days` par rapport a une date ISO donnee.
+const addDays = (iso, days) => {
+  const d = new Date(iso)
+  d.setDate(d.getDate() + days)
+  return d.toISOString().slice(0, 10)
+}
+
+// <input type="date"> n'a pas d'heure ; sans le +23:59:59.999 sur la borne haute, l'API
+// (created_at <= date_to) caste a minuit et exclut toute la journee choisie.
+const endOfDayISO = (dateStr) => dateStr ? `${dateStr}T23:59:59.999` : undefined
 
 // Pour un Œil, is_active ne reflète plus que le blocage anti-fraude (POST /anti-fraud/block) —
 // la suspension admin/score passe désormais par is_suspended (reliability.is_suspended), qui
@@ -41,14 +52,20 @@ const REPORT_STATUS = {
 export default function UserProfile() {
   const { userId } = useParams()
   const navigate = useNavigate()
+  const location = useLocation()
+  const focusDate = location.state?.focusDate
   const [data, setData] = useState(null)
   const [loading, setLoading] = useState(true)
-  const [tab, setTab] = useState('infos')
+  const [tab, setTab] = useState(location.state?.tab || 'infos')
   const [page, setPage] = useState(1)
+  // Pre-rempli une fenetre de +/-3j autour de focusDate (venant d'un clic depuis
+  // /admin/wallet-reconciliation) ; vide sinon — accès direct = historique complet, inchangé.
+  const [dateFrom, setDateFrom] = useState(() => focusDate ? addDays(focusDate, -3) : '')
+  const [dateTo, setDateTo] = useState(() => focusDate ? addDays(focusDate, 3) : '')
 
-  const load = (p = page) => {
+  const load = (p = page, df = dateFrom, dt = dateTo) => {
     setLoading(true)
-    adminAPI.userProfile(userId, { page: p, limit: 20 })
+    adminAPI.userProfile(userId, { page: p, limit: 20, date_from: df || undefined, date_to: endOfDayISO(dt) })
       .then(({ data }) => setData(data))
       .catch(() => toast('Erreur de chargement de la fiche', 'error'))
       .finally(() => setLoading(false))
@@ -56,6 +73,9 @@ export default function UserProfile() {
 
   useEffect(() => { load(1); setPage(1) }, [userId])
   useEffect(() => { if (tab === 'production') load(page) }, [page])
+
+  const applyDateFilter = () => load(page, dateFrom, dateTo)
+  const clearDateFilter = () => { setDateFrom(''); setDateTo(''); load(page, '', '') }
 
   if (loading && !data) {
     return (
@@ -114,7 +134,21 @@ export default function UserProfile() {
 
         {tab === 'infos' && <InfosTab user={user} isOeil={isOeil} reliability={reliability} />}
         {tab === 'production' && <ProductionTab production={production} isOeil={isOeil} page={page} setPage={setPage} />}
-        {tab === 'financier' && <FinancierTab financial={financial} isOeil={isOeil} />}
+        {tab === 'financier' && (
+          <FinancierTab
+            financial={financial}
+            isOeil={isOeil}
+            navigate={navigate}
+            focusDate={focusDate}
+            dateFrom={dateFrom}
+            dateTo={dateTo}
+            setDateFrom={setDateFrom}
+            setDateTo={setDateTo}
+            onApply={applyDateFilter}
+            onClear={clearDateFilter}
+            loading={loading}
+          />
+        )}
         {tab === 'problemes' && <ProblemesTab problems={problems} />}
         {tab === 'fiabilite' && isOeil && <FiabiliteTab reliability={reliability} />}
       </div>
@@ -194,8 +228,31 @@ function ProductionTab({ production, isOeil, page, setPage }) {
 }
 
 // ═══ Onglet Financier ═══
-function FinancierTab({ financial, isOeil }) {
+function FinancierTab({ financial, isOeil, navigate, focusDate, dateFrom, dateTo, setDateFrom, setDateTo, onApply, onClear, loading }) {
   const transactions = financial?.wallet_transactions || []
+  const hasFilter = !!(dateFrom || dateTo)
+  const [highlightId, setHighlightId] = useState(null)
+  const highlightRef = useRef(null)
+  const highlightedOnceRef = useRef(false)
+
+  // A l'ouverture (venant d'un clic depuis la reconciliation), surligne la transaction la
+  // plus proche de focusDate — une seule fois, pas a chaque changement manuel du filtre.
+  useEffect(() => {
+    if (focusDate && transactions.length > 0 && !highlightedOnceRef.current) {
+      highlightedOnceRef.current = true
+      const target = new Date(focusDate).getTime()
+      const nearest = transactions.reduce((best, t) => {
+        const diff = Math.abs(new Date(t.created_at).getTime() - target)
+        return diff < best.diff ? { id: t.id, diff } : best
+      }, { id: null, diff: Infinity })
+      setHighlightId(nearest.id)
+    }
+  }, [focusDate, transactions])
+
+  useEffect(() => {
+    if (highlightId && highlightRef.current) highlightRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' })
+  }, [highlightId, transactions])
+
   return (
     <div className="space-y-5">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -220,19 +277,44 @@ function FinancierTab({ financial, isOeil }) {
       </div>
 
       <div>
-        <h3 className="text-sm font-semibold mb-2">Historique des transactions</h3>
+        <div className="flex items-center justify-between mb-2 flex-wrap gap-2">
+          <h3 className="text-sm font-semibold">Historique des transactions</h3>
+          <div className="flex items-center gap-2 flex-wrap">
+            <input type="date" className="input py-1.5 text-xs max-w-[140px]" value={dateFrom} onChange={(e) => setDateFrom(e.target.value)} />
+            <span className="text-xs text-[#555]">→</span>
+            <input type="date" className="input py-1.5 text-xs max-w-[140px]" value={dateTo} onChange={(e) => setDateTo(e.target.value)} />
+            <button onClick={onApply} disabled={loading} className="btn btn-primary btn-sm disabled:opacity-50">Filtrer</button>
+            {hasFilter && <button onClick={onClear} disabled={loading} className="btn btn-ghost btn-sm disabled:opacity-50">Réinitialiser</button>}
+          </div>
+        </div>
         {transactions.length === 0 ? (
-          <div className="card text-center py-8 text-[#AAA] text-sm">Aucune transaction</div>
+          <div className="card text-center py-8 text-[#AAA] text-sm">Aucune transaction{hasFilter ? ' sur cette période' : ''}</div>
         ) : (
           <div className="card p-0">
             <div className="table-wrap">
               <table>
-                <thead><tr><th>Type</th><th>Motif</th><th>Montant</th><th>Date</th></tr></thead>
+                <thead><tr><th>Type</th><th>Motif</th><th>Mission</th><th>Montant</th><th>Date</th></tr></thead>
                 <tbody>
                   {transactions.map(t => (
-                    <tr key={t.id}>
+                    <tr
+                      key={t.id}
+                      ref={t.id === highlightId ? highlightRef : null}
+                      className={t.id === highlightId ? 'bg-[#FF4D00]/10' : ''}
+                    >
                       <td><Badge variant={t.type === 'credit' ? 'green' : 'red'}>{t.type === 'credit' ? 'Crédit' : 'Débit'}</Badge></td>
                       <td className="text-[#AAA]">{t.reason}</td>
+                      <td>
+                        {t.mission_id ? (
+                          <button
+                            className="text-xs text-[#FF4D00] hover:underline"
+                            onClick={() => navigate('/admin/missions', { state: { search: t.mission_id } })}
+                          >
+                            📋 Voir
+                          </button>
+                        ) : (
+                          <span className="text-xs text-[#555]">—</span>
+                        )}
+                      </td>
                       <td className={t.type === 'credit' ? 'text-green-400 font-semibold' : 'text-red-400 font-semibold'}>
                         {t.type === 'credit' ? '+' : '-'}{parseFloat(t.amount).toFixed(0)} MAD
                       </td>

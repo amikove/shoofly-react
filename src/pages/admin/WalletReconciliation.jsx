@@ -128,7 +128,7 @@ export default function WalletReconciliation() {
                         <td>
                           <span
                             className="text-white cursor-pointer hover:text-[#FF4D00] hover:underline"
-                            onClick={() => navigate(`/admin/users/${a.user_id}`)}
+                            onClick={() => navigate(`/admin/users/${a.user_id}`, { state: { tab: 'financier', focusDate: a.detected_at } })}
                           >
                             {userLabel(a)}
                           </span>
