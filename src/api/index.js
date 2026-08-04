@@ -63,6 +63,7 @@ export const usersAPI = {
     markRead:         (data)   => api.put('/api/users/notifications/read', data),
     availability:     ()       => api.get('/api/users/oeil/availability'),
     oeilEarnings:     ()       => api.get('/api/users/oeil/earnings'),
+    cashplusGenerateToken: (data) => api.post('/api/users/oeil/cashplus/generate-token', data),
     adminFinanceOeils: ()      => api.get('/api/users/admin/finance/oeils'),
    wireTransfer:     (oeilId, data) => api.post(`/api/users/admin/finance/${oeilId}/wire-transfer`, data),
     uploadAvatar:     (formData) => api.post('/api/users/avatar', formData, {

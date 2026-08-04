@@ -4,6 +4,7 @@ import AppLayout from '../../components/layout/AppLayout'
 import Topbar from '../../components/layout/Topbar'
 import { usersAPI } from '../../api'
 import { Spinner, EmptyState, toast } from '../../components/ui'
+import CashPlusRechargeModal from '../../components/payments/CashPlusRechargeModal'
 
 export default function OeilGains() {
   const { t } = useTranslation()
@@ -17,8 +18,9 @@ export default function OeilGains() {
   const [balance, setBalance] = useState(0)
   const [totalEarnings, setTotalEarnings] = useState(0)
   const [loading, setLoading] = useState(true)
+  const [rechargeOpen, setRechargeOpen] = useState(false)
 
-  useEffect(() => {
+  const loadEarnings = () => {
     usersAPI.oeilEarnings()
       .then(({ data }) => {
         setLines(data.lines || [])
@@ -27,14 +29,16 @@ export default function OeilGains() {
         })
         .catch(() => toast('Erreur lors du chargement de vos gains', 'error'))
         .finally(() => setLoading(false))
-  }, [])
+  }
+
+  useEffect(() => { loadEarnings() }, [])
 
   return (
     <AppLayout>
       <Topbar title={t('oeilGains.title')} />
       <div className="p-6">
         {/* Résumé */}
-        <div className="grid grid-cols-2 gap-3 mb-5">
+        <div className="grid grid-cols-2 gap-3 mb-3">
           <div className="card">
             <p className="text-xs text-[#AAA] mb-1">{t('oeilGains.currentBalanceLabel')}</p>
             <p className="text-2xl font-bold text-green-400">{parseFloat(balance).toFixed(0)} MAD</p>
@@ -44,6 +48,16 @@ export default function OeilGains() {
             <p className="text-2xl font-bold">{parseFloat(totalEarnings).toFixed(0)} MAD</p>
           </div>
         </div>
+
+        <button onClick={() => setRechargeOpen(true)} className="btn btn-primary w-full justify-center mb-5">
+          {t('oeilGains.recharge.openButton')}
+        </button>
+
+        {rechargeOpen && (
+          <CashPlusRechargeModal
+            onClose={() => { setRechargeOpen(false); loadEarnings() }}
+          />
+        )}
 
         {loading ? (
           <div className="flex justify-center py-20"><Spinner size="lg" /></div>

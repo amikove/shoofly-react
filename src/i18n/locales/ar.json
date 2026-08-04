@@ -1149,6 +1149,27 @@
       "executionDate": "تاريخ التنفيذ",
       "status": "الحالة",
       "earnings": "الأرباح"
+    },
+    "recharge": {
+      "openButton": "إعادة شحن محفظتي",
+      "modalTitle": "إعادة الشحن عبر CashPlus",
+      "modalSubtitle": "اختر مبلغًا وادفع في وكالة CashPlus",
+      "chooseAmountLabel": "المبلغ المراد شحنه",
+      "cancel": "إلغاء",
+      "errorTitle": "❌ فشل إنشاء الرمز",
+      "errorGenericMessage": "حدث خطأ. حاول مرة أخرى.",
+      "retryButton": "إعادة المحاولة",
+      "closeButton": "إغلاق",
+      "successTitle": "✅ تم إنشاء الرمز",
+      "tokenLabel": "رمز CashPlus الخاص بك",
+      "expirationLabel": "صالح حتى",
+      "instructionText": "قدّم هذا الرمز في أي وكالة CashPlus قبل {{date}} لشحن محفظتك بمبلغ {{amount}} MAD.",
+      "amountBreakdown": {
+        "rechargeAmount": "مبلغ الشحن",
+        "fees": "رسوم CashPlus",
+        "total": "المجموع الواجب دفعه في الوكالة"
+      },
+      "totalHint": "سيُطلب منك هذا المبلغ الإجمالي (الشحن + الرسوم) في الوكالة."
     }
   },
   "verificationIdentite": {

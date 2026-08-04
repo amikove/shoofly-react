@@ -1148,6 +1148,27 @@
       "executionDate": "Date exécution",
       "status": "Statut",
       "earnings": "Gains"
+    },
+    "recharge": {
+      "openButton": "Recharger mon wallet",
+      "modalTitle": "Recharger via CashPlus",
+      "modalSubtitle": "Choisissez un montant, payez en agence CashPlus",
+      "chooseAmountLabel": "Montant à recharger",
+      "cancel": "Annuler",
+      "errorTitle": "❌ Échec de la génération",
+      "errorGenericMessage": "Une erreur est survenue. Réessayez.",
+      "retryButton": "Réessayer",
+      "closeButton": "Fermer",
+      "successTitle": "✅ Code généré",
+      "tokenLabel": "Votre code CashPlus",
+      "expirationLabel": "Valable jusqu'au",
+      "instructionText": "Présentez ce code dans n'importe quelle agence CashPlus avant le {{date}} pour créditer votre wallet de {{amount}} MAD.",
+      "amountBreakdown": {
+        "rechargeAmount": "Montant de la recharge",
+        "fees": "Frais CashPlus",
+        "total": "Total à payer en agence"
+      },
+      "totalHint": "Ce montant total (recharge + frais) vous sera demandé en agence."
     }
   },
   "verificationIdentite": {
