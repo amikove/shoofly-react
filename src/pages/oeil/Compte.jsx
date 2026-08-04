@@ -1,4 +1,5 @@
 import { useState, useRef } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import AppLayout from '../../components/layout/AppLayout'
 import Topbar from '../../components/layout/Topbar'
@@ -18,6 +19,7 @@ const defaultDispo = () => JOURS.map((j, i) => ({
 
 export default function OeilCompte() {
   const { t, i18n } = useTranslation()
+  const navigate = useNavigate()
   const { user, updateUser } = useAuth()
   const [saving, setSaving]  = useState(false)
   const [uploadingAvatar, setUploadingAvatar] = useState(false)
@@ -112,8 +114,6 @@ const [dispo, setDispo] = useState(() => parseDispo(user?.disponibilites))
     finally { setSavingBankAccount(false) }
   }
 
-  const requestWithdraw = () => toast(t('oeilCompte.withdrawComingSoonToast'), 'info')
-
   return (
     <AppLayout>
       <Topbar title={t('oeilCompte.title')} />
@@ -176,14 +176,7 @@ const [dispo, setDispo] = useState(() => parseDispo(user?.disponibilites))
             {/* Paiements */}
             <div className="card">
               <h2 className="font-semibold text-sm mb-4">{t('oeilCompte.payments.title')}</h2>
-              <div className="flex items-center justify-between bg-[#222] rounded-xl p-4 mb-4">
-                <div>
-                  <div className="text-sm font-semibold">{t('oeilCompte.payments.balanceLabel')}</div>
-                  <div className="text-xs text-[#AAA]">{t('oeilCompte.payments.readyToTransfer')}</div>
-                </div>
-                <div className="text-xl font-bold text-green-400">{t('oeilCompte.payments.zeroBalance')}</div>
-              </div>
-              <button onClick={requestWithdraw} className="btn btn-primary w-full justify-center">{t('oeilCompte.payments.withdrawButton')}</button>
+              <button onClick={() => navigate('/oeil/gains')} className="btn btn-primary w-full justify-center">{t('oeilCompte.payments.viewGainsLink')}</button>
 
               <div className="border-t border-white/10 mt-4 pt-4">
                 <div className="flex items-center gap-2 mb-2">
