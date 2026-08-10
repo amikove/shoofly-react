@@ -7,8 +7,9 @@ import { translateLocation } from '../../constants/villesTranslations'
 import { captureAcquisitionParams, getAcquisitionParams, clearAcquisitionParams } from '../../utils/acquisitionTracking'
 import { toast } from '../../components/ui'
 import LanguageToggle from '../../components/ui/LanguageToggle'
+import Autocomplete from '../../components/missions/Autocomplete'
 
-import { useRef, useEffect } from 'react'
+import { useEffect } from 'react'
 
 const OEIL_SITUATION_OPTIONS = [
   { value: 'Étudiant', key: 'etudiant' },
@@ -62,50 +63,6 @@ const CLIENT_USAGE_FREQ_OPTIONS = [
   { value: 'Plusieurs fois par mois', key: 'plusieursFoisParMois' },
   { value: 'Chaque semaine', key: 'chaqueSemaine' },
 ]
-
-function Autocomplete({ label, value, onChange, suggestions, placeholder, disabled = false, required = false }) {
-  const { i18n } = useTranslation()
-  const [open, setOpen] = useState(false)
-  const [query, setQuery] = useState(value || '')
-  const ref = useRef(null)
-
-  useEffect(() => { setQuery(value || '') }, [value])
-  useEffect(() => {
-    const handler = (e) => { if (ref.current && !ref.current.contains(e.target)) setOpen(false) }
-    document.addEventListener('mousedown', handler)
-    return () => document.removeEventListener('mousedown', handler)
-  }, [])
-
-  const filtered = query.length >= 1
-    ? suggestions.filter((s) => s.toLowerCase().includes(query.toLowerCase())).slice(0, 8)
-    : suggestions.slice(0, 8)
-
-  const select = (val) => { setQuery(val); onChange(val); setOpen(false) }
-
-  return (
-    <div ref={ref} className="relative">
-      <label className="label">{label}{required && ' *'}</label>
-      <input
-        className="input"
-        value={query}
-        placeholder={placeholder}
-        disabled={disabled}
-        onChange={(e) => { setQuery(e.target.value); onChange(e.target.value); setOpen(true) }}
-        onFocus={() => setOpen(true)}
-      />
-      {open && filtered.length > 0 && (
-        <div className="absolute z-50 w-full mt-1 bg-[#222] border border-white/20 rounded-xl overflow-hidden shadow-xl max-h-48 overflow-y-auto">
-          {filtered.map((s) => (
-            <div key={s} onMouseDown={() => select(s)}
-              className="px-4 py-2.5 text-sm cursor-pointer hover:bg-[#FF4D00]/10 hover:text-white text-[#CCC] transition-colors">
-              {translateLocation(s, i18n.language)}
-            </div>
-          ))}
-        </div>
-      )}
-    </div>
-  )
-}
 
 export default function Register() {
   const { t, i18n } = useTranslation()
@@ -206,7 +163,6 @@ const [form, setForm] = useState({
               <div className="mt-3">
                 <Autocomplete
                   label={t('register.step2.city')}
-                  required={role === 'oeil'}
                   value={form.city}
                   onChange={(v) => setForm((f) => ({ ...f, city: v, quartier: '' }))}
                   suggestions={VILLES_LIST}
@@ -217,7 +173,6 @@ const [form, setForm] = useState({
                 <div className="mt-3">
                   <Autocomplete
                     label={t('register.step2.quartier')}
-                    required
                     value={form.quartier}
                     onChange={(v) => setForm((f) => ({ ...f, quartier: v }))}
                     suggestions={VILLES[form.city] || []}
