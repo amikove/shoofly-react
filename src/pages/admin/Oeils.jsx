@@ -69,6 +69,9 @@ export default function AdminOeils() {
     finally { setActing((a) => ({ ...a, [id]: false })) }
   }
 
+  const pendingRequests      = requests.filter((r) => r.request_status === 'pending')
+  const notSubmittedRequests = requests.filter((r) => r.request_status === 'not_submitted')
+
   return (
     <AppLayout>
       <Topbar title="Gestion des Œils" />
@@ -115,7 +118,7 @@ export default function AdminOeils() {
                         <td className="text-[#AAA]">{o.city || '—'}</td>
                         <td>
                           <span className={`badge ${o.is_verified ? 'badge-green' : 'badge-yellow'}`}>
-                            {o.is_verified ? '✓ Vérifié' : 'En attente'}
+                            {o.is_verified ? '✓ Vérifié' : 'Non vérifié'}
                           </span>
                         </td>
                         <td className="text-center">{o.total_missions || 0}</td>
@@ -145,80 +148,108 @@ export default function AdminOeils() {
           requests.length === 0 ? (
             <EmptyState icon="🕐" title="Aucune demande" description="Aucune demande de vérification en attente." />
           ) : (
-            <div className="space-y-4">
-              {requests.map((r) => (
-                <div key={r.id} className="card">
-                  {/* En-tête */}
-                  <div className="flex items-center gap-3 mb-4 cursor-pointer hover:text-[#FF4D00]" onClick={() => navigate(`/admin/users/${r.user_id}`)}>
-                      <Avatar name={`${r.first_name} ${r.last_name}`} size={44} src={r.avatar_url} />
-                    <div>
-                      <p className="font-semibold">{r.first_name} {r.last_name}</p>
-                      <p className="text-xs text-[#AAA]">📍 {r.city || '—'} · {r.email}</p>
-                      {r.phone && <p className="text-xs text-[#AAA]">📞 {r.phone}</p>}
-                      <p className="text-xs text-[#555] mt-0.5">Soumis le {new Date(r.created_at).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
-                    </div>
-                  </div>
-
-                  {/* Documents */}
-                  <div className="grid grid-cols-3 gap-3 mb-4">
-                    {[
-                      { url: r.cin_recto, label: 'CIN Recto' },
-                      { url: r.cin_verso, label: 'CIN Verso' },
-                      { url: r.selfie,    label: 'Selfie' },
-                    ].map(({ url, label }) => (
-                      <div key={label} className="space-y-1">
-                        <p className="text-xs text-[#AAA] text-center">{label}</p>
-                        <img
-                          src={url}
-                          alt={label}
-                          onClick={() => setLightbox(url)}
-                          className="w-full h-28 object-cover rounded-xl cursor-pointer hover:opacity-80 transition-opacity border border-white/10"
-                        />
+            <div className="space-y-8">
+              {pendingRequests.length > 0 && (
+                <div className="space-y-4">
+                  <p className="text-xs text-[#AAA] uppercase tracking-wider font-semibold">
+                    Documents à examiner ({pendingRequests.length})
+                  </p>
+                  {pendingRequests.map((r) => (
+                    <div key={r.user_id} className="card">
+                      {/* En-tête */}
+                      <div className="flex items-center gap-3 mb-4 cursor-pointer hover:text-[#FF4D00]" onClick={() => navigate(`/admin/users/${r.user_id}`)}>
+                          <Avatar name={`${r.first_name} ${r.last_name}`} size={44} src={r.avatar_url} />
+                        <div>
+                          <p className="font-semibold">{r.first_name} {r.last_name}</p>
+                          <p className="text-xs text-[#AAA]">📍 {r.city || '—'} · {r.email}</p>
+                          {r.phone && <p className="text-xs text-[#AAA]">📞 {r.phone}</p>}
+                          <p className="text-xs text-[#555] mt-0.5">Soumis le {new Date(r.created_at).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
+                        </div>
                       </div>
-                    ))}
-                  </div>
 
-                  {/* Actions */}
-                  {rejecting === r.id ? (
-                    <div className="space-y-3">
-                      <textarea
-                        className="input resize-none h-20 w-full text-sm"
-                        placeholder="Raison du rejet (ex: photo floue, CIN expirée...)"
-                        value={rejectReason}
-                        onChange={(e) => setRejectReason(e.target.value)}
-                      />
-                      <div className="flex gap-2">
-                        <button
-                          onClick={() => reject(r.id)}
-                          disabled={acting[r.id]}
-                          className="btn btn-ghost btn-sm text-red-400 disabled:opacity-50"
-                        >
-                          {acting[r.id] ? '...' : '❌ Confirmer le rejet'}
-                        </button>
-                        <button onClick={() => { setRejecting(null); setRejectReason('') }} className="btn btn-ghost btn-sm">
-                          Annuler
-                        </button>
+                      {/* Documents */}
+                      <div className="grid grid-cols-3 gap-3 mb-4">
+                        {[
+                          { url: r.cin_recto, label: 'CIN Recto' },
+                          { url: r.cin_verso, label: 'CIN Verso' },
+                          { url: r.selfie,    label: 'Selfie' },
+                        ].map(({ url, label }) => (
+                          <div key={label} className="space-y-1">
+                            <p className="text-xs text-[#AAA] text-center">{label}</p>
+                            <img
+                              src={url}
+                              alt={label}
+                              onClick={() => setLightbox(url)}
+                              className="w-full h-28 object-cover rounded-xl cursor-pointer hover:opacity-80 transition-opacity border border-white/10"
+                            />
+                          </div>
+                        ))}
                       </div>
+
+                      {/* Actions */}
+                      {rejecting === r.id ? (
+                        <div className="space-y-3">
+                          <textarea
+                            className="input resize-none h-20 w-full text-sm"
+                            placeholder="Raison du rejet (ex: photo floue, CIN expirée...)"
+                            value={rejectReason}
+                            onChange={(e) => setRejectReason(e.target.value)}
+                          />
+                          <div className="flex gap-2">
+                            <button
+                              onClick={() => reject(r.id)}
+                              disabled={acting[r.id]}
+                              className="btn btn-ghost btn-sm text-red-400 disabled:opacity-50"
+                            >
+                              {acting[r.id] ? '...' : '❌ Confirmer le rejet'}
+                            </button>
+                            <button onClick={() => { setRejecting(null); setRejectReason('') }} className="btn btn-ghost btn-sm">
+                              Annuler
+                            </button>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="flex gap-2">
+                          <button
+                            onClick={() => approve(r.id)}
+                            disabled={acting[r.id]}
+                            className="btn btn-primary btn-sm disabled:opacity-50"
+                          >
+                            {acting[r.id] ? '...' : '✅ Approuver'}
+                          </button>
+                          <button
+                            onClick={() => setRejecting(r.id)}
+                            className="btn btn-ghost btn-sm text-red-400"
+                          >
+                            ❌ Rejeter
+                          </button>
+                        </div>
+                      )}
                     </div>
-                  ) : (
-                    <div className="flex gap-2">
-                      <button
-                        onClick={() => approve(r.id)}
-                        disabled={acting[r.id]}
-                        className="btn btn-primary btn-sm disabled:opacity-50"
-                      >
-                        {acting[r.id] ? '...' : '✅ Approuver'}
-                      </button>
-                      <button
-                        onClick={() => setRejecting(r.id)}
-                        className="btn btn-ghost btn-sm text-red-400"
-                      >
-                        ❌ Rejeter
-                      </button>
-                    </div>
-                  )}
+                  ))}
                 </div>
-              ))}
+              )}
+
+              {notSubmittedRequests.length > 0 && (
+                <div className="space-y-4">
+                  <p className="text-xs text-[#AAA] uppercase tracking-wider font-semibold">
+                    Inscrits, documents pas encore soumis ({notSubmittedRequests.length})
+                  </p>
+                  {notSubmittedRequests.map((r) => (
+                    <div key={r.user_id} className="card">
+                      <div className="flex items-center gap-3 cursor-pointer hover:text-[#FF4D00]" onClick={() => navigate(`/admin/users/${r.user_id}`)}>
+                        <Avatar name={`${r.first_name} ${r.last_name}`} size={44} src={r.avatar_url} />
+                        <div>
+                          <p className="font-semibold">{r.first_name} {r.last_name}</p>
+                          <p className="text-xs text-[#AAA]">📍 {r.city || '—'} · {r.email}</p>
+                          {r.phone && <p className="text-xs text-[#AAA]">📞 {r.phone}</p>}
+                          <p className="text-xs text-[#555] mt-0.5">Inscrit le {new Date(r.created_at).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           )
         )}
