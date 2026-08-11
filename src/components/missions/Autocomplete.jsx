@@ -8,8 +8,12 @@ export default function Autocomplete({ label, value, onChange, suggestions, plac
   const [open, setOpen]     = useState(false)
   const [query, setQuery]   = useState(value || '')
   const ref                  = useRef(null)
+  const selfChange           = useRef(false)
 
-  useEffect(() => { setQuery(value || '') }, [value])
+  useEffect(() => {
+    if (selfChange.current) { selfChange.current = false; return }
+    setQuery(value || '')
+  }, [value])
 
   useEffect(() => {
     const handler = (e) => { if (ref.current && !ref.current.contains(e.target)) setOpen(false) }
@@ -18,11 +22,12 @@ export default function Autocomplete({ label, value, onChange, suggestions, plac
   }, [])
 
   const filtered = query.length >= 1
-    ? suggestions.filter((s) => s.toLowerCase().includes(query.toLowerCase())).slice(0, 8)
+    ? suggestions.filter((s) => translateLocation(s, i18n.language).toLowerCase().includes(query.toLowerCase())).slice(0, 8)
     : suggestions.slice(0, 8)
 
   const select = (val) => {
     setQuery(val)
+    selfChange.current = true
     onChange(val)
     setOpen(false)
   }
@@ -35,7 +40,7 @@ export default function Autocomplete({ label, value, onChange, suggestions, plac
         value={query}
         placeholder={placeholder}
         disabled={disabled}
-        onChange={(e) => { setQuery(e.target.value); onChange(''); setOpen(true) }}
+        onChange={(e) => { setQuery(e.target.value); selfChange.current = true; onChange(''); setOpen(true) }}
         onFocus={() => setOpen(true)}
       />
       {open && filtered.length > 0 && (
