@@ -12,6 +12,8 @@ import VerificationIdentite from './pages/oeil/VerificationIdentite'
 // Auth pages
 import Login    from './pages/auth/Login'
 import Register from './pages/auth/Register'
+import ForgotPassword from './pages/auth/ForgotPassword'
+import ResetPassword  from './pages/auth/ResetPassword'
 import Landing from './pages/Landing'
 import Confidentialite from './pages/legal/Confidentialite'
 import CGV from './pages/legal/CGV'
@@ -126,6 +128,8 @@ export default function App() {
       <Route path="/" element={user ? <Navigate to={`/${user.role}`} replace /> : <Landing />} />
       <Route path="/login"    element={user ? <Navigate to={`/${user.role}`} /> : <Login />} />
       <Route path="/register" element={user ? <Navigate to={`/${user.role}`} /> : <Register />} />
+      <Route path="/forgot-password" element={<ForgotPassword />} />
+      <Route path="/reset-password"  element={<ResetPassword />} />
 
       {/* Client */}
       <Route path="/client" element={<RequireAuth allowedRoles={['client']}><ClientDashboard /></RequireAuth>} />

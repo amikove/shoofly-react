@@ -7,6 +7,8 @@ export const authAPI = {
   me:       ()     => api.get('/api/auth/me'),
   update:   (data) => api.put('/api/auth/me', data),
   password: (data) => api.put('/api/auth/password', data),
+  forgotPassword: (data) => api.post('/api/auth/forgot-password', data),
+  resetPassword:  (data) => api.post('/api/auth/reset-password', data),
 }
 
 // MISSIONS

@@ -234,6 +234,7 @@
     "noAccount": "Pas encore de compte ?",
     "registerLink": "S'inscrire",
     "backHome": "← Retour à l'accueil",
+    "forgotPasswordLink": "Mot de passe oublié ?",
     "demo": {
       "title": "Comptes démo :",
       "client": "Client → {{email}} / {{pw}}",
@@ -374,6 +375,33 @@
     "toastAccountCreated": "Compte créé ! Connectez-vous.",
     "alreadyAccount": "Déjà un compte ?",
     "loginLink": "Se connecter"
+  },
+  "forgotPassword": {
+    "subtitle": "Réinitialisez votre mot de passe",
+    "emailLabel": "Email",
+    "emailPlaceholder": "vous@email.com",
+    "submitLoading": "Envoi...",
+    "submitButton": "Envoyer le lien →",
+    "successMessage": "Si un compte existe avec cet email, un lien de réinitialisation a été envoyé.",
+    "backToLogin": "← Retour à la connexion"
+  },
+  "resetPassword": {
+    "subtitle": "Choisissez un nouveau mot de passe",
+    "passwordLabel": "Nouveau mot de passe",
+    "passwordPlaceholder": "Min. 6 caractères",
+    "confirmLabel": "Confirmer le mot de passe",
+    "confirmPlaceholder": "••••••••",
+    "submitLoading": "Réinitialisation...",
+    "submitButton": "Réinitialiser →",
+    "successMessage": "Mot de passe réinitialisé avec succès. Redirection vers la connexion...",
+    "loginButton": "Se connecter →",
+    "requestNewLinkText": "Besoin d'un nouveau lien ?",
+    "requestNewLink": "Demander une réinitialisation",
+    "errors": {
+      "missingToken": "Lien invalide, demandez une nouvelle réinitialisation.",
+      "missingTokenButton": "Demander une nouvelle réinitialisation →",
+      "generic": "Erreur lors de la réinitialisation. Le lien est peut-être invalide ou expiré."
+    }
   },
   "clientDashboard": {
     "title": "Tableau de bord",

@@ -100,7 +100,12 @@ export default function Login() {
               />
             </div>
             <div>
-              <label className="label">{t('login.passwordLabel')}</label>
+              <div className="flex items-center justify-between">
+                <label className="label">{t('login.passwordLabel')}</label>
+                <Link to="/forgot-password" className="text-[11px] text-[#FF4D00] mb-1">
+                  {t('login.forgotPasswordLink')}
+                </Link>
+              </div>
               <input
                 type="password"
                 className="input"
