@@ -1986,7 +1986,21 @@
     "empty": "Aucune alerte de réconciliation",
     "loadError": "Erreur de chargement",
     "resolveSuccess": "Alerte résolue ✓",
-    "resolveError": "Erreur lors de la résolution"
+    "resolveError": "Erreur lors de la résolution",
+    "shortfalls": {
+      "title": "💸 Manques à gagner — commission cash",
+      "table": {
+        "mission": "Mission",
+        "oeil": "Œil",
+        "due": "Commission due",
+        "collected": "Commission collectée",
+        "shortfall": "Manque à gagner"
+      },
+      "empty": "Aucun manque à gagner sur la commission cash",
+      "loadError": "Erreur de chargement",
+      "resolveSuccess": "Manque à gagner résolu ✓",
+      "resolveError": "Erreur lors de la résolution"
+    }
   },
   "systemMessage": {
     "oeilAccepted": "{{oeilName}} a accepté la mission.",

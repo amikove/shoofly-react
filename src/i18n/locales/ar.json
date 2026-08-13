@@ -1985,7 +1985,21 @@
     "empty": "لا توجد تنبيهات تسوية",
     "loadError": "خطأ في التحميل",
     "resolveSuccess": "تم حل التنبيه ✓",
-    "resolveError": "خطأ أثناء الحل"
+    "resolveError": "خطأ أثناء الحل",
+    "shortfalls": {
+      "title": "💸 عجز في تحصيل العمولة — الدفع نقدًا",
+      "table": {
+        "mission": "المهمة",
+        "oeil": "العين",
+        "due": "العمولة المستحقة",
+        "collected": "العمولة المحصلة",
+        "shortfall": "العجز"
+      },
+      "empty": "لا يوجد عجز في تحصيل عمولة الدفع النقدي",
+      "loadError": "خطأ في التحميل",
+      "resolveSuccess": "تم حل العجز ✓",
+      "resolveError": "خطأ أثناء الحل"
+    }
   },
   "systemMessage": {
     "oeilAccepted": "قبل {{oeilName}} المهمة.",

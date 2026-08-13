@@ -23,6 +23,19 @@ export default function WalletReconciliation() {
   const [reloadTick, setReloadTick] = useState(0)
   const highlightRef = useRef(null)
 
+  // Section séparée "manques à gagner commission cash" (voir mission_commission_shortfalls,
+  // backend) — état indépendant de la section alertes ci-dessus (tab/page/loading propres),
+  // même page/écran ("l'écran admin de réconciliation déjà en place") mais deux mécanismes
+  // distincts : une alerte de réconciliation signale un solde qui NE CORRESPOND PAS au ledger
+  // (bug à investiguer), un manque à gagner cash n'en est pas un (rien n'est désynchronisé).
+  const [shortfalls, setShortfalls] = useState([])
+  const [shortfallsLoading, setShortfallsLoading] = useState(true)
+  const [shortfallTab, setShortfallTab] = useState('unresolved')
+  const [shortfallPage, setShortfallPage] = useState(1)
+  const [shortfallPages, setShortfallPages] = useState(1)
+  const [resolvingShortfallId, setResolvingShortfallId] = useState(null)
+  const [shortfallReloadTick, setShortfallReloadTick] = useState(0)
+
   // Une seule requête pour tous les utilisateurs (même pattern que Clients.jsx/Oeils.jsx) plutôt
   // qu'un GET /admin/profile/:userId (fiche lourde, plusieurs requêtes) par ligne affichée.
   useEffect(() => {
@@ -55,6 +68,22 @@ export default function WalletReconciliation() {
   useEffect(() => { setPage(1) }, [tab])
 
   useEffect(() => {
+    let cancelled = false
+    setShortfallsLoading(true)
+    adminAPI.commissionShortfalls({ status: shortfallTab, page: shortfallPage, limit: 20 })
+      .then(({ data }) => {
+        if (cancelled) return
+        setShortfalls(data.shortfalls || [])
+        setShortfallPages(data.pages || 1)
+      })
+      .catch(() => { if (!cancelled) toast(t('walletReconciliation.shortfalls.loadError'), 'error') })
+      .finally(() => { if (!cancelled) setShortfallsLoading(false) })
+    return () => { cancelled = true }
+  }, [shortfallTab, shortfallPage, shortfallReloadTick, t])
+
+  useEffect(() => { setShortfallPage(1) }, [shortfallTab])
+
+  useEffect(() => {
     const openId = location.state?.openAlertId
     if (openId) { setTab('all'); setHighlightId(openId) }
   }, [location.state])
@@ -79,6 +108,24 @@ export default function WalletReconciliation() {
   const userLabel = (a) => {
     const u = userMap[a.user_id]
     return u ? `${u.first_name} ${u.last_name}` : a.user_id
+  }
+
+  const resolveShortfall = async (id) => {
+    setResolvingShortfallId(id)
+    try {
+      await adminAPI.resolveCommissionShortfall(id)
+      toast(t('walletReconciliation.shortfalls.resolveSuccess'), 'success')
+      setShortfallReloadTick((x) => x + 1)
+    } catch (err) {
+      toast(err.response?.data?.error || t('walletReconciliation.shortfalls.resolveError'), 'error')
+    } finally {
+      setResolvingShortfallId(null)
+    }
+  }
+
+  const oeilLabel = (s) => {
+    const u = userMap[s.oeil_id]
+    return u ? `${u.first_name} ${u.last_name}` : s.oeil_id
   }
 
   return (
@@ -173,6 +220,90 @@ export default function WalletReconciliation() {
             <Pagination page={page} pages={pages} onPageChange={setPage} />
           </>
         )}
+
+        <div className="pt-2">
+          <h2 className="text-base font-semibold text-white mb-3">{t('walletReconciliation.shortfalls.title')}</h2>
+          <div className="flex gap-1 bg-[#222] rounded-xl p-1 w-fit max-w-full overflow-x-auto mb-4">
+            {TABS.map((s) => (
+              <button key={s} onClick={() => setShortfallTab(s)}
+                className={`px-4 py-2 rounded-lg text-xs font-medium transition-all ${shortfallTab === s ? 'bg-[#2A2A2A] text-white' : 'text-[#AAA] hover:text-white'}`}>
+                {t(`walletReconciliation.tabs.${s}`)}
+              </button>
+            ))}
+          </div>
+
+          {shortfallsLoading ? (
+            <div className="flex justify-center py-20"><Spinner size="lg" /></div>
+          ) : shortfalls.length === 0 ? (
+            <div className="card text-center py-12 text-[#AAA]">
+              <div className="text-4xl mb-3">✅</div>
+              <p className="text-sm">{t('walletReconciliation.shortfalls.empty')}</p>
+            </div>
+          ) : (
+            <>
+              <div className="card p-0">
+                <div className="table-wrap">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>{t('walletReconciliation.shortfalls.table.mission')}</th>
+                        <th>{t('walletReconciliation.shortfalls.table.oeil')}</th>
+                        <th>{t('walletReconciliation.shortfalls.table.due')}</th>
+                        <th>{t('walletReconciliation.shortfalls.table.collected')}</th>
+                        <th>{t('walletReconciliation.shortfalls.table.shortfall')}</th>
+                        <th>{t('walletReconciliation.table.detectedAt')}</th>
+                        <th>{t('walletReconciliation.table.status')}</th>
+                        <th></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {shortfalls.map((s) => (
+                        <tr key={s.id}>
+                          <td className="text-white">{s.mission_title}</td>
+                          <td>
+                            <span
+                              className="text-white cursor-pointer hover:text-[#FF4D00] hover:underline"
+                              onClick={() => navigate(`/admin/users/${s.oeil_id}`, { state: { tab: 'financier', focusDate: s.created_at } })}
+                            >
+                              {oeilLabel(s)}
+                            </span>
+                          </td>
+                          <td className="text-[#AAA]">{Number(s.commission_due).toFixed(2)} MAD</td>
+                          <td className="text-[#AAA]">{Number(s.commission_collected).toFixed(2)} MAD</td>
+                          <td className="font-semibold text-red-400">{Number(s.shortfall).toFixed(2)} MAD</td>
+                          <td className="text-xs text-[#AAA]">
+                            {new Date(s.created_at).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}
+                          </td>
+                          <td>
+                            {s.resolved_at ? (
+                              <Badge variant="green">
+                                {t('walletReconciliation.resolvedLabel')} {new Date(s.resolved_at).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })}
+                              </Badge>
+                            ) : (
+                              <Badge variant="orange">{t('walletReconciliation.tabs.unresolved')}</Badge>
+                            )}
+                          </td>
+                          <td>
+                            {!s.resolved_at && (
+                              <button
+                                onClick={() => resolveShortfall(s.id)}
+                                disabled={resolvingShortfallId === s.id}
+                                className="btn btn-primary btn-sm disabled:opacity-50"
+                              >
+                                {resolvingShortfallId === s.id ? '...' : t('walletReconciliation.resolve')}
+                              </button>
+                            )}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <Pagination page={shortfallPage} pages={shortfallPages} onPageChange={setShortfallPage} />
+            </>
+          )}
+        </div>
       </div>
     </AppLayout>
   )
