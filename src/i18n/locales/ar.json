@@ -801,6 +801,11 @@
     "budgetPlaceholder": "الحد الأدنى {{min}} درهم",
     "budgetMinNotice": "الميزانية الدنيا لهذه المهمة:",
     "budgetMinValue": "{{min}} درهم",
+    "paymentMethodLabel": "طريقة الدفع",
+    "paymentMethods": {
+      "cash": "نقدًا",
+      "payzone": "الدفع عبر الإنترنت"
+    },
     "promoLabel": "  رمز ترويجي - كود برومو ",
     "promoDiscount": "− {{amount}} درهم",
     "promoRemove": "✕ إزالة",

@@ -1,10 +1,9 @@
 import { useState, useRef, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
-import { missionsAPI, usersAPI, paymentsAPI } from '../../api'
+import { missionsAPI, usersAPI } from '../../api'
 import { VILLES, VILLES_LIST } from '../../constants/villes'
 import { toast } from '../ui'
 import { useAuth } from '../../context/AuthContext'
-import { redirectToPaywall } from '../../utils/payzone'
 import Autocomplete from './Autocomplete'
 
 const MIN_PRICES = {
@@ -149,13 +148,23 @@ function SubcategorySelector({ type, value, onChange, t }) {
   return null
 }
 
+// Options de paiement du formulaire — seule 'cash' est active aujourd'hui (PayZone n'a pas encore
+// de clés de production réelles, voir décision de session 2026-08-13). 'payzone' reste déclarée
+// ici, désactivée : la réactiver plus tard ne demande que enabled:true, aucun changement JSX.
+const PAYMENT_METHODS = [
+  { value: 'cash', labelKey: 'cash', enabled: true },
+  { value: 'payzone', labelKey: 'payzone', enabled: false },
+]
+const DEFAULT_PAYMENT_METHOD = PAYMENT_METHODS.find((m) => m.enabled)?.value || 'cash'
+
 export default function NewMissionModal({ open, onClose, onCreated, preselectedOeil }) {
   const { t }             = useTranslation()
   const { user }          = useAuth()
   const [type, setType]   = useState('immobilier')
   const [subcategory, setSub] = useState('')
   const [loading, setLoading] = useState(false)
-  const [form, setForm]   = useState({ title: '', address: '', city: '', quartier: '', price: '', description: '', scheduled_date: '', scheduled_time: ''  })
+  const [form, setForm]   = useState({ title: '', address: '', city: '', quartier: '', price: '', description: '', scheduled_date: '', scheduled_time: '', payment_method: DEFAULT_PAYMENT_METHOD })
+  const availablePaymentMethods = PAYMENT_METHODS.filter((m) => m.enabled)
   const [promoCode, setPromoCode]     = useState('')
   const [promoResult, setPromoResult] = useState(null)
   const [promoLoading, setPromoLoading] = useState(false)
@@ -228,6 +237,7 @@ if (parseFloat(form.price) < minPrice) {
         quartier:     form.quartier || null,
         price:        parseFloat(form.price),
         description:  form.description,
+        payment_method: form.payment_method,
         scheduled_at: (() => {
   const dt = new Date(`${form.scheduled_date}T${form.scheduled_time}`)
   return dt.toISOString()
@@ -242,22 +252,18 @@ if (parseFloat(form.price) < minPrice) {
         if (promoResult.platform_amount) payload.platform_amount = promoResult.platform_amount
       }
 
-      // Prix résolu à 0 (code promo gratuit à 100%) : rien à payer, flux direct inchangé.
-      // Sinon : paiement réel requis, on passe par PayZone au lieu de créer la mission tout de suite.
-      if (Number(payload.price) === 0) {
-        const { data } = await missionsAPI.create(payload)
-        onCreated?.(data.mission)
-        onClose()
-        setForm({ title: '', address: '', city: '', quartier: '', price: '', description: '' })
-        setType('immobilier')
-        setSub('')
-        setPromoCode('')
-        setPromoResult(null)
-      } else {
-        const { data } = await paymentsAPI.init(payload)
-        redirectToPaywall(data.paywallUrl, data.payload, data.signature)
-        // Pas de reset/onClose ici : la page va être remplacée par la redirection vers le paywall PayZone.
-      }
+      // Modèle de paiement cash (2026-08-13) : POST /missions est le seul chemin utilisé par ce
+      // formulaire désormais, quel que soit le prix (payment_method='cash' tant que 'payzone'
+      // reste désactivée dans PAYMENT_METHODS ci-dessus). PayZone (POST /payments/payzone/init)
+      // n'est plus appelé depuis cet écran ; son code backend n'est pas touché.
+      const { data } = await missionsAPI.create(payload)
+      onCreated?.(data.mission)
+      onClose()
+      setForm({ title: '', address: '', city: '', quartier: '', price: '', description: '', scheduled_date: '', scheduled_time: '', payment_method: DEFAULT_PAYMENT_METHOD })
+      setType('immobilier')
+      setSub('')
+      setPromoCode('')
+      setPromoResult(null)
     } catch (err) {
       toast(err.response?.data?.error || t('newMissionModal.errors.creationError'), 'error')
     } finally {
@@ -419,6 +425,17 @@ if (parseFloat(form.price) < minPrice) {
               </p>
             )}
 
+          </div>
+
+          {/* Mode de paiement */}
+          <div>
+            <label className="label">{t('newMissionModal.paymentMethodLabel')}</label>
+            <select className="input" value={form.payment_method} onChange={set('payment_method')}
+              disabled={availablePaymentMethods.length <= 1}>
+              {availablePaymentMethods.map((m) => (
+                <option key={m.value} value={m.value}>{t(`newMissionModal.paymentMethods.${m.labelKey}`)}</option>
+              ))}
+            </select>
           </div>
 
           {/* Code promo */}

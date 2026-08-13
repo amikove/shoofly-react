@@ -800,6 +800,11 @@
     "budgetPlaceholder": "Min. {{min}} MAD",
     "budgetMinNotice": "Budget minimum pour cette mission :",
     "budgetMinValue": "{{min}} MAD",
+    "paymentMethodLabel": "Mode de paiement",
+    "paymentMethods": {
+      "cash": "Espèces",
+      "payzone": "Paiement en ligne"
+    },
     "promoLabel": "Code promo",
     "promoDiscount": "− {{amount}} MAD",
     "promoRemove": "✕ Retirer",
