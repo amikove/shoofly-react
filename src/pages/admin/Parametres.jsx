@@ -45,6 +45,19 @@ const ADVANCED_DEFAULTS = {
   candidature_whatsapp_seuil_minutes: 60,
   whatsapp_retry_max_attempts: 3,
   payment_attempt_abandoned_minutes: 30,
+  no_show_h30_penalty_points: -20,
+  no_show_h30_debit_cap_mad: 100,
+  transfer_during_no_replacement_penalty_points: -70,
+  transfer_during_no_replacement_debit_cap_mad: 100,
+  transfer_before_no_replacement_penalty_points: -10,
+  transfer_before_replacement_bonus_points: 5,
+  late_cancel_penalty_tier1_points: -15,
+  late_cancel_penalty_tier2_points: -35,
+  late_cancel_penalty_tier3_points: -50,
+  late_cancel_penalty_tier1_threshold_hours: 24,
+  late_cancel_penalty_tier2_threshold_hours: 2,
+  presence_confirmation_deadline_minutes_h45: 15,
+  password_reset_token_expiry_hours: 1,
 }
 
 // rate stockée en base comme fraction (0.5) — affichée en % dans le formulaire
@@ -62,19 +75,22 @@ const ADVANCED_GROUPS = [
   { key: 'candidatureWhatsapp', category: 'missions', fields: ['candidature_whatsapp_seuil_count', 'candidature_whatsapp_seuil_minutes'] },
   { key: 'whatsappRetry',    category: 'missions',    fields: ['whatsapp_retry_max_attempts'] },
   { key: 'overdue',          category: 'missions',    fields: ['mission_overdue_verification_hours'] },
-  { key: 'lateStart',        category: 'missions',    fields: ['late_start_alert_window_minutes', 'late_start_auto_transfer_minutes'] },
+  { key: 'lateStart',        category: 'missions',    fields: ['late_start_alert_window_minutes', 'late_start_auto_transfer_minutes', 'no_show_h30_penalty_points', 'no_show_h30_debit_cap_mad'] },
   { key: 'reminders',        category: 'missions',    fields: ['reminder_before_mission_minutes_early', 'reminder_before_mission_minutes_late'] },
-  { key: 'presenceConfirmation', category: 'missions', fields: ['presence_confirmation_deadline_minutes', 'presence_confirmation_deadline_minutes_sameday'] },
+  { key: 'presenceConfirmation', category: 'missions', fields: ['presence_confirmation_deadline_minutes', 'presence_confirmation_deadline_minutes_sameday', 'presence_confirmation_deadline_minutes_h45'] },
   { key: 'refund',           category: 'missions',    fields: ['refund_partial_threshold_hours', 'refund_partial_rate'] },
   { key: 'paymentRetry',     category: 'missions',    fields: ['payment_attempt_abandoned_minutes'] },
   { key: 'newOeil',          category: 'reliability', fields: ['new_oeil_mission_threshold'] },
   { key: 'reactivation',     category: 'reliability', fields: ['reactivation_default_score'] },
+  { key: 'transferPenalties', category: 'reliability', fields: ['transfer_during_no_replacement_penalty_points', 'transfer_during_no_replacement_debit_cap_mad', 'transfer_before_no_replacement_penalty_points', 'transfer_before_replacement_bonus_points'] },
+  { key: 'lateCancelPenalty', category: 'reliability', fields: ['late_cancel_penalty_tier1_threshold_hours', 'late_cancel_penalty_tier1_points', 'late_cancel_penalty_tier2_threshold_hours', 'late_cancel_penalty_tier2_points', 'late_cancel_penalty_tier3_points'] },
   { key: 'ticketResolve',    category: 'support',     fields: ['ticket_auto_resolve_hours'] },
   { key: 'responseTime',     category: 'support',     fields: ['response_time_max_valid_minutes', 'response_time_min_turns'] },
   { key: 'dashboardAlerts',  category: 'dashboard',    fields: ['dashboard_stuck_pending_hours', 'dashboard_low_reliability_threshold'] },
+  { key: 'passwordReset',    category: 'account',     fields: ['password_reset_token_expiry_hours'] },
 ]
 
-const CATEGORY_ORDER = ['missions', 'reliability', 'support', 'dashboard']
+const CATEGORY_ORDER = ['missions', 'reliability', 'support', 'dashboard', 'account']
 
 export default function AdminParametres() {
   const { t } = useTranslation()

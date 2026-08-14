@@ -2478,7 +2478,8 @@
       "missions": "Missions & délais",
       "reliability": "Fiabilité",
       "support": "Support",
-      "dashboard": "Dashboard"
+      "dashboard": "Dashboard",
+      "account": "Compte"
     },
     "groups": {
       "candidateCascade": {
@@ -2533,7 +2534,7 @@
       },
       "presenceConfirmation": {
         "title": "Confirmation de présence de l'Œil",
-        "note": "Vérifie activement la présence de l'Œil à deux moments : la veille au soir (délai long) et quelques heures avant la mission (délai court, contrôle systématique même si déjà confirmé la veille). Sans confirmation dans le délai, la mission est automatiquement remise en recherche d'un autre Œil."
+        "note": "Vérifie activement la présence de l'Œil à trois moments : la veille au soir, puis deux contrôles rapprochés de la mission (H-2 et H-45, chacun systématique même si déjà confirmé précédemment). Sans confirmation dans le délai, la mission est automatiquement remise en recherche d'un autre Œil."
       },
       "refund": {
         "title": "Remboursement à l'annulation",
@@ -2549,6 +2550,14 @@
       "reactivation": {
         "title": "Réintégration après suspension"
       },
+      "transferPenalties": {
+        "title": "Pénalités de transfert sans remplaçant",
+        "note": "Barème appliqué quand une mission transférée n'a trouvé aucun remplaçant avant sa deadline (voir groupe \"Délai de grâce après transfert\" ci-dessus). Le cas \"avant démarrage, avec remplaçant\" (bonus) est actuellement inatteignable en production : seule une déclaration d'urgence peut encore ouvrir ce type de transfert, et elle passe toujours par le chemin \"sans pénalité\"."
+      },
+      "lateCancelPenalty": {
+        "title": "Barème d'annulation tardive par l'Œil",
+        "note": "⚠️ Barème actuellement inatteignable en production (aucune route ne peut plus l'exercer) — conservé et rendu configurable pour cohérence avec le reste des réglages de fiabilité. Ex : annulation par l'Œil 1h avant la mission → -50 points (palier le plus sévère, sous le seuil de 2h)."
+      },
       "ticketResolve": {
         "title": "Auto-résolution des tickets"
       },
@@ -2558,6 +2567,9 @@
       },
       "dashboardAlerts": {
         "title": "Alertes du dashboard admin"
+      },
+      "passwordReset": {
+        "title": "Réinitialisation de mot de passe"
       }
     },
     "fields": {
@@ -2597,7 +2609,20 @@
       "candidature_whatsapp_seuil_count": "Nombre de candidatures déclenchant l'envoi",
       "candidature_whatsapp_seuil_minutes": "Délai de repli depuis la 1ère candidature (min)",
       "whatsapp_retry_max_attempts": "Nombre max de réessais",
-      "payment_attempt_abandoned_minutes": "Délai avant tentative abandonnée (min)"
+      "payment_attempt_abandoned_minutes": "Délai avant tentative abandonnée (min)",
+      "no_show_h30_penalty_points": "Pénalité fiabilité au transfert (points)",
+      "no_show_h30_debit_cap_mad": "Plafond débit financier (MAD)",
+      "transfer_during_no_replacement_penalty_points": "Pendant la mission — pénalité (points)",
+      "transfer_during_no_replacement_debit_cap_mad": "Pendant la mission — plafond débit (MAD)",
+      "transfer_before_no_replacement_penalty_points": "Avant démarrage, sans remplaçant — pénalité (points)",
+      "transfer_before_replacement_bonus_points": "Avant démarrage, avec remplaçant — bonus (points)",
+      "late_cancel_penalty_tier1_threshold_hours": "Seuil palier 1 (h avant la mission)",
+      "late_cancel_penalty_tier1_points": "Pénalité palier 1 (points)",
+      "late_cancel_penalty_tier2_threshold_hours": "Seuil palier 2 (h avant la mission)",
+      "late_cancel_penalty_tier2_points": "Pénalité palier 2 (points)",
+      "late_cancel_penalty_tier3_points": "Pénalité palier 3 (points)",
+      "presence_confirmation_deadline_minutes_h45": "Confirmation présence — contrôle H-45 (min)",
+      "password_reset_token_expiry_hours": "Expiration du lien de réinitialisation (h)"
     },
     "fieldExplanations": {
       "transfer_grace_minutes_queue": "Pour une mission \"file d'attente\" transférée, la cascade a 45 min pour trouver un remplaçant avant annulation et remboursement intégral du client.",
@@ -2636,7 +2661,20 @@
       "candidature_whatsapp_seuil_count": "Dès que 3 Œils vérifiés ont candidaté sur la mission, le client reçoit immédiatement un WhatsApp l'en informant.",
       "candidature_whatsapp_seuil_minutes": "Si ce nombre n'est jamais atteint, un cron envoie quand même le WhatsApp 60 min après la toute première candidature d'un Œil vérifié — un seul envoi au total par mission.",
       "whatsapp_retry_max_attempts": "Un envoi WhatsApp échoué est retenté jusqu'à 3 fois par le cron de réessai ; au-delà, il reste visible comme échec définitif dans l'écran admin dédié.",
-      "payment_attempt_abandoned_minutes": "Une tentative de paiement PayZone restée en statut « créée » plus de 30 min sans confirmation est considérée comme abandonnée et peut être relancée par le client."
+      "payment_attempt_abandoned_minutes": "Une tentative de paiement PayZone restée en statut « créée » plus de 30 min sans confirmation est considérée comme abandonnée et peut être relancée par le client.",
+      "no_show_h30_penalty_points": "Un Œil qui n'a pas démarré sa mission 60 min après l'heure prévue perd 20 points de fiabilité, en plus du transfert automatique et du débit financier ci-dessous.",
+      "no_show_h30_debit_cap_mad": "Jusqu'à 100 MAD sont débités du portefeuille de l'Œil, plafonnés à son solde réel disponible (jamais de solde négatif).",
+      "transfer_during_no_replacement_penalty_points": "Si aucun remplaçant n'est trouvé après l'abandon d'une mission déjà commencée, l'Œil fautif perd 70 points de fiabilité — la pénalité la plus sévère du barème.",
+      "transfer_during_no_replacement_debit_cap_mad": "Jusqu'à 100 MAD sont débités du portefeuille de l'Œil, plafonnés à son solde réel disponible.",
+      "transfer_before_no_replacement_penalty_points": "Si aucun remplaçant n'est trouvé après un transfert avant le démarrage de la mission, l'Œil perd 10 points de fiabilité (s'ajoute au bonus déjà accordé à l'ouverture du transfert, voir le champ suivant — solde net -5 par défaut).",
+      "transfer_before_replacement_bonus_points": "Accordé dès l'ouverture d'un transfert avant démarrage, avant même de savoir si un remplaçant sera trouvé. ⚠️ Actuellement inatteignable en production : la seule route encore active qui ouvre ce type de transfert (déclaration d'urgence) passe systématiquement par le chemin \"sans pénalité\".",
+      "late_cancel_penalty_tier1_threshold_hours": "Au-delà de ce seuil (ou si la mission n'a pas d'heure programmée), la pénalité la plus légère du barème s'applique.",
+      "late_cancel_penalty_tier1_points": "Annulation par l'Œil au-delà du seuil du palier 1 : pénalité la plus légère du barème.",
+      "late_cancel_penalty_tier2_threshold_hours": "En dessous de ce seuil, la pénalité du palier 3 (la plus sévère) s'applique à la place de celle du palier 2.",
+      "late_cancel_penalty_tier2_points": "Annulation par l'Œil entre le seuil du palier 2 et celui du palier 1 : pénalité intermédiaire, classée événement grave.",
+      "late_cancel_penalty_tier3_points": "Annulation par l'Œil en dessous du seuil du palier 2, donc très tardive : pénalité la plus sévère de ce barème.",
+      "presence_confirmation_deadline_minutes_h45": "Après l'ouverture du point de contrôle H-45, l'Œil a 15 min pour confirmer sa présence avant réattribution automatique — sans pénalité, contrairement au no-show H+30 (fenêtre différente, plus tardive).",
+      "password_reset_token_expiry_hours": "Un lien de réinitialisation de mot de passe envoyé par email n'est valable que 1h ; passé ce délai, l'utilisateur doit refaire une demande."
     },
     "basicExplanations": {
       "commission": "Ex: 20 pour 20% — sur une mission à 300 MAD, Shoofly prélève 60 MAD et l'Œil reçoit 240 MAD. Calcul figé à la création : changer ce taux n'affecte pas les missions déjà créées.",
