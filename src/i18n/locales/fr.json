@@ -1802,6 +1802,7 @@
     "missionAutoTransferredClientBody": "Votre Œil n'a pas démarré \"{{missionTitle}}\" à l'heure. Nous recherchons un remplaçant en urgence.",
     "penaltyAppliedTitle": "⚠️ Pénalité appliquée",
     "penaltyAppliedBody": "Vous n'avez pas démarré \"{{missionTitle}}\" à l'heure. -{{amount}} MAD déduits et cooldown {{cooldownHours}}h appliqué.",
+    "penaltyAppliedNoReplacementBody": "Aucun remplaçant n'a été trouvé pour \"{{missionTitle}}\". -{{amount}} MAD déduits.",
     "autoTransferAdminTitle": "🔄 Transfert automatique H+30",
     "autoTransferAdminBody": "Mission \"{{missionTitle}}\" transférée automatiquement — Œil {{oeilName}} n'a pas démarré.",
     "missionToVerifyAdminTitle": "🔍 Mission à vérifier",
