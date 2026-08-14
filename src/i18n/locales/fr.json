@@ -2481,6 +2481,10 @@
       "dashboard": "Dashboard"
     },
     "groups": {
+      "candidateCascade": {
+        "title": "Cascade de candidats par lot",
+        "note": "Un lot d'Œils est sollicité simultanément (mieux classés d'abord). Ils ont un délai pour confirmer leur disponibilité ; dès la première confirmation, une fenêtre de départage s'ouvre pour laisser une chance aux autres du même lot avant d'attribuer au mieux classé des confirmés. Ex : lot de 10, personne ne confirme en 10 min → lot suivant tiré ; un Œil confirme à la 3ᵉ minute → 5 min de plus pour les autres avant attribution."
+      },
       "transferGrace": {
         "title": "Délai de grâce après transfert",
         "note": "Temps laissé pour trouver un remplaçant avant que la mission ne soit annulée faute de prestataire. Ex : 45 min pour une mission \"file d'attente\", 60 min pour les autres types."
@@ -2499,7 +2503,7 @@
       },
       "cooldowns": {
         "title": "Cooldown après transfert ou abandon",
-        "note": "Empêche l'Œil d'accepter une nouvelle mission immédiatement après avoir transféré/refusé une mission (délai court) ou abandonné une mission déjà en cours (délai aggravé, sans remplaçant trouvé). Ex : 4h après un refus, 48h après un abandon en cours de mission."
+        "note": "Empêche l'Œil d'accepter une nouvelle mission immédiatement après avoir transféré/refusé une mission (délai court), abandonné une mission déjà en cours (délai aggravé, sans remplaçant trouvé), ou transféré une mission avant son démarrage (délai ancré sur l'heure du créneau, pas sur l'heure du clic). Ex : 4h après un refus, 48h après un abandon en cours de mission, ou de 1h avant à 2h après le créneau pour un transfert avant démarrage (délai de 3h)."
       },
       "staleMission": {
         "title": "Mission sans prestataire trouvé",
@@ -2508,6 +2512,13 @@
       "urgentWhatsappWaves": {
         "title": "Notifications WhatsApp — missions urgentes",
         "note": "Si la mission urgente n'a toujours pas d'Œil, une nouvelle vague de candidats est contactée par WhatsApp après ce délai, jusqu'à épuisement des Œils disponibles dans la ville. Ex : 15 Œils éligibles → les 10 mieux classés contactés immédiatement, les 5 restants 30 min plus tard si la mission est toujours sans Œil."
+      },
+      "candidatureWhatsapp": {
+        "title": "Notification WhatsApp au client — seuil de candidatures",
+        "note": "Le client est notifié par WhatsApp qu'un Œil est intéressé dès que l'un des deux seuils ci-dessous est atteint (le premier déclenché suffit, un seul envoi par mission). Seules les candidatures d'Œils vérifiés comptent."
+      },
+      "whatsappRetry": {
+        "title": "Réessai des envois WhatsApp échoués"
       },
       "overdue": {
         "title": "Mission active trop longtemps"
@@ -2520,9 +2531,17 @@
         "title": "Rappels avant mission",
         "note": "Notifications envoyées à l'Œil avant le début de sa mission (marge de ±10 min autour de chaque valeur). Ex : mission à 14h → rappels vers 12h puis 13h30."
       },
+      "presenceConfirmation": {
+        "title": "Confirmation de présence de l'Œil",
+        "note": "Vérifie activement la présence de l'Œil à deux moments : la veille au soir (délai long) et quelques heures avant la mission (délai court, contrôle systématique même si déjà confirmé la veille). Sans confirmation dans le délai, la mission est automatiquement remise en recherche d'un autre Œil."
+      },
       "refund": {
         "title": "Remboursement à l'annulation",
         "note": "Si un client annule une mission de 300 MAD plus de 2h avant l'heure prévue, il est remboursé de 150 MAD (50%) ; moins de 2h avant, aucun remboursement."
+      },
+      "paymentRetry": {
+        "title": "Nouvel essai de paiement PayZone",
+        "note": "Ne s'applique qu'aux tentatives restées bloquées en statut « créée » (le client n'a jamais terminé côté PayZone) — une tentative refusée ou en erreur peut toujours être relancée immédiatement, quel que soit ce délai."
       },
       "newOeil": {
         "title": "Badge \"Nouveau\""
@@ -2568,7 +2587,17 @@
       "dashboard_stuck_pending_hours": "Missions \"bloquées\" après (h)",
       "dashboard_low_reliability_threshold": "Seuil \"Œil à risque\" (score <)",
       "urgent_mission_whatsapp_batch_size": "Nombre d'Œils contactés par vague",
-      "urgent_mission_whatsapp_batch_delay_minutes": "Délai avant la vague suivante (min)"
+      "urgent_mission_whatsapp_batch_delay_minutes": "Délai avant la vague suivante (min)",
+      "candidate_batch_size": "Taille du lot (nb d'Œils sollicités)",
+      "candidate_confirmation_minutes": "Délai de confirmation du lot (min)",
+      "candidate_tiebreak_window_minutes": "Fenêtre de départage (min)",
+      "transfer_cooldown_before_hours": "Cooldown transfert avant démarrage (h)",
+      "presence_confirmation_deadline_minutes": "Confirmation présence — rappel J-1 (min)",
+      "presence_confirmation_deadline_minutes_sameday": "Confirmation présence — contrôle H-2 (min)",
+      "candidature_whatsapp_seuil_count": "Nombre de candidatures déclenchant l'envoi",
+      "candidature_whatsapp_seuil_minutes": "Délai de repli depuis la 1ère candidature (min)",
+      "whatsapp_retry_max_attempts": "Nombre max de réessais",
+      "payment_attempt_abandoned_minutes": "Délai avant tentative abandonnée (min)"
     },
     "fieldExplanations": {
       "transfer_grace_minutes_queue": "Pour une mission \"file d'attente\" transférée, la cascade a 45 min pour trouver un remplaçant avant annulation et remboursement intégral du client.",
@@ -2597,7 +2626,17 @@
       "dashboard_stuck_pending_hours": "Compte les missions encore sans Œil depuis plus de 24h, affiché comme alerte sur le dashboard admin.",
       "dashboard_low_reliability_threshold": "Compte les Œils actifs dont le score de fiabilité est sous 70, affiché comme alerte sur le dashboard admin.",
       "urgent_mission_whatsapp_batch_size": "Les 10 Œils les mieux classés (fiabilité puis note) de la ville sont contactés par WhatsApp dès la création de la mission urgente.",
-      "urgent_mission_whatsapp_batch_delay_minutes": "Si la mission urgente n'a toujours pas d'Œil 30 min après une vague, la vague suivante contacte les Œils restants."
+      "urgent_mission_whatsapp_batch_delay_minutes": "Si la mission urgente n'a toujours pas d'Œil 30 min après une vague, la vague suivante contacte les Œils restants.",
+      "candidate_batch_size": "Les 10 Œils les mieux classés (fiabilité puis note) sont sollicités simultanément à chaque tirage de lot.",
+      "candidate_confirmation_minutes": "Si aucun Œil du lot ne confirme sa disponibilité en 10 min, ce lot est abandonné et un nouveau lot est tiré.",
+      "candidate_tiebreak_window_minutes": "Dès la première confirmation reçue, les autres Œils du lot ont encore 5 min pour confirmer avant que le mieux classé des confirmés soit assigné.",
+      "transfer_cooldown_before_hours": "Un Œil qui transfère une mission avant son démarrage est bloqué de 1h avant le créneau jusqu'à (ce délai − 1h) après. Ex : mission à 14h, délai de 3h → indisponible de 13h à 16h, quelle que soit l'heure réelle du transfert.",
+      "presence_confirmation_deadline_minutes": "Après le rappel envoyé la veille à 20h, l'Œil a 120 min pour confirmer sa présence (jusque vers 22h) avant réattribution automatique de la mission.",
+      "presence_confirmation_deadline_minutes_sameday": "Un second contrôle a lieu environ 2h avant la mission, que la présence ait déjà été confirmée la veille ou non : l'Œil a 45 min pour (re)confirmer avant réattribution automatique.",
+      "candidature_whatsapp_seuil_count": "Dès que 3 Œils vérifiés ont candidaté sur la mission, le client reçoit immédiatement un WhatsApp l'en informant.",
+      "candidature_whatsapp_seuil_minutes": "Si ce nombre n'est jamais atteint, un cron envoie quand même le WhatsApp 60 min après la toute première candidature d'un Œil vérifié — un seul envoi au total par mission.",
+      "whatsapp_retry_max_attempts": "Un envoi WhatsApp échoué est retenté jusqu'à 3 fois par le cron de réessai ; au-delà, il reste visible comme échec définitif dans l'écran admin dédié.",
+      "payment_attempt_abandoned_minutes": "Une tentative de paiement PayZone restée en statut « créée » plus de 30 min sans confirmation est considérée comme abandonnée et peut être relancée par le client."
     },
     "basicExplanations": {
       "commission": "Ex: 20 pour 20% — sur une mission à 300 MAD, Shoofly prélève 60 MAD et l'Œil reçoit 240 MAD. Calcul figé à la création : changer ce taux n'affecte pas les missions déjà créées.",
