@@ -92,6 +92,26 @@ const ADVANCED_GROUPS = [
 
 const CATEGORY_ORDER = ['missions', 'reliability', 'support', 'dashboard', 'account']
 
+// Les 4 réglages "de base" (cartes du haut) n'ont pas d'entrée adminAdvancedSettings.fields.* —
+// libellés utilisés par le tableau d'aperçu de la réinitialisation (voir ci-dessous).
+const BASIC_FIELD_LABELS = {
+  commission: 'Commission SHOOFLY (%)',
+  min_price: 'Tarif minimum (MAD)',
+  five_star_bonus_active: 'Bonus qualité 5 étoiles — actif',
+  five_star_bonus_percent: 'Bonus qualité 5 étoiles — pourcentage',
+}
+
+// Comparaison tolérante au formatage : la valeur seedée par schema.js ('0.20') et celle réécrite
+// par un save du formulaire (String(0.2) => '0.2') sont numériquement identiques mais diffèrent en
+// tant que chaînes — comparer les chaînes brutes ferait apparaître de faux positifs dans l'aperçu
+// de réinitialisation. Même détection numérique que utils/settings.js (isNumeric) côté backend.
+const isNumericStr = (s) => s !== '' && s !== undefined && s !== null && !isNaN(s)
+const valuesEqual = (a, b) => {
+  if (a === undefined) return false
+  if (isNumericStr(a) && isNumericStr(b)) return Number(a) === Number(b)
+  return String(a) === String(b)
+}
+
 export default function AdminParametres() {
   const { t } = useTranslation()
   const [params, setParams] = useState({ commission: 20, min_price: 80 })
@@ -101,28 +121,84 @@ export default function AdminParametres() {
   const [loading, setLoading] = useState(true)
   const [saving, setSaving]   = useState(false)
   const [savingAdvanced, setSavingAdvanced] = useState(false)
+  const [resetPreview, setResetPreview] = useState(null) // null | { rows: [{key,current,default}], defaultsRaw }
+  const [resetLoading, setResetLoading] = useState(false)
+  const [resetApplying, setResetApplying] = useState(false)
 
-  useEffect(() => {
-    adminAPI.settings()
-      .then(({ data }) => {
-        const s = data.settings || {}
-        setParams({
-          commission:   parseFloat(s.commission || 0.20) * 100,
-          min_price:    parseFloat(s.min_price   || 80),
-        })
-        setFiveStarBonusActive(s.five_star_bonus_active === 'true')
-        setFiveStarBonusPercent(parseFloat(s.five_star_bonus_percent || 10))
-
-        const nextAdvanced = {}
-        for (const [key, defaultValue] of Object.entries(ADVANCED_DEFAULTS)) {
-          const raw = s[key] !== undefined ? parseFloat(s[key]) : defaultValue
-          nextAdvanced[key] = PERCENT_FIELDS.includes(key) ? raw * 100 : raw
-        }
-        setAdvanced(nextAdvanced)
+  // Extrait de l'useEffect de montage pour être ré-appelable après une réinitialisation, afin que
+  // les champs affichés reflètent immédiatement les valeurs restaurées sans recharger la page.
+  const loadSettings = async () => {
+    try {
+      const { data } = await adminAPI.settings()
+      const s = data.settings || {}
+      setParams({
+        commission:   parseFloat(s.commission || 0.20) * 100,
+        min_price:    parseFloat(s.min_price   || 80),
       })
-      .catch(() => toast('Erreur chargement', 'error'))
-      .finally(() => setLoading(false))
-  }, [])
+      setFiveStarBonusActive(s.five_star_bonus_active === 'true')
+      setFiveStarBonusPercent(parseFloat(s.five_star_bonus_percent || 10))
+
+      const nextAdvanced = {}
+      for (const [key, defaultValue] of Object.entries(ADVANCED_DEFAULTS)) {
+        const raw = s[key] !== undefined ? parseFloat(s[key]) : defaultValue
+        nextAdvanced[key] = PERCENT_FIELDS.includes(key) ? raw * 100 : raw
+      }
+      setAdvanced(nextAdvanced)
+    } catch {
+      toast('Erreur chargement', 'error')
+    }
+  }
+
+  useEffect(() => { loadSettings().finally(() => setLoading(false)) }, [])
+
+  // Aperçu de réinitialisation : recharge la vérité DB actuelle (pas les valeurs du formulaire,
+  // potentiellement non enregistrées) + les valeurs par défaut de schema.js, et ne garde que les
+  // réglages qui diffèrent réellement.
+  const openResetPreview = async () => {
+    setResetLoading(true)
+    try {
+      const [curRes, defRes] = await Promise.all([adminAPI.settings(), adminAPI.settingsDefaults()])
+      const current = curRes.data.settings || {}
+      const defaults = defRes.data.defaults || {}
+      const rows = Object.entries(defaults)
+        .filter(([key, def]) => !valuesEqual(current[key], def))
+        .map(([key, def]) => ({ key, current: current[key], default: def }))
+      setResetPreview({ rows, defaultsRaw: defaults })
+    } catch {
+      toast(t('adminSettingsReset.loadErrorToast'), 'error')
+    } finally {
+      setResetLoading(false)
+    }
+  }
+
+  // Confirmé : envoie l'intégralité des valeurs par défaut (pas seulement le sous-ensemble
+  // affiché dans l'aperçu) — aucun réglage n'est exclu de la réinitialisation.
+  const confirmReset = async () => {
+    if (!resetPreview) return
+    setResetApplying(true)
+    try {
+      await adminAPI.saveSettings(resetPreview.defaultsRaw)
+      toast(t('adminSettingsReset.successToast'), 'success')
+      setResetPreview(null)
+      await loadSettings()
+    } catch {
+      toast(t('adminSettingsReset.errorToast'), 'error')
+    } finally {
+      setResetApplying(false)
+    }
+  }
+
+  const fieldLabel = (key) => BASIC_FIELD_LABELS[key] || t(`adminAdvancedSettings.fields.${key}`, { defaultValue: key })
+
+  const displayValue = (key, raw) => {
+    if (raw === undefined || raw === null) return '—'
+    if (key === 'five_star_bonus_active') return raw === 'true' ? 'Actif' : 'Inactif'
+    if (key === 'commission' || PERCENT_FIELDS.includes(key)) {
+      const n = parseFloat(raw)
+      return Number.isFinite(n) ? `${n * 100}%` : raw
+    }
+    return raw
+  }
 
   const setAdvancedField = (key) => (e) => {
     const value = e.target.value
@@ -163,7 +239,14 @@ export default function AdminParametres() {
 
   return (
     <AppLayout>
-      <Topbar title="Paramètres" />
+      <Topbar
+        title="Paramètres"
+        actions={
+          <button onClick={openResetPreview} disabled={resetLoading} className="btn btn-ghost btn-sm disabled:opacity-60">
+            {resetLoading ? t('adminSettingsReset.loading') : t('adminSettingsReset.button')}
+          </button>
+        }
+      />
       <div className="p-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="card">
@@ -252,6 +335,55 @@ export default function AdminParametres() {
           </button>
         </div>
       </div>
+
+      {resetPreview && (
+        <div className="fixed inset-0 bg-black/80 z-[70] flex items-center justify-center p-4 backdrop-blur-sm">
+          <div className="bg-[#181818] border border-orange-500/30 rounded-2xl p-6 w-full max-w-2xl shadow-xl max-h-[85vh] overflow-y-auto">
+            <h2 className="font-bold text-base mb-1">{t('adminSettingsReset.modalTitle')}</h2>
+
+            {resetPreview.rows.length === 0 ? (
+              <>
+                <p className="text-sm text-[#AAA] my-6">{t('adminSettingsReset.noDifference')}</p>
+                <button onClick={() => setResetPreview(null)} className="btn btn-ghost w-full justify-center">
+                  {t('adminSettingsReset.close')}
+                </button>
+              </>
+            ) : (
+              <>
+                <p className="text-xs text-[#AAA] mb-4">{t('adminSettingsReset.warning', { count: resetPreview.rows.length })}</p>
+                <div className="table-wrap mb-5">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>{t('adminSettingsReset.columnSetting')}</th>
+                        <th>{t('adminSettingsReset.columnCurrent')}</th>
+                        <th>{t('adminSettingsReset.columnDefault')}</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {resetPreview.rows.map((row) => (
+                        <tr key={row.key}>
+                          <td>{fieldLabel(row.key)}</td>
+                          <td className="text-[#FF4D4D]">{displayValue(row.key, row.current)}</td>
+                          <td className="text-[#2ECC71]">{displayValue(row.key, row.default)}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+                <div className="flex gap-3">
+                  <button onClick={() => setResetPreview(null)} disabled={resetApplying} className="btn btn-ghost flex-1 justify-center">
+                    {t('adminSettingsReset.cancel')}
+                  </button>
+                  <button onClick={confirmReset} disabled={resetApplying} className="btn btn-red flex-1 justify-center disabled:opacity-60">
+                    {resetApplying ? t('adminSettingsReset.confirming') : t('adminSettingsReset.confirm', { count: resetPreview.rows.length })}
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+      )}
     </AppLayout>
   )
 }

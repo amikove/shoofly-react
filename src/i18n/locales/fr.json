@@ -2683,5 +2683,22 @@
       "five_star_bonus_active": "Active ou coupe le bonus pour toutes les nouvelles notes 5★, immédiatement. Calculé sur le gain de l'Œil, pas sur le prix total de la mission. Désactivé par défaut.",
       "five_star_bonus_percent": "Ex: 10 pour 10% du gain de l'Œil — sur un gain de 240 MAD, un Œil noté 5★ reçoit 24 MAD de bonus, payé par Shoofly."
     }
+  },
+  "adminSettingsReset": {
+    "button": "Réinitialiser aux valeurs par défaut",
+    "loading": "Chargement...",
+    "modalTitle": "Réinitialiser aux valeurs par défaut",
+    "noDifference": "Tous les réglages sont déjà à leur valeur par défaut.",
+    "warning": "{{count}} réglage(s) vont être réinitialisés à leur valeur par défaut ci-dessous. Cette action est immédiate.",
+    "columnSetting": "Réglage",
+    "columnCurrent": "Valeur actuelle",
+    "columnDefault": "Valeur par défaut",
+    "cancel": "Annuler",
+    "confirm": "Confirmer la réinitialisation ({{count}})",
+    "confirming": "Réinitialisation...",
+    "close": "Fermer",
+    "successToast": "Réglages réinitialisés ✓",
+    "errorToast": "Erreur lors de la réinitialisation",
+    "loadErrorToast": "Erreur de chargement des valeurs par défaut"
   }
 }

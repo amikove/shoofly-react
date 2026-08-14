@@ -115,6 +115,7 @@ export const adminAPI = {
   resolveCommissionShortfall: (id) => api.put(`/api/users/admin/commission-shortfalls/${id}/resolve`),
   fraudDashboard: ()       => api.get('/api/anti-fraud/dashboard', { params: { _t: Date.now() } }),
   settings:       ()       => api.get('/api/users/admin/settings'),
+  settingsDefaults: ()     => api.get('/api/users/admin/settings/defaults'),
   saveSettings:   (data)   => api.put('/api/users/admin/settings', data),
   claims:         ()       => api.get('/api/users/admin/claims'),
   flaggedMessages: () => api.get('/api/users/admin/flagged-messages'),
