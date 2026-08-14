@@ -1800,7 +1800,7 @@
     "missionAutoTransferredClientTitle": "⚠️ تم نقل المهمة تلقائيًا",
     "missionAutoTransferredClientBody": "لم تبدأ عينك الميدانية \"{{missionTitle}}\" في الوقت المحدد. نبحث عن بديل بشكل عاجل.",
     "penaltyAppliedTitle": "⚠️ تم تطبيق عقوبة",
-    "penaltyAppliedBody": "لم تبدأ \"{{missionTitle}}\" في الوقت المحدد. تم خصم 100 درهم وتطبيق فترة انتظار 4 ساعات.",
+    "penaltyAppliedBody": "لم تبدأ \"{{missionTitle}}\" في الوقت المحدد. تم خصم {{amount}} درهم وتطبيق فترة انتظار {{cooldownHours}} ساعة.",
     "autoTransferAdminTitle": "🔄 نقل تلقائي H+30",
     "autoTransferAdminBody": "تم نقل المهمة \"{{missionTitle}}\" تلقائيًا — العين الميدانية {{oeilName}} لم تبدأ.",
     "missionToVerifyAdminTitle": "🔍 مهمة تحتاج إلى تحقق",
