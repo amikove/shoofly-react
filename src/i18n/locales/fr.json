@@ -3,7 +3,9 @@
     "close": "Fermer",
     "back": "Retour",
     "forward": "Suivant",
-    "notifications": "Notifications"
+    "notifications": "Notifications",
+    "showPassword": "Afficher le mot de passe",
+    "hidePassword": "Masquer le mot de passe"
   },
   "joursSemaine": {
     "Lun": "Lun",

@@ -7,6 +7,7 @@ import { translateLocation } from '../../constants/villesTranslations'
 import { captureAcquisitionParams, getAcquisitionParams, clearAcquisitionParams } from '../../utils/acquisitionTracking'
 import { toast } from '../../components/ui'
 import LanguageToggle from '../../components/ui/LanguageToggle'
+import PasswordInput from '../../components/ui/PasswordInput'
 import Autocomplete from '../../components/missions/Autocomplete'
 
 import { useEffect } from 'react'
@@ -183,8 +184,24 @@ const [form, setForm] = useState({
               )}
 
 
-              <div className="mt-3"><label className="label">{t('register.step2.password')}</label><input className="input" type="password" value={form.password} onChange={set('password')} placeholder={t('register.step2.passwordPlaceholder')} /></div>
-              <div className="mt-3"><label className="label">{t('register.step2.confirm')}</label><input className="input" type="password" value={form.confirm} onChange={set('confirm')} placeholder={t('register.step2.confirmPlaceholder')} /></div>
+              <div className="mt-3">
+                <PasswordInput
+                  label={t('register.step2.password')}
+                  value={form.password}
+                  onChange={set('password')}
+                  placeholder={t('register.step2.passwordPlaceholder')}
+                  autoComplete="new-password"
+                />
+              </div>
+              <div className="mt-3">
+                <PasswordInput
+                  label={t('register.step2.confirm')}
+                  value={form.confirm}
+                  onChange={set('confirm')}
+                  placeholder={t('register.step2.confirmPlaceholder')}
+                  autoComplete="new-password"
+                />
+              </div>
               {error && <p className="text-xs text-red-400 mt-3 bg-red-500/10 border border-red-500/20 rounded-lg px-3 py-2">{error}</p>}
               <div className="flex gap-2 mt-5">
                 <button onClick={() => setStep(1)} className="btn btn-ghost">{t('register.step2.back')}</button>

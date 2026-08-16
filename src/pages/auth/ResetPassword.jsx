@@ -3,6 +3,7 @@ import { useNavigate, useSearchParams, Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { authAPI } from '../../api'
 import LanguageToggle from '../../components/ui/LanguageToggle'
+import PasswordInput from '../../components/ui/PasswordInput'
 
 const REDIRECT_DELAY_MS = 3000
 
@@ -80,25 +81,23 @@ export default function ResetPassword() {
             <>
               <form onSubmit={handleSubmit} className="space-y-3">
                 <div>
-                  <label className="label">{t('resetPassword.passwordLabel')}</label>
-                  <input
-                    type="password"
-                    className="input"
+                  <PasswordInput
+                    label={t('resetPassword.passwordLabel')}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder={t('resetPassword.passwordPlaceholder')}
                     required
+                    autoComplete="new-password"
                   />
                 </div>
                 <div>
-                  <label className="label">{t('resetPassword.confirmLabel')}</label>
-                  <input
-                    type="password"
-                    className="input"
+                  <PasswordInput
+                    label={t('resetPassword.confirmLabel')}
                     value={confirm}
                     onChange={(e) => setConfirm(e.target.value)}
                     placeholder={t('resetPassword.confirmPlaceholder')}
                     required
+                    autoComplete="new-password"
                   />
                 </div>
 

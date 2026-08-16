@@ -3,7 +3,9 @@
     "close": "إغلاق",
     "back": "رجوع",
     "forward": "التالي",
-    "notifications": "الإشعارات"
+    "notifications": "الإشعارات",
+    "showPassword": "إظهار كلمة المرور",
+    "hidePassword": "إخفاء كلمة المرور"
   },
   "joursSemaine": {
     "Lun": "الاثنين",

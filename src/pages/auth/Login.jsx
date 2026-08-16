@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next'
 import { useAuth } from '../../context/AuthContext'
 import { captureAcquisitionParams } from '../../utils/acquisitionTracking'
 import LanguageToggle from '../../components/ui/LanguageToggle'
+import PasswordInput from '../../components/ui/PasswordInput'
 
 const ROLES = [
   { id: 'client', icon: '👤', labelKey: 'login.roles.client' },
@@ -106,13 +107,12 @@ export default function Login() {
                   {t('login.forgotPasswordLink')}
                 </Link>
               </div>
-              <input
-                type="password"
-                className="input"
+              <PasswordInput
                 value={pwd}
                 onChange={(e) => setPwd(e.target.value)}
                 placeholder={t('login.passwordPlaceholder')}
                 required
+                autoComplete="current-password"
               />
             </div>
 
