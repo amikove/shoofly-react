@@ -6,7 +6,7 @@ import { Spinner, toast, Avatar } from '../../components/ui'
 import DateRangeFilter, { getPresetRange } from '../../components/dashboard/DateRangeFilter'
 import { ComparisonCell, DeltaBadge, delta } from '../../components/dashboard/ComparisonCell'
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
-import { CASABLANCA_TZ } from '../../utils/casablancaTime'
+import { CASABLANCA_TZ, casablancaYMD } from '../../utils/casablancaTime'
 
 const MAIN_TABS = [
   { id: 'executif',    label: '📊 Exécutif' },
@@ -73,7 +73,7 @@ export default function AdminDashboard() {
   const [loadingFinance, setLoadingFinance] = useState(true)
   const [expenses, setExpenses] = useState([])
   const [showExpenseForm, setShowExpenseForm] = useState(false)
-  const [newExpense, setNewExpense] = useState({ amount: '', category: EXPENSE_CATEGORIES[0], description: '', expense_date: new Date().toISOString().slice(0, 10) })
+  const [newExpense, setNewExpense] = useState({ amount: '', category: EXPENSE_CATEGORIES[0], description: '', expense_date: casablancaYMD(new Date()) })
   const [savingExpense, setSavingExpense] = useState(false)
 
   // ── File d'attente ──
@@ -157,7 +157,7 @@ export default function AdminDashboard() {
     }
     Promise.all([
       adminAPI.dashboardFinancier(params),
-      adminAPI.listExpenses({ date_from: range.from.toISOString().slice(0, 10), date_to: range.to.toISOString().slice(0, 10) }),
+      adminAPI.listExpenses({ date_from: casablancaYMD(range.from), date_to: casablancaYMD(range.to) }),
     ])
       .then(([finRes, expRes]) => {
         setFinanceData(finRes.data)
@@ -179,7 +179,7 @@ export default function AdminDashboard() {
       await adminAPI.addExpense({ ...newExpense, amount: parseFloat(newExpense.amount) })
       toast('Dépense ajoutée ✓', 'success')
       setShowExpenseForm(false)
-      setNewExpense({ amount: '', category: EXPENSE_CATEGORIES[0], description: '', expense_date: new Date().toISOString().slice(0, 10) })
+      setNewExpense({ amount: '', category: EXPENSE_CATEGORIES[0], description: '', expense_date: casablancaYMD(new Date()) })
       loadFinance()
     } catch (err) {
       toast(err.response?.data?.error || 'Erreur', 'error')
