@@ -56,3 +56,69 @@ export function casablancaYMD(date) {
   const get = (type) => parts.find((p) => p.type === type)?.value
   return `${get('year')}-${get('month')}-${get('day')}`
 }
+
+// ── Bornes de calendrier (PROMPT B, 2026-08-18) ────────────────────────────────────────────────
+// Ajouté pour DateRangeFilter.jsx (préréglages "Aujourd'hui/Hier/Cette semaine/Ce mois" du
+// dashboard analytique admin), qui calculait ces bornes avec `Date.getFullYear()/getMonth()/
+// getDate()` — donc dans le fuseau de l'appareil de l'admin plutôt qu'à Casablanca (rapport
+// PROMPT 6 : "demanderait sa propre conception plutôt qu'un simple ajout de timeZone"). Toute
+// nouvelle borne de calendrier (jour/semaine/mois) doit être ajoutée ici, jamais recalculée
+// localement dans un composant.
+
+// Année/mois/jour + jour de semaine ISO (1=lundi..7=dimanche) du jour civil à Casablanca contenant
+// `when` — ignore totalement le fuseau de l'appareil qui exécute ce code.
+function casablancaCalendarParts(when) {
+  const parts = new Intl.DateTimeFormat('en-US', {
+    timeZone: CASABLANCA_TZ, year: 'numeric', month: '2-digit', day: '2-digit', weekday: 'short',
+  }).formatToParts(when)
+  const get = (type) => parts.find((p) => p.type === type)?.value
+  const isoWeekday = { Mon: 1, Tue: 2, Wed: 3, Thu: 4, Fri: 5, Sat: 6, Sun: 7 }[get('weekday')]
+  return { year: Number(get('year')), month: Number(get('month')), day: Number(get('day')), weekday: isoWeekday }
+}
+
+// Instant UTC réel de l'heure murale {year, month (1-indexé), day, hour, minute, second} à
+// Casablanca — même principe que casablancaWallTimeToISO ci-dessus, en composantes numériques
+// plutôt qu'en chaînes, pour construire les bornes ci-dessous.
+function casablancaPartsToUTC(year, month, day, hour, minute, second) {
+  const naiveUTC = Date.UTC(year, month - 1, day, hour, minute, second)
+  const offsetMinutes = casablancaOffsetMinutes(new Date(naiveUTC))
+  return new Date(naiveUTC - offsetMinutes * 60000)
+}
+
+// Début du jour civil (00:00:00.000) à Casablanca contenant `when`.
+export function casablancaStartOfDay(when = new Date()) {
+  const { year, month, day } = casablancaCalendarParts(when)
+  return casablancaPartsToUTC(year, month, day, 0, 0, 0)
+}
+
+// Fin du jour civil (23:59:59.999) à Casablanca contenant `when` — calculée comme "minuit du jour
+// suivant moins 1ms" plutôt que via l'heure 23:59:59 directement, pour rester correcte même les
+// jours où Casablanca change d'offset (retour du Ramadan, UTC+1 → UTC+0).
+export function casablancaEndOfDay(when = new Date()) {
+  return new Date(casablancaStartOfDay(casablancaAddDays(when, 1)).getTime() - 1)
+}
+
+// Un instant représentatif (12h, hors de toute ambiguïté d'offset) du jour civil à Casablanca situé
+// `days` jours avant/après (peut être négatif) celui de `when`. N'est utile qu'en entrée de
+// casablancaStartOfDay/casablancaEndOfDay ci-dessus, qui n'en retiennent que le jour civil —
+// n'essaie pas de préserver l'heure murale exacte de `when`.
+export function casablancaAddDays(when, days) {
+  const { year, month, day } = casablancaCalendarParts(when)
+  // Arithmétique calendaire neutre — Date.UTC gère nativement les débordements de mois/année
+  // (ex: day=0 recule d'un jour dans le mois précédent). L'instant réel n'est reconstruit qu'à
+  // la fin, via casablancaPartsToUTC.
+  const shifted = new Date(Date.UTC(year, month - 1, day + days))
+  return casablancaPartsToUTC(shifted.getUTCFullYear(), shifted.getUTCMonth() + 1, shifted.getUTCDate(), 12, 0, 0)
+}
+
+// Lundi 00:00:00 (début de semaine ISO) à Casablanca de la semaine contenant `when`.
+export function casablancaStartOfWeek(when = new Date()) {
+  const { weekday } = casablancaCalendarParts(when)
+  return casablancaStartOfDay(casablancaAddDays(when, -(weekday - 1)))
+}
+
+// 1er du mois, 00:00:00, à Casablanca, du mois contenant `when`.
+export function casablancaStartOfMonth(when = new Date()) {
+  const { year, month } = casablancaCalendarParts(when)
+  return casablancaPartsToUTC(year, month, 1, 0, 0, 0)
+}

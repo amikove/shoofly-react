@@ -2628,7 +2628,7 @@
       },
       "clientValidation": {
         "title": "Validation client & paiement",
-        "note": "⚠️ Cette valeur est utilisée à 3 endroits qui doivent rester synchronisés : fenêtre de réclamation, délai affiché au client, et déclenchement du paiement automatique de l'Œil. Ex : mission terminée à 9h → paiement automatique et fin de la fenêtre de réclamation à 21h si rien n'est signalé."
+        "note": "⚠️ Le premier délai est utilisé à 3 endroits qui doivent rester synchronisés : fenêtre de réclamation, délai affiché au client, et déclenchement du paiement automatique de l'Œil. Ex : mission terminée à 9h → paiement automatique et fin de la fenêtre de réclamation à 21h si rien n'est signalé. Un rappel intermédiaire est aussi envoyé au client à mi-parcours (second délai), avant l'auto-validation silencieuse."
       },
       "scheduleConflict": {
         "title": "Conflit de créneau",
@@ -2649,6 +2649,14 @@
       "candidatureWhatsapp": {
         "title": "Notification WhatsApp au client — seuil de candidatures",
         "note": "Le client est notifié par WhatsApp qu'un Œil est intéressé dès que l'un des deux seuils ci-dessous est atteint (le premier déclenché suffit, un seul envoi par mission). Seules les candidatures d'Œils vérifiés comptent."
+      },
+      "candidatureRelance": {
+        "title": "Relance WhatsApp — candidatures non choisies",
+        "note": "Une fois le client notifié (seuil ci-dessus), s'il ne choisit toujours pas d'Œil, le même WhatsApp lui est renvoyé à intervalles réguliers. Si la mission devient trop proche de son créneau, la relance WhatsApp s'arrête et laisse place à une alerte admin unique (onglet \"Missions proches sans validation\") plutôt qu'un nouveau message au client."
+      },
+      "emailFallback": {
+        "title": "Relance par email si WhatsApp non lu",
+        "note": "S'applique à deux notifications à délai de réponse court : la sollicitation d'un candidat en cascade (~10 min pour confirmer) et le contrôle de présence H-45 de l'Œil assigné. Si la notification reste non lue passé ce délai, un email reprenant le même message est envoyé en secours au même destinataire — un seul envoi par notification concernée."
       },
       "whatsappRetry": {
         "title": "Réessai des envois WhatsApp échoués"
@@ -2711,6 +2719,7 @@
       "mission_edit_approval_minutes_urgent": "Délai réduit si urgent (min)",
       "mission_edit_urgent_threshold_hours": "Seuil de bascule \"urgent\" (h avant la mission)",
       "client_validation_hours": "Délai avant auto-validation (h)",
+      "client_validation_reminder_hours": "Rappel intermédiaire au client (h après la clôture)",
       "schedule_conflict_window_hours": "Fenêtre de conflit (h)",
       "transfer_cooldown_hours": "Cooldown transfert/refus (h)",
       "abandon_during_mission_cooldown_hours": "Cooldown abandon en cours de mission (h)",
@@ -2740,6 +2749,10 @@
       "presence_confirmation_deadline_minutes_sameday": "Confirmation présence — contrôle H-2 (min)",
       "candidature_whatsapp_seuil_count": "Nombre de candidatures déclenchant l'envoi",
       "candidature_whatsapp_seuil_minutes": "Délai de repli depuis la 1ère candidature (min)",
+      "candidature_relance_first_after_minutes": "1er renvoi après la notification initiale (min)",
+      "candidature_relance_interval_minutes": "Renvois suivants — intervalle (min)",
+      "candidature_relance_imminent_threshold_minutes": "Bascule vers alerte admin (min avant le créneau)",
+      "unread_whatsapp_email_fallback_minutes": "Délai avant email de secours (min)",
       "whatsapp_retry_max_attempts": "Nombre max de réessais",
       "payment_attempt_abandoned_minutes": "Délai avant tentative abandonnée (min)",
       "no_show_h30_penalty_points": "Pénalité fiabilité au transfert (points)",
@@ -2765,6 +2778,7 @@
       "mission_edit_approval_minutes_urgent": "Si la mission a lieu dans moins de 4h, ce délai de réponse tombe à 30 min.",
       "mission_edit_urgent_threshold_hours": "En dessous de 4h avant le créneau, le délai réduit (30 min) s'applique au lieu du délai standard (120 min).",
       "client_validation_hours": "Si le client ne réclame rien dans les 12h suivant la fin de la mission, l'Œil est payé automatiquement et la réclamation n'est plus possible.",
+      "client_validation_reminder_hours": "6h après la clôture par l'Œil, si le client n'a ni validé ni réclamé, un rappel lui indique le temps restant avant l'auto-validation silencieuse. Ex : mission clôturée à 9h → rappel vers 15h (H+6), qui annonce environ 6h restantes avant l'auto-validation à 21h.",
       "schedule_conflict_window_hours": "Deux missions du même Œil prévues à moins de 4h d'écart sont bloquées comme conflit de créneau.",
       "stale_mission_hours": "Une mission publiée depuis plus de 12h sans aucun Œil positionné déclenche une alerte admin.",
       "stale_mission_min_lead_hours": "L'alerte n'est envoyée que si le créneau est encore à plus de 4h — inutile d'alerter pour une mission sur le point de commencer.",
@@ -2792,6 +2806,10 @@
       "presence_confirmation_deadline_minutes_sameday": "Un second contrôle a lieu environ 2h avant la mission, que la présence ait déjà été confirmée la veille ou non : l'Œil a 45 min pour (re)confirmer avant réattribution automatique.",
       "candidature_whatsapp_seuil_count": "Dès que 3 Œils vérifiés ont candidaté sur la mission, le client reçoit immédiatement un WhatsApp l'en informant.",
       "candidature_whatsapp_seuil_minutes": "Si ce nombre n'est jamais atteint, un cron envoie quand même le WhatsApp 60 min après la toute première candidature d'un Œil vérifié — un seul envoi au total par mission.",
+      "candidature_relance_first_after_minutes": "60 min après le premier WhatsApp de notification, le client reçoit un premier rappel s'il n'a toujours pas choisi d'Œil.",
+      "candidature_relance_interval_minutes": "Si le client reste sans réponse, les rappels suivants sont espacés de 120 min chacun.",
+      "candidature_relance_imminent_threshold_minutes": "Dès que le créneau de la mission passe sous 120 min, la relance WhatsApp s'arrête : l'admin reçoit à la place une alerte unique dans l'onglet \"Missions proches sans validation\".",
+      "unread_whatsapp_email_fallback_minutes": "Si la notification WhatsApp/in-app reste non lue 5 min après son envoi, un email reprenant le même message part automatiquement — uniquement pour la cascade de candidats et le contrôle de présence H-45.",
       "whatsapp_retry_max_attempts": "Un envoi WhatsApp échoué est retenté jusqu'à 3 fois par le cron de réessai ; au-delà, il reste visible comme échec définitif dans l'écran admin dédié.",
       "payment_attempt_abandoned_minutes": "Une tentative de paiement PayZone restée en statut « créée » plus de 30 min sans confirmation est considérée comme abandonnée et peut être relancée par le client.",
       "no_show_h30_penalty_points": "Un Œil qui n'a pas démarré sa mission 60 min après l'heure prévue perd 20 points de fiabilité, en plus du transfert automatique et du débit financier ci-dessous.",

@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { casablancaStartOfDay, casablancaEndOfDay, casablancaAddDays, casablancaStartOfWeek, casablancaStartOfMonth } from '../../utils/casablancaTime'
 
 const PRESETS = [
   { key: 'today',     label: "Aujourd'hui" },
@@ -8,30 +9,25 @@ const PRESETS = [
   { key: 'custom',    label: 'Personnalisé' },
 ]
 
-// Calcule les dates ISO (date_from, date_to) pour un preset donné
+// Calcule les dates ISO (date_from, date_to) pour un preset donné — bornes calculées à Casablanca
+// (voir utils/casablancaTime.js), jamais dans le fuseau de l'appareil de l'admin : un admin connecté
+// depuis l'étranger doit voir le même "Aujourd'hui" qu'un admin au Maroc.
 export function getPresetRange(preset) {
   const now = new Date()
-  const startOfDay = (d) => new Date(d.getFullYear(), d.getMonth(), d.getDate())
-  const endOfDay = (d) => new Date(d.getFullYear(), d.getMonth(), d.getDate(), 23, 59, 59, 999)
 
   switch (preset) {
     case 'today':
-      return { from: startOfDay(now), to: endOfDay(now) }
+      return { from: casablancaStartOfDay(now), to: casablancaEndOfDay(now) }
     case 'yesterday': {
-      const y = new Date(now); y.setDate(y.getDate() - 1)
-      return { from: startOfDay(y), to: endOfDay(y) }
+      const y = casablancaAddDays(now, -1)
+      return { from: casablancaStartOfDay(y), to: casablancaEndOfDay(y) }
     }
-    case 'week': {
-      const day = now.getDay() || 7 // dimanche = 0 -> 7
-      const monday = new Date(now); monday.setDate(now.getDate() - day + 1)
-      return { from: startOfDay(monday), to: endOfDay(now) }
-    }
-    case 'month': {
-      const first = new Date(now.getFullYear(), now.getMonth(), 1)
-      return { from: startOfDay(first), to: endOfDay(now) }
-    }
+    case 'week':
+      return { from: casablancaStartOfWeek(now), to: casablancaEndOfDay(now) }
+    case 'month':
+      return { from: casablancaStartOfMonth(now), to: casablancaEndOfDay(now) }
     default:
-      return { from: startOfDay(now), to: endOfDay(now) }
+      return { from: casablancaStartOfDay(now), to: casablancaEndOfDay(now) }
   }
 }
 
