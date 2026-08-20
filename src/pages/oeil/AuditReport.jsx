@@ -7,6 +7,9 @@ import { missionsAPI, reportsAPI } from '../../api'
 import { Spinner, toast } from '../../components/ui'
 import { translateLocation } from '../../constants/villesTranslations'
 import { COMPETENCE_COMMERCIALE, POINTS_POSITIFS, POINTS_NEGATIFS, INCIDENTS } from '../../constants/auditReportLabels'
+import PhotoUploadField from '../../components/missions/PhotoUploadField'
+
+const PHOTOS_MIN = 10
 
 // ── Composant Note étoiles ─────────────────────────────────
 function StarRating({ value, onChange, label, disabled }) {
@@ -192,6 +195,7 @@ export default function AuditReport() {
   const [saving, setSaving]       = useState(false)
   const [submitted, setSubmitted] = useState(false)
   const [data, setData]           = useState({})
+  const [photosCount, setPhotosCount] = useState(0)
 
   const score = calculateScore(data)
   const { label: scoreLbl, color: scoreColor } = scoreLabel(score, t)
@@ -291,6 +295,8 @@ export default function AuditReport() {
     // Section 9
     if (!data.achat_produit)        missing.push('S9 — Réponse achat produit')
     if (!data.recommandation_note)  missing.push('S9 — Note recommandation')
+    // Section 11 — Photos de la visite (minimum obligatoire, PROMPT 4)
+    if (photosCount < PHOTOS_MIN)   missing.push(`S11 — Photos (minimum ${PHOTOS_MIN})`)
     return missing
   }
 
@@ -480,6 +486,17 @@ export default function AuditReport() {
           <textarea className="input resize-none h-32" value={data.commentaire_libre || ''} disabled={submitted}
             onChange={(e) => set('commentaire_libre')(e.target.value)}
             placeholder={t('oeilAuditReport.sections.s10.placeholder')} />
+        </Section>
+
+        {/* Section 11 — Photos de la visite (upload réel obligatoire, PROMPT 4) */}
+        <Section number="11" title={t('oeilAuditReport.sections.s11.title')}>
+          <p className="text-xs text-[#AAA] mb-2">{t('oeilAuditReport.sections.s11.subtitle', { min: PHOTOS_MIN })}</p>
+          <PhotoUploadField
+            missionId={missionId}
+            minRequired={PHOTOS_MIN}
+            disabled={submitted}
+            onCountChange={setPhotosCount}
+          />
         </Section>
 
         {/* Récap score */}

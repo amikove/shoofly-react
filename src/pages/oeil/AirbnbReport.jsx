@@ -7,6 +7,9 @@ import { missionsAPI, reportsAPI } from '../../api'
 import { Spinner, toast } from '../../components/ui'
 import { translateLocation } from '../../constants/villesTranslations'
 import { CUISINE_ITEMS, POINTS_FORTS, POINTS_FAIBLES } from '../../constants/airbnbReportLabels'
+import PhotoUploadField from '../../components/missions/PhotoUploadField'
+
+const PHOTOS_MIN = 10
 
 // ── Composant Note étoiles ─────────────────────────────────
 function StarRating({ value, onChange, label }) {
@@ -125,6 +128,7 @@ export default function AirbnbReport() {
   const [saving, setSaving] = useState(false)
   const [submitted, setSubmitted] = useState(false)
   const [data, setData] = useState({})
+  const [photosCount, setPhotosCount] = useState(0)
   const score = calculateScore(data)
   const { label: scoreLbl, color: scoreColor } = scoreLabel(score, t)
 
@@ -209,6 +213,8 @@ const validateAirbnb = () => {
     if (!data.transports)        missing.push('S9 — Transports')
     // Section 10 — Photos
     if (!data.photos_conformite) missing.push('S10 — Conformité photos')
+    // Section 13 — Photos de la visite (minimum obligatoire, PROMPT 4)
+    if (photosCount < PHOTOS_MIN) missing.push(`S13 — Photos (minimum ${PHOTOS_MIN})`)
     // Section 11 — Points forts/faibles
     if (!data.points_forts?.length)  missing.push('S11 — Au moins 1 point fort')
     if (!data.points_faibles?.length) missing.push('S11 — Au moins 1 point faible')
@@ -475,6 +481,17 @@ const validateAirbnb = () => {
                 }`}>{label}</button>
             ))}
           </div>
+        </Section>
+
+        {/* Section 13 — Photos de la visite (upload réel obligatoire, PROMPT 4) */}
+        <Section number="13" title={t('oeilAirbnbReport.sections.s13.title')}>
+          <p className="text-xs text-[#AAA] mb-2">{t('oeilAirbnbReport.sections.s13.subtitle', { min: PHOTOS_MIN })}</p>
+          <PhotoUploadField
+            missionId={missionId}
+            minRequired={PHOTOS_MIN}
+            disabled={submitted}
+            onCountChange={setPhotosCount}
+          />
         </Section>
 
       </div>

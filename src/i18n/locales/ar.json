@@ -1035,6 +1035,8 @@
       "invalidStatus": "حالة غير صالحة",
       "reportRequiredBeforeComplete": "يجب عليك تقديم التقرير قبل إنهاء المهمة 📋",
       "cannotVerifyReport": "تعذر التحقق من التقرير",
+      "photoRequiredBeforeComplete": "يجب عليك إرسال صورة واحدة على الأقل قبل إنهاء المهمة 📸",
+      "cannotVerifyPhotos": "تعذر التحقق من الصور المرسلة",
       "networkErrorReconciling": "انقطع الاتصال — جارٍ التحقق من طلبك...",
       "missionReconciledAssignedToYou": "خبر سار: تم إسناد هذه المهمة إليك! ستجدها في تبويب «جارية» 🎉",
       "missionReconciledGone": "هذه المهمة لم تعد متاحة.",
@@ -1082,6 +1084,11 @@
       "summaryButton": "📄 ملخص",
       "rateClientButton": "تقييم العميل",
       "clientRatedDisplay": "تم تقييم العميل {{score}}/5"
+    },
+    "photosModal": {
+      "title": "📸 صور المهمة",
+      "subtitle": "أرسل صورة واحدة على الأقل تثبت حضورك في المكان.",
+      "close": "إغلاق"
     },
     "assistanceModal": {
       "title": "طلب المساعدة",
@@ -1134,6 +1141,14 @@
         "duration": "المدة"
       }
     }
+  },
+  "photoUpload": {
+    "counter": "{{count}}/{{min}} صور",
+    "requirementMet": "✅ تم استيفاء شرط الصور",
+    "addButton": "📸 إضافة صور",
+    "uploading": "جارٍ الإرسال...",
+    "empty": "لم يتم إرسال أي صورة بعد",
+    "uploadError": "فشل إرسال الصورة — أعد المحاولة"
   },
   "oeilCompte": {
     "title": "ملفي الشخصي",
@@ -1432,6 +1447,10 @@
       "s10": {
         "title": "تعليق حر",
         "placeholder": "ملاحظات مفصلة، سياق، عناصر مهمة لم يغطها النموذج..."
+      },
+      "s11": {
+        "title": "صور الزيارة",
+        "subtitle": "أرسل {{min}} صور حقيقية على الأقل من زيارتك — إلزامي لإرسال التقرير."
       }
     },
     "recap": {
@@ -1607,6 +1626,10 @@
           "non": "👎 لا",
           "eviter": "🚫 يجب تجنبه"
         }
+      },
+      "s13": {
+        "title": "صور الزيارة",
+        "subtitle": "أرسل {{min}} صور حقيقية على الأقل من زيارتك — إلزامي لإرسال التقرير."
       }
     },
     "saveButton": "💾 حفظ",

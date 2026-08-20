@@ -1034,6 +1034,8 @@
       "invalidStatus": "Statut invalide",
       "reportRequiredBeforeComplete": "Vous devez soumettre le rapport avant de terminer la mission 📋",
       "cannotVerifyReport": "Impossible de vérifier le rapport",
+      "photoRequiredBeforeComplete": "Vous devez envoyer au moins une photo avant de terminer la mission 📸",
+      "cannotVerifyPhotos": "Impossible de vérifier les photos envoyées",
       "networkErrorReconciling": "Connexion interrompue — vérification de votre candidature en cours...",
       "missionReconciledAssignedToYou": "Bonne nouvelle : cette mission vous a été attribuée ! Retrouvez-la dans l'onglet « En cours » 🎉",
       "missionReconciledGone": "Cette mission n'est plus disponible.",
@@ -1081,6 +1083,11 @@
       "summaryButton": "📄 Résumé",
       "rateClientButton": "Noter le client",
       "clientRatedDisplay": "Client noté {{score}}/5"
+    },
+    "photosModal": {
+      "title": "📸 Photos de la mission",
+      "subtitle": "Envoyez au moins une photo prouvant votre présence sur place.",
+      "close": "Fermer"
     },
     "assistanceModal": {
       "title": "Demander assistance",
@@ -1133,6 +1140,14 @@
         "duration": "Durée"
       }
     }
+  },
+  "photoUpload": {
+    "counter": "{{count}}/{{min}} photos",
+    "requirementMet": "✅ Exigence de photos atteinte",
+    "addButton": "📸 Ajouter des photos",
+    "uploading": "Envoi...",
+    "empty": "Aucune photo envoyée pour l'instant",
+    "uploadError": "Échec de l'envoi de la photo — réessayez"
   },
   "oeilCompte": {
     "title": "Mon profil",
@@ -1431,6 +1446,10 @@
       "s10": {
         "title": "Commentaire libre",
         "placeholder": "Observations détaillées, contexte, éléments importants non couverts par le formulaire..."
+      },
+      "s11": {
+        "title": "Photos de la visite",
+        "subtitle": "Envoyez au moins {{min}} photos réelles de votre visite — obligatoire pour soumettre le rapport."
       }
     },
     "recap": {
@@ -1606,6 +1625,10 @@
           "non": "👎 Non",
           "eviter": "🚫 À éviter"
         }
+      },
+      "s13": {
+        "title": "Photos de la visite",
+        "subtitle": "Envoyez au moins {{min}} photos réelles de votre visite — obligatoire pour soumettre le rapport."
       }
     },
     "saveButton": "💾 Sauvegarder",

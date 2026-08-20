@@ -5,7 +5,7 @@ import AppLayout from '../../components/layout/AppLayout'
 import { VILLES } from '../../constants/villes'
 import { translateLocation } from '../../constants/villesTranslations'
 import Topbar from '../../components/layout/Topbar'
-import { missionsAPI, reportsAPI } from '../../api'
+import { missionsAPI, reportsAPI, mediaAPI } from '../../api'
 import { StatusBadge, Spinner, EmptyState, toast, Pagination, Stars } from '../../components/ui'
 import { useNotif } from '../../context/NotifContext'
 import { useNavigate } from 'react-router-dom'
@@ -15,6 +15,7 @@ import MissionSummaryModal from '../../components/missions/MissionSummaryModal'
 import RateClientModal from '../../components/missions/RateClientModal'
 import ComplianceModal from '../../components/missions/ComplianceModal'
 import AssistanceModal from '../../components/missions/AssistanceModal'
+import MissionPhotosModal from '../../components/missions/MissionPhotosModal'
 import { getChatAccessState } from '../../utils/chatAccess'
 
 const TABS = ['priority', 'available', 'active', 'done']
@@ -294,6 +295,7 @@ const load = useCallback((t) => {
 
 
 const [complianceAdvance, setComplianceAdvance] = useState(null)
+const [photosMission, setPhotosMission] = useState(null)
 
 const advance = async (mission, bypassed = false) => {
   const next = {
@@ -338,6 +340,22 @@ const advance = async (mission, bypassed = false) => {
         toast(t('oeilMissions.toasts.cannotVerifyReport'), 'error')
         return
       }
+    } else {
+      // Mission standard : au moins 1 photo envoyée par l'Œil lui-même (preuve de
+      // déplacement, PROMPT 4). Vérif préalable côté client en plus de la garde backend,
+      // pour ouvrir directement la modale plutôt que de laisser échouer l'appel de statut.
+      try {
+        const { data: mData } = await mediaAPI.list(mission.id)
+        const myPhotos = (mData.media || []).filter(m => m.type === 'photo' && m.uploader_id === user.id)
+        if (myPhotos.length < 1) {
+          toast(t('oeilMissions.toasts.photoRequiredBeforeComplete'), 'error')
+          setPhotosMission(mission)
+          return
+        }
+      } catch {
+        toast(t('oeilMissions.toasts.cannotVerifyPhotos'), 'error')
+        return
+      }
     }
   }
 
@@ -359,6 +377,8 @@ try {
       const isAirbnb = ['airbnb','booking'].some(s => mission.subcategory?.toLowerCase().includes(s.toLowerCase()))
       if (isAudit)  navigate(`/oeil/missions/${mission.id}/audit`)
       if (isAirbnb) navigate(`/oeil/missions/${mission.id}/rapport`)
+    } else if (msg.includes('photo')) {
+      setPhotosMission(mission)
     }
   }
 }
@@ -610,7 +630,11 @@ try {
                           </button>
                         )}
 
-                      <button className="btn btn-ghost btn-sm">{t('oeilMissions.card.photosButton')}</button>
+                      {['en_route','active'].includes(m.status) && (
+                        <button onClick={() => setPhotosMission(m)} className="btn btn-ghost btn-sm">
+                          {t('oeilMissions.card.photosButton')}
+                        </button>
+                      )}
                       {advanceLabel[m.status] && (
                         <button onClick={() => advance(m)} className="btn btn-primary btn-sm flex-1 justify-center">
                           {advanceLabel[m.status]}
@@ -685,6 +709,10 @@ try {
 
       {chatMission && (
         <ChatModal mission={chatMission} onClose={() => setChatMission(null)} />
+      )}
+
+      {photosMission && (
+        <MissionPhotosModal mission={photosMission} onClose={() => setPhotosMission(null)} />
       )}
     </AppLayout>
   )
