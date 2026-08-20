@@ -913,6 +913,17 @@
     "sentToast": "تم إرسال التقييم {{rating}}/5 ⭐ شكراً!",
     "errorRating": "خطأ أثناء التقييم"
   },
+  "rateClientModal": {
+    "title": "تقييم العميل",
+    "howWasIt": "كيف سارت المهمة مع هذا العميل؟",
+    "commentLabel": "تعليق (اختياري، مرئي داخلياً فقط)",
+    "commentPlaceholder": "رأيك في هذا العميل...",
+    "sending": "جارٍ الإرسال...",
+    "submit": "إرسال التقييم",
+    "cancel": "إلغاء",
+    "sentToast": "تم تقييم العميل {{rating}}/5 ⭐",
+    "errorRating": "خطأ أثناء التقييم"
+  },
   "reportModal": {
     "title": "إرسال التقرير",
     "summaryLabel": "ملخص المهمة *",
@@ -1068,7 +1079,9 @@
       "auditButton": "📋 تدقيق",
       "photosButton": "📸 صور",
       "askAssistance": "🆘 طلب المساعدة",
-      "summaryButton": "📄 ملخص"
+      "summaryButton": "📄 ملخص",
+      "rateClientButton": "تقييم العميل",
+      "clientRatedDisplay": "تم تقييم العميل {{score}}/5"
     },
     "assistanceModal": {
       "title": "طلب المساعدة",
@@ -1970,7 +1983,31 @@
     "replacementConfirmedClientTitle": "✅ تم إيجاد بديل",
     "replacementConfirmedClientBody": "أكد بديل توفره لمهمة \"{{missionTitle}}\".",
     "walletReconciliationAlertAdminTitle": "⚠️ تم اكتشاف فارق في التسوية",
-    "walletReconciliationAlertAdminBody": "{{userName}} ({{userTypeLabel}}، {{userId}}) — الرصيد المسجل {{storedBalance}} درهم مقابل دفتر الحسابات {{ledgerBalance}} درهم (الفارق {{discrepancy}} درهم). التنبيه رقم {{alertId}}."
+    "walletReconciliationAlertAdminBody": "{{userName}} ({{userTypeLabel}}، {{userId}}) — الرصيد المسجل {{storedBalance}} درهم مقابل دفتر الحسابات {{ledgerBalance}} درهم (الفارق {{discrepancy}} درهم). التنبيه رقم {{alertId}}.",
+    "oeilResumedAfterH30ClientTitle": "✅ عودة العين الميدانية",
+    "oeilResumedAfterH30ClientBody": "عادت العين الميدانية المعيّنة أصلاً لمهمة \"{{missionTitle}}\" ووصلت أخيراً لاستئناف المهمة.",
+    "activityPhotoRequestTitle": "📸 صورة متابعة مطلوبة",
+    "activityPhotoRequestBody": "يرجى إرسال صورة في محادثة المهمة \"{{missionTitle}}\" كل 45 دقيقة أثناء سيرها (يجب ألا يظهر أي وجه في الصورة).",
+    "activityPhotoMissingClientTitle": "⚠️ انقطاع أخبار العين الميدانية",
+    "activityPhotoMissingClientBody": "لم ترسل العين الميدانية صورة متابعة منذ فترة بخصوص \"{{missionTitle}}\". نحن نتحقق من الوضع.",
+    "activityPhotoMissingAdminTitle": "🚨 احتمال تخلٍّ عن المهمة — صورة المتابعة مفقودة",
+    "activityPhotoMissingAdminBody": "لم ترسل العين {{oeilName}} أي صورة متابعة مؤخراً بخصوص \"{{missionTitle}}\" (مهمة جارية).",
+    "claimResolvedOeilWinPendingCommissionTitle": "✅ تم حل الشكوى",
+    "claimResolvedOeilWinPendingCommissionBody": "حُلت لصالحك. سيتم إبلاغك لاحقاً بقرار العمولة (خصم أو إعفاء) من قبل الإدارة.",
+    "clientBlockedNoShowTitle": "🔴 تم إيقاف الحساب",
+    "clientBlockedNoShowBody": "تم إيقاف حسابك بسبب عدة شكاوى \"غياب العميل\" حُلت لصالح العين الميدانية. يرجى التواصل مع الدعم لمزيد من المعلومات.",
+    "clientBlockedNoShowAdminTitle": "🔴 تم حظر عميل تلقائياً",
+    "clientBlockedNoShowAdminBody": "تم حظر العميل {{clientName}} تلقائياً بعد {{count}} شكاوى \"غياب العميل\" حُلت في غير صالحه.",
+    "clientNoShowWarningTitle": "⚠️ تحذير",
+    "clientNoShowWarningBody": "حُلت شكوى \"غياب العميل\" لصالح العين الميدانية بخصوص مهمة حديثة. في حال التكرار، قد يُوقف حسابك.",
+    "commissionReleasedOeilTitle": "تم إعفاء العمولة",
+    "commissionReleasedOeilBody": "قررت الإدارة عدم تحصيل عمولة على \"{{missionTitle}}\".",
+    "assistanceAutoValidatedPendingCommissionOeilTitle": "أُغلقت المهمة تلقائياً",
+    "assistanceAutoValidatedPendingCommissionOeilBody": "انتهت المهلة دون رد من العميل — أُغلقت \"{{missionTitle}}\". سيتم إبلاغك لاحقاً بقرار العمولة (خصم أو إعفاء) من قبل الإدارة.",
+    "forceReassignClientTitle": "⚠️ تغيير في مهمتك",
+    "forceReassignClientBody": "أطلقت الإدارة البحث عن بديل لمهمة \"{{missionTitle}}\".",
+    "forceReassignOeilTitle": "أعيد إسناد المهمة من قبل الإدارة",
+    "forceReassignOeilBody": "أطلقت الإدارة بحثاً عن بديل لمهمة \"{{missionTitle}}\". لم تُطبق عليك أي عقوبة في الوقت الحالي."
   },
   "walletReconciliation": {
     "title": "⚖️ تسوية المحفظة",
@@ -2009,6 +2046,26 @@
       "resolveError": "خطأ أثناء الحل"
     }
   },
+  "clientsSuspendus": {
+    "title": "العملاء الموقوفون",
+    "tabs": {
+      "blocked": "موقوفون",
+      "unblocked": "غير موقوفين",
+      "all": "الكل"
+    },
+    "table": {
+      "client": "العميل",
+      "strikes": "الإنذارات",
+      "strikesUnit": "إنذار(ات)",
+      "lastStrike": "آخر إنذار",
+      "status": "الحالة"
+    },
+    "unblock": "إلغاء الحظر",
+    "empty": "لا يوجد عملاء معنيون",
+    "loadError": "خطأ في التحميل",
+    "unblockSuccess": "تم إلغاء حظر العميل ✓",
+    "unblockError": "خطأ أثناء إلغاء الحظر"
+  },
   "systemMessage": {
     "oeilAccepted": "قبل {{oeilName}} المهمة.",
     "missionEnRoute": "العين الميدانية في الطريق.",
@@ -2018,7 +2075,8 @@
     "missionImpediment": "أبلغت العين الميدانية عن مانع. أعيدت المهمة إلى قائمة الأولوية.",
     "assignedByAdmin": "أسندت الإدارة المهمة إلى {{oeilName}}.",
     "assistanceUrgenceSystemMessage": "أبلغت العين عن حالة طارئة. البحث عن بديل جارٍ.",
-    "assistanceMissionRequestSystemMessage": "العين تبلغ: {{reason}}. في انتظار تأكيدك."
+    "assistanceMissionRequestSystemMessage": "العين تبلغ: {{reason}}. في انتظار تأكيدك.",
+    "forceReassignSystemMessage": "أطلقت الإدارة بحثاً عن بديل لهذه المهمة."
   },
   "statusBadge": {
     "active": "مباشر",

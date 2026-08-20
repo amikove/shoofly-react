@@ -43,6 +43,7 @@ const MENUS = {
     { to: '/admin/tickets',      icon: '🎫',  label: 'Tickets',      section: 'Gestion',     permission: 'moderation' },
     { to: '/admin/finance',      icon: '💰',  label: 'Finance',      section: 'Gestion',     permission: 'finance' },
     { to: '/admin/wallet-reconciliation', icon: '⚖️', label: 'Réconciliation', section: 'Gestion', permission: 'finance' },
+    { to: '/admin/clients-suspendus', icon: '🚫', label: 'Clients suspendus', section: 'Gestion', permission: 'users' },
     { to: '/admin/promos',       icon: '🎟️',  label: 'Codes Promo',  section: 'Système',     permission: 'finance'    },
     { to: '/admin/parametres',   icon: '⚙️',  label: 'Paramètres',   section: 'Système',     permission: 'settings'   },
     { to: '/admin/admins',       icon: '👑',  label: 'Admins',       section: 'Système',     superAdminOnly: true     },

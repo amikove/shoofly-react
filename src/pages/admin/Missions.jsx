@@ -21,6 +21,22 @@ export default function AdminMissions() {
     const [cancelling, setCancelling]   = useState(false)
     const [overrideWarningModal, setOverrideWarningModal] = useState(null) // { message, reason } à confirmer avant affectation forcée (suspendu/bloqué proactif, ou 409 réactif ex. cooldown de transfert)
 
+    // PROMPT 2 point 4 (2026-08-17) — force une mission active/en_route à repasser en recherche
+    // de remplaçant, sans pénalité pour l'Œil au déclenchement (même mécanique que la déclaration
+    // d'urgence de l'Œil lui-même — un admin peut ensuite requalifier a posteriori depuis
+    // AdminFiabilite.jsx si l'origine s'avère être un abandon).
+    const doForceReassign = async (mission) => {
+      const reason = window.prompt("Motif de la réattribution forcée (visible par l'Œil concerné) :")
+      if (!reason || !reason.trim()) return
+      try {
+        await missionsAPI.forceReassign(mission.id, { reason: reason.trim() })
+        toast('Réattribution lancée ✓', 'success')
+        load()
+      } catch (err) {
+        toast(err.response?.data?.error || 'Erreur', 'error')
+      }
+    }
+
     const doCancel = async (clientAtFault) => {
       setCancelling(true)
       try {
@@ -284,6 +300,14 @@ const doAssign = async (overrideWarning = false, overrideReason = '') => {
                               className="btn btn-ghost btn-sm text-[#FF4D00]"
                             >
                               Affecter
+                            </button>
+                          )}
+                          {['active', 'en_route'].includes(m.status) && (
+                            <button
+                              onClick={() => doForceReassign(m)}
+                              className="btn btn-ghost btn-sm text-yellow-400"
+                            >
+                              Forcer réattribution
                             </button>
                           )}
                           {['pending', 'assigned', 'en_route', 'active'].includes(m.status) && (

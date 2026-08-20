@@ -6,12 +6,13 @@ import { VILLES } from '../../constants/villes'
 import { translateLocation } from '../../constants/villesTranslations'
 import Topbar from '../../components/layout/Topbar'
 import { missionsAPI, reportsAPI } from '../../api'
-import { StatusBadge, Spinner, EmptyState, toast, Pagination } from '../../components/ui'
+import { StatusBadge, Spinner, EmptyState, toast, Pagination, Stars } from '../../components/ui'
 import { useNotif } from '../../context/NotifContext'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
 import MissionHistoryModal from '../../components/missions/MissionHistoryModal'
 import MissionSummaryModal from '../../components/missions/MissionSummaryModal'
+import RateClientModal from '../../components/missions/RateClientModal'
 import ComplianceModal from '../../components/missions/ComplianceModal'
 import AssistanceModal from '../../components/missions/AssistanceModal'
 import { getChatAccessState } from '../../utils/chatAccess'
@@ -64,6 +65,7 @@ export default function OeilMissions() {
   useEffect(() => { missionsAPI.fiveStarBonus().then(({ data }) => setBonusCampaign(data)).catch(() => {}) }, [])
 
   const [summaryMission, setSummaryMission] = useState(null)
+  const [ratingClientMission, setRatingClientMission] = useState(null)
 
 
 
@@ -452,7 +454,7 @@ try {
       ))}
     </div>
   )
-)}    
+)}
     {tab === 'available' && (
       <div className="mb-4">
         <select
@@ -500,7 +502,17 @@ try {
                         <div className="flex flex-wrap gap-3">
                           <span>📍 {translateLocation(m.city, i18n.language)}{m.quartier ? ` · ${translateLocation(m.quartier, i18n.language)}` : ''}</span>
                           <span>📅 {m.scheduled_at ? `${new Date(m.scheduled_at).toLocaleDateString('fr-FR', { day:'numeric', month:'short', year:'numeric' })} à ${new Date(m.scheduled_at).toLocaleTimeString('fr-FR', { hour:'2-digit', minute:'2-digit' })}` : '—'}</span>
-                          {m.client_name && <span>👤 {m.client_name}</span>}
+                          {m.client_name && (
+                            <span className="inline-flex items-center gap-1">
+                              👤 {m.client_name}
+                              {m.client_rating_count > 0 && (
+                                <span className="inline-flex items-center gap-0.5">
+                                  <Stars value={m.client_rating_avg} />
+                                  <span className="text-[10px]">({m.client_rating_count})</span>
+                                </span>
+                              )}
+                            </span>
+                          )}
                           {tab !== 'available' && <StatusBadge status={m.status} validated={!!m.validated_at} role="oeil" />}
                         </div>
                         {m.address && <div>🏠 {m.address}</div>}
@@ -619,6 +631,11 @@ try {
                   {tab === 'done' && (
                     <button onClick={() => setSummaryMission(m)} className="btn btn-ghost btn-sm">{t('oeilMissions.card.summaryButton')}</button>
                   )}
+                  {tab === 'done' && m.status === 'completed' && (
+                    m.client_rating_score_given
+                      ? <span className="text-xs text-yellow-400 font-semibold self-center">{t('oeilMissions.card.clientRatedDisplay', { score: m.client_rating_score_given })}</span>
+                      : <button onClick={() => setRatingClientMission(m)} className="btn btn-ghost btn-sm">{t('oeilMissions.card.rateClientButton')}</button>
+                  )}
                 </div>
               </div>
             ))}
@@ -641,6 +658,14 @@ try {
      
 {summaryMission && (
   <MissionSummaryModal mission={summaryMission} onClose={() => setSummaryMission(null)} />
+)}
+
+{ratingClientMission && (
+  <RateClientModal
+    mission={ratingClientMission}
+    onClose={() => setRatingClientMission(null)}
+    onRated={() => { setRatingClientMission(null); load(tab) }}
+  />
 )}
 
 

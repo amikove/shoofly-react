@@ -912,6 +912,17 @@
     "sentToast": "Note {{rating}}/5 envoyée ⭐ Merci !",
     "errorRating": "Erreur lors de la notation"
   },
+  "rateClientModal": {
+    "title": "Noter le client",
+    "howWasIt": "Comment s'est passée la mission avec ce client ?",
+    "commentLabel": "Commentaire (optionnel, visible uniquement en interne)",
+    "commentPlaceholder": "Votre avis sur ce client...",
+    "sending": "Envoi...",
+    "submit": "Envoyer la note",
+    "cancel": "Annuler",
+    "sentToast": "Client noté {{rating}}/5 ⭐",
+    "errorRating": "Erreur lors de la notation"
+  },
   "reportModal": {
     "title": "Soumettre le rapport",
     "summaryLabel": "Résumé de la mission *",
@@ -1067,7 +1078,9 @@
       "auditButton": "📋 Audit",
       "photosButton": "📸 Photos",
       "askAssistance": "🆘 Demander assistance",
-      "summaryButton": "📄 Résumé"
+      "summaryButton": "📄 Résumé",
+      "rateClientButton": "Noter le client",
+      "clientRatedDisplay": "Client noté {{score}}/5"
     },
     "assistanceModal": {
       "title": "Demander assistance",
@@ -1971,7 +1984,31 @@
     "replacementConfirmedClientTitle": "✅ Remplaçant trouvé",
     "replacementConfirmedClientBody": "Un remplaçant a confirmé sa disponibilité pour \"{{missionTitle}}\".",
     "walletReconciliationAlertAdminTitle": "⚠️ Écart de réconciliation détecté",
-    "walletReconciliationAlertAdminBody": "{{userName}} ({{userTypeLabel}}, {{userId}}) — solde {{storedBalance}} MAD vs ledger {{ledgerBalance}} MAD (écart {{discrepancy}} MAD). Alerte #{{alertId}}."
+    "walletReconciliationAlertAdminBody": "{{userName}} ({{userTypeLabel}}, {{userId}}) — solde {{storedBalance}} MAD vs ledger {{ledgerBalance}} MAD (écart {{discrepancy}} MAD). Alerte #{{alertId}}.",
+    "oeilResumedAfterH30ClientTitle": "✅ Votre Œil est de retour",
+    "oeilResumedAfterH30ClientBody": "L'Œil initialement assigné à \"{{missionTitle}}\" est finalement arrivé et reprend la mission.",
+    "activityPhotoRequestTitle": "📸 Photo de suivi requise",
+    "activityPhotoRequestBody": "Merci d'envoyer une photo dans la messagerie de la mission \"{{missionTitle}}\" toutes les 45 minutes pendant son déroulement (aucun visage ne doit apparaître sur la photo).",
+    "activityPhotoMissingClientTitle": "⚠️ Absence de nouvelles de votre Œil",
+    "activityPhotoMissingClientBody": "Votre Œil n'a pas envoyé de photo de suivi depuis un moment sur \"{{missionTitle}}\". Nous vérifions la situation.",
+    "activityPhotoMissingAdminTitle": "🚨 Abandon possible — photo de suivi manquante",
+    "activityPhotoMissingAdminBody": "L'Œil {{oeilName}} n'a envoyé aucune photo de suivi récemment sur \"{{missionTitle}}\" (mission active).",
+    "claimResolvedOeilWinPendingCommissionTitle": "✅ Réclamation résolue",
+    "claimResolvedOeilWinPendingCommissionBody": "Résolue en votre faveur. La décision concernant la commission (débitée ou libérée) vous sera communiquée séparément par un administrateur.",
+    "clientBlockedNoShowTitle": "🔴 Compte suspendu",
+    "clientBlockedNoShowBody": "Votre compte a été suspendu suite à plusieurs litiges \"client absent\" résolus en faveur de l'Œil. Contactez le support pour plus d'informations.",
+    "clientBlockedNoShowAdminTitle": "🔴 Client bloqué automatiquement",
+    "clientBlockedNoShowAdminBody": "Le client {{clientName}} a été bloqué automatiquement après {{count}} litiges \"client absent\" résolus en sa défaveur.",
+    "clientNoShowWarningTitle": "⚠️ Avertissement",
+    "clientNoShowWarningBody": "Un litige \"client absent\" a été résolu en faveur de l'Œil sur une mission récente. En cas de récidive, votre compte pourra être suspendu.",
+    "commissionReleasedOeilTitle": "Commission libérée",
+    "commissionReleasedOeilBody": "Un administrateur a décidé de ne pas prélever de commission sur \"{{missionTitle}}\".",
+    "assistanceAutoValidatedPendingCommissionOeilTitle": "Mission clôturée automatiquement",
+    "assistanceAutoValidatedPendingCommissionOeilBody": "Délai écoulé sans réponse du client — \"{{missionTitle}}\" clôturée. La décision concernant la commission (débitée ou libérée) vous sera communiquée séparément par un administrateur.",
+    "forceReassignClientTitle": "⚠️ Changement sur votre mission",
+    "forceReassignClientBody": "Un administrateur a lancé la recherche d'un remplaçant pour \"{{missionTitle}}\".",
+    "forceReassignOeilTitle": "Mission réattribuée par un administrateur",
+    "forceReassignOeilBody": "Un administrateur a lancé une recherche de remplaçant pour \"{{missionTitle}}\". Aucune pénalité ne vous a été appliquée pour le moment."
   },
   "walletReconciliation": {
     "title": "⚖️ Réconciliation Wallet",
@@ -2010,6 +2047,26 @@
       "resolveError": "Erreur lors de la résolution"
     }
   },
+  "clientsSuspendus": {
+    "title": "Clients suspendus",
+    "tabs": {
+      "blocked": "Bloqués",
+      "unblocked": "Débloqués",
+      "all": "Tous"
+    },
+    "table": {
+      "client": "Client",
+      "strikes": "Strikes",
+      "strikesUnit": "strike(s)",
+      "lastStrike": "Dernier strike",
+      "status": "Statut"
+    },
+    "unblock": "Débloquer",
+    "empty": "Aucun client concerné",
+    "loadError": "Erreur de chargement",
+    "unblockSuccess": "Client débloqué ✓",
+    "unblockError": "Erreur lors du déblocage"
+  },
   "systemMessage": {
     "oeilAccepted": "{{oeilName}} a accepté la mission.",
     "missionEnRoute": "L'Œil est en route.",
@@ -2019,7 +2076,8 @@
     "missionImpediment": "L'Œil a signalé un empêchement. Mission remise en priorité.",
     "assignedByAdmin": "{{oeilName}} a été assigné par l'admin.",
     "assistanceUrgenceSystemMessage": "L'Œil a signalé une urgence. Recherche d'un remplaçant en cours.",
-    "assistanceMissionRequestSystemMessage": "L'Œil signale : {{reason}}. En attente de votre confirmation."
+    "assistanceMissionRequestSystemMessage": "L'Œil signale : {{reason}}. En attente de votre confirmation.",
+    "forceReassignSystemMessage": "Un administrateur a lancé une recherche de remplaçant pour cette mission."
   },
   "statusBadge": {
     "active": "En cours",
