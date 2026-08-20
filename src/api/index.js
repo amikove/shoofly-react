@@ -118,6 +118,7 @@ export const adminAPI = {
   resolveWalletReconciliationAlert: (id) => api.put(`/api/users/admin/wallet-reconciliation-alerts/${id}/resolve`),
   commissionShortfalls: (params) => api.get('/api/users/admin/commission-shortfalls', { params }),
   resolveCommissionShortfall: (id) => api.put(`/api/users/admin/commission-shortfalls/${id}/resolve`),
+  missionsProchesValidation: () => api.get('/api/missions/admin/missions-proches-validation'),
   fraudDashboard: ()       => api.get('/api/anti-fraud/dashboard', { params: { _t: Date.now() } }),
   settings:       ()       => api.get('/api/users/admin/settings'),
   settingsDefaults: ()     => api.get('/api/users/admin/settings/defaults'),

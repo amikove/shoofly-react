@@ -67,6 +67,7 @@ const AdminTickets = lazy(() => import('./pages/admin/AdminTickets'))
 const AdminFinance = lazy(() => import('./pages/admin/AdminFinance'))
 const AdminWalletReconciliation = lazy(() => import('./pages/admin/WalletReconciliation'))
 const AdminClientsSuspendus = lazy(() => import('./pages/admin/ClientsSuspendus'))
+const AdminMissionsProchesValidation = lazy(() => import('./pages/admin/MissionsProchesValidation'))
 const UserProfile = lazy(() => import('./pages/admin/UserProfile'))
 
 
@@ -176,6 +177,7 @@ export default function App() {
       <Route path="/admin/finance" element={<RequireAuth allowedRoles={['admin']}><AdminFinance /></RequireAuth>} />
       <Route path="/admin/wallet-reconciliation" element={<RequireAuth allowedRoles={['admin']}><AdminWalletReconciliation /></RequireAuth>} />
       <Route path="/admin/clients-suspendus" element={<RequireAuth allowedRoles={['admin']}><AdminClientsSuspendus /></RequireAuth>} />
+      <Route path="/admin/missions-proches-validation" element={<RequireAuth allowedRoles={['admin']}><AdminMissionsProchesValidation /></RequireAuth>} />
       <Route path="/admin/users/:userId" element={<RequireAuth allowedRoles={['admin']}><UserProfile /></RequireAuth>} />
 
 

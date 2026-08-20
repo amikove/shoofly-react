@@ -2030,7 +2030,19 @@
     "forceReassignClientTitle": "⚠️ تغيير في مهمتك",
     "forceReassignClientBody": "أطلقت الإدارة البحث عن بديل لمهمة \"{{missionTitle}}\".",
     "forceReassignOeilTitle": "أعيد إسناد المهمة من قبل الإدارة",
-    "forceReassignOeilBody": "أطلقت الإدارة بحثاً عن بديل لمهمة \"{{missionTitle}}\". لم تُطبق عليك أي عقوبة في الوقت الحالي."
+    "forceReassignOeilBody": "أطلقت الإدارة بحثاً عن بديل لمهمة \"{{missionTitle}}\". لم تُطبق عليك أي عقوبة في الوقت الحالي.",
+    "validationReminderH6Title": "⏳ مهمة بانتظار التصديق",
+    "validationReminderH6Body": "انتهت مهمتك \"{{missionTitle}}\" وهي بانتظار تصديقك. بدون إجراء من طرفك، سيتم التصديق عليها تلقائياً خلال حوالي {{hoursLeft}} ساعة.",
+    "autoValidatedClientTitle": "✅ تم التصديق على المهمة تلقائياً",
+    "autoValidatedClientBody": "تم التصديق تلقائياً على \"{{missionTitle}}\" بعد {{hours}} ساعة دون رد من طرفك.",
+    "autoValidatedOeilTitle": "💰 تم استلام الدفع (تلقائياً)",
+    "autoValidatedOeilBody": "تصديق تلقائي بعد انتهاء المهلة لمهمة \"{{missionTitle}}\". تم إيداع {{amount}} درهم.",
+    "autoValidatedCashOeilTitle": "✅ تم التصديق على المهمة تلقائياً",
+    "autoValidatedCashOeilBody": "تصديق تلقائي بعد انتهاء المهلة لمهمة \"{{missionTitle}}\". تم خصم {{amount}} درهم كعمولة من محفظتك (مهمة نقدية).",
+    "partialPaymentAutoReceivedTitle": "💰 تم استلام دفعة جزئية (تلقائياً)",
+    "partialPaymentAutoReceivedBody": "تم إيداع {{amount}} درهم — حصتك من \"{{missionTitle}}\" (تصديق تلقائي بعد انتهاء المهلة).",
+    "candidatureAdminAlertTitle": "⏰ مهمة وشيكة دون اختيار مرشح",
+    "candidatureAdminAlertBody": "مهمة \"{{missionTitle}}\" مقررة قريباً ولم يختر العميل بعد عيناً ميدانية من بين {{count}} ترشيح(ات) مستلمة."
   },
   "walletReconciliation": {
     "title": "⚖️ تسوية المحفظة",
@@ -2088,6 +2100,23 @@
     "loadError": "خطأ في التحميل",
     "unblockSuccess": "تم إلغاء حظر العميل ✓",
     "unblockError": "خطأ أثناء إلغاء الحظر"
+  },
+  "missionsProchesValidation": {
+    "title": "⏰ مهام وشيكة دون اختيار مرشح",
+    "subtitle": "مهام بانتظار اختيار العميل لعين ميدانية من بين المرشحين، أصبحت الآن قريبة جداً من موعدها المقرر بحيث لا يمكن الاعتماد على تذكير واتساب بسيط.",
+    "table": {
+      "mission": "المهمة",
+      "client": "العميل",
+      "scheduledAt": "موعدها",
+      "remaining": "الوقت المتبقي",
+      "candidatures": "الترشيحات"
+    },
+    "view": "عرض",
+    "empty": "لا توجد مهام معنية",
+    "loadError": "خطأ في التحميل",
+    "overdue": "تجاوزت الموعد بـ {{minutes}} د",
+    "minutesLeft": "{{minutes}} د متبقية",
+    "hoursLeft": "{{hours}} س متبقية"
   },
   "systemMessage": {
     "oeilAccepted": "قبل {{oeilName}} المهمة.",

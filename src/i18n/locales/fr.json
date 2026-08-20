@@ -2031,7 +2031,19 @@
     "forceReassignClientTitle": "⚠️ Changement sur votre mission",
     "forceReassignClientBody": "Un administrateur a lancé la recherche d'un remplaçant pour \"{{missionTitle}}\".",
     "forceReassignOeilTitle": "Mission réattribuée par un administrateur",
-    "forceReassignOeilBody": "Un administrateur a lancé une recherche de remplaçant pour \"{{missionTitle}}\". Aucune pénalité ne vous a été appliquée pour le moment."
+    "forceReassignOeilBody": "Un administrateur a lancé une recherche de remplaçant pour \"{{missionTitle}}\". Aucune pénalité ne vous a été appliquée pour le moment.",
+    "validationReminderH6Title": "⏳ Mission à valider",
+    "validationReminderH6Body": "Votre mission \"{{missionTitle}}\" est terminée et en attente de votre validation. Sans action de votre part, elle sera validée automatiquement dans environ {{hoursLeft}}h.",
+    "autoValidatedClientTitle": "✅ Mission validée automatiquement",
+    "autoValidatedClientBody": "\"{{missionTitle}}\" a été validée automatiquement après {{hours}}h sans réponse de votre part.",
+    "autoValidatedOeilTitle": "💰 Paiement reçu (automatique)",
+    "autoValidatedOeilBody": "Validation automatique après délai pour \"{{missionTitle}}\". {{amount}} MAD crédités.",
+    "autoValidatedCashOeilTitle": "✅ Mission validée automatiquement",
+    "autoValidatedCashOeilBody": "Validation automatique après délai pour \"{{missionTitle}}\". {{amount}} MAD de commission débités de votre wallet (mission cash).",
+    "partialPaymentAutoReceivedTitle": "💰 Paiement partiel reçu (automatique)",
+    "partialPaymentAutoReceivedBody": "{{amount}} MAD crédités — votre part de \"{{missionTitle}}\" (validation automatique après délai).",
+    "candidatureAdminAlertTitle": "⏰ Mission proche sans candidature validée",
+    "candidatureAdminAlertBody": "\"{{missionTitle}}\" est prévue bientôt et le client n'a toujours pas choisi d'Œil parmi {{count}} candidature(s) reçues."
   },
   "walletReconciliation": {
     "title": "⚖️ Réconciliation Wallet",
@@ -2089,6 +2101,23 @@
     "loadError": "Erreur de chargement",
     "unblockSuccess": "Client débloqué ✓",
     "unblockError": "Erreur lors du déblocage"
+  },
+  "missionsProchesValidation": {
+    "title": "⏰ Missions proches sans validation",
+    "subtitle": "Missions en attente de candidature choisie par le client, désormais trop proches de leur horaire prévu pour compter sur une simple relance WhatsApp.",
+    "table": {
+      "mission": "Mission",
+      "client": "Client",
+      "scheduledAt": "Prévue le",
+      "remaining": "Temps restant",
+      "candidatures": "Candidatures"
+    },
+    "view": "Voir",
+    "empty": "Aucune mission concernée",
+    "loadError": "Erreur de chargement",
+    "overdue": "Dépassée de {{minutes}} min",
+    "minutesLeft": "{{minutes}} min restantes",
+    "hoursLeft": "{{hours}} h restantes"
   },
   "systemMessage": {
     "oeilAccepted": "{{oeilName}} a accepté la mission.",

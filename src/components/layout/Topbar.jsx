@@ -6,7 +6,7 @@ import { useAuth } from '../../context/AuthContext'
 import { useSocket } from '../../context/SocketContext'
 import { useNotif } from '../../context/NotifContext'
 
-const CLICKABLE_ACTION_TYPES = ['ticket_view', 'admin_urgent_ticket', 'admin_ticket_message', 'admin_wallet_reconciliation']
+const CLICKABLE_ACTION_TYPES = ['ticket_view', 'admin_urgent_ticket', 'admin_ticket_message', 'admin_wallet_reconciliation', 'admin_missions_proches_validation']
 
 export default function Topbar({ title, actions }) {
   const { t }       = useTranslation()
@@ -120,6 +120,10 @@ const handleClick = (n) => {
     case 'admin_wallet_reconciliation':
       setShowNotifs(false)
       navigate('/admin/wallet-reconciliation', { state: { openAlertId: n.params?.alertId } })
+      break
+    case 'admin_missions_proches_validation':
+      setShowNotifs(false)
+      navigate('/admin/missions-proches-validation')
       break
     case 'mes_signalements':
       setShowNotifs(false)

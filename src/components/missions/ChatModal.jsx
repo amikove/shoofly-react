@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import { missionsAPI, mediaAPI } from '../../api'
@@ -21,7 +20,14 @@ function formatGraceDeadline(iso) {
 export default function ChatModal({ mission, onClose }) {
   const { t } = useTranslation()
   const { user }              = useAuth()
-  const isReadOnly = getChatAccessState(mission, user?.role === 'admin') === 'grace'
+  // localMission suit les changements de statut reçus en direct (mission_status_changed,
+  // ci-dessous) — la prop `mission` d'origine ne bouge que si le parent la rafraîchit lui-même,
+  // ce qu'il ne fait pas forcément pendant que la modale est ouverte (le cas le plus fréquent :
+  // clôture de la mission pendant que le chat est ouvert restait en lecture NON seule jusqu'à
+  // fermeture/réouverture de la modale).
+  const [localMission, setLocalMission] = useState(mission)
+  useEffect(() => { setLocalMission(mission) }, [mission])
+  const isReadOnly = getChatAccessState(localMission, user?.role === 'admin') === 'grace'
   const { onEvent, sendMessage, joinMission, leaveMission } = useSocket()
   const [messages, setMessages] = useState([])
   const [msg, setMsg]           = useState('')
@@ -51,48 +57,68 @@ useEffect(() => {
   const bottomRef               = useRef(null)
   const fileRef                 = useRef(null)
 
-  // Charger les messages existants
-useEffect(() => {
-  if (!mission) return
-  setLoading(true)
-  Promise.all([
-    missionsAPI.get(mission.id),
-    mediaAPI.list(mission.id),
-  ])
-    .then(([msgRes, mediaRes]) => {
-      const msgs = msgRes.data.messages || []
-      const medias = (mediaRes.data.media || []).map((m) => ({
-        id: `media-${m.id}`,
-        content: `📎 ${m.filename || t('chatModal.file')}`,
-        sender_id: m.uploader_id,
-        sender_role: m.uploader_role,
-        type: 'media',
-        media_url: m.url,
-        created_at: m.created_at,
-      }))
-      // Fusionner et trier par date
-      const all = [...msgs, ...medias].sort(
-        (a, b) => new Date(a.created_at) - new Date(b.created_at)
-      )
-      setMessages(all)
-    })
-    .catch(() => toast(t('chatModal.loadError'), 'error'))
-    .finally(() => setLoading(false))
+  // Charger la mission (statut + accès chat à jour) + messages + médias. Extrait en fonction
+  // réutilisable : appelé au montage ET à chaque mission_status_changed reçu en direct
+  // (ci-dessous) — un simple GET suffit à récupérer chat_access_expires_at déjà recalculé
+  // côté serveur (voir GET /missions/:id, routes/missions.js), sans dupliquer sa logique de
+  // délai de grâce 24h côté frontend.
+  const loadMissionAndMessages = () => {
+    if (!mission) return
+    setLoading(true)
+    Promise.all([
+      missionsAPI.get(mission.id),
+      mediaAPI.list(mission.id),
+    ])
+      .then(([msgRes, mediaRes]) => {
+        if (msgRes.data.mission) setLocalMission(msgRes.data.mission)
+        const msgs = msgRes.data.messages || []
+        const medias = (mediaRes.data.media || []).map((m) => ({
+          id: `media-${m.id}`,
+          content: `📎 ${m.filename || t('chatModal.file')}`,
+          sender_id: m.uploader_id,
+          sender_role: m.uploader_role,
+          type: 'media',
+          media_url: m.url,
+          created_at: m.created_at,
+        }))
+        // Fusionner et trier par date
+        const all = [...msgs, ...medias].sort(
+          (a, b) => new Date(a.created_at) - new Date(b.created_at)
+        )
+        setMessages(all)
+      })
+      .catch(() => toast(t('chatModal.loadError'), 'error'))
+      .finally(() => setLoading(false))
+  }
+
+  useEffect(() => {
+    if (!mission) return
+    loadMissionAndMessages()
 
     // Rejoindre la room Socket.io
     joinMission?.(mission.id)
 
     // Écouter les nouveaux messages en temps réel
-    const unsub = onEvent?.('new_message', (newMsg) => {
+    const unsubMessage = onEvent?.('new_message', (newMsg) => {
       setMessages(prev => {
         if (prev.find(m => m.id === newMsg.id)) return prev
         return [...prev, newMsg]
       })
     })
 
+    // Écouter les changements de statut en temps réel (clôture pendant que le chat est ouvert,
+    // réouverture après sous_reclamation...) — recharge la mission pour refléter immédiatement
+    // le mode lecture seule/l'accès au chat, sans attendre une fermeture/réouverture manuelle
+    // de la modale.
+    const unsubStatus = onEvent?.('mission_status_changed', (data) => {
+      if (data?.missionId !== mission.id) return
+      loadMissionAndMessages()
+    })
+
     return () => {
       leaveMission?.(mission.id)
-      unsub?.()
+      unsubMessage?.()
+      unsubStatus?.()
     }
   }, [mission?.id])
 
@@ -109,9 +135,15 @@ const send = async () => {
     setSending(true)
     try {
           await missionsAPI.message(mission.id, { content })
-    } catch {
-      toast(t('chatModal.sendError'), 'error')
+    } catch (err) {
+      // Message d'erreur précis du backend (ex: "Cette mission est clôturée, le chat n'est plus
+      // disponible.") plutôt qu'un toast générique qui n'explique pas pourquoi l'envoi a échoué —
+      // voir POST /:id/messages, routes/missions.js, pour les cas concrets renvoyés.
+      toast(err.response?.data?.error || t('chatModal.sendError'), 'error')
       setMsg(content)
+      // Le refus est en général dû à un changement de statut manqué par le listener socket
+      // (ex: coupure réseau ponctuelle) — resynchronise pour refléter immédiatement l'état réel.
+      if (err.response?.status === 400) loadMissionAndMessages()
     } finally { setSending(false) }
   }
 
@@ -137,8 +169,9 @@ const send = async () => {
         media_url: data.media?.[0]?.url,
         created_at: new Date().toISOString()
       }])
-    } catch {
-      toast(t('chatModal.fileSendError'), 'error')
+    } catch (err) {
+      toast(err.response?.data?.error || t('chatModal.fileSendError'), 'error')
+      if (err.response?.status === 400) loadMissionAndMessages()
     } finally { setUploading(false) }
   }
 
@@ -177,7 +210,7 @@ const send = async () => {
           <div className="mx-4 mt-3 bg-[#FF4D00]/10 border border-[#FF4D00]/30 rounded-xl px-3 py-2.5 flex items-start gap-2 flex-shrink-0">
             <span className="text-base leading-none flex-shrink-0">🔒</span>
             <p className="text-xs text-white/80 leading-relaxed">
-              {t('chatModal.readOnlyBanner', { date: formatGraceDeadline(mission.chat_access_expires_at) })}
+              {t('chatModal.readOnlyBanner', { date: formatGraceDeadline(localMission.chat_access_expires_at) })}
             </p>
           </div>
         )}
