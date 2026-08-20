@@ -3,6 +3,7 @@ import AppLayout from '../../components/layout/AppLayout'
 import Topbar from '../../components/layout/Topbar'
 import { adminAPI } from '../../api'
 import { Spinner, toast } from '../../components/ui'
+import { CASABLANCA_TZ } from '../../utils/casablancaTime'
 
 const EMPTY_FORM = { code: '', type: 'percent', value: '', max_uses: '', max_uses_per_user: '1', expires_at: '', platform_amount: '' }
 
@@ -158,7 +159,7 @@ export default function AdminPromos() {
                         <span className="text-xs text-[#555] ms-1">(max {p.max_uses_per_user}×/client)</span>
                       </td>
                       <td className="text-[#AAA]">
-                        {p.expires_at ? new Date(p.expires_at).toLocaleDateString('fr-FR') : '—'}
+                        {p.expires_at ? new Date(p.expires_at).toLocaleDateString('fr-FR', { timeZone: CASABLANCA_TZ }) : '—'}
                       </td>
                       <td>
                           {(() => {

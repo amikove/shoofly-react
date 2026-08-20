@@ -4,6 +4,7 @@ import AppLayout from '../../components/layout/AppLayout'
 import Topbar from '../../components/layout/Topbar'
 import { missionsAPI } from '../../api'
 import { Spinner, EmptyState, toast } from '../../components/ui'
+import { CASABLANCA_TZ } from '../../utils/casablancaTime'
 
 const STATUS_LABEL_KEYS = {
   open:        { key: 'open',       variant: 'text-orange-400' },
@@ -63,8 +64,8 @@ export default function MesSignalements() {
                   )}
 
                   <p className="text-[10px] text-[#555]">
-                    {t('mesSignalements.reportedOn', { date: new Date(r.created_at).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }) })}
-                    {r.resolved_at && t('mesSignalements.processedOn', { date: new Date(r.resolved_at).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' }) })}
+                    {t('mesSignalements.reportedOn', { date: new Date(r.created_at).toLocaleDateString('fr-FR', { timeZone: CASABLANCA_TZ, day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }) })}
+                    {r.resolved_at && t('mesSignalements.processedOn', { date: new Date(r.resolved_at).toLocaleDateString('fr-FR', { timeZone: CASABLANCA_TZ, day: 'numeric', month: 'short', year: 'numeric' }) })}
                   </p>
                 </div>
               )

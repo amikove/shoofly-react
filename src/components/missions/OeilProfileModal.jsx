@@ -4,6 +4,7 @@ import { usersAPI } from '../../api'
 import { Modal, Avatar, Stars, Spinner, Badge } from '../ui'
 import { translateLocation } from '../../constants/villesTranslations'
 import { getResponseTimeDisplay } from '../../utils/responseTime'
+import { CASABLANCA_TZ } from '../../utils/casablancaTime'
 
 export default function OeilProfileModal({ oeil, onClose, onCommander }) {
   const { t, i18n } = useTranslation()
@@ -182,7 +183,7 @@ export default function OeilProfileModal({ oeil, onClose, onCommander }) {
                         </div>
                         <span className="text-[11px] text-[#555]">
                           {new Date(r.created_at).toLocaleDateString('fr-FR', {
-                            day: 'numeric', month: 'short', year: 'numeric'
+                            timeZone: CASABLANCA_TZ, day: 'numeric', month: 'short', year: 'numeric'
                           })}
                         </span>
                       </div>

@@ -6,8 +6,7 @@ import { toast, Spinner } from '../ui'
 import { useSocket } from '../../context/SocketContext'
 import { useAuth } from '../../context/AuthContext'
 import { getChatAccessState } from '../../utils/chatAccess'
-
-const CASABLANCA_TZ = 'Africa/Casablanca'
+import { CASABLANCA_TZ } from '../../utils/casablancaTime'
 
 function formatGraceDeadline(iso) {
   if (!iso) return ''

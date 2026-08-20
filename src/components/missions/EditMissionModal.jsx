@@ -4,14 +4,13 @@ import { missionsAPI } from '../../api'
 import { VILLES, VILLES_LIST } from '../../constants/villes'
 import { toast } from '../ui'
 import Autocomplete from './Autocomplete'
+import { casablancaWallTimeToISO, casablancaDateTimeInputParts } from '../../utils/casablancaTime'
 
 function toDateInput(iso) {
-  if (!iso) return ''
-  return new Date(iso).toISOString().slice(0, 10)
+  return casablancaDateTimeInputParts(iso).date
 }
 function toTimeInput(iso) {
-  if (!iso) return ''
-  return new Date(iso).toTimeString().slice(0, 5)
+  return casablancaDateTimeInputParts(iso).time
 }
 
 export default function EditMissionModal({ mission, onClose, onSaved }) {
@@ -48,7 +47,7 @@ export default function EditMissionModal({ mission, onClose, onSaved }) {
       return
     }
 
-    const scheduledAt = new Date(`${form.scheduled_date}T${form.scheduled_time}`).toISOString()
+    const scheduledAt = casablancaWallTimeToISO(form.scheduled_date, form.scheduled_time)
 
     // proposed_changes ne doit contenir que les champs réellement modifiés — pas un patch complet
     const changes = {}

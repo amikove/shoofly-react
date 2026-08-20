@@ -5,6 +5,7 @@ import Topbar from '../../components/layout/Topbar'
 import { usersAPI } from '../../api'
 import { Spinner, EmptyState, toast } from '../../components/ui'
 import CashPlusRechargeModal from '../../components/payments/CashPlusRechargeModal'
+import { CASABLANCA_TZ } from '../../utils/casablancaTime'
 
 export default function OeilGains() {
   const { t } = useTranslation()
@@ -80,14 +81,14 @@ export default function OeilGains() {
                   {lines.map((l) => (
                     <tr key={`${l.kind}-${l.id}`}>
                       <td className="text-xs text-[#AAA]">
-                        {new Date(l.event_date).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' })}
+                        {new Date(l.event_date).toLocaleDateString('fr-FR', { timeZone: CASABLANCA_TZ, day: 'numeric', month: 'short', year: 'numeric' })}
                       </td>
                       <td className="font-medium">
                         {l.kind === 'transfer' ? t('oeilGains.bankTransferLabel') : (TYPE_LABELS[l.type] || l.title)}
                       </td>
                       <td className="text-xs text-[#AAA]">
                         {l.kind === 'mission' && l.scheduled_at
-                          ? new Date(l.scheduled_at).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' })
+                          ? new Date(l.scheduled_at).toLocaleDateString('fr-FR', { timeZone: CASABLANCA_TZ, day: 'numeric', month: 'short', year: 'numeric' })
                           : '—'}
                       </td>
                       <td>

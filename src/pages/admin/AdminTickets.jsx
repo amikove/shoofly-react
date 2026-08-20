@@ -5,6 +5,7 @@ import AppLayout from '../../components/layout/AppLayout'
 import Topbar from '../../components/layout/Topbar'
 import { ticketsAPI } from '../../api'
 import { Spinner, toast, Pagination } from '../../components/ui'
+import { CASABLANCA_TZ } from '../../utils/casablancaTime'
 import { useAuth } from '../../context/AuthContext'
 import { TICKET_CATEGORIES } from '../../constants/ticketCategories'
 
@@ -133,7 +134,7 @@ export default function AdminTickets() {
                         </td>
                         <td>{tk.first_name} {tk.last_name}</td>
                         <td className={`text-xs font-semibold ${STATUS_VARIANT[tk.status]}`}>{t(`mesTickets.status.${tk.status}`)}</td>
-                        <td className="text-xs text-[#555]">{new Date(tk.created_at).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}</td>
+                        <td className="text-xs text-[#555]">{new Date(tk.created_at).toLocaleDateString('fr-FR', { timeZone: CASABLANCA_TZ, day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}</td>
                         <td className="text-[#FF4D00] text-xs">Voir →</td>
                       </tr>
                     ))}
@@ -235,7 +236,7 @@ function AdminTicketDetail({ ticket, messages, currentUserId, onClose, onChanged
                   </div>
                   <div className="text-[10px] text-[#555] mt-0.5 px-1">
                     {!isMine(m) && `${m.sender_name} · `}
-                    {new Date(m.created_at).toLocaleTimeString('fr-MA', { hour: '2-digit', minute: '2-digit' })}
+                    {new Date(m.created_at).toLocaleTimeString('fr-MA', { timeZone: CASABLANCA_TZ, hour: '2-digit', minute: '2-digit' })}
                   </div>
                 </>
               )}

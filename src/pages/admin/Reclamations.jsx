@@ -4,6 +4,7 @@ import AppLayout from '../../components/layout/AppLayout'
 import Topbar from '../../components/layout/Topbar'
 import { adminAPI, missionsAPI } from '../../api'
 import { Spinner, toast } from '../../components/ui'
+import { CASABLANCA_TZ } from '../../utils/casablancaTime'
 
 export default function AdminReclamations() {
   const navigate = useNavigate()
@@ -115,7 +116,7 @@ export default function AdminReclamations() {
                 </div>
               </div>
               <span className="text-xs text-[#555] shrink-0">
-                {new Date(c.created_at).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}
+                {new Date(c.created_at).toLocaleDateString('fr-FR', { timeZone: CASABLANCA_TZ, day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}
               </span>
             </div>
 

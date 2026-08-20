@@ -7,6 +7,7 @@ import { reliabilityAPI } from '../../api'
 import { Spinner, Avatar, toast, Pagination } from '../../components/ui'
 import { VILLES, VILLES_LIST } from '../../constants/villes'
 import { translateLocation } from '../../constants/villesTranslations'
+import { CASABLANCA_TZ } from '../../utils/casablancaTime'
 
 const MAIN_TABS = [
   { id: 'suspended', label: '🔴 Suspendus' },
@@ -93,7 +94,7 @@ function SuspendedTab() {
             <div className="text-right">
               <span className="badge badge-red">Score : {o.reliability_score}%</span>
               {o.suspended_at && (
-                <p className="text-[10px] text-[#555] mt-1">Suspendu le {new Date(o.suspended_at).toLocaleDateString('fr-FR')}</p>
+                <p className="text-[10px] text-[#555] mt-1">Suspendu le {new Date(o.suspended_at).toLocaleDateString('fr-FR', { timeZone: CASABLANCA_TZ })}</p>
               )}
             </div>
           </div>
@@ -206,7 +207,7 @@ function RequestsTab() {
             </div>
             <div className="text-right">
               <span className="badge badge-red">Score : {r.reliability_score}%</span>
-              <p className="text-[10px] text-[#555] mt-1">{new Date(r.created_at).toLocaleDateString('fr-FR')}</p>
+              <p className="text-[10px] text-[#555] mt-1">{new Date(r.created_at).toLocaleDateString('fr-FR', { timeZone: CASABLANCA_TZ })}</p>
             </div>
           </div>
 
@@ -238,13 +239,13 @@ function RequestsTab() {
                     <div className="text-[#AAA] space-y-0.5 mt-1.5">
                       <div>📋 {e.mission_title}</div>
                       {e.client_first_name && <div>👤 {e.client_first_name} {e.client_last_name}</div>}
-                      {e.mission_scheduled_at && <div>📅 {new Date(e.mission_scheduled_at).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' })} à {new Date(e.mission_scheduled_at).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}</div>}
+                      {e.mission_scheduled_at && <div>📅 {new Date(e.mission_scheduled_at).toLocaleDateString('fr-FR', { timeZone: CASABLANCA_TZ, day: 'numeric', month: 'short', year: 'numeric' })} à {new Date(e.mission_scheduled_at).toLocaleTimeString('fr-FR', { timeZone: CASABLANCA_TZ, hour: '2-digit', minute: '2-digit' })}</div>}
                       {e.mission_city && <div>📍 {translateLocation(e.mission_city, i18n.language)}{e.mission_quartier ? ` · ${translateLocation(e.mission_quartier, i18n.language)}` : ''}</div>}
                       {e.mission_status && <div>🔄 Statut : {e.mission_status}</div>}
                       {e.media_count !== null && <div>📸 {e.media_count} média(s)</div>}
                     </div>
                   )}
-                  <div className="text-[10px] text-[#555] mt-1.5">{new Date(e.created_at).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</div>
+                  <div className="text-[10px] text-[#555] mt-1.5">{new Date(e.created_at).toLocaleDateString('fr-FR', { timeZone: CASABLANCA_TZ, day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</div>
                 </div>
               ))}
             </div>

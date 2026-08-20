@@ -1821,6 +1821,20 @@
     "next": "Suivant",
     "counter": "{{current}}/{{total}}"
   },
+  "clientDisabledBanner": {
+    "text": "Le compte du client de la mission « {{missionTitle}} » a été désactivé. Que souhaitez-vous faire ?",
+    "honorButton": "Continuer la mission",
+    "honorConfirming": "...",
+    "honorToast": "Mission poursuivie ✓",
+    "cancelButton": "Annuler la mission",
+    "cancelConfirmPrompt": "Annuler « {{missionTitle}} » ? Aucune pénalité ne vous sera appliquée.",
+    "cancelConfirming": "Annulation...",
+    "cancelToast": "Mission annulée",
+    "errorToast": "Erreur, réessayez",
+    "previous": "Précédent",
+    "next": "Suivant",
+    "counter": "{{current}}/{{total}}"
+  },
   "notifications": {
     "title": "Notifications",
     "markAllRead": "Tout lire",
@@ -1901,6 +1915,10 @@
     "missionCancelledByClientTitle": "Mission annulée",
     "missionCancelledByClientBody": "La mission \"{{missionTitle}}\" a été annulée par le client.",
     "missionCancelledNoRefundBody": "Annulation dans les 2h — aucun remboursement conformément aux CGV.",
+    "missionCancelledClientDisabledTitle": "Mission annulée",
+    "missionCancelledClientDisabledBody": "\"{{missionTitle}}\" a été annulée : votre compte a été désactivé.",
+    "clientDisabledOeilTitle": "⚠️ Compte client désactivé",
+    "clientDisabledOeilBody": "Le compte du client de la mission \"{{missionTitle}}\" a été désactivé. Vous pouvez choisir de continuer la mission normalement ou de l'annuler — aucune pénalité ne vous sera appliquée dans les deux cas.",
     "fullRefundTitle": "💰 Remboursement intégral",
     "fullRefundBody": "{{amount}} MAD crédités sur votre portefeuille.",
     "missionCompletedClientTitle": "Mission terminée ✅",

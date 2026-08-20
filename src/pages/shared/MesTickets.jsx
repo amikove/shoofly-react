@@ -7,6 +7,7 @@ import { ticketsAPI } from '../../api'
 import { Spinner, EmptyState, toast, Pagination } from '../../components/ui'
 import { useAuth } from '../../context/AuthContext'
 import NewTicketModal from '../../components/tickets/NewTicketModal'
+import { CASABLANCA_TZ } from '../../utils/casablancaTime'
 
 const STATUS_VARIANT = {
   open:        'text-orange-400',
@@ -80,7 +81,7 @@ export default function MesTickets() {
                     </span>
                   </div>
                   <p className="text-[10px] text-[#555] mt-2">
-                    {new Date(tk.created_at).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                    {new Date(tk.created_at).toLocaleDateString('fr-FR', { timeZone: CASABLANCA_TZ, day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
                   </p>
                 </div>
               ))}
@@ -166,7 +167,7 @@ function TicketThread({ ticket, messages, currentUserId, onClose, onSent }) {
                   </div>
                   <div className="text-[10px] text-[#555] mt-0.5 px-1">
                     {m.sender_role === 'admin' && !isMine(m) ? `${t('mesTickets.adminLabel')} · ` : ''}
-                    {new Date(m.created_at).toLocaleTimeString('fr-MA', { hour: '2-digit', minute: '2-digit' })}
+                    {new Date(m.created_at).toLocaleTimeString('fr-MA', { timeZone: CASABLANCA_TZ, hour: '2-digit', minute: '2-digit' })}
                   </div>
                 </>
               )}

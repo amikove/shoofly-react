@@ -4,6 +4,7 @@ import AppLayout from '../../components/layout/AppLayout'
 import Topbar from '../../components/layout/Topbar'
 import { reliabilityAPI } from '../../api'
 import { Spinner, toast } from '../../components/ui'
+import { CASABLANCA_TZ } from '../../utils/casablancaTime'
 
 // Seule raison ecrite par le backend pour une suspension automatique liee au score
 // (reliabilityScore.js, checkAndUpdateSuspension). Tout suspended_reason different
@@ -69,7 +70,7 @@ export default function CompteSuspendu() {
             <div className="bg-[#222] rounded-xl p-3">
               <p className="text-xs text-[#AAA]">
                 {t('compteSuspendu.scoreBelowThreshold')}
-                {data?.suspended_at && ` ${t('compteSuspendu.suspendedSince', { date: new Date(data.suspended_at).toLocaleDateString('fr-FR') })}`}
+                {data?.suspended_at && ` ${t('compteSuspendu.suspendedSince', { date: new Date(data.suspended_at).toLocaleDateString('fr-FR', { timeZone: CASABLANCA_TZ }) })}`}
               </p>
             </div>
           ) : (
@@ -77,7 +78,7 @@ export default function CompteSuspendu() {
               <p className="text-[10px] text-[#777] mb-1">{t('compteSuspendu.adminReasonLabel')}</p>
               <p className="text-xs text-white/80">{data?.suspended_reason}</p>
               {data?.suspended_at && (
-                <p className="text-xs text-[#AAA] mt-2">{t('compteSuspendu.suspendedSince', { date: new Date(data.suspended_at).toLocaleDateString('fr-FR') })}</p>
+                <p className="text-xs text-[#AAA] mt-2">{t('compteSuspendu.suspendedSince', { date: new Date(data.suspended_at).toLocaleDateString('fr-FR', { timeZone: CASABLANCA_TZ }) })}</p>
               )}
             </div>
           )}
@@ -97,7 +98,7 @@ export default function CompteSuspendu() {
                   }`}>
                     <div>
                       <p className="text-xs text-white/80">{e.reason}</p>
-                      <p className="text-[10px] text-[#555] mt-0.5">{new Date(e.created_at).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' })}</p>
+                      <p className="text-[10px] text-[#555] mt-0.5">{new Date(e.created_at).toLocaleDateString('fr-FR', { timeZone: CASABLANCA_TZ, day: 'numeric', month: 'short', year: 'numeric' })}</p>
                     </div>
                     <span className={`text-xs font-bold whitespace-nowrap ${e.points >= 0 ? 'text-green-400' : 'text-red-400'}`}>
                       {t('compteSuspendu.pointsValue', { value: `${e.points >= 0 ? '+' : ''}${e.points}` })}
@@ -124,7 +125,7 @@ export default function CompteSuspendu() {
                     <span className={`badge ${r.status === 'approved' ? 'badge-green' : r.status === 'rejected' ? 'badge-red' : 'badge-yellow'}`}>
                       {r.status === 'approved' ? t('compteSuspendu.status.approved') : r.status === 'rejected' ? t('compteSuspendu.status.rejected') : t('compteSuspendu.status.pending')}
                     </span>
-                    <span className="text-[10px] text-[#555]">{new Date(r.created_at).toLocaleDateString('fr-FR')}</span>
+                    <span className="text-[10px] text-[#555]">{new Date(r.created_at).toLocaleDateString('fr-FR', { timeZone: CASABLANCA_TZ })}</span>
                   </div>
                   <p className="text-xs text-[#AAA] mb-2">{t('compteSuspendu.yourMessage', { message: r.message })}</p>
                   {r.admin_response && (

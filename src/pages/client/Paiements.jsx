@@ -5,6 +5,7 @@ import Topbar from '../../components/layout/Topbar'
 import { paymentsAPI } from '../../api'
 import { Spinner, EmptyState, toast } from '../../components/ui'
 import { redirectToPaywall } from '../../utils/payzone'
+import { CASABLANCA_TZ } from '../../utils/casablancaTime'
 
 const STATUS_VARIANT = {
   created:  'text-[#AAA]',
@@ -56,7 +57,7 @@ export default function Paiements() {
                   <div className="min-w-0 flex-1">
                     <div className="font-semibold text-sm truncate">{a.title}</div>
                     <div className="text-xs text-[#AAA] mt-0.5">
-                      {new Date(a.created_at).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                      {new Date(a.created_at).toLocaleDateString('fr-FR', { timeZone: CASABLANCA_TZ, day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
                     </div>
                   </div>
                   <div className="flex-shrink-0 flex flex-col items-end gap-1">

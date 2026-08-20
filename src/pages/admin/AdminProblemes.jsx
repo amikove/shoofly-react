@@ -4,6 +4,7 @@ import AppLayout from '../../components/layout/AppLayout'
 import Topbar from '../../components/layout/Topbar'
 import { missionsAPI } from '../../api'
 import { Spinner, toast, Pagination } from '../../components/ui'
+import { CASABLANCA_TZ } from '../../utils/casablancaTime'
 
 const STATUS_TABS = [
   { id: 'open',        label: 'Ouverts',   color: 'text-red-400'    },
@@ -195,8 +196,8 @@ export default function AdminProblemes() {
                         <td>{r.reporter_first} {r.reporter_last}</td>
                         <td className="text-[#AAA]">{r.mission_title}</td>
                         <td className="text-[#AAA]">{r.city}</td>
-                        <td className="text-[#AAA]">{r.scheduled_at ? new Date(r.scheduled_at).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' }) : '—'}</td>
-                        <td className="text-xs text-[#555]">{new Date(r.created_at).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}</td>
+                        <td className="text-[#AAA]">{r.scheduled_at ? new Date(r.scheduled_at).toLocaleDateString('fr-FR', { timeZone: CASABLANCA_TZ, day: 'numeric', month: 'short' }) : '—'}</td>
+                        <td className="text-xs text-[#555]">{new Date(r.created_at).toLocaleDateString('fr-FR', { timeZone: CASABLANCA_TZ, day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}</td>
                         <td className="text-[#FF4D00] text-xs">Voir →</td>
                       </tr>
                     ))}
@@ -231,7 +232,7 @@ export default function AdminProblemes() {
 
               <div className="bg-[#222] rounded-xl p-3 mb-3 space-y-1">
                   <p className="text-xs font-semibold text-white">📋 {selectedReport.mission_title}</p>
-                  <p className="text-xs text-[#AAA]">📍 {selectedReport.city} · 📅 {selectedReport.scheduled_at ? new Date(selectedReport.scheduled_at).toLocaleDateString('fr-FR') : '—'}</p>
+                  <p className="text-xs text-[#AAA]">📍 {selectedReport.city} · 📅 {selectedReport.scheduled_at ? new Date(selectedReport.scheduled_at).toLocaleDateString('fr-FR', { timeZone: CASABLANCA_TZ }) : '—'}</p>
                   <p className="text-xs text-[#AAA]">
                     👥 Client :{' '}
                     {selectedReport.client_id ? (

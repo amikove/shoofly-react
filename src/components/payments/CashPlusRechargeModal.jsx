@@ -2,9 +2,9 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { usersAPI } from '../../api'
 import { Modal } from '../ui'
+import { CASABLANCA_TZ } from '../../utils/casablancaTime'
 
 const AMOUNTS = [100, 200, 300, 500]
-const CASABLANCA_TZ = 'Africa/Casablanca'
 
 function formatExpiration(iso) {
   return new Intl.DateTimeFormat('fr-FR', {

@@ -4,6 +4,7 @@ import { missionsAPI, reportsAPI } from '../../api'
 import { Spinner, Stars } from '../ui'
 import { useNavigate } from 'react-router-dom'
 import { translateLocation } from '../../constants/villesTranslations'
+import { CASABLANCA_TZ } from '../../utils/casablancaTime'
 
 function useStatusConfig() {
   const { t } = useTranslation()
@@ -22,6 +23,7 @@ function useStatusConfig() {
 function formatDate(dateStr) {
   if (!dateStr) return '—'
   return new Date(dateStr).toLocaleDateString('fr-FR', {
+    timeZone: CASABLANCA_TZ,
     day: 'numeric', month: 'short', year: 'numeric',
     hour: '2-digit', minute: '2-digit'
   })

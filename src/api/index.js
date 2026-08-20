@@ -52,6 +52,8 @@ export const missionsAPI = {
   fiveStarBonus: () => api.get('/api/missions/campaign/five-star-bonus'),
   pendingConfirmations: () => api.get('/api/missions/pending-confirmations'),
   confirmPresence: (id) => api.post(`/api/missions/${id}/confirm-presence`),
+  pendingClientDisabled: () => api.get('/api/missions/pending-client-disabled'),
+  clientDisabledDecision: (id, decision) => api.post(`/api/missions/${id}/client-disabled-decision`, { decision }),
 }
 
 // PAYMENTS (PayZone)

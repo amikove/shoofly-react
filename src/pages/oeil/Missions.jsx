@@ -17,6 +17,7 @@ import ComplianceModal from '../../components/missions/ComplianceModal'
 import AssistanceModal from '../../components/missions/AssistanceModal'
 import MissionPhotosModal from '../../components/missions/MissionPhotosModal'
 import { getChatAccessState } from '../../utils/chatAccess'
+import { CASABLANCA_TZ } from '../../utils/casablancaTime'
 
 const TABS = ['priority', 'available', 'active', 'done']
 const TYPE_ICONS = { immobilier:'🏠', file_attente:'⏳', audit:'🔎', personnalisee:'🎯' }
@@ -30,7 +31,7 @@ const EDIT_FIELD_LABELS = {
 function formatEditFieldValue(key, value, t) {
   if (value === null || value === undefined || value === '') return '—'
   if (key === 'scheduled_at') {
-    return `${new Date(value).toLocaleDateString('fr-FR', { day:'numeric', month:'short' })} ${t('oeilMissions.editRequest.at')} ${new Date(value).toLocaleTimeString('fr-FR', { hour:'2-digit', minute:'2-digit' })}`
+    return `${new Date(value).toLocaleDateString('fr-FR', { timeZone: CASABLANCA_TZ, day:'numeric', month:'short' })} ${t('oeilMissions.editRequest.at')} ${new Date(value).toLocaleTimeString('fr-FR', { timeZone: CASABLANCA_TZ, hour:'2-digit', minute:'2-digit' })}`
   }
   if (key === 'duration_est') return `${value} min`
   return String(value)
@@ -447,10 +448,10 @@ try {
               <div className="text-xs text-[#AAA] space-y-0.5">
                 <div>📍 {translateLocation(m.city, i18n.language)} {m.quartier ? `· ${translateLocation(m.quartier, i18n.language)}` : ''}</div>
                 {m.scheduled_at && (
-                  <div>📅 {new Date(m.scheduled_at).toLocaleDateString('fr-FR', { day:'numeric', month:'short' })} à {new Date(m.scheduled_at).toLocaleTimeString('fr-FR', { hour:'2-digit', minute:'2-digit' })}</div>
+                  <div>📅 {new Date(m.scheduled_at).toLocaleDateString('fr-FR', { timeZone: CASABLANCA_TZ, day:'numeric', month:'short' })} à {new Date(m.scheduled_at).toLocaleTimeString('fr-FR', { timeZone: CASABLANCA_TZ, hour:'2-digit', minute:'2-digit' })}</div>
                 )}
                 {m.transfer_deadline && (
-                  <div className="text-red-400">⏱️ Expire à {new Date(m.transfer_deadline).toLocaleTimeString('fr-FR', { hour:'2-digit', minute:'2-digit' })}</div>
+                  <div className="text-red-400">⏱️ Expire à {new Date(m.transfer_deadline).toLocaleTimeString('fr-FR', { timeZone: CASABLANCA_TZ, hour:'2-digit', minute:'2-digit' })}</div>
                 )}
               </div>
             </div>
@@ -521,7 +522,7 @@ try {
                         <div className="text-xs text-[#AAA] mt-1 space-y-0.5">
                         <div className="flex flex-wrap gap-3">
                           <span>📍 {translateLocation(m.city, i18n.language)}{m.quartier ? ` · ${translateLocation(m.quartier, i18n.language)}` : ''}</span>
-                          <span>📅 {m.scheduled_at ? `${new Date(m.scheduled_at).toLocaleDateString('fr-FR', { day:'numeric', month:'short', year:'numeric' })} à ${new Date(m.scheduled_at).toLocaleTimeString('fr-FR', { hour:'2-digit', minute:'2-digit' })}` : '—'}</span>
+                          <span>📅 {m.scheduled_at ? `${new Date(m.scheduled_at).toLocaleDateString('fr-FR', { timeZone: CASABLANCA_TZ, day:'numeric', month:'short', year:'numeric' })} à ${new Date(m.scheduled_at).toLocaleTimeString('fr-FR', { timeZone: CASABLANCA_TZ, hour:'2-digit', minute:'2-digit' })}` : '—'}</span>
                           {m.client_name && (
                             <span className="inline-flex items-center gap-1">
                               👤 {m.client_name}
@@ -561,7 +562,7 @@ try {
                     <div className="flex items-center justify-between gap-2 mb-2 flex-wrap">
                       <span className="text-xs font-semibold text-[#FF4D00]">✏️ {t('oeilMissions.editRequest.banner')}</span>
                       <span className="text-[11px] text-[#AAA]">
-                        {t('oeilMissions.editRequest.expiresAt', { time: new Date(m.pending_edit_request.expires_at).toLocaleTimeString('fr-FR', { hour:'2-digit', minute:'2-digit' }) })}
+                        {t('oeilMissions.editRequest.expiresAt', { time: new Date(m.pending_edit_request.expires_at).toLocaleTimeString('fr-FR', { timeZone: CASABLANCA_TZ, hour:'2-digit', minute:'2-digit' }) })}
                       </span>
                     </div>
                     <div className="space-y-1.5 mb-3">

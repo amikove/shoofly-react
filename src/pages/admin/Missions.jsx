@@ -4,6 +4,7 @@ import AppLayout from '../../components/layout/AppLayout'
 import Topbar from '../../components/layout/Topbar'
 import { missionsAPI, adminAPI } from '../../api'
 import { StatusBadge, Spinner, EmptyState, toast, Pagination } from '../../components/ui'
+import { CASABLANCA_TZ } from '../../utils/casablancaTime'
 
 export default function AdminMissions() {
  const navigate = useNavigate()
@@ -186,7 +187,7 @@ const doAssign = async (overrideWarning = false, overrideReason = '') => {
                     <div className="text-xs text-[#AAA]">{m.client_name} · {m.city}</div>
                     {m.transfer_deadline && (
                       <div className="text-xs text-red-400 mt-0.5">
-                        ⏱️ Expire à {new Date(m.transfer_deadline).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
+                        ⏱️ Expire à {new Date(m.transfer_deadline).toLocaleTimeString('fr-FR', { timeZone: CASABLANCA_TZ, hour: '2-digit', minute: '2-digit' })}
                       </div>
                     )}
                   </div>
@@ -282,12 +283,12 @@ const doAssign = async (overrideWarning = false, overrideReason = '') => {
                           <>
                             <td className="text-xs">
                               {m.scheduled_at
-                                ? new Date(m.scheduled_at).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })
+                                ? new Date(m.scheduled_at).toLocaleDateString('fr-FR', { timeZone: CASABLANCA_TZ, day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })
                                 : '—'}
                             </td>
                             <td className="text-xs text-red-400">
                               {m.transfer_deadline
-                                ? new Date(m.transfer_deadline).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })
+                                ? new Date(m.transfer_deadline).toLocaleDateString('fr-FR', { timeZone: CASABLANCA_TZ, day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })
                                 : '—'}
                             </td>
                           </>
@@ -353,7 +354,7 @@ const doAssign = async (overrideWarning = false, overrideReason = '') => {
                 {assignModal.transfer_type && <p className="text-xs text-[#AAA]">Type : {assignModal.transfer_type === 'during' ? 'Pendant mission (50/50)' : 'Avant démarrage'}</p>}
                 {assignModal.transfer_deadline && (
                   <p className="text-xs text-red-400">
-                    ⏱️ Expire à {new Date(assignModal.transfer_deadline).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
+                    ⏱️ Expire à {new Date(assignModal.transfer_deadline).toLocaleTimeString('fr-FR', { timeZone: CASABLANCA_TZ, hour: '2-digit', minute: '2-digit' })}
                   </p>
                 )}
               </div>

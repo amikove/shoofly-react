@@ -6,6 +6,7 @@ import { Spinner, toast, Avatar } from '../../components/ui'
 import DateRangeFilter, { getPresetRange } from '../../components/dashboard/DateRangeFilter'
 import { ComparisonCell, DeltaBadge, delta } from '../../components/dashboard/ComparisonCell'
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
+import { CASABLANCA_TZ } from '../../utils/casablancaTime'
 
 const MAIN_TABS = [
   { id: 'executif',    label: '📊 Exécutif' },
@@ -406,11 +407,11 @@ export default function AdminDashboard() {
                     <ResponsiveContainer width="100%" height={220}>
                       <BarChart data={execData.daily_series}>
                         <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.08)" />
-                        <XAxis dataKey="day" tick={{ fill: '#777', fontSize: 11 }} tickFormatter={(d) => new Date(d).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })} />
+                        <XAxis dataKey="day" tick={{ fill: '#777', fontSize: 11 }} tickFormatter={(d) => new Date(d).toLocaleDateString('fr-FR', { timeZone: CASABLANCA_TZ, day: 'numeric', month: 'short' })} />
                         <YAxis tick={{ fill: '#777', fontSize: 11 }} />
                         <Tooltip
                           contentStyle={{ background: '#181818', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 8, fontSize: 12 }}
-                          labelFormatter={(d) => new Date(d).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' })}
+                          labelFormatter={(d) => new Date(d).toLocaleDateString('fr-FR', { timeZone: CASABLANCA_TZ, day: 'numeric', month: 'long' })}
                         />
                         <Bar dataKey="missions" fill="#FF4D00" radius={[4, 4, 0, 0]} />
                       </BarChart>
@@ -422,11 +423,11 @@ export default function AdminDashboard() {
                     <ResponsiveContainer width="100%" height={220}>
                       <LineChart data={execData.daily_series}>
                         <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.08)" />
-                        <XAxis dataKey="day" tick={{ fill: '#777', fontSize: 11 }} tickFormatter={(d) => new Date(d).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })} />
+                        <XAxis dataKey="day" tick={{ fill: '#777', fontSize: 11 }} tickFormatter={(d) => new Date(d).toLocaleDateString('fr-FR', { timeZone: CASABLANCA_TZ, day: 'numeric', month: 'short' })} />
                         <YAxis tick={{ fill: '#777', fontSize: 11 }} />
                         <Tooltip
                           contentStyle={{ background: '#181818', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 8, fontSize: 12 }}
-                          labelFormatter={(d) => new Date(d).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' })}
+                          labelFormatter={(d) => new Date(d).toLocaleDateString('fr-FR', { timeZone: CASABLANCA_TZ, day: 'numeric', month: 'long' })}
                           formatter={(value) => [`${value} MAD`, 'CA']}
                         />
                         <Line type="monotone" dataKey="revenue" stroke="#2ECC71" strokeWidth={2} dot={false} />
@@ -1207,7 +1208,7 @@ export default function AdminDashboard() {
                           <tr><td colSpan={6} className="text-center text-[#AAA] py-6">Aucune dépense sur cette période</td></tr>
                         ) : expenses.map((e) => (
                           <tr key={e.id}>
-                            <td className="text-xs text-[#AAA]">{new Date(e.expense_date).toLocaleDateString('fr-FR')}</td>
+                            <td className="text-xs text-[#AAA]">{new Date(e.expense_date).toLocaleDateString('fr-FR', { timeZone: CASABLANCA_TZ })}</td>
                             <td>
                               <span className={`badge ${e.category === 'Marketing' ? 'badge-orange' : e.category === 'Promotions' ? 'badge-blue' : 'badge-gray'}`}>
                                 {e.category}
@@ -1422,7 +1423,7 @@ export default function AdminDashboard() {
                 </div>
 
                 <div className="text-xs text-[#555]">
-                  Réclamé le {new Date(c.created_at).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                  Réclamé le {new Date(c.created_at).toLocaleDateString('fr-FR', { timeZone: CASABLANCA_TZ, day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
                 </div>
 
                 <div className="flex gap-2">

@@ -5,6 +5,7 @@ import AppLayout from '../../components/layout/AppLayout'
 import Topbar from '../../components/layout/Topbar'
 import { adminAPI } from '../../api'
 import { Spinner, toast, Pagination, Badge } from '../../components/ui'
+import { CASABLANCA_TZ } from '../../utils/casablancaTime'
 
 const TABS = ['unresolved', 'resolved', 'all']
 
@@ -189,12 +190,12 @@ export default function WalletReconciliation() {
                           {Number(a.discrepancy) > 0 ? '+' : ''}{Number(a.discrepancy).toFixed(2)} MAD
                         </td>
                         <td className="text-xs text-[#AAA]">
-                          {new Date(a.detected_at).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}
+                          {new Date(a.detected_at).toLocaleDateString('fr-FR', { timeZone: CASABLANCA_TZ, day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}
                         </td>
                         <td>
                           {a.resolved_at ? (
                             <Badge variant="green">
-                              {t('walletReconciliation.resolvedLabel')} {new Date(a.resolved_at).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })}
+                              {t('walletReconciliation.resolvedLabel')} {new Date(a.resolved_at).toLocaleDateString('fr-FR', { timeZone: CASABLANCA_TZ, day: 'numeric', month: 'short' })}
                             </Badge>
                           ) : (
                             <Badge variant="orange">{t('walletReconciliation.tabs.unresolved')}</Badge>
@@ -272,12 +273,12 @@ export default function WalletReconciliation() {
                           <td className="text-[#AAA]">{Number(s.commission_collected).toFixed(2)} MAD</td>
                           <td className="font-semibold text-red-400">{Number(s.shortfall).toFixed(2)} MAD</td>
                           <td className="text-xs text-[#AAA]">
-                            {new Date(s.created_at).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}
+                            {new Date(s.created_at).toLocaleDateString('fr-FR', { timeZone: CASABLANCA_TZ, day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}
                           </td>
                           <td>
                             {s.resolved_at ? (
                               <Badge variant="green">
-                                {t('walletReconciliation.resolvedLabel')} {new Date(s.resolved_at).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })}
+                                {t('walletReconciliation.resolvedLabel')} {new Date(s.resolved_at).toLocaleDateString('fr-FR', { timeZone: CASABLANCA_TZ, day: 'numeric', month: 'short' })}
                               </Badge>
                             ) : (
                               <Badge variant="orange">{t('walletReconciliation.tabs.unresolved')}</Badge>

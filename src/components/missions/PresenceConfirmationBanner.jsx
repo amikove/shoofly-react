@@ -3,16 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { missionsAPI } from '../../api'
 import { toast } from '../ui'
 import { useAuth } from '../../context/AuthContext'
-
-const CASABLANCA_TZ = 'Africa/Casablanca'
-
-function casablancaYMD(date) {
-  const parts = new Intl.DateTimeFormat('en-CA', {
-    timeZone: CASABLANCA_TZ, year: 'numeric', month: '2-digit', day: '2-digit',
-  }).formatToParts(date)
-  const get = (type) => parts.find((p) => p.type === type)?.value
-  return `${get('year')}-${get('month')}-${get('day')}`
-}
+import { CASABLANCA_TZ, casablancaYMD } from '../../utils/casablancaTime'
 
 function dayLabel(scheduledAt, t) {
   const missionYMD  = casablancaYMD(new Date(scheduledAt))

@@ -5,6 +5,7 @@ import { VILLES, VILLES_LIST } from '../../constants/villes'
 import { toast } from '../ui'
 import { useAuth } from '../../context/AuthContext'
 import Autocomplete from './Autocomplete'
+import { casablancaWallTimeToISO } from '../../utils/casablancaTime'
 
 const MIN_PRICES = {
   // Immobilier
@@ -238,10 +239,7 @@ if (parseFloat(form.price) < minPrice) {
         price:        parseFloat(form.price),
         description:  form.description,
         payment_method: form.payment_method,
-        scheduled_at: (() => {
-  const dt = new Date(`${form.scheduled_date}T${form.scheduled_time}`)
-  return dt.toISOString()
-})(),
+        scheduled_at: casablancaWallTimeToISO(form.scheduled_date, form.scheduled_time),
       }
       if (preselectedOeil?.id) payload.oeil_id = preselectedOeil.id
       if (promoResult) {

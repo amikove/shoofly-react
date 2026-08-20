@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next'
+import { CASABLANCA_TZ } from './casablancaTime'
 
 export function useStatusConfig() {
   const { t } = useTranslation()
@@ -18,6 +19,7 @@ export function formatHistoryDate(dateStr) {
   if (!dateStr) return ''
   const d = new Date(dateStr)
   return d.toLocaleDateString('fr-FR', {
+    timeZone: CASABLANCA_TZ,
     day: 'numeric', month: 'short', year: 'numeric',
     hour: '2-digit', minute: '2-digit'
   })

@@ -7,6 +7,7 @@ import { Spinner, EmptyState, Avatar, Stars, toast } from '../../components/ui'
 import NewMissionModal from '../../components/missions/NewMissionModal'
 import OeilProfileModal from '../../components/missions/OeilProfileModal'
 import { translateLocation } from '../../constants/villesTranslations'
+import { CASABLANCA_TZ } from '../../utils/casablancaTime'
 
 function AvisPopup({ oeil, onClose }) {
   const { t } = useTranslation()
@@ -62,7 +63,7 @@ function AvisPopup({ oeil, onClose }) {
                   <span className="text-xs font-semibold text-yellow-400">{r.score}/5</span>
                 </div>
                 <span className="text-[11px] text-[#555]">
-                  {new Date(r.created_at).toLocaleDateString('fr-FR', { day:'numeric', month:'short', year:'numeric' })}
+                  {new Date(r.created_at).toLocaleDateString('fr-FR', { timeZone: CASABLANCA_TZ, day:'numeric', month:'short', year:'numeric' })}
                 </span>
               </div>
               {r.comment

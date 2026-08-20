@@ -1820,6 +1820,20 @@
     "next": "التالي",
     "counter": "{{current}}/{{total}}"
   },
+  "clientDisabledBanner": {
+    "text": "تم تعطيل حساب عميل المهمة « {{missionTitle}} ». ماذا تريد أن تفعل؟",
+    "honorButton": "متابعة المهمة",
+    "honorConfirming": "...",
+    "honorToast": "تمت متابعة المهمة ✓",
+    "cancelButton": "إلغاء المهمة",
+    "cancelConfirmPrompt": "إلغاء « {{missionTitle}} »؟ لن يتم تطبيق أي عقوبة عليك.",
+    "cancelConfirming": "جارٍ الإلغاء...",
+    "cancelToast": "تم إلغاء المهمة",
+    "errorToast": "خطأ، أعد المحاولة",
+    "previous": "السابق",
+    "next": "التالي",
+    "counter": "{{current}}/{{total}}"
+  },
   "notifications": {
     "title": "الإشعارات",
     "markAllRead": "قراءة الكل",
@@ -1900,6 +1914,10 @@
     "missionCancelledByClientTitle": "تم إلغاء المهمة",
     "missionCancelledByClientBody": "تم إلغاء المهمة \"{{missionTitle}}\" من طرف العميل.",
     "missionCancelledNoRefundBody": "إلغاء خلال أقل من ساعتين — لا يوجد استرجاع وفقًا للشروط العامة للبيع.",
+    "missionCancelledClientDisabledTitle": "تم إلغاء المهمة",
+    "missionCancelledClientDisabledBody": "تم إلغاء \"{{missionTitle}}\": تم تعطيل حسابك.",
+    "clientDisabledOeilTitle": "⚠️ تم تعطيل حساب العميل",
+    "clientDisabledOeilBody": "تم تعطيل حساب عميل المهمة \"{{missionTitle}}\". يمكنك اختيار متابعة المهمة بشكل طبيعي أو إلغاؤها — لن يتم تطبيق أي عقوبة عليك في الحالتين.",
     "fullRefundTitle": "💰 استرجاع كامل",
     "fullRefundBody": "تم إضافة {{amount}} درهم إلى محفظتك.",
     "missionCompletedClientTitle": "انتهت المهمة ✅",

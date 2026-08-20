@@ -9,6 +9,7 @@ import { useNavigate } from 'react-router-dom'
 import ChatModal from '../../components/missions/ChatModal'
 import AssistanceModal from '../../components/missions/AssistanceModal'
 import { translateLocation } from '../../constants/villesTranslations'
+import { CASABLANCA_TZ } from '../../utils/casablancaTime'
 
 export default function OeilDashboard() {
   const { t, i18n } = useTranslation()
@@ -204,8 +205,8 @@ const refuse = async (id) => {
                     </div>
                     <div className="text-xs text-[#AAA] mt-1 space-y-0.5">
                       <div>📍 {translateLocation(m.city, i18n.language)} {m.quartier ? `· ${translateLocation(m.quartier, i18n.language)}` : ''}</div>
-                      {m.scheduled_at && <div>📅 {new Date(m.scheduled_at).toLocaleDateString('fr-FR', { day:'numeric', month:'short' })} à {new Date(m.scheduled_at).toLocaleTimeString('fr-FR', { hour:'2-digit', minute:'2-digit' })}</div>}
-                      {m.transfer_deadline && <div className="text-red-400">⏱️ Expire à {new Date(m.transfer_deadline).toLocaleTimeString('fr-FR', { hour:'2-digit', minute:'2-digit' })}</div>}
+                      {m.scheduled_at && <div>📅 {new Date(m.scheduled_at).toLocaleDateString('fr-FR', { timeZone: CASABLANCA_TZ, day:'numeric', month:'short' })} à {new Date(m.scheduled_at).toLocaleTimeString('fr-FR', { timeZone: CASABLANCA_TZ, hour:'2-digit', minute:'2-digit' })}</div>}
+                      {m.transfer_deadline && <div className="text-red-400">⏱️ Expire à {new Date(m.transfer_deadline).toLocaleTimeString('fr-FR', { timeZone: CASABLANCA_TZ, hour:'2-digit', minute:'2-digit' })}</div>}
                     </div>
                   </div>
                   <div className="text-green-400 font-bold whitespace-nowrap text-sm">
@@ -252,7 +253,7 @@ const refuse = async (id) => {
                     <div className="text-xs text-[#AAA] mt-0.5 space-y-0.5">
                       <div>📍 {translateLocation(m.city, i18n.language)} {m.quartier ? `· ${translateLocation(m.quartier, i18n.language)}` : ''}</div>
                       {m.address && <div>🏠 {m.address}</div>}
-                      {m.scheduled_at && <div>📅 {new Date(m.scheduled_at).toLocaleDateString('fr-FR', { day:'numeric', month:'short', year:'numeric' })} à {new Date(m.scheduled_at).toLocaleTimeString('fr-FR', { hour:'2-digit', minute:'2-digit' })}</div>}
+                      {m.scheduled_at && <div>📅 {new Date(m.scheduled_at).toLocaleDateString('fr-FR', { timeZone: CASABLANCA_TZ, day:'numeric', month:'short', year:'numeric' })} à {new Date(m.scheduled_at).toLocaleTimeString('fr-FR', { timeZone: CASABLANCA_TZ, hour:'2-digit', minute:'2-digit' })}</div>}
                       {m.description && <div className="text-[#666] line-clamp-2">💬 {m.description}</div>}
                     </div>
                   </div>
@@ -311,7 +312,7 @@ const refuse = async (id) => {
                       <div>👤 {m.client_name}</div>
                       <div>📍 {translateLocation(m.city, i18n.language)} {m.quartier ? `· ${translateLocation(m.quartier, i18n.language)}` : ''}</div>
                       {m.address && <div>🏠 {m.address}</div>}
-                      {m.scheduled_at && <div>📅 {new Date(m.scheduled_at).toLocaleDateString('fr-FR', { day:'numeric', month:'short', year:'numeric' })} à {new Date(m.scheduled_at).toLocaleTimeString('fr-FR', { hour:'2-digit', minute:'2-digit' })}</div>}
+                      {m.scheduled_at && <div>📅 {new Date(m.scheduled_at).toLocaleDateString('fr-FR', { timeZone: CASABLANCA_TZ, day:'numeric', month:'short', year:'numeric' })} à {new Date(m.scheduled_at).toLocaleTimeString('fr-FR', { timeZone: CASABLANCA_TZ, hour:'2-digit', minute:'2-digit' })}</div>}
                       {m.description && <div className="text-[#666] line-clamp-2">💬 {m.description}</div>}
                     </div>
 

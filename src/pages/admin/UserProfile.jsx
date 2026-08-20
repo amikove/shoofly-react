@@ -4,6 +4,7 @@ import AppLayout from '../../components/layout/AppLayout'
 import Topbar from '../../components/layout/Topbar'
 import { adminAPI } from '../../api'
 import { Spinner, EmptyState, Avatar, StatusBadge, Badge, Pagination, toast } from '../../components/ui'
+import { CASABLANCA_TZ } from '../../utils/casablancaTime'
 
 const TABS_BASE = [
   { id: 'infos',      label: '👤 Infos personnelles' },
@@ -13,8 +14,8 @@ const TABS_BASE = [
 ]
 const TAB_FIABILITE = { id: 'fiabilite', label: '🛡️ Fiabilité' }
 
-const fmtDate = (d, opts) => d ? new Date(d).toLocaleDateString('fr-FR', opts || { day: 'numeric', month: 'short', year: 'numeric' }) : 'Non renseigné'
-const fmtDateTime = (d) => d ? new Date(d).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : '—'
+const fmtDate = (d, opts) => d ? new Date(d).toLocaleDateString('fr-FR', { timeZone: CASABLANCA_TZ, ...(opts || { day: 'numeric', month: 'short', year: 'numeric' }) }) : 'Non renseigné'
+const fmtDateTime = (d) => d ? new Date(d).toLocaleDateString('fr-FR', { timeZone: CASABLANCA_TZ, day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : '—'
 const val = (v) => (v === null || v === undefined || v === '') ? 'Non renseigné' : v
 
 // YYYY-MM-DD (pour <input type="date">), decale de `days` par rapport a une date ISO donnee.

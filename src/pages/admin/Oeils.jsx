@@ -4,6 +4,7 @@ import AppLayout from '../../components/layout/AppLayout'
 import Topbar from '../../components/layout/Topbar'
 import { adminAPI } from '../../api'
 import { Spinner, EmptyState, Avatar, Stars, toast } from '../../components/ui'
+import { CASABLANCA_TZ } from '../../utils/casablancaTime'
 
 export default function AdminOeils() {
   const navigate = useNavigate()
@@ -163,7 +164,7 @@ export default function AdminOeils() {
                           <p className="font-semibold">{r.first_name} {r.last_name}</p>
                           <p className="text-xs text-[#AAA]">📍 {r.city || '—'} · {r.email}</p>
                           {r.phone && <p className="text-xs text-[#AAA]">📞 {r.phone}</p>}
-                          <p className="text-xs text-[#555] mt-0.5">Soumis le {new Date(r.created_at).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
+                          <p className="text-xs text-[#555] mt-0.5">Soumis le {new Date(r.created_at).toLocaleDateString('fr-FR', { timeZone: CASABLANCA_TZ, day: 'numeric', month: 'long', year: 'numeric' })}</p>
                         </div>
                       </div>
 
@@ -243,7 +244,7 @@ export default function AdminOeils() {
                           <p className="font-semibold">{r.first_name} {r.last_name}</p>
                           <p className="text-xs text-[#AAA]">📍 {r.city || '—'} · {r.email}</p>
                           {r.phone && <p className="text-xs text-[#AAA]">📞 {r.phone}</p>}
-                          <p className="text-xs text-[#555] mt-0.5">Inscrit le {new Date(r.created_at).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
+                          <p className="text-xs text-[#555] mt-0.5">Inscrit le {new Date(r.created_at).toLocaleDateString('fr-FR', { timeZone: CASABLANCA_TZ, day: 'numeric', month: 'long', year: 'numeric' })}</p>
                         </div>
                       </div>
                     </div>
