@@ -2371,7 +2371,8 @@
     "Autre cas de force majeure": "قوة قاهرة أخرى",
     "Client absent ou injoignable": "العميل غائب أو يتعذر الوصول إليه",
     "Mauvaise adresse": "عنوان خاطئ",
-    "Mission différente de la description": "المهمة مختلفة عن الوصف"
+    "Mission différente de la description": "المهمة مختلفة عن الوصف",
+    "Mission impossible à réaliser sur place": "يتعذر تنفيذ المهمة في الموقع"
   },
   "ticketCategories": {
     "categories": {

@@ -2372,7 +2372,8 @@
     "Autre cas de force majeure": "Autre cas de force majeure",
     "Client absent ou injoignable": "Client absent ou injoignable",
     "Mauvaise adresse": "Mauvaise adresse",
-    "Mission différente de la description": "Mission différente de la description"
+    "Mission différente de la description": "Mission différente de la description",
+    "Mission impossible à réaliser sur place": "Mission impossible à réaliser sur place"
   },
   "ticketCategories": {
     "categories": {

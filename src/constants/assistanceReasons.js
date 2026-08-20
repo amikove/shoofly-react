@@ -20,4 +20,5 @@ export const MISSION_REASONS = [
   'Client absent ou injoignable',
   'Mauvaise adresse',
   'Mission différente de la description',
+  'Mission impossible à réaliser sur place',
 ]
