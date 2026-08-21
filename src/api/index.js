@@ -29,6 +29,7 @@ export const missionsAPI = {
   rate:     (id, data) => api.post(`/api/missions/${id}/rate`, data),
   rateClient: (id, data) => api.post(`/api/missions/${id}/rate-client`, data),
   resumeAfterH30: (id) => api.post(`/api/missions/${id}/resume-after-h30`),
+  pendingH30Resume: () => api.get('/api/missions/pending-h30-resume'),
   forceReassign: (id, data) => api.post(`/api/missions/${id}/force-reassign`, data),
   assistanceCommissionPending: () => api.get('/api/missions/assistance-requests/commission-pending'),
   assistanceCommissionDecide: (id, decision) => api.post(`/api/missions/assistance-requests/${id}/commission`, { decision }),

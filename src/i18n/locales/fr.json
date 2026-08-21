@@ -1835,6 +1835,16 @@
     "next": "Suivant",
     "counter": "{{current}}/{{total}}"
   },
+  "resumeH30Banner": {
+    "text": "La mission « {{missionTitle}} » a été remise en recherche suite à un retard. Vous pouvez encore la reprendre si vous êtes disponible.",
+    "resumeButton": "Reprendre la mission",
+    "resuming": "Reprise...",
+    "resumedToast": "Mission reprise ✓",
+    "errorToast": "Erreur, réessayez",
+    "previous": "Précédent",
+    "next": "Suivant",
+    "counter": "{{current}}/{{total}}"
+  },
   "notifications": {
     "title": "Notifications",
     "markAllRead": "Tout lire",

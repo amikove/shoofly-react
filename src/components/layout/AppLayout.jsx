@@ -7,6 +7,7 @@ import { useNotifications } from '../../hooks/useNotifications'
 import NotificationBanner from '../ui/NotificationBanner'
 import PresenceConfirmationBanner from '../missions/PresenceConfirmationBanner'
 import ClientDisabledBanner from '../missions/ClientDisabledBanner'
+import ResumeH30Banner from '../missions/ResumeH30Banner'
 import { useState, useEffect } from 'react'
 import { missionsAPI, adminAPI } from '../../api'
 
@@ -303,6 +304,7 @@ useEffect(() => {
       <NotificationBanner />
       <PresenceConfirmationBanner />
       <ClientDisabledBanner />
+      <ResumeH30Banner />
     </div>
   )
 }

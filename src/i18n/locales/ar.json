@@ -1834,6 +1834,16 @@
     "next": "التالي",
     "counter": "{{current}}/{{total}}"
   },
+  "resumeH30Banner": {
+    "text": "تمت إعادة مهمة « {{missionTitle}} » إلى البحث عن بديل بسبب التأخر. يمكنك استئنافها إذا كنت لا تزال متاحًا.",
+    "resumeButton": "استئناف المهمة",
+    "resuming": "جارٍ الاستئناف...",
+    "resumedToast": "تم استئناف المهمة ✓",
+    "errorToast": "خطأ، أعد المحاولة",
+    "previous": "السابق",
+    "next": "التالي",
+    "counter": "{{current}}/{{total}}"
+  },
   "notifications": {
     "title": "الإشعارات",
     "markAllRead": "قراءة الكل",
