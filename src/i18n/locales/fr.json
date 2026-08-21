@@ -2120,7 +2120,11 @@
     "clientReminderH2Title": "📅 Rappel — mission bientôt",
     "clientReminderH2Body": "Votre mission \"{{missionTitle}}\" est prévue dans environ {{minutes}} minutes.",
     "missionCancelledCashClientTitle": "Mission annulée",
-    "missionCancelledCashClientBody": "\"{{missionTitle}}\" a été annulée."
+    "missionCancelledCashClientBody": "\"{{missionTitle}}\" a été annulée.",
+    "assistanceUrgenceRequalifiedOeilTitle": "Déclaration d'urgence requalifiée",
+    "assistanceUrgenceRequalifiedOeilBody": "Un administrateur a examiné votre déclaration d'urgence sur la mission \"{{missionTitle}}\" et l'a jugée non légitime.",
+    "assistanceReminderH6Title": "⏳ Réponse en attente",
+    "assistanceReminderH6Body": "Votre Œil a signalé un problème sur \"{{missionTitle}}\" et attend toujours votre réponse. Sans action de votre part, sa déclaration sera considérée comme acceptée dans environ {{hoursLeft}}h."
   },
   "walletReconciliation": {
     "title": "⚖️ Réconciliation Wallet",
@@ -2206,6 +2210,8 @@
     "assignedByAdmin": "{{oeilName}} a été assigné par l'admin.",
     "assistanceUrgenceSystemMessage": "L'Œil a signalé une urgence. Recherche d'un remplaçant en cours.",
     "assistanceMissionRequestSystemMessage": "L'Œil signale : {{reason}}. En attente de votre confirmation.",
+    "presenceNotConfirmedSystemMessage": "L'Œil n'a pas confirmé sa présence à temps. Recherche d'un remplaçant en cours.",
+    "autoTransferH30SystemMessage": "L'Œil n'a pas démarré la mission à l'heure. Recherche d'un remplaçant en cours.",
     "forceReassignSystemMessage": "Un administrateur a lancé une recherche de remplaçant pour cette mission."
   },
   "statusBadge": {

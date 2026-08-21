@@ -2119,7 +2119,11 @@
     "clientReminderH2Title": "📅 تذكير — مهمة قريبًا",
     "clientReminderH2Body": "مهمتك \"{{missionTitle}}\" مقررة خلال حوالي {{minutes}} دقيقة.",
     "missionCancelledCashClientTitle": "تم إلغاء المهمة",
-    "missionCancelledCashClientBody": "تم إلغاء \"{{missionTitle}}\"."
+    "missionCancelledCashClientBody": "تم إلغاء \"{{missionTitle}}\".",
+    "assistanceUrgenceRequalifiedOeilTitle": "تمت إعادة تصنيف تصريح الحالة الطارئة",
+    "assistanceUrgenceRequalifiedOeilBody": "قام أحد المسؤولين بدراسة تصريحك بالحالة الطارئة في مهمة \"{{missionTitle}}\" واعتبره غير مبرر.",
+    "assistanceReminderH6Title": "⏳ بانتظار ردك",
+    "assistanceReminderH6Body": "أبلغت عينك الميدانية عن مشكلة بخصوص مهمة \"{{missionTitle}}\" وما زالت بانتظار ردك. بدون إجراء من طرفك، سيتم اعتبار تصريحها مقبولاً خلال حوالي {{hoursLeft}} ساعة."
   },
   "walletReconciliation": {
     "title": "⚖️ تسوية المحفظة",
@@ -2205,6 +2209,8 @@
     "assignedByAdmin": "أسندت الإدارة المهمة إلى {{oeilName}}.",
     "assistanceUrgenceSystemMessage": "أبلغت العين عن حالة طارئة. البحث عن بديل جارٍ.",
     "assistanceMissionRequestSystemMessage": "العين تبلغ: {{reason}}. في انتظار تأكيدك.",
+    "presenceNotConfirmedSystemMessage": "العين الميدانية لم تؤكد حضورها في الوقت المحدد. البحث عن بديل جارٍ.",
+    "autoTransferH30SystemMessage": "العين الميدانية لم تبدأ المهمة في الوقت المحدد. البحث عن بديل جارٍ.",
     "forceReassignSystemMessage": "أطلقت الإدارة بحثاً عن بديل لهذه المهمة."
   },
   "statusBadge": {
