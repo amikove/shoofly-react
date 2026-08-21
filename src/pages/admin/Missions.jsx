@@ -5,10 +5,14 @@ import Topbar from '../../components/layout/Topbar'
 import { missionsAPI, adminAPI } from '../../api'
 import { StatusBadge, Spinner, EmptyState, toast, Pagination } from '../../components/ui'
 import { CASABLANCA_TZ } from '../../utils/casablancaTime'
+import { useAuth } from '../../context/AuthContext'
+import AdminEditMissionModal from '../../components/missions/AdminEditMissionModal'
 
 export default function AdminMissions() {
  const navigate = useNavigate()
  const location = useLocation()
+ const { user } = useAuth()
+ const [editModal, setEditModal] = useState(null)
  const [missions, setMissions]       = useState([])
   const [loading, setLoading]         = useState(true)
   const [search, setSearch]           = useState(location.state?.search || '')
@@ -295,6 +299,14 @@ const doAssign = async (overrideWarning = false, overrideReason = '') => {
                         )}
                         <td><StatusBadge status={m.status} /></td>
                       <td>
+                        {user?.is_super_admin && (
+                          <button
+                            onClick={() => setEditModal(m)}
+                            className="btn btn-ghost btn-sm text-white/70"
+                          >
+                            ✏️ Modifier
+                          </button>
+                        )}
                         {m.status === 'pending' && (
                             <button
                               onClick={() => openAssign(m)}
@@ -492,6 +504,14 @@ const doAssign = async (overrideWarning = false, overrideReason = '') => {
             </button>
           </div>
         </div>
+      )}
+
+      {editModal && (
+        <AdminEditMissionModal
+          mission={editModal}
+          onClose={() => setEditModal(null)}
+          onSaved={() => load()}
+        />
       )}
 
       {overrideWarningModal && (

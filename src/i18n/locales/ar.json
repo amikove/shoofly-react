@@ -614,6 +614,43 @@
       "generic": "خطأ أثناء التعديل"
     }
   },
+  "adminEditMissionModal": {
+    "title": "تعديل المهمة (مدير عام)",
+    "priceLockedNotice": "السعر مقفل بعد الإنشاء، حتى بالنسبة للمدير العام — لا يظهر في هذه الشاشة.",
+    "titleLabel": "العنوان",
+    "typeLabel": "النوع",
+    "subcategoryLabel": "الفئة الفرعية",
+    "subcategoryNone": "لا شيء",
+    "cityLabel": "المدينة",
+    "cityPlaceholder": "ابحث عن مدينة...",
+    "quartierLabel": "الحي",
+    "quartierPlaceholder": "ابحث عن حي...",
+    "quartierPlaceholderDisabled": "اختر مدينة أولاً",
+    "addressLabel": "العنوان الكامل",
+    "descriptionLabel": "التعليمات / الوصف",
+    "dateLabel": "التاريخ",
+    "timeLabel": "الوقت",
+    "durationLabel": "المدة المقدرة (دقائق)",
+    "replacementPreferenceLabel": "تفضيل الاستبدال",
+    "replacementPreferenceFast": "سريع",
+    "replacementPreferenceChoose": "اختيار",
+    "replacementPreferenceDeadNotice": "معلومة تاريخية فقط — لم يعد لها أي تأثير على إعادة الإسناد التلقائي (تُدار بالكامل عبر سلسلة التأكيد المتتالية).",
+    "submitLoading": "جارٍ الإرسال...",
+    "submitApply": "حفظ",
+    "cancel": "إلغاء",
+    "savedToast": "تم تعديل المهمة ✓",
+    "historyTitle": "سجل التعديلات الإدارية",
+    "historyEmpty": "لا يوجد أي تعديل إداري على هذه المهمة",
+    "historyLoadError": "خطأ في تحميل السجل",
+    "unknownAdmin": "مسؤول",
+    "errors": {
+      "titleTooShort": "يجب أن يتكون العنوان من 6 أحرف على الأقل",
+      "cityQuartierRequired": "المدينة والحي مطلوبان",
+      "dateTimeRequired": "التاريخ والوقت مطلوبان",
+      "noChanges": "لا توجد تغييرات لحفظها",
+      "generic": "خطأ أثناء التعديل"
+    }
+  },
   "clientOeils": {
     "title": "العيون الميدانية",
     "searchPlaceholder": "🔍 اسم، مدينة...",

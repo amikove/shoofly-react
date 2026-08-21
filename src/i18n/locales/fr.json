@@ -613,6 +613,43 @@
       "generic": "Erreur lors de la modification"
     }
   },
+  "adminEditMissionModal": {
+    "title": "Modifier la mission (Super Admin)",
+    "priceLockedNotice": "Le prix est verrouillé après création, y compris pour le Super Admin — il n'apparaît pas dans cet écran.",
+    "titleLabel": "Titre",
+    "typeLabel": "Type",
+    "subcategoryLabel": "Sous-catégorie",
+    "subcategoryNone": "Aucune",
+    "cityLabel": "Ville",
+    "cityPlaceholder": "Rechercher une ville...",
+    "quartierLabel": "Quartier",
+    "quartierPlaceholder": "Rechercher un quartier...",
+    "quartierPlaceholderDisabled": "Choisissez d'abord une ville",
+    "addressLabel": "Adresse complète",
+    "descriptionLabel": "Instructions / description",
+    "dateLabel": "Date",
+    "timeLabel": "Heure",
+    "durationLabel": "Durée estimée (minutes)",
+    "replacementPreferenceLabel": "Préférence de remplacement",
+    "replacementPreferenceFast": "Rapide",
+    "replacementPreferenceChoose": "Choisir",
+    "replacementPreferenceDeadNotice": "Information historique uniquement — n'a plus d'effet sur la réattribution automatique (gérée entièrement par la cascade de confirmation séquentielle).",
+    "submitLoading": "Envoi...",
+    "submitApply": "Enregistrer",
+    "cancel": "Annuler",
+    "savedToast": "Mission modifiée ✓",
+    "historyTitle": "Historique des modifications admin",
+    "historyEmpty": "Aucune modification admin sur cette mission",
+    "historyLoadError": "Erreur de chargement de l'historique",
+    "unknownAdmin": "Administrateur",
+    "errors": {
+      "titleTooShort": "Le titre doit contenir au moins 6 caractères",
+      "cityQuartierRequired": "Ville et quartier requis",
+      "dateTimeRequired": "Date et heure requises",
+      "noChanges": "Aucun changement à enregistrer",
+      "generic": "Erreur lors de la modification"
+    }
+  },
   "clientOeils": {
     "title": "Les Œils",
     "searchPlaceholder": "🔍 Nom, ville...",
