@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import AppLayout from '../../components/layout/AppLayout'
 import Topbar from '../../components/layout/Topbar'
@@ -6,12 +6,14 @@ import { missionsAPI, adminAPI } from '../../api'
 import { StatusBadge, Spinner, EmptyState, toast, Pagination } from '../../components/ui'
 import { CASABLANCA_TZ } from '../../utils/casablancaTime'
 import { useAuth } from '../../context/AuthContext'
+import { useSocket } from '../../context/SocketContext'
 import AdminEditMissionModal from '../../components/missions/AdminEditMissionModal'
 
 export default function AdminMissions() {
  const navigate = useNavigate()
  const location = useLocation()
  const { user } = useAuth()
+ const { onEvent } = useSocket() || {}
  const [editModal, setEditModal] = useState(null)
  const [missions, setMissions]       = useState([])
   const [loading, setLoading]         = useState(true)
@@ -86,10 +88,28 @@ export default function AdminMissions() {
         .catch(() => toast('Erreur', 'error'))
         .finally(() => setLoading(false))
     }
+    // Toujours la dernière version de `load` (filtres/tri/page à jour) sans en faire une dépendance
+    // d'effet — `load` est redéfinie à chaque rendu, l'écouteur socket ci-dessous ne doit donc pas
+    // se désabonner/réabonner à chaque frappe de recherche pour rester à jour. Affectation dans un
+    // effet sans tableau de dépendances (pas directement dans le corps du rendu — interdit par
+    // react-hooks/refs, "Cannot update ref during render").
+    const loadRef = useRef(load)
+    useEffect(() => { loadRef.current = load })
 
     useEffect(() => { load() }, [search, status, tab, page, sortBy, sortDir])
     // Revenir à la page 1 si on change de recherche, statut ou onglet (évite une page vide hors limites)
     useEffect(() => { setPage(1) }, [search, status, tab])
+
+    // CONSTAT 21 (audit-360, FE-5) — rafraîchissement live de la liste sur les 3 événements
+    // room:admin liés au cycle de vie d'une mission (new_mission/mission_updated/mission_assigned,
+    // voir routes/missions.js). Ré-appelle `load()` (via loadRef, toujours à jour) avec les
+    // filtres/tri/page actuels — aucun rechargement de page. Abonné une seule fois par socket
+    // (deps [onEvent]), pas de ré-abonnement à chaque changement de filtre.
+    useEffect(() => {
+      if (!onEvent) return
+      const unsubs = ['new_mission', 'mission_updated', 'mission_assigned'].map(evt => onEvent(evt, () => loadRef.current()))
+      return () => unsubs.forEach(u => u())
+    }, [onEvent])
 
   const openAssign = async (mission) => {
     setAssignModal(mission)

@@ -1,10 +1,11 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import AppLayout from '../../components/layout/AppLayout'
 import Topbar from '../../components/layout/Topbar'
 import { missionsAPI } from '../../api'
 import { Spinner, toast, Pagination } from '../../components/ui'
 import { CASABLANCA_TZ } from '../../utils/casablancaTime'
+import { useSocket } from '../../context/SocketContext'
 
 const STATUS_TABS = [
   { id: 'open',        label: 'Ouverts',   color: 'text-red-400'    },
@@ -30,6 +31,7 @@ const typeColor = (type) => {
 
 export default function AdminProblemes() {
   const navigate = useNavigate()
+  const { onEvent } = useSocket() || {}
   const [reports, setReports]   = useState([])
   const [loading, setLoading]   = useState(true)
   const [tab, setTab]           = useState('open')
@@ -104,10 +106,24 @@ export default function AdminProblemes() {
       .catch(() => toast('Erreur chargement', 'error'))
       .finally(() => setLoading(false))
   }
+  // Toujours la dernière version de `load` sans en faire une dépendance d'effet — voir la même
+  // technique dans Missions.jsx (FE-5). Affectation dans un effet sans dépendances (pas dans le
+  // corps du rendu — interdit par react-hooks/refs).
+  const loadRef = useRef(load)
+  useEffect(() => { loadRef.current = load })
 
   useEffect(() => { load() }, [tab, page, filterType, filterCity, filterRole, sortByExecution, sortDir])
   // Revenir à la page 1 si l'onglet ou un filtre change (évite une page vide hors limites)
   useEffect(() => { setPage(1) }, [tab, filterType, filterCity, filterRole])
+
+  // CONSTAT 21 (audit-360, FE-5) — rafraîchissement live sur mission_problem_reported (room:admin,
+  // voir routes/missions.js ~4266). Un nouveau signalement pendant que l'écran est ouvert doit
+  // apparaître sans rechargement manuel.
+  useEffect(() => {
+    if (!onEvent) return
+    const unsub = onEvent('mission_problem_reported', () => loadRef.current())
+    return () => unsub()
+  }, [onEvent])
 
   const resolve = async (id, status, note) => {
     setActing(a => ({ ...a, [id]: true }))

@@ -7,6 +7,7 @@ import { ticketsAPI } from '../../api'
 import { Spinner, toast, Pagination } from '../../components/ui'
 import { CASABLANCA_TZ } from '../../utils/casablancaTime'
 import { useAuth } from '../../context/AuthContext'
+import { useSocket } from '../../context/SocketContext'
 import { TICKET_CATEGORIES } from '../../constants/ticketCategories'
 
 const STATUS_TABS = [
@@ -27,6 +28,7 @@ const STATUS_VARIANT = {
 export default function AdminTickets() {
   const { t } = useTranslation()
   const { user } = useAuth()
+  const { onEvent } = useSocket() || {}
   const navigate = useNavigate()
   const location = useLocation()
   const [tickets, setTickets] = useState([])
@@ -52,6 +54,15 @@ export default function AdminTickets() {
 
   useEffect(() => { load() }, [load])
   useEffect(() => { setPage(1) }, [tab, filterCategory, filterUrgent])
+
+  // CONSTAT 21 (audit-360, FE-5) — rafraîchissement live sur urgent_ticket_created (room:admin,
+  // voir routes/tickets.js:79). `load` est déjà stabilisé par useCallback ci-dessus, donc pas de
+  // ré-abonnement à chaque changement de filtre — seulement quand `load` change réellement.
+  useEffect(() => {
+    if (!onEvent) return
+    const unsub = onEvent('urgent_ticket_created', () => load())
+    return () => unsub()
+  }, [onEvent, load])
 
   const openTicket = (id) => {
     ticketsAPI.get(id)

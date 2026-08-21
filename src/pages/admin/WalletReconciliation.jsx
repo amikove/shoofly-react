@@ -6,6 +6,7 @@ import Topbar from '../../components/layout/Topbar'
 import { adminAPI } from '../../api'
 import { Spinner, toast, Pagination, Badge } from '../../components/ui'
 import { CASABLANCA_TZ } from '../../utils/casablancaTime'
+import { useSocket } from '../../context/SocketContext'
 
 const TABS = ['unresolved', 'resolved', 'all']
 
@@ -13,6 +14,7 @@ export default function WalletReconciliation() {
   const { t } = useTranslation()
   const navigate = useNavigate()
   const location = useLocation()
+  const { onEvent } = useSocket() || {}
   const [alerts, setAlerts] = useState([])
   const [userMap, setUserMap] = useState({})
   const [loading, setLoading] = useState(true)
@@ -67,6 +69,17 @@ export default function WalletReconciliation() {
   }, [tab, page, reloadTick, t])
 
   useEffect(() => { setPage(1) }, [tab])
+
+  // CONSTAT 21 (audit-360, FE-5) — rafraîchissement live sur wallet_reconciliation_alert_created
+  // (room:admin, voir jobs/walletReconciliation.js:93). Réutilise reloadTick — le même mécanisme
+  // que le bouton "Résoudre" plus bas — plutôt qu'un appel direct à un `load()`, qui n'existe pas
+  // ici sous cette forme (le fetch vit dans l'effet ci-dessus, avec sa propre garde d'annulation ;
+  // voir le commentaire sur la race condition corrigée à l'ouverture de cet écran).
+  useEffect(() => {
+    if (!onEvent) return
+    const unsub = onEvent('wallet_reconciliation_alert_created', () => setReloadTick(v => v + 1))
+    return () => unsub()
+  }, [onEvent])
 
   useEffect(() => {
     let cancelled = false
