@@ -6,6 +6,23 @@ import { adminAPI, missionsAPI } from '../../api'
 import { Spinner, toast } from '../../components/ui'
 import { CASABLANCA_TZ } from '../../utils/casablancaTime'
 
+// CONSTAT 13 (audit-360, FE-4) — seuil au-delà duquel une réclamation encore 'pending' est mise
+// en évidence (badge rouge) dans la liste admin. 24h choisi comme délai raisonnable de première
+// prise en charge d'un litige ouvert par un client, cohérent avec les autres délais "J-1"/fenêtres
+// de 24h déjà utilisés ailleurs dans l'app (ex. rappel client J-1). Purement un seuil d'affichage
+// — aucune logique métier/backend associée (pas d'auto-escalade, pas de SLA contractuel).
+const CLAIM_AGE_WARNING_HOURS = 24
+
+function formatClaimAge(ageHours) {
+  const h = Number(ageHours)
+  if (!Number.isFinite(h) || h < 0) return null
+  if (h < 1) return '< 1h'
+  if (h < 24) return `${Math.floor(h)}h`
+  const days = Math.floor(h / 24)
+  const rem = Math.floor(h % 24)
+  return rem > 0 ? `${days}j ${rem}h` : `${days}j`
+}
+
 export default function AdminReclamations() {
   const navigate = useNavigate()
   const [claims, setClaims]     = useState([])
@@ -115,9 +132,16 @@ export default function AdminReclamations() {
                   Prix : <span className="text-green-400">{c.mission_price} MAD</span> · Gain Œil : <span className="text-[#FF4D00]">{c.oeil_earning} MAD</span>
                 </div>
               </div>
-              <span className="text-xs text-[#555] shrink-0">
-                {new Date(c.created_at).toLocaleDateString('fr-FR', { timeZone: CASABLANCA_TZ, day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}
-              </span>
+              <div className="flex flex-col items-end gap-1 shrink-0">
+                <span className="text-xs text-[#555]">
+                  {new Date(c.created_at).toLocaleDateString('fr-FR', { timeZone: CASABLANCA_TZ, day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}
+                </span>
+                {formatClaimAge(c.age_hours) && (
+                  <span className={`badge ${Number(c.age_hours) >= CLAIM_AGE_WARNING_HOURS ? 'badge-red' : 'badge-gray'}`}>
+                    {Number(c.age_hours) >= CLAIM_AGE_WARNING_HOURS && '⏱ '}Ouverte depuis {formatClaimAge(c.age_hours)}
+                  </span>
+                )}
+              </div>
             </div>
 
             <div className="bg-[#222] rounded-xl p-3">

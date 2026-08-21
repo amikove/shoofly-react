@@ -2107,7 +2107,19 @@
     "partialPaymentAutoReceivedTitle": "💰 تم استلام دفعة جزئية (تلقائياً)",
     "partialPaymentAutoReceivedBody": "تم إيداع {{amount}} درهم — حصتك من \"{{missionTitle}}\" (تصديق تلقائي بعد انتهاء المهلة).",
     "candidatureAdminAlertTitle": "⏰ مهمة وشيكة دون اختيار مرشح",
-    "candidatureAdminAlertBody": "مهمة \"{{missionTitle}}\" مقررة قريباً ولم يختر العميل بعد عيناً ميدانية من بين {{count}} ترشيح(ات) مستلمة."
+    "candidatureAdminAlertBody": "مهمة \"{{missionTitle}}\" مقررة قريباً ولم يختر العميل بعد عيناً ميدانية من بين {{count}} ترشيح(ات) مستلمة.",
+    "commissionDebitedOeilTitle": "💸 تم خصم العمولة",
+    "commissionDebitedOeilBody": "تم خصم {{amount}} درهم كعمولة من محفظتك (مهمة نقدية).",
+    "cashplusRechargeCompletedTitle": "💰 تمت إعادة الشحن",
+    "cashplusRechargeCompletedBody": "تم إضافة {{amount}} درهم إلى محفظتك بعد إعادة الشحن عبر CashPlus.",
+    "claimResolvedClientWinCashTitle": "✅ تم حل الاعتراض",
+    "claimResolvedClientWinCashBody": "حُلت لصالحك. تم إلغاء المهمة.",
+    "clientReminderJ1Title": "📅 تذكير — مهمة غدًا",
+    "clientReminderJ1Body": "مهمتك \"{{missionTitle}}\" مقررة غدًا الساعة {{time}}.",
+    "clientReminderH2Title": "📅 تذكير — مهمة قريبًا",
+    "clientReminderH2Body": "مهمتك \"{{missionTitle}}\" مقررة خلال حوالي {{minutes}} دقيقة.",
+    "missionCancelledCashClientTitle": "تم إلغاء المهمة",
+    "missionCancelledCashClientBody": "تم إلغاء \"{{missionTitle}}\"."
   },
   "walletReconciliation": {
     "title": "⚖️ تسوية المحفظة",

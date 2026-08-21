@@ -2108,7 +2108,19 @@
     "partialPaymentAutoReceivedTitle": "💰 Paiement partiel reçu (automatique)",
     "partialPaymentAutoReceivedBody": "{{amount}} MAD crédités — votre part de \"{{missionTitle}}\" (validation automatique après délai).",
     "candidatureAdminAlertTitle": "⏰ Mission proche sans candidature validée",
-    "candidatureAdminAlertBody": "\"{{missionTitle}}\" est prévue bientôt et le client n'a toujours pas choisi d'Œil parmi {{count}} candidature(s) reçues."
+    "candidatureAdminAlertBody": "\"{{missionTitle}}\" est prévue bientôt et le client n'a toujours pas choisi d'Œil parmi {{count}} candidature(s) reçues.",
+    "commissionDebitedOeilTitle": "💸 Commission débitée",
+    "commissionDebitedOeilBody": "{{amount}} MAD de commission débités de votre wallet (mission cash).",
+    "cashplusRechargeCompletedTitle": "💰 Recharge effectuée",
+    "cashplusRechargeCompletedBody": "Votre wallet a été crédité de {{amount}} MAD suite à votre recharge CashPlus.",
+    "claimResolvedClientWinCashTitle": "✅ Réclamation résolue",
+    "claimResolvedClientWinCashBody": "Résolue en votre faveur. Mission annulée.",
+    "clientReminderJ1Title": "📅 Rappel — mission demain",
+    "clientReminderJ1Body": "Votre mission \"{{missionTitle}}\" est prévue demain à {{time}}.",
+    "clientReminderH2Title": "📅 Rappel — mission bientôt",
+    "clientReminderH2Body": "Votre mission \"{{missionTitle}}\" est prévue dans environ {{minutes}} minutes.",
+    "missionCancelledCashClientTitle": "Mission annulée",
+    "missionCancelledCashClientBody": "\"{{missionTitle}}\" a été annulée."
   },
   "walletReconciliation": {
     "title": "⚖️ Réconciliation Wallet",
