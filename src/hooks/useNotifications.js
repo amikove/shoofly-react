@@ -121,39 +121,11 @@ const unsubNotif = onEvent('notification', (notif) => {
       )
     })
 
-    // Mission acceptée (pour le client)
-    const unsubAccepted = onEvent('mission_accepted', (data) => {
-      if (user.role !== 'client') return
-
-      toast(`👁️ Votre Œil a accepté la mission : ${data.mission_title}`, 'success')
-
-      sendPushNotification(
-        '👁️ Œil assigné !',
-        `${data.oeil_name} a accepté votre mission "${data.mission_title}"`,
-        { tag: `accepted-${data.mission_id}`, url: '/client/missions' }
-      )
-    })
-
-    // Mission terminée
-    const unsubCompleted = onEvent('mission_completed', (data) => {
-      if (user.role !== 'client') return
-
-      toast(`✅ Mission terminée : ${data.mission_title}`, 'success')
-
-      sendPushNotification(
-        '✅ Mission terminée !',
-        `"${data.mission_title}" a été complétée. Notez votre Œil.`,
-        { tag: `completed-${data.mission_id}`, url: '/client/missions' }
-      )
-    })
-
    return () => {
 
     unsubDebug?.()
     unsubMessage?.()
     unsubMission?.()
-    unsubAccepted?.()
-    unsubCompleted?.()
     unsubNotif?.()
   }
   }, [onEvent, user])

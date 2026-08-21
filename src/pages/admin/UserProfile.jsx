@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import AppLayout from '../../components/layout/AppLayout'
 import Topbar from '../../components/layout/Topbar'
-import { adminAPI } from '../../api'
+import { adminAPI, missionsAPI } from '../../api'
 import { Spinner, EmptyState, Avatar, StatusBadge, Badge, Pagination, toast } from '../../components/ui'
 import { CASABLANCA_TZ } from '../../utils/casablancaTime'
 
@@ -78,6 +78,27 @@ export default function UserProfile() {
   const applyDateFilter = () => load(page, dateFrom, dateTo)
   const clearDateFilter = () => { setDateFrom(''); setDateTo(''); load(page, '', '') }
 
+  // Désactivation manuelle d'un compte client (FE-3 constat 08) — équivalent du bouton déjà en
+  // place sur Oeils.jsx (Suspendre/Activer), même route PUT /admin/:id/toggle-active, qui gère
+  // déjà correctement is_active pour un client (branche non-Œil, avec déclenchement de
+  // handleClientDisabled sur toute mission en cours — voir routes/users.js). Raison demandée
+  // uniquement à la désactivation, jamais à la réactivation — même logique que Oeils.jsx.
+  const toggleClientActive = async () => {
+    let reason
+    if (data.user.is_active) {
+      const input = window.prompt('Pourquoi désactivez-vous ce compte client ?')
+      if (input === null) return
+      reason = input.trim() || undefined
+    }
+    try {
+      await adminAPI.toggleActive(data.user.id, reason ? { reason } : undefined)
+      toast('Statut modifié', 'info')
+      load()
+    } catch {
+      toast('Erreur', 'error')
+    }
+  }
+
   if (loading && !data) {
     return (
       <AppLayout>
@@ -120,6 +141,11 @@ export default function UserProfile() {
             </p>
             <p className="text-xs text-[#555] mt-0.5">Inscrit le {fmtDate(user.created_at)}</p>
           </div>
+          {!isOeil && (
+            <button onClick={toggleClientActive} className={`btn btn-ghost btn-sm ${user.is_active ? 'text-red-400' : 'text-green-400'}`}>
+              {user.is_active ? 'Désactiver' : 'Activer'}
+            </button>
+          )}
           <button onClick={() => navigate(-1)} className="btn btn-ghost btn-sm">← Retour</button>
         </div>
 
@@ -151,7 +177,7 @@ export default function UserProfile() {
           />
         )}
         {tab === 'problemes' && <ProblemesTab problems={problems} />}
-        {tab === 'fiabilite' && isOeil && <FiabiliteTab reliability={reliability} />}
+        {tab === 'fiabilite' && isOeil && <FiabiliteTab reliability={reliability} onReload={() => load()} />}
       </div>
     </AppLayout>
   )
@@ -398,9 +424,29 @@ function ProblemesTab({ problems }) {
 }
 
 // ═══ Onglet Fiabilité (Œil uniquement) ═══
-function FiabiliteTab({ reliability }) {
+function FiabiliteTab({ reliability, onReload }) {
+  const [requalifying, setRequalifying] = useState(null) // id de la déclaration en cours de traitement
   if (!reliability) return null
   const events = reliability.events || []
+  const urgenceDeclarations = reliability.urgence_declarations || []
+
+  // Requalification a posteriori d'une déclaration d'urgence (PROMPT 1 point 5) : applique une
+  // pénalité de fiabilité si le préavis était insuffisant, notifie l'Œil — irréversible (le
+  // backend refuse toute 2e requalification sur la même déclaration), d'où la confirmation.
+  const requalify = async (declaration) => {
+    if (!window.confirm(`Requalifier la déclaration d'urgence sur "${declaration.mission_title}" comme non légitime ? Cette action peut appliquer une pénalité de fiabilité à l'Œil et ne peut pas être annulée.`)) return
+    setRequalifying(declaration.id)
+    try {
+      const { data } = await missionsAPI.requalifyUrgence(declaration.id)
+      toast(data.penalty?.points ? `Requalifiée — pénalité appliquée (${data.penalty.points} pts)` : 'Requalifiée — aucune pénalité (préavis suffisant)', 'success')
+      onReload?.()
+    } catch (err) {
+      toast(err.response?.data?.error || 'Erreur lors de la requalification', 'error')
+    } finally {
+      setRequalifying(null)
+    }
+  }
+
   return (
     <div className="space-y-5">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -428,6 +474,36 @@ function FiabiliteTab({ reliability }) {
           <p className="text-sm text-white/80">{reliability.suspended_reason}</p>
         </div>
       )}
+
+      <div>
+        <h3 className="text-sm font-semibold mb-2">Déclarations d'urgence ({urgenceDeclarations.length})</h3>
+        {urgenceDeclarations.length === 0 ? (
+          <div className="card text-center py-8 text-[#AAA] text-sm">Aucune déclaration d'urgence</div>
+        ) : (
+          <div className="space-y-2">
+            {urgenceDeclarations.map(d => (
+              <div key={d.id} className="p-3 rounded-xl text-xs bg-[#222] flex items-center justify-between gap-3">
+                <div className="min-w-0">
+                  <div className="text-white/80 font-medium truncate">{d.mission_title}</div>
+                  <div className="text-[#AAA] mt-0.5">{d.reason}</div>
+                  <div className="text-[10px] text-[#555] mt-1">{fmtDateTime(d.created_at)}</div>
+                </div>
+                {d.admin_requalified_at ? (
+                  <Badge variant="gray">Requalifiée le {fmtDate(d.admin_requalified_at)}</Badge>
+                ) : (
+                  <button
+                    onClick={() => requalify(d)}
+                    disabled={requalifying === d.id}
+                    className="btn btn-ghost btn-sm text-red-400 disabled:opacity-50 flex-shrink-0"
+                  >
+                    {requalifying === d.id ? '...' : 'Requalifier'}
+                  </button>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
 
       <div>
         <h3 className="text-sm font-semibold mb-2">Historique des événements ({events.length})</h3>

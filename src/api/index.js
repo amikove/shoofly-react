@@ -40,6 +40,7 @@ export const missionsAPI = {
   edit:         (id, data)   => api.put(`/api/missions/${id}`, data),
   adminEdit:        (id, data) => api.put(`/api/missions/${id}/admin-edit`, data),
   adminEditsHistory: (id)      => api.get(`/api/missions/${id}/admin-edits`),
+  requalifyUrgence: (id)     => api.post(`/api/missions/assistance-requests/${id}/requalify`),
   approveEditRequest: (id)   => api.post(`/api/missions/edit-requests/${id}/approve`),
   rejectEditRequest:  (id)   => api.post(`/api/missions/edit-requests/${id}/reject`),
   transfer:     (id, data)   => api.post(`/api/missions/${id}/transfer`, data),
