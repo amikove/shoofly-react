@@ -98,6 +98,11 @@ const handleClick = (n) => {
       // liste, en réutilisant le pendingAction 'mission_detail' déjà câblé côté ClientMissions.
       if (n.title_key === 'assistanceMissionRequestClientTitle') {
         setPending('mission_detail', n.mission_id)
+      } else if (n.title_key === 'candidateConfirmRequestTitle') {
+        // Sollicitation de lot (advanceCandidateCascade, backend) : ouvre directement la modale
+        // de confirmation/déclin côté OeilMissions plutôt que la simple liste — même principe
+        // que 'mission_detail' ci-dessus.
+        setPending('candidate_confirm', n.mission_id)
       }
       navigate(missionsRoute)
       break

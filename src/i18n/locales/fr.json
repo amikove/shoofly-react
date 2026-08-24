@@ -1076,7 +1076,10 @@
       "networkErrorReconciling": "Connexion interrompue — vérification de votre candidature en cours...",
       "missionReconciledAssignedToYou": "Bonne nouvelle : cette mission vous a été attribuée ! Retrouvez-la dans l'onglet « En cours » 🎉",
       "missionReconciledGone": "Cette mission n'est plus disponible.",
-      "chatClosed": "Cette mission est clôturée, le chat n'est plus disponible."
+      "chatClosed": "Cette mission est clôturée, le chat n'est plus disponible.",
+      "candidateConfirmed": "Disponibilité confirmée ✓",
+      "candidateAlreadyConfirmed": "Vous aviez déjà confirmé pour cette mission ✓",
+      "candidateDeclined": "Mission déclinée"
     },
     "advanceStatusLabels": {
       "enRoute": "En route vers la mission ✓",
@@ -1100,6 +1103,17 @@
       "badge": "PRIORITÉ",
       "interestButton": "⚡ Je prends cette mission →",
       "interestButtonSending": "..."
+    },
+    "candidateConfirmModal": {
+      "title": "🎯 Confirmez votre disponibilité",
+      "body": "Vous êtes parmi les candidats les mieux classés pour « {{missionTitle}} ». Confirmez votre disponibilité pour rester en lice.",
+      "minutesLeft": "⏱️ {{minutes}} min restantes",
+      "expired": "⏱️ Délai expiré",
+      "confirmButton": "✓ Je suis disponible",
+      "confirming": "...",
+      "declineButton": "✕ Décliner",
+      "declining": "...",
+      "later": "Plus tard"
     },
     "filters": {
       "allQuartiers": "Tous les quartiers"

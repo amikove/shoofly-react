@@ -10,6 +10,7 @@ import { StatusBadge, Spinner, EmptyState, toast, Pagination, Stars } from '../.
 import { useNotif } from '../../context/NotifContext'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
+import { useSocket } from '../../context/SocketContext'
 import MissionHistoryModal from '../../components/missions/MissionHistoryModal'
 import MissionSummaryModal from '../../components/missions/MissionSummaryModal'
 import RateClientModal from '../../components/missions/RateClientModal'
@@ -60,9 +61,15 @@ export default function OeilMissions() {
   const [totalPages, setTotalPages] = useState(1)
   const { pendingAction, clearPending } = useNotif()
   const { user } = useAuth()
+  const { onEvent } = useSocket() || {}
   const [historyMission, setHistoryMission] = useState(null)
   const [assistanceMission, setAssistanceMission] = useState(null)
   const [bonusCampaign, setBonusCampaign] = useState({ active: false, percent: 0 })
+
+  // ── Cascade de confirmation par lot (candidate-confirm / candidate-decline) ──
+  const [candidateMission, setCandidateMission] = useState(null)
+  const [candidateActing, setCandidateActing] = useState(null) // 'confirm' | 'decline' | null
+  const [now, setNow] = useState(() => Date.now())
 
   useEffect(() => { missionsAPI.fiveStarBonus().then(({ data }) => setBonusCampaign(data)).catch(() => {}) }, [])
 
@@ -98,6 +105,55 @@ useEffect(() => {
       .finally(() => clearPending())
   }
 }, [pendingAction, missions, priorityMissions])
+
+  // Ouvrir la modale de confirmation de candidature depuis une notification (voir Topbar.jsx
+  // handleClick, cas 'mission_view' + title_key 'candidateConfirmRequestTitle'). Toujours une
+  // lecture fraîche via missionsAPI.get (pas de fallback sur missions/priorityMissions déjà
+  // chargées, contrairement à l'effet chat ci-dessus) : candidate_window_ends_at doit refléter
+  // l'état réel au moment où l'Œil décide de confirmer/décliner, jamais une valeur
+  // potentiellement périmée d'un load() antérieur.
+  useEffect(() => {
+    if (!pendingAction || pendingAction.type !== 'candidate_confirm') return
+    const id = pendingAction.missionId
+    if (!id) { clearPending(); return }
+
+    missionsAPI.get(id)
+      .then(({ data }) => setCandidateMission(data.mission || data))
+      .catch(() => toast(t('oeilMissions.toasts.genericError'), 'error'))
+      .finally(() => clearPending())
+    // clearPending/t volontairement hors dépendances (même schéma que l'effet chat ci-dessus) :
+    // ne doit réagir qu'à pendingAction.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pendingAction])
+
+  // Pousse la modale de confirmation en direct dès l'arrivée de la notification (socket), sans
+  // attendre que l'Œil pense à ouvrir la cloche — la fenêtre de confirmation ne dure que
+  // quelques minutes (candidate_confirmation_minutes). L'event 'notification' est déjà émis
+  // individuellement au bon Œil par notify()/emitToUser (backend) et déjà utilisé ailleurs
+  // (Topbar.jsx, badge de cloche) : ici on ne fait que réagir au même event.
+  useEffect(() => {
+    if (!onEvent) return
+    const unsub = onEvent('notification', (notif) => {
+      if (notif.title_key !== 'candidateConfirmRequestTitle' || !notif.mission_id) return
+      missionsAPI.get(notif.mission_id)
+        .then(({ data }) => setCandidateMission(data.mission || data))
+        .catch(() => {})
+    })
+    return () => unsub?.()
+  }, [onEvent])
+
+  // Horloge du compte à rebours affiché dans la modale — ne tourne que pendant qu'elle est
+  // ouverte (même granularité, 60s, que les autres décomptes du projet : client/Dashboard.jsx,
+  // PresenceConfirmationBanner.jsx). Resync initiale différée via setTimeout(...,0) plutôt qu'un
+  // appel synchrone dans le corps de l'effet, pour rester exacte dès l'ouverture sans dépendre
+  // du premier tick de 60s.
+  useEffect(() => {
+    if (!candidateMission) return
+    const tick = () => setNow(Date.now())
+    const resync = setTimeout(tick, 0)
+    const iv = setInterval(tick, 60000)
+    return () => { clearTimeout(resync); clearInterval(iv) }
+  }, [candidateMission])
 
 const load = useCallback((t) => {
   setLoading(true)
@@ -294,6 +350,43 @@ const load = useCallback((t) => {
     }
   }
 
+  // Confirmation/déclin d'une sollicitation de lot (candidate-confirm / candidate-decline).
+  // Le backend est seul juge de la validité (403 si plus sollicité, 409 si mission déjà
+  // tranchée entretemps) : on ferme systématiquement la modale et on recharge l'onglet plutôt
+  // que de deviner l'issue côté client — même logique de confiance que reconcileMission.
+  const confirmCandidate = async () => {
+    if (!candidateMission) return
+    setCandidateActing('confirm')
+    try {
+      const { data } = await missionsAPI.candidateConfirm(candidateMission.id)
+      toast(
+        data.already_confirmed ? t('oeilMissions.toasts.candidateAlreadyConfirmed') : t('oeilMissions.toasts.candidateConfirmed'),
+        'success'
+      )
+    } catch (err) {
+      toast(err.response?.data?.error || t('oeilMissions.toasts.genericError'), 'error')
+    } finally {
+      setCandidateActing(null)
+      setCandidateMission(null)
+      load(tab)
+    }
+  }
+
+  const declineCandidate = async () => {
+    if (!candidateMission) return
+    setCandidateActing('decline')
+    try {
+      await missionsAPI.candidateDecline(candidateMission.id)
+      toast(t('oeilMissions.toasts.candidateDeclined'), 'info')
+    } catch (err) {
+      toast(err.response?.data?.error || t('oeilMissions.toasts.genericError'), 'error')
+    } finally {
+      setCandidateActing(null)
+      setCandidateMission(null)
+      load(tab)
+    }
+  }
+
 
 const [complianceAdvance, setComplianceAdvance] = useState(null)
 const [photosMission, setPhotosMission] = useState(null)
@@ -385,6 +478,13 @@ try {
 }
 
 
+
+  // Minutes restantes avant candidate_window_ends_at (délai pour confirmer sa disponibilité,
+  // voir advanceCandidateCascade côté backend) — arrondi au-dessus pour ne jamais afficher
+  // "0 min" tant qu'il reste ne serait-ce que quelques secondes.
+  const candidateMinutesLeft = candidateMission?.candidate_window_ends_at
+    ? Math.max(0, Math.ceil((new Date(candidateMission.candidate_window_ends_at).getTime() - now) / 60000))
+    : null
 
   const emptyProps = {
     priority:  { icon:'🟢', title: t('oeilMissions.empty.priority.title'),  desc: t('oeilMissions.empty.priority.desc')  },
@@ -714,6 +814,56 @@ try {
 
       {photosMission && (
         <MissionPhotosModal mission={photosMission} onClose={() => setPhotosMission(null)} />
+      )}
+
+      {candidateMission && (
+        <div className="fixed inset-0 bg-black/80 z-[70] flex items-center justify-center p-4 backdrop-blur-sm">
+          <div className="bg-[#181818] border border-[#FF4D00]/30 rounded-2xl p-6 w-full max-w-md shadow-xl max-h-[85vh] overflow-y-auto">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-10 h-10 rounded-xl bg-[#FF4D00]/10 flex items-center justify-center text-xl flex-shrink-0">🎯</div>
+              <div className="min-w-0">
+                <h2 className="font-bold text-base">{t('oeilMissions.candidateConfirmModal.title')}</h2>
+                <p className="text-xs text-[#AAA] truncate">{candidateMission.title}</p>
+              </div>
+            </div>
+
+            <p className="text-sm text-[#CCC] mb-4">
+              {t('oeilMissions.candidateConfirmModal.body', { missionTitle: candidateMission.title })}
+            </p>
+
+            {candidateMinutesLeft !== null && (
+              <p className={`text-xs font-semibold mb-5 ${candidateMinutesLeft > 0 ? 'text-[#FF4D00]' : 'text-red-400'}`}>
+                {candidateMinutesLeft > 0
+                  ? t('oeilMissions.candidateConfirmModal.minutesLeft', { minutes: candidateMinutesLeft })
+                  : t('oeilMissions.candidateConfirmModal.expired')}
+              </p>
+            )}
+
+            <div className="flex gap-2">
+              <button
+                onClick={confirmCandidate}
+                disabled={!!candidateActing}
+                className="btn btn-sm flex-1 justify-center bg-green-500 text-white hover:bg-green-600 disabled:opacity-50"
+              >
+                {candidateActing === 'confirm' ? t('oeilMissions.candidateConfirmModal.confirming') : t('oeilMissions.candidateConfirmModal.confirmButton')}
+              </button>
+              <button
+                onClick={declineCandidate}
+                disabled={!!candidateActing}
+                className="btn btn-sm flex-1 justify-center bg-red-500 text-white hover:bg-red-600 disabled:opacity-50"
+              >
+                {candidateActing === 'decline' ? t('oeilMissions.candidateConfirmModal.declining') : t('oeilMissions.candidateConfirmModal.declineButton')}
+              </button>
+            </div>
+            <button
+              onClick={() => setCandidateMission(null)}
+              disabled={!!candidateActing}
+              className="w-full text-center text-xs text-[#666] hover:text-white mt-3 disabled:opacity-50"
+            >
+              {t('oeilMissions.candidateConfirmModal.later')}
+            </button>
+          </div>
+        </div>
       )}
     </AppLayout>
   )

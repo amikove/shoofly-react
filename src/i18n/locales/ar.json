@@ -1077,7 +1077,10 @@
       "networkErrorReconciling": "انقطع الاتصال — جارٍ التحقق من طلبك...",
       "missionReconciledAssignedToYou": "خبر سار: تم إسناد هذه المهمة إليك! ستجدها في تبويب «جارية» 🎉",
       "missionReconciledGone": "هذه المهمة لم تعد متاحة.",
-      "chatClosed": "هذه المهمة مغلقة، المحادثة لم تعد متاحة."
+      "chatClosed": "هذه المهمة مغلقة، المحادثة لم تعد متاحة.",
+      "candidateConfirmed": "تم تأكيد التوفر ✓",
+      "candidateAlreadyConfirmed": "لقد أكدت توفرك بالفعل لهذه المهمة ✓",
+      "candidateDeclined": "تم رفض المهمة"
     },
     "advanceStatusLabels": {
       "enRoute": "في الطريق إلى المهمة ✓",
@@ -1101,6 +1104,17 @@
       "badge": "أولوية",
       "interestButton": "⚡ سأتولى هذه المهمة ←",
       "interestButtonSending": "..."
+    },
+    "candidateConfirmModal": {
+      "title": "🎯 أكد توفرك",
+      "body": "أنت من ضمن المرشحين الأعلى تصنيفاً لمهمة « {{missionTitle}} ». أكد توفرك لتبقى ضمن المرشحين.",
+      "minutesLeft": "⏱️ يتبقى {{minutes}} دقيقة",
+      "expired": "⏱️ انتهت المهلة",
+      "confirmButton": "✓ أنا متوفر",
+      "confirming": "...",
+      "declineButton": "✕ رفض",
+      "declining": "...",
+      "later": "لاحقًا"
     },
     "filters": {
       "allQuartiers": "جميع الأحياء"
