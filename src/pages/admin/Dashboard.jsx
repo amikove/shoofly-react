@@ -53,6 +53,7 @@ export default function AdminDashboard() {
   // ── Données exécutives ──
   const [execData, setExecData] = useState(null)
   const [loadingExec, setLoadingExec] = useState(true)
+  const [execError, setExecError] = useState(false)
 
   // ── Alertes ──
   const [alertData, setAlertData] = useState(null)
@@ -121,8 +122,8 @@ export default function AdminDashboard() {
       ...(compareRange ? { compare_from: compareRange.from.toISOString(), compare_to: compareRange.to.toISOString() } : {}),
     }
     adminAPI.dashboardExecutif(params)
-      .then(({ data }) => setExecData(data))
-      .catch(() => toast('Erreur chargement dashboard', 'error'))
+      .then(({ data }) => { setExecData(data); setExecError(false) })
+      .catch(() => { setExecError(true); toast('Erreur chargement dashboard', 'error') })
       .finally(() => setLoadingExec(false))
   }, [range, compareRange])
 
@@ -381,6 +382,8 @@ export default function AdminDashboard() {
 
             {loadingExec ? (
               <div className="flex justify-center py-20"><Spinner size="lg" /></div>
+            ) : execError ? (
+              <div className="card text-center py-8 text-[#AAA] text-sm">Impossible de charger les données. Réessayez plus tard.</div>
             ) : (
               <>
                 {/* KPIs */}
