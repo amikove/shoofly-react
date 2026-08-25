@@ -5,6 +5,7 @@ import { useAuth } from '../../context/AuthContext'
 import { Avatar } from '../ui'
 import { useNotifications } from '../../hooks/useNotifications'
 import NotificationBanner from '../ui/NotificationBanner'
+import ConnectionLostBanner from '../ui/ConnectionLostBanner'
 import PresenceConfirmationBanner from '../missions/PresenceConfirmationBanner'
 import ClientDisabledBanner from '../missions/ClientDisabledBanner'
 import ResumeH30Banner from '../missions/ResumeH30Banner'
@@ -302,6 +303,7 @@ useEffect(() => {
       </nav>
 
       <NotificationBanner />
+      <ConnectionLostBanner />
       <PresenceConfirmationBanner />
       <ClientDisabledBanner />
       <ResumeH30Banner />

@@ -199,12 +199,6 @@ export default function ClientOeils() {
                   >
                     {t('clientOeils.reviewsButton')}
                   </button>
-                  <button
-                    onClick={() => toast(t('clientOeils.favoriteToast'), 'success')}
-                    className="btn btn-ghost btn-sm"
-                  >
-                    ❤️
-                  </button>
                 </div>
               </div>
             ))}

@@ -158,6 +158,11 @@ const PAYMENT_METHODS = [
 ]
 const DEFAULT_PAYMENT_METHOD = PAYMENT_METHODS.find((m) => m.enabled)?.value || 'cash'
 
+// Même tolérance que le backend (missions.js, SCHEDULED_AT_PAST_TOLERANCE_MS — chantier
+// audit-360 v2, point 7) : POST /missions refuse déjà un scheduled_at de plus de 5 min dans le
+// passé, cette vérification côté formulaire ne fait qu'anticiper le même refus avant l'appel API.
+const SCHEDULED_AT_PAST_TOLERANCE_MS = 5 * 60 * 1000
+
 export default function NewMissionModal({ open, onClose, onCreated, preselectedOeil }) {
   const { t }             = useTranslation()
   const { user }          = useAuth()
@@ -221,6 +226,11 @@ if (parseFloat(form.price) < minPrice) {
       toast(t('newMissionModal.errors.dateTimeRequired'), 'error')
       return
     }
+    const scheduledAtISO = casablancaWallTimeToISO(form.scheduled_date, form.scheduled_time)
+    if (new Date(scheduledAtISO).getTime() < Date.now() - SCHEDULED_AT_PAST_TOLERANCE_MS) {
+      toast(t('newMissionModal.errors.scheduledAtPast'), 'error')
+      return
+    }
     if ((type === 'file_attente' || type === 'audit') && !subcategory) {
       toast(t('newMissionModal.errors.subcategoryRequired'), 'error')
       return
@@ -239,7 +249,7 @@ if (parseFloat(form.price) < minPrice) {
         price:        parseFloat(form.price),
         description:  form.description,
         payment_method: form.payment_method,
-        scheduled_at: casablancaWallTimeToISO(form.scheduled_date, form.scheduled_time),
+        scheduled_at: scheduledAtISO,
       }
       if (preselectedOeil?.id) payload.oeil_id = preselectedOeil.id
       if (promoResult) {

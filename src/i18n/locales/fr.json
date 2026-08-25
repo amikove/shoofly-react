@@ -666,7 +666,6 @@
     "unavailableTitle": "Cet Œil est actuellement occupé",
     "viewReviews": "Voir les avis",
     "reviewsButton": "★ Avis",
-    "favoriteToast": "Ajouté aux favoris ❤️",
     "missionAssignedToast": "Mission assignée directement à {{name}} 🎉",
     "missionCreatedToast": "Mission créée ! 🎉",
     "avisPopup": {
@@ -865,6 +864,7 @@
       "budgetBelowMin": "Le budget minimum pour cette mission est de {{min}} MAD",
       "quartierRequired": "Quartier obligatoire",
       "dateTimeRequired": "Date et heure de la mission obligatoires",
+      "scheduledAtPast": "La date de la mission doit être dans le futur",
       "subcategoryRequired": "Veuillez sélectionner une sous-catégorie",
       "creationError": "Erreur lors de la création",
       "paymentInitError": "Erreur lors de l'initialisation du paiement"
@@ -1895,6 +1895,9 @@
     "previous": "Précédent",
     "next": "Suivant",
     "counter": "{{current}}/{{total}}"
+  },
+  "connectionLostBanner": {
+    "text": "Connexion perdue — reconnexion en cours…"
   },
   "notifications": {
     "title": "Notifications",

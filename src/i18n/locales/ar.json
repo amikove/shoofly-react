@@ -667,7 +667,6 @@
     "unavailableTitle": "هذه العين الميدانية مشغولة حالياً",
     "viewReviews": "عرض التقييمات",
     "reviewsButton": "★ التقييمات",
-    "favoriteToast": "أُضيف إلى المفضلة ❤️",
     "missionAssignedToast": "تم إسناد المهمة مباشرة إلى {{name}} 🎉",
     "missionCreatedToast": "تم إنشاء المهمة! 🎉",
     "avisPopup": {
@@ -866,6 +865,7 @@
       "budgetBelowMin": "الميزانية الدنيا لهذه المهمة هي {{min}} درهم",
       "quartierRequired": "الحي إلزامي",
       "dateTimeRequired": "تاريخ ووقت المهمة إلزاميان",
+      "scheduledAtPast": "يجب أن يكون تاريخ المهمة في المستقبل",
       "subcategoryRequired": "يرجى اختيار فئة فرعية",
       "creationError": "خطأ أثناء الإنشاء",
       "paymentInitError": "خطأ أثناء بدء الدفع"
@@ -1894,6 +1894,9 @@
     "previous": "السابق",
     "next": "التالي",
     "counter": "{{current}}/{{total}}"
+  },
+  "connectionLostBanner": {
+    "text": "الاتصال منقطع — جارٍ إعادة الاتصال…"
   },
   "notifications": {
     "title": "الإشعارات",

@@ -72,15 +72,17 @@ const UserProfile = lazy(() => import('./pages/admin/UserProfile'))
 
 
 // Route guard
-function RequireAuth({ children, allowedRoles }) {
-  const { user, loading } = useAuth()
+function RequireAuth({ children, allowedRoles, requiredPermission }) {
+  const { user, loading, hasPermission, isSuperAdmin } = useAuth()
   if (loading) return (
     <div className="min-h-screen flex items-center justify-center">
       <Spinner size="lg" />
     </div>
   )
   if (!user) return <Navigate to="/login" replace />
-  if (allowedRoles && !allowedRoles.includes(user.role)) {
+  const roleDenied = allowedRoles && !allowedRoles.includes(user.role)
+  const permissionDenied = requiredPermission && !(isSuperAdmin || hasPermission(requiredPermission))
+  if (roleDenied || permissionDenied) {
     const routes = { client: '/client', oeil: '/oeil', admin: '/admin' }
     return <Navigate to={routes[user.role] || '/login'} replace />
   }
@@ -161,23 +163,26 @@ export default function App() {
       <Route path="/oeil/suspendu" element={<RequireAuth allowedRoles={['oeil']}><CompteSuspendu /></RequireAuth>} />
 
       {/* Admin */}
+      {/* /admin (dash) volontairement sans requiredPermission : c'est la cible de repli de
+          RequireAuth pour le rôle admin (voir routes[user.role] ci-dessus) — la gater sur
+          'dash' créerait une boucle de redirection pour un admin sans cette permission. */}
       <Route path="/admin"              element={<RequireAuth allowedRoles={['admin']}><AdminDashboard /></RequireAuth>} />
-      <Route path="/admin/missions"     element={<RequireAuth allowedRoles={['admin']}><AdminMissions /></RequireAuth>} />
-      <Route path="/admin/oeils"        element={<RequireAuth allowedRoles={['admin']}><AdminOeils /></RequireAuth>} />
-      <Route path="/admin/clients"      element={<RequireAuth allowedRoles={['admin']}><AdminClients /></RequireAuth>} />
-      <Route path="/admin/fraude"       element={<RequireAuth allowedRoles={['admin']}><AdminFraude /></RequireAuth>} />
-      <Route path="/admin/reclamations" element={<RequireAuth allowedRoles={['admin']}><AdminReclamations /></RequireAuth>} />
-      <Route path="/admin/messages-suspects" element={<RequireAuth allowedRoles={['admin']}><AdminMessagesSuspects /></RequireAuth>} />
-      <Route path="/admin/parametres"   element={<RequireAuth allowedRoles={['admin']}><AdminParametres /></RequireAuth>} />
-      <Route path="/admin/promos" element={<RequireAuth allowedRoles={['admin']}><AdminPromos /></RequireAuth>} />
+      <Route path="/admin/missions"     element={<RequireAuth allowedRoles={['admin']} requiredPermission="missions"><AdminMissions /></RequireAuth>} />
+      <Route path="/admin/oeils"        element={<RequireAuth allowedRoles={['admin']} requiredPermission="users"><AdminOeils /></RequireAuth>} />
+      <Route path="/admin/clients"      element={<RequireAuth allowedRoles={['admin']} requiredPermission="users"><AdminClients /></RequireAuth>} />
+      <Route path="/admin/fraude"       element={<RequireAuth allowedRoles={['admin']} requiredPermission="moderation"><AdminFraude /></RequireAuth>} />
+      <Route path="/admin/reclamations" element={<RequireAuth allowedRoles={['admin']} requiredPermission="claims"><AdminReclamations /></RequireAuth>} />
+      <Route path="/admin/messages-suspects" element={<RequireAuth allowedRoles={['admin']} requiredPermission="moderation"><AdminMessagesSuspects /></RequireAuth>} />
+      <Route path="/admin/parametres"   element={<RequireAuth allowedRoles={['admin']} requiredPermission="settings"><AdminParametres /></RequireAuth>} />
+      <Route path="/admin/promos" element={<RequireAuth allowedRoles={['admin']} requiredPermission="finance"><AdminPromos /></RequireAuth>} />
       <Route path="/admin/admins" element={<RequireAuth allowedRoles={['admin']}><AdminGestion /></RequireAuth>} />
-      <Route path="/admin/fiabilite" element={<RequireAuth allowedRoles={['admin']}><AdminFiabilite /></RequireAuth>} />
-      <Route path="/admin/problemes" element={<RequireAuth allowedRoles={['admin']}><AdminProblemes /></RequireAuth>} />
-      <Route path="/admin/tickets" element={<RequireAuth allowedRoles={['admin']}><AdminTickets /></RequireAuth>} />
-      <Route path="/admin/finance" element={<RequireAuth allowedRoles={['admin']}><AdminFinance /></RequireAuth>} />
-      <Route path="/admin/wallet-reconciliation" element={<RequireAuth allowedRoles={['admin']}><AdminWalletReconciliation /></RequireAuth>} />
-      <Route path="/admin/clients-suspendus" element={<RequireAuth allowedRoles={['admin']}><AdminClientsSuspendus /></RequireAuth>} />
-      <Route path="/admin/missions-proches-validation" element={<RequireAuth allowedRoles={['admin']}><AdminMissionsProchesValidation /></RequireAuth>} />
+      <Route path="/admin/fiabilite" element={<RequireAuth allowedRoles={['admin']} requiredPermission="identity"><AdminFiabilite /></RequireAuth>} />
+      <Route path="/admin/problemes" element={<RequireAuth allowedRoles={['admin']} requiredPermission="moderation"><AdminProblemes /></RequireAuth>} />
+      <Route path="/admin/tickets" element={<RequireAuth allowedRoles={['admin']} requiredPermission="moderation"><AdminTickets /></RequireAuth>} />
+      <Route path="/admin/finance" element={<RequireAuth allowedRoles={['admin']} requiredPermission="finance"><AdminFinance /></RequireAuth>} />
+      <Route path="/admin/wallet-reconciliation" element={<RequireAuth allowedRoles={['admin']} requiredPermission="finance"><AdminWalletReconciliation /></RequireAuth>} />
+      <Route path="/admin/clients-suspendus" element={<RequireAuth allowedRoles={['admin']} requiredPermission="users"><AdminClientsSuspendus /></RequireAuth>} />
+      <Route path="/admin/missions-proches-validation" element={<RequireAuth allowedRoles={['admin']} requiredPermission="missions"><AdminMissionsProchesValidation /></RequireAuth>} />
       <Route path="/admin/users/:userId" element={<RequireAuth allowedRoles={['admin']}><UserProfile /></RequireAuth>} />
 
 
