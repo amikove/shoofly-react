@@ -35,6 +35,7 @@ export default function ClientDashboard() {
   const [ratingMission, setRatingMission] = useState(null)
   const [now, setNow] = useState(Date.now())
   const [validatingIds, setValidatingIds] = useState(new Set())
+  const [statsError, setStatsError] = useState(false)
 
   useEffect(() => {
     const iv = setInterval(() => setNow(Date.now()), 60000)
@@ -56,7 +57,9 @@ export default function ClientDashboard() {
     Promise.all([
       missionsAPI.list({ limit: 5 }),
       usersAPI.oeils({ limit: 3, verified: true }),
-      usersAPI.clientStats().catch(() => ({ data: {} })),
+      usersAPI.clientStats()
+        .then((res) => { setStatsError(false); return res })
+        .catch(() => { setStatsError(true); return { data: {} } }),
       missionsAPI.actionsRequired().catch(() => ({ data: {} })),
     ])
       .then(([mRes, oRes, sRes, arRes]) => {
@@ -130,8 +133,8 @@ export default function ClientDashboard() {
             { label: t('clientDashboard.stats.total'), value: stats.total,           color: 'text-white'     },
             { label: t('clientDashboard.stats.active'), value: stats.active,          color: 'text-[#FF4D00]' },
             { label: t('clientDashboard.stats.completed'), value: stats.completed,       color: 'text-green-400' },
-            { label: t('clientDashboard.stats.totalSpent'), value: t('clientDashboard.stats.madValue', { value: Math.round(stats.budget || 0) }), color: 'text-green-400' },
-            { label: t('clientDashboard.stats.wallet'), value: t('clientDashboard.stats.madValue', { value: Math.round(stats.wallet || 0) }), color: 'text-[#FF4D00]'  },
+            { label: t('clientDashboard.stats.totalSpent'), value: statsError ? t('clientDashboard.stats.unavailable') : t('clientDashboard.stats.madValue', { value: Math.round(stats.budget || 0) }), color: statsError ? 'text-[#666]' : 'text-green-400' },
+            { label: t('clientDashboard.stats.wallet'), value: statsError ? t('clientDashboard.stats.unavailable') : t('clientDashboard.stats.madValue', { value: Math.round(stats.wallet || 0) }), color: statsError ? 'text-[#666]' : 'text-[#FF4D00]'  },
           ].map((s) => (
             <div key={s.label} className="stat-card">
               <div className="text-[11px] text-[#AAA] mb-1 leading-tight">{s.label}</div>

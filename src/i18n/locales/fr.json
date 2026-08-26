@@ -421,6 +421,7 @@
       "totalSpent": "Total dépensé",
       "wallet": "Portefeuille",
       "madValue": "{{value}} MAD",
+      "unavailable": "Indisponible",
       "timeSaved": "Temps économisé",
       "timeSavedValue": "{{hours}} heures économisées",
       "timeSavedEmpty": "Complétez votre première mission pour voir votre temps économisé"
@@ -1241,6 +1242,7 @@
     "title": "💰 Mes gains",
     "currentBalanceLabel": "Solde actuel",
     "totalEarningsLabel": "Gains totaux",
+    "summaryUnavailable": "Indisponible",
     "emptyTitle": "Aucun gain pour le moment",
     "emptyDesc": "Vos missions terminées et virements apparaîtront ici.",
     "bankTransferLabel": "🏦 Virement bancaire",

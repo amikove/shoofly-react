@@ -19,6 +19,7 @@ export default function OeilGains() {
   const [balance, setBalance] = useState(0)
   const [totalEarnings, setTotalEarnings] = useState(0)
   const [loading, setLoading] = useState(true)
+  const [summaryError, setSummaryError] = useState(false)
   const [rechargeOpen, setRechargeOpen] = useState(false)
 
   const loadEarnings = () => {
@@ -27,8 +28,9 @@ export default function OeilGains() {
         setLines(data.lines || [])
         setBalance(data.balance || 0)
           setTotalEarnings(data.total_earnings || 0)
+          setSummaryError(false)
         })
-        .catch(() => toast('Erreur lors du chargement de vos gains', 'error'))
+        .catch(() => { setSummaryError(true); toast('Erreur lors du chargement de vos gains', 'error') })
         .finally(() => setLoading(false))
   }
 
@@ -42,11 +44,23 @@ export default function OeilGains() {
         <div className="grid grid-cols-2 gap-3 mb-3">
           <div className="card">
             <p className="text-xs text-[#AAA] mb-1">{t('oeilGains.currentBalanceLabel')}</p>
-            <p className="text-2xl font-bold text-green-400">{parseFloat(balance).toFixed(0)} MAD</p>
+            {loading ? (
+              <Spinner size="sm" />
+            ) : summaryError ? (
+              <p className="text-sm text-[#AAA]">{t('oeilGains.summaryUnavailable')}</p>
+            ) : (
+              <p className="text-2xl font-bold text-green-400">{parseFloat(balance).toFixed(0)} MAD</p>
+            )}
           </div>
           <div className="card">
             <p className="text-xs text-[#AAA] mb-1">{t('oeilGains.totalEarningsLabel')}</p>
-            <p className="text-2xl font-bold">{parseFloat(totalEarnings).toFixed(0)} MAD</p>
+            {loading ? (
+              <Spinner size="sm" />
+            ) : summaryError ? (
+              <p className="text-sm text-[#AAA]">{t('oeilGains.summaryUnavailable')}</p>
+            ) : (
+              <p className="text-2xl font-bold">{parseFloat(totalEarnings).toFixed(0)} MAD</p>
+            )}
           </div>
         </div>
 

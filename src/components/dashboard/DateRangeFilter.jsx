@@ -41,7 +41,7 @@ export default function DateRangeFilter({ range, onChange, compareRange, onCompa
 
   const selectPreset = (key) => {
     if (key === 'custom') {
-      onChange({ preset: 'custom', ...(customFrom && customTo ? { from: new Date(customFrom), to: new Date(customTo) } : {}) })
+      onChange({ preset: 'custom', ...(customFrom && customTo ? { from: casablancaStartOfDay(new Date(customFrom)), to: casablancaEndOfDay(new Date(customTo)) } : {}) })
     } else {
       onChange({ preset: key, ...getPresetRange(key) })
     }
@@ -49,13 +49,13 @@ export default function DateRangeFilter({ range, onChange, compareRange, onCompa
 
   const applyCustom = () => {
     if (customFrom && customTo) {
-      onChange({ preset: 'custom', from: new Date(customFrom), to: new Date(customTo) })
+      onChange({ preset: 'custom', from: casablancaStartOfDay(new Date(customFrom)), to: casablancaEndOfDay(new Date(customTo)) })
     }
   }
 
   const applyCompare = () => {
     if (compareFrom && compareTo) {
-      onCompareChange({ from: new Date(compareFrom), to: new Date(compareTo) })
+      onCompareChange({ from: casablancaStartOfDay(new Date(compareFrom)), to: casablancaEndOfDay(new Date(compareTo)) })
     }
   }
 

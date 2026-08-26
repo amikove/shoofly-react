@@ -423,6 +423,7 @@
       "totalSpent": "إجمالي الإنفاق",
       "wallet": "المحفظة",
       "madValue": "{{value}} درهم",
+      "unavailable": "غير متاح",
       "timeSaved": "الوقت الموفر",
       "timeSavedValue": "{{hours}} ساعة موفرة",
       "timeSavedEmpty": "أكمل مهمتك الأولى لرؤية الوقت الذي وفرته"
@@ -1242,6 +1243,7 @@
     "title": "💰 أرباحي",
     "currentBalanceLabel": "الرصيد الحالي",
     "totalEarningsLabel": "إجمالي الأرباح",
+    "summaryUnavailable": "غير متاح",
     "emptyTitle": "لا يوجد ربح حتى الآن",
     "emptyDesc": "ستظهر هنا مهامك المكتملة وتحويلاتك البنكية.",
     "bankTransferLabel": "🏦 تحويل بنكي",
