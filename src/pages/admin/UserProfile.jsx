@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import AppLayout from '../../components/layout/AppLayout'
 import Topbar from '../../components/layout/Topbar'
+import { useAuth } from '../../context/AuthContext'
 import { adminAPI, missionsAPI } from '../../api'
 import { Spinner, EmptyState, Avatar, StatusBadge, Badge, Pagination, toast } from '../../components/ui'
 import { CASABLANCA_TZ } from '../../utils/casablancaTime'
@@ -426,6 +427,8 @@ function ProblemesTab({ problems }) {
 // ═══ Onglet Fiabilité (Œil uniquement) ═══
 function FiabiliteTab({ reliability, onReload }) {
   const [requalifying, setRequalifying] = useState(null) // id de la déclaration en cours de traitement
+  const { hasPermission, isSuperAdmin } = useAuth()
+  const canRequalify = isSuperAdmin || hasPermission('identity')
   if (!reliability) return null
   const events = reliability.events || []
   const urgenceDeclarations = reliability.urgence_declarations || []
@@ -490,7 +493,7 @@ function FiabiliteTab({ reliability, onReload }) {
                 </div>
                 {d.admin_requalified_at ? (
                   <Badge variant="gray">Requalifiée le {fmtDate(d.admin_requalified_at)}</Badge>
-                ) : (
+                ) : canRequalify ? (
                   <button
                     onClick={() => requalify(d)}
                     disabled={requalifying === d.id}
@@ -498,7 +501,7 @@ function FiabiliteTab({ reliability, onReload }) {
                   >
                     {requalifying === d.id ? '...' : 'Requalifier'}
                   </button>
-                )}
+                ) : null}
               </div>
             ))}
           </div>

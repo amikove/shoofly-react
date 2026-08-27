@@ -4,6 +4,7 @@ import { Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import { useAuth } from './context/AuthContext'
 import { trackPageView } from './utils/googleAnalytics'
 import { Spinner } from './components/ui'
+import ErrorBoundary from './components/ui/ErrorBoundary'
 import VerificationIdentite from './pages/oeil/VerificationIdentite'
 
 
@@ -120,6 +121,7 @@ export default function App() {
   return (
     <>
       <RouteTracker />
+      <ErrorBoundary>
       <Suspense fallback={<div className="min-h-screen flex items-center justify-center"><Spinner size="lg" /></div>}>
       <Routes>
       {/* Public */}
@@ -183,12 +185,13 @@ export default function App() {
       <Route path="/admin/wallet-reconciliation" element={<RequireAuth allowedRoles={['admin']} requiredPermission="finance"><AdminWalletReconciliation /></RequireAuth>} />
       <Route path="/admin/clients-suspendus" element={<RequireAuth allowedRoles={['admin']} requiredPermission="users"><AdminClientsSuspendus /></RequireAuth>} />
       <Route path="/admin/missions-proches-validation" element={<RequireAuth allowedRoles={['admin']} requiredPermission="missions"><AdminMissionsProchesValidation /></RequireAuth>} />
-      <Route path="/admin/users/:userId" element={<RequireAuth allowedRoles={['admin']}><UserProfile /></RequireAuth>} />
+      <Route path="/admin/users/:userId" element={<RequireAuth allowedRoles={['admin']} requiredPermission="users"><UserProfile /></RequireAuth>} />
 
 
       <Route path="*" element={<Navigate to="/" replace />} />
 </Routes>
       </Suspense>
+      </ErrorBoundary>
     </>
   )
 }
