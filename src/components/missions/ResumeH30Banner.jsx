@@ -53,11 +53,10 @@ export default function ResumeH30Banner() {
   }
 
   return (
-    // top-[336px]/md:top-[264px] — même colonne que les deux bannières sœurs, décalé plus bas
-    // pour rester lisible si plusieurs sont visibles en même temps pour le même Œil (delta
-    // constant avec ClientDisabledBanner : +136 mobile / +124 desktop, identique à l'écart déjà
-    // en place entre PresenceConfirmationBanner et ClientDisabledBanner).
-    <div className="fixed top-[336px] md:top-[264px] inset-x-0 z-[70] flex justify-center px-4 pointer-events-none">
+    // Positionnement (fixed / top / z-index) et empilement avec les bannières sœurs gérés par le
+    // conteneur commun dans AppLayout ; les bannières masquées ne consomment aucun espace, donc
+    // plus de `top` décalé à la main ni de delta constant à maintenir entre les bannières.
+    <div className="w-full flex justify-center pointer-events-none">
       <div className="pointer-events-auto w-full max-w-md bg-[#181818] border border-[#FF4D00]/40 rounded-2xl p-4 shadow-[0_16px_40px_rgba(0,0,0,0.5)] flex gap-3">
         <div className="text-2xl flex-shrink-0">🔁</div>
         <div className="flex-1 min-w-0">

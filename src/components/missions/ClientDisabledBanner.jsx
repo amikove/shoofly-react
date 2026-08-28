@@ -63,10 +63,10 @@ export default function ClientDisabledBanner() {
   }
 
   return (
-    // top-[200px]/md:top-[140px] (pas top-[64px]/top-4 comme PresenceConfirmationBanner) — même
-    // slot horizontal que cette bannière-là, décalé plus bas pour rester lisible si les deux sont
-    // visibles en même temps pour le même Œil (les deux montées côte à côte dans AppLayout).
-    <div className="fixed top-[200px] md:top-[140px] inset-x-0 z-[70] flex justify-center px-4 pointer-events-none">
+    // Positionnement (fixed / top / z-index) et empilement avec les bannières sœurs gérés par le
+    // conteneur commun dans AppLayout ; celles qui rendent `null` ne prennent aucune place, donc
+    // plus besoin d'un `top` décalé à la main pour éviter le chevauchement.
+    <div className="w-full flex justify-center pointer-events-none">
       <div className="pointer-events-auto w-full max-w-md bg-[#181818] border border-red-500/40 rounded-2xl p-4 shadow-[0_16px_40px_rgba(0,0,0,0.5)] flex gap-3">
         <div className="text-2xl flex-shrink-0">⚠️</div>
         <div className="flex-1 min-w-0">

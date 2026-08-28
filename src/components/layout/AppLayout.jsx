@@ -303,10 +303,17 @@ useEffect(() => {
       </nav>
 
       <NotificationBanner />
-      <ConnectionLostBanner />
-      <PresenceConfirmationBanner />
-      <ClientDisabledBanner />
-      <ResumeH30Banner />
+
+      {/* Pile unique des bannières globales. Chaque bannière rend `null` quand sa garde échoue
+          (rôle / état) et ne consomme alors aucun espace : le conteneur en flux normal gère seul
+          le positionnement (plus de `top` codés en dur par bannière) et empêche tout chevauchement.
+          Ordre = hiérarchie d'alerte : les 3 bannières Œil, puis l'alerte système de connexion. */}
+      <div className="fixed top-[64px] md:top-4 inset-x-0 z-[70] px-4 flex flex-col items-center gap-3 pointer-events-none">
+        <PresenceConfirmationBanner />
+        <ClientDisabledBanner />
+        <ResumeH30Banner />
+        <ConnectionLostBanner />
+      </div>
     </div>
   )
 }

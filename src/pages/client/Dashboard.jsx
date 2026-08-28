@@ -24,7 +24,6 @@ export default function ClientDashboard() {
   const { t, i18n } = useTranslation()
   const { user } = useAuth()
   const [missions, setMissions] = useState([])
-  const [oeils, setOeils]       = useState([])
   const [stats, setStats]       = useState({ total:0, active:0, completed:0, budget:0, timeSavedMinutes:0 })
   const [actionsRequired, setActionsRequired] = useState({ to_validate: [], to_rate: [], to_choose_replacement: [] })
   const [loading, setLoading]   = useState(true)
@@ -55,18 +54,16 @@ export default function ClientDashboard() {
   useEffect(() => {
 
     Promise.all([
-      missionsAPI.list({ limit: 5 }),
-      usersAPI.oeils({ limit: 3, verified: true }),
+      missionsAPI.list({ limit: 5 }).catch(() => ({ data: {} })),
       usersAPI.clientStats()
         .then((res) => { setStatsError(false); return res })
         .catch(() => { setStatsError(true); return { data: {} } }),
       missionsAPI.actionsRequired().catch(() => ({ data: {} })),
     ])
-      .then(([mRes, oRes, sRes, arRes]) => {
+      .then(([mRes, sRes, arRes]) => {
         const ms = mRes.data.missions || []
         const s  = sRes?.data || {}
         setMissions(ms)
-        setOeils(oRes.data.oeils || [])
         setStats({
           total:     s.total     ?? ms.length,
           active:    s.active    ?? ms.filter(m => ['active','assigned','en_route'].includes(m.status)).length,

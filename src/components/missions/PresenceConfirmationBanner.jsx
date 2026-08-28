@@ -61,7 +61,9 @@ export default function PresenceConfirmationBanner() {
   }
 
   return (
-    <div className="fixed top-[64px] md:top-4 inset-x-0 z-[70] flex justify-center px-4 pointer-events-none">
+    // Positionnement (fixed / top / z-index) et empilement gérés par le conteneur commun dans
+    // AppLayout ; cette bannière ne fait plus que se centrer dans la largeur disponible.
+    <div className="w-full flex justify-center pointer-events-none">
       <div className="pointer-events-auto w-full max-w-md bg-[#181818] border border-[#FF4D00]/40 rounded-2xl p-4 shadow-[0_16px_40px_rgba(0,0,0,0.5)] flex gap-3">
         <div className="text-2xl flex-shrink-0">⏰</div>
         <div className="flex-1 min-w-0">
