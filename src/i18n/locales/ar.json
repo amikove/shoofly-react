@@ -1024,7 +1024,8 @@
       "reviewsCount": "{{count}} تقييم",
       "earnings": "الأرباح (المهام)",
       "balance": "الرصيد المتاح",
-      "madUnit": "درهم"
+      "madUnit": "درهم",
+      "unavailable": "غير متاح"
     },
     "priority": {
       "title": "مهام ذات أولوية",

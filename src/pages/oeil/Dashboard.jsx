@@ -23,13 +23,26 @@ export default function OeilDashboard() {
   const [assistanceMission, setAssistanceMission] = useState(null)
   const [advancing, setAdvancing] = useState(null)
   const [bonusCampaign, setBonusCampaign] = useState({ active: false, percent: 0 })
+  // Distingue un montant réellement à 0 d'un échec de chargement — même motif que
+  // oeil/Gains.jsx (chantier FIN-FE-3) : la carte concernée affiche « Indisponible » au
+  // lieu de « 0 MAD » quand la donnée n'a pas pu être récupérée. Deux sources de données
+  // indépendantes => deux drapeaux, chacun ne masquant QUE le chiffre dont l'appel a échoué
+  // (aucune régression sur un chiffre qui, lui, s'est bien chargé) :
+  //   • balanceError  : l'appel profil (usersAPI.oeil) a échoué (seul, ou via le rejet du
+  //                     Promise.all) — le solde vient de profile.balance.
+  //   • earningsError : le Promise.all a été rejeté (liste 'mine' KO) => stats non peuplé,
+  //                     les gains (somme des missions terminées) sont inconnus.
+  const [balanceError, setBalanceError] = useState(false)
+  const [earningsError, setEarningsError] = useState(false)
 
   const load = () => {
     setLoading(true)
+    setBalanceError(false)
+    setEarningsError(false)
     Promise.all([
       missionsAPI.list({ mode: 'available', sort: 'scheduled_asc', limit: 5 }), // Tri par date d'exécution la plus proche (aperçu des missions urgentes)
       missionsAPI.list({ mode: 'mine', limit: 50 }),
-      user?.id ? usersAPI.oeil(user.id).catch(() => null) : Promise.resolve(null),
+      user?.id ? usersAPI.oeil(user.id).catch(() => { setBalanceError(true); return null }) : Promise.resolve(null),
     ])
       .then(([pRes, mRes, oRes]) => {
         setPending(pRes.data.missions || [])
@@ -46,7 +59,7 @@ export default function OeilDashboard() {
           earnings,
         })
       })
-      .catch(() => toast(t('oeilDashboard.loadingError'), 'error'))
+      .catch(() => { setBalanceError(true); setEarningsError(true); toast(t('oeilDashboard.loadingError'), 'error') })
       .finally(() => setLoading(false))
   }
 
@@ -170,17 +183,25 @@ const refuse = async (id) => {
           </div>
           <div className="stat-card">
             <div className="text-xs text-[#AAA] mb-1">{t('oeilDashboard.stats.earnings')}</div>
-            <div className="text-2xl font-bold">
-              {stats?.earnings?.toFixed(0) || 0}
-              <span className="text-sm text-[#AAA] ms-1">{t('oeilDashboard.stats.madUnit')}</span>
-            </div>
+            {earningsError ? (
+              <div className="text-sm text-[#AAA]">{t('oeilDashboard.stats.unavailable')}</div>
+            ) : (
+              <div className="text-2xl font-bold">
+                {stats?.earnings?.toFixed(0) || 0}
+                <span className="text-sm text-[#AAA] ms-1">{t('oeilDashboard.stats.madUnit')}</span>
+              </div>
+            )}
           </div>
           <div className="stat-card">
             <div className="text-xs text-[#AAA] mb-1">{t('oeilDashboard.stats.balance')}</div>
-            <div className="text-2xl font-bold text-green-400">
-              {stats?.balance?.toFixed(0) || 0}
-              <span className="text-sm ms-1">{t('oeilDashboard.stats.madUnit')}</span>
-            </div>
+            {balanceError ? (
+              <div className="text-sm text-[#AAA]">{t('oeilDashboard.stats.unavailable')}</div>
+            ) : (
+              <div className="text-2xl font-bold text-green-400">
+                {stats?.balance?.toFixed(0) || 0}
+                <span className="text-sm ms-1">{t('oeilDashboard.stats.madUnit')}</span>
+              </div>
+            )}
           </div>
         </div>
 

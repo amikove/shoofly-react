@@ -1023,7 +1023,8 @@
       "reviewsCount": "{{count}} avis",
       "earnings": "Revenus (missions)",
       "balance": "Solde disponible",
-      "madUnit": "MAD"
+      "madUnit": "MAD",
+      "unavailable": "Indisponible"
     },
     "priority": {
       "title": "Missions prioritaires",
