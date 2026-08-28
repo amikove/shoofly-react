@@ -66,7 +66,14 @@ const MIN_PRICES = {
 }
 
 function getMinPrice(type, sub) {
-  if (sub && MIN_PRICES[sub]) return MIN_PRICES[sub]
+  // Les sous-catégories « file d'attente » sont émises préfixées du libellé de groupe
+  // (ex. 'Consulats et visas — Consulat étranger'), alors que MIN_PRICES est indexé sur la
+  // clé nue ('Consulat étranger'). On dérive la clé nue avant lookup — no-op pour les autres
+  // types, dont aucune valeur ne contient ' — '. La valeur préfixée elle-même n'est pas
+  // touchée : elle reste la value du <select> et le champ envoyé au backend, qui l'exige
+  // sous cette forme (isValidSubcategory / constants/missionCategories.js).
+  const bareSub = sub ? sub.split(' — ').pop() : sub
+  if (bareSub && MIN_PRICES[bareSub]) return MIN_PRICES[bareSub]
   return MIN_PRICES[`_${type}`] || MIN_PRICES['_default']
 }
 
