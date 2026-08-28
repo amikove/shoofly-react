@@ -7,6 +7,10 @@
     "showPassword": "Afficher le mot de passe",
     "hidePassword": "Masquer le mot de passe"
   },
+  "appLoading": {
+    "reconnecting": "Connexion interrompue. Reprise automatique dès le retour du réseau…",
+    "retryNow": "Réessayer maintenant"
+  },
   "joursSemaine": {
     "Lun": "Lun",
     "Mar": "Mar",
@@ -231,6 +235,7 @@
     "passwordLabel": "Mot de passe",
     "passwordPlaceholder": "••••••••",
     "errorDefault": "Email ou mot de passe incorrect.",
+    "sessionExpired": "Votre session a expiré. Reconnectez-vous pour continuer.",
     "submitLoading": "Connexion...",
     "submitButton": "Se connecter →",
     "noAccount": "Pas encore de compte ?",
@@ -1349,6 +1354,17 @@
       "missingFields": "⚠️ {{count}} champs manquants — sections à compléter : {{sections}}",
       "submitted": "Rapport soumis ✅",
       "submitError": "Erreur soumission"
+    },
+    "autosave": {
+      "saving": "Sauvegarde en cours…",
+      "savedAt": "Sauvegardé à {{time}}",
+      "failed": "Échec de sauvegarde — nouvelle tentative automatique. Ne fermez pas la page.",
+      "idle": "Sauvegarde automatique activée"
+    },
+    "localDraft": {
+      "notice": "Une version locale non synchronisée de ce rapport existe (modifiée le {{time}}).",
+      "restore": "Restaurer",
+      "discard": "Ignorer"
     },
     "confirmSubmit": "Soumettre le rapport ? Le client sera notifié.",
     "submittedBanner": "✅ Rapport soumis — lecture seule",

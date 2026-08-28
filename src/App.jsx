@@ -99,8 +99,8 @@ function RouteTracker() {
 }
 
 export default function App() {
-  const { user, loading } = useAuth()
-  const { i18n } = useTranslation()
+  const { user, loading, netRetrying } = useAuth()
+  const { t, i18n } = useTranslation()
 
   useEffect(() => {
     document.documentElement.dir = i18n.language === 'ar' ? 'rtl' : 'ltr'
@@ -114,6 +114,14 @@ export default function App() {
           SHOOF<span className="text-[#FF4D00]">LY</span>
         </div>
         <Spinner size="lg" />
+        {netRetrying && (
+          <div className="mt-6 max-w-xs mx-auto">
+            <p className="text-xs text-[#AAA] leading-relaxed mb-3">{t('appLoading.reconnecting')}</p>
+            <button onClick={() => window.location.reload()} className="btn btn-ghost btn-sm">
+              {t('appLoading.retryNow')}
+            </button>
+          </div>
+        )}
       </div>
     </div>
   )

@@ -18,11 +18,28 @@ const DEMO = {
   admin:  { email: 'admin@shoofly.ma',   pw: 'admin123'  },
 }
 
+// Drapeau posé par l'intercepteur 401 de api/client.js juste avant un rechargement vers
+// /login. Consommé une seule fois ici, mémoïsé au niveau module pour rester stable même si
+// React StrictMode double-invoque l'initialiseur de useState en dev — le rechargement
+// complet du flux 401 réinitialise de toute façon cet état module à chaque redirection.
+let consumedSessionExpired = null
+function takeSessionExpiredFlag() {
+  if (consumedSessionExpired !== null) return consumedSessionExpired
+  let v = false
+  try {
+    v = sessionStorage.getItem('shoofly_session_expired') === '1'
+    if (v) sessionStorage.removeItem('shoofly_session_expired')
+  } catch { /* mode privé */ }
+  consumedSessionExpired = v
+  return v
+}
+
 export default function Login() {
   const { t } = useTranslation()
   useEffect(() => { captureAcquisitionParams() }, [])
   const { login } = useAuth()
   const navigate   = useNavigate()
+  const [sessionExpired] = useState(takeSessionExpiredFlag)
   const [role, setRole]     = useState('client')
   const [email, setEmail]   = useState(import.meta.env.DEV ? DEMO.client.email : '')
   const [pwd, setPwd]       = useState(import.meta.env.DEV ? DEMO.client.pw : '')
@@ -89,6 +106,11 @@ export default function Login() {
 
           {/* Form */}
           <form onSubmit={handleSubmit} className="space-y-3">
+            {sessionExpired && !error && (
+              <p className="text-xs text-blue-300 bg-blue-500/10 border border-blue-500/20 rounded-lg px-3 py-2">
+                {t('login.sessionExpired')}
+              </p>
+            )}
             <div>
               <label className="label">{t('login.emailLabel')}</label>
               <input

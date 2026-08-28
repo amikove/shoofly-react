@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useParams, useNavigate } from 'react-router-dom'
 import AppLayout from '../../components/layout/AppLayout'
@@ -196,6 +196,18 @@ export default function AuditReport() {
   const [submitted, setSubmitted] = useState(false)
   const [data, setData]           = useState({})
   const [photosCount, setPhotosCount] = useState(0)
+  // Visibilité de l'autosave (audit 360° v3 §5.8 : l'échec était totalement avalé par un
+  // .catch(() => {})).
+  const [saveState, setSaveState]     = useState('idle') // 'idle' | 'saving' | 'saved' | 'error'
+  const [lastSavedAt, setLastSavedAt] = useState(null)
+  // Filet local : sur échec d'autosave, `data` est miroité en localStorage et proposé à la
+  // restauration au prochain chargement (jamais appliqué d'office).
+  const [localDraft, setLocalDraft]  = useState(null)
+  const DRAFT_KEY = `shoofly_audit_draft_${missionId}`
+  // Sérialisation de la dernière sauvegarde réussie (ou de l'état serveur au chargement) —
+  // sert à savoir si le formulaire est « sale » pour la garde beforeunload. Jamais lue
+  // pendant le rendu (règle eslint react-hooks/refs).
+  const lastSavedSerializedRef = useRef('')
 
   const score = calculateScore(data)
   const { label: scoreLbl, color: scoreColor } = scoreLabel(score, t)
@@ -208,13 +220,25 @@ export default function AuditReport() {
       reportsAPI.get(missionId),
     ]).then(([mRes, rRes]) => {
       setMission(mRes.data.mission || mRes.data)
+      const serverSubmitted = rRes.data.report?.submitted || false
       if (rRes.data.report) {
         setData(rRes.data.report.data || {})
-        setSubmitted(rRes.data.report.submitted || false)
+        setSubmitted(serverSubmitted)
       }
+      lastSavedSerializedRef.current = JSON.stringify(rRes.data.report?.data || {})
+      // Filet local d'un précédent échec d'autosave : proposé à la restauration, jamais
+      // appliqué d'office. Si le serveur a déjà une version soumise, le brouillon est périmé.
+      try {
+        if (serverSubmitted) {
+          localStorage.removeItem(DRAFT_KEY)
+        } else {
+          const raw = localStorage.getItem(DRAFT_KEY)
+          if (raw) setLocalDraft(JSON.parse(raw))
+        }
+      } catch { /* JSON corrompu ou storage indisponible */ }
     }).catch(() => toast(t('oeilAuditReport.toasts.loadError'), 'error'))
       .finally(() => setLoading(false))
-  }, [missionId])
+  }, [missionId, DRAFT_KEY])
 
   // Sauvegarde automatique toutes les 30s — revérifie le statut réel côté serveur avant
   // chaque tick : si une vraie soumission a eu lieu ailleurs (autre onglet/appareil) pendant
@@ -226,20 +250,73 @@ export default function AuditReport() {
     const interval = setInterval(() => {
       reportsAPI.get(missionId)
         .then(({ data: current }) => {
+          // Revérification serveur avant écrasement — INCHANGÉE : ne jamais renvoyer
+          // submitted:false par-dessus une vraie soumission faite ailleurs.
           if (current.report?.submitted) { setSubmitted(true); return }
-          return reportsAPI.save(missionId, data, false)
+          setSaveState('saving')
+          return reportsAPI.save(missionId, data, false).then(() => {
+            setSaveState('saved')
+            setLastSavedAt(new Date())
+            lastSavedSerializedRef.current = JSON.stringify(data)
+            try { localStorage.removeItem(DRAFT_KEY) } catch { /* storage indisponible */ }
+          })
         })
-        .catch(() => {})
+        .catch(() => {
+          // Plus jamais avalé en silence : l'Œil voit « Échec de sauvegarde » et un miroir
+          // local est écrit pour pouvoir restaurer la saisie.
+          setSaveState('error')
+          try {
+            localStorage.setItem(DRAFT_KEY, JSON.stringify({ data, savedAt: new Date().toISOString() }))
+          } catch { /* quota / mode privé */ }
+        })
     }, 30000)
     return () => clearInterval(interval)
-  }, [data, missionId, submitted])
+  }, [data, missionId, submitted, DRAFT_KEY])
+
+  // Garde de sortie : avertit avant de quitter la page si des modifications ne sont pas
+  // encore parties côté serveur (audit 360° v3 §5.8). Armée UNIQUEMENT quand c'est le cas —
+  // aucun prompt intempestif sur un formulaire propre ou déjà soumis. `lastSavedAt` est dans
+  // les deps pour que l'effet se ré-évalue après une sauvegarde réussie (qui met à jour
+  // lastSavedSerializedRef mais ne touche pas `data`) et retire alors le listener.
+  useEffect(() => {
+    if (submitted) return
+    if (JSON.stringify(data) === lastSavedSerializedRef.current) return
+    // Persiste la saisie non synchronisée AVANT le déchargement de la page — indispensable
+    // quand un 401 de fond (api/client.js) déclenche window.location.href='/login' pendant
+    // qu'un tick d'autosave échoue : le .catch de l'autosave court alors APRÈS la navigation
+    // et peut ne pas s'exécuter. `pagehide` en complément car `beforeunload` ne se déclenche
+    // pas dans tous les contextes (mobile Safari, onglets en arrière-plan).
+    const persist = () => {
+      try {
+        localStorage.setItem(DRAFT_KEY, JSON.stringify({ data, savedAt: new Date().toISOString() }))
+      } catch { /* quota / mode privé */ }
+    }
+    const onBeforeUnload = (e) => { persist(); e.preventDefault(); e.returnValue = '' }
+    window.addEventListener('beforeunload', onBeforeUnload)
+    window.addEventListener('pagehide', persist)
+    return () => {
+      window.removeEventListener('beforeunload', onBeforeUnload)
+      window.removeEventListener('pagehide', persist)
+    }
+  }, [data, submitted, lastSavedAt, DRAFT_KEY])
 
   const save = async () => {
     setSaving(true)
+    setSaveState('saving')
     try {
       await reportsAPI.save(missionId, data, false)
+      setSaveState('saved')
+      setLastSavedAt(new Date())
+      lastSavedSerializedRef.current = JSON.stringify(data)
+      try { localStorage.removeItem(DRAFT_KEY) } catch { /* storage indisponible */ }
       toast(t('oeilAuditReport.toasts.saved'), 'success')
-    } catch { toast(t('oeilAuditReport.toasts.saveError'), 'error') }
+    } catch {
+      setSaveState('error')
+      try {
+        localStorage.setItem(DRAFT_KEY, JSON.stringify({ data, savedAt: new Date().toISOString() }))
+      } catch { /* quota / mode privé */ }
+      toast(t('oeilAuditReport.toasts.saveError'), 'error')
+    }
     finally { setSaving(false) }
   }
 
@@ -313,6 +390,8 @@ export default function AuditReport() {
     try {
       await reportsAPI.save(missionId, { ...data, score_final: score }, true)
       setSubmitted(true)
+      lastSavedSerializedRef.current = JSON.stringify(data)
+      try { localStorage.removeItem(DRAFT_KEY) } catch { /* storage indisponible */ }
       toast(t('oeilAuditReport.toasts.submitted'), 'success')
       setTimeout(() => navigate(-1), 1500)
     } catch { toast(t('oeilAuditReport.toasts.submitError'), 'error') }
@@ -347,6 +426,28 @@ export default function AuditReport() {
         {submitted && (
           <div className="card mb-4 bg-green-500/10 border border-green-500/20 text-green-400 text-sm text-center py-3">
             {t('oeilAuditReport.submittedBanner')}
+          </div>
+        )}
+
+        {!submitted && localDraft && (
+          <div className="card mb-4 bg-amber-500/10 border border-amber-500/30">
+            <p className="text-xs text-amber-300 mb-2">
+              {t('oeilAuditReport.localDraft.notice', { time: new Date(localDraft.savedAt).toLocaleString('fr-FR', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }) })}
+            </p>
+            <div className="flex gap-2">
+              <button
+                onClick={() => { setData(localDraft.data || {}); setLocalDraft(null) }}
+                className="btn btn-primary btn-sm"
+              >
+                {t('oeilAuditReport.localDraft.restore')}
+              </button>
+              <button
+                onClick={() => { setLocalDraft(null); try { localStorage.removeItem(DRAFT_KEY) } catch { /* ignore */ } }}
+                className="btn btn-ghost btn-sm"
+              >
+                {t('oeilAuditReport.localDraft.discard')}
+              </button>
+            </div>
           </div>
         )}
 
@@ -527,13 +628,26 @@ export default function AuditReport() {
 
       {/* Barre d'actions */}
       {!submitted && (
-        <div className="fixed bottom-20 md:bottom-0 start-0 end-0 md:start-[220px] bg-[#181818] border-t border-white/12 p-4 flex gap-3 z-40">
-          <button onClick={save} disabled={saving} className="btn btn-ghost flex-1 justify-center disabled:opacity-50">
-            {saving ? '...' : t('oeilAuditReport.saveButton')}
-          </button>
-          <button onClick={submit} disabled={saving} className="btn btn-primary flex-1 justify-center disabled:opacity-50">
-            {saving ? '...' : t('oeilAuditReport.submitButton')}
-          </button>
+        <div className="fixed bottom-20 md:bottom-0 start-0 end-0 md:start-[220px] bg-[#181818] border-t border-white/12 p-4 flex flex-col gap-2 z-40">
+          <div className="text-[11px] leading-none">
+            {saveState === 'error' ? (
+              <span className="text-amber-400">{t('oeilAuditReport.autosave.failed')}</span>
+            ) : saveState === 'saving' ? (
+              <span className="text-[#AAA]">{t('oeilAuditReport.autosave.saving')}</span>
+            ) : lastSavedAt ? (
+              <span className="text-[#777]">{t('oeilAuditReport.autosave.savedAt', { time: lastSavedAt.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }) })}</span>
+            ) : (
+              <span className="text-[#777]">{t('oeilAuditReport.autosave.idle')}</span>
+            )}
+          </div>
+          <div className="flex gap-3">
+            <button onClick={save} disabled={saving} className="btn btn-ghost flex-1 justify-center disabled:opacity-50">
+              {saving ? '...' : t('oeilAuditReport.saveButton')}
+            </button>
+            <button onClick={submit} disabled={saving} className="btn btn-primary flex-1 justify-center disabled:opacity-50">
+              {saving ? '...' : t('oeilAuditReport.submitButton')}
+            </button>
+          </div>
         </div>
       )}
     </AppLayout>
