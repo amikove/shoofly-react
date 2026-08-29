@@ -224,8 +224,16 @@ const cancel = async (id) => {
       ? (new Date(mission.scheduled_at).getTime() - Date.now()) / 3600000
       : 999
 
+    // Depuis le modèle cash (2026-08-13, PayZone désactivé), le backend refuse
+    // inconditionnellement l'annulation d'une mission assignée payée en espèces
+    // (missions.js:1885 — aucun remboursement possible, pas de distinction de délai). Les
+    // messages assignedRefund50/assignedNoRefund ci-dessous ne s'appliquent donc plus qu'à
+    // payment_method='payzone' — conservés tels quels pour la réactivation prévue de PayZone,
+    // où le remboursement wallet redevient réel.
     let confirmMsg = t('clientMissions.cancelConfirm.default')
-    if (isAssigned && hoursBeforeMission > 2) {
+    if (isAssigned && mission?.payment_method === 'cash') {
+      confirmMsg = t('clientMissions.cancelConfirm.assignedCash')
+    } else if (isAssigned && hoursBeforeMission > 2) {
       confirmMsg = t('clientMissions.cancelConfirm.assignedRefund50')
     } else if (isAssigned && hoursBeforeMission <= 2) {
       confirmMsg = t('clientMissions.cancelConfirm.assignedNoRefund')
