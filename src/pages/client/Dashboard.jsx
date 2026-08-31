@@ -54,7 +54,10 @@ export default function ClientDashboard() {
   useEffect(() => {
 
     Promise.all([
-      missionsAPI.list({ limit: 5 }).catch(() => ({ data: {} })),
+      // limit 50 (pas 5) : cette liste alimente la section « Missions en cours »
+      // (filtre client-side pending/assigned/active) ; un échantillon de 5 pouvait
+      // afficher « Aucune mission active » en contradiction avec la tuile « En cours ».
+      missionsAPI.list({ limit: 50 }).catch(() => ({ data: {} })),
       usersAPI.clientStats()
         .then((res) => { setStatsError(false); return res })
         .catch(() => { setStatsError(true); return { data: {} } }),
@@ -127,9 +130,9 @@ export default function ClientDashboard() {
         {/* Stats — 2 colonnes mobile, 4 desktop */}
         <div className="grid grid-cols-2 md:grid-cols-5 gap-3 md:gap-4">
           {[
-            { label: t('clientDashboard.stats.total'), value: stats.total,           color: 'text-white'     },
-            { label: t('clientDashboard.stats.active'), value: stats.active,          color: 'text-[#FF4D00]' },
-            { label: t('clientDashboard.stats.completed'), value: stats.completed,       color: 'text-green-400' },
+            { label: t('clientDashboard.stats.total'),     value: statsError ? t('clientDashboard.stats.unavailable') : stats.total,     color: statsError ? 'text-[#666]' : 'text-white'     },
+            { label: t('clientDashboard.stats.active'),    value: statsError ? t('clientDashboard.stats.unavailable') : stats.active,    color: statsError ? 'text-[#666]' : 'text-[#FF4D00]' },
+            { label: t('clientDashboard.stats.completed'), value: statsError ? t('clientDashboard.stats.unavailable') : stats.completed, color: statsError ? 'text-[#666]' : 'text-green-400' },
             { label: t('clientDashboard.stats.totalSpent'), value: statsError ? t('clientDashboard.stats.unavailable') : t('clientDashboard.stats.madValue', { value: Math.round(stats.budget || 0) }), color: statsError ? 'text-[#666]' : 'text-green-400' },
             { label: t('clientDashboard.stats.wallet'), value: statsError ? t('clientDashboard.stats.unavailable') : t('clientDashboard.stats.madValue', { value: Math.round(stats.wallet || 0) }), color: statsError ? 'text-[#666]' : 'text-[#FF4D00]'  },
           ].map((s) => (
