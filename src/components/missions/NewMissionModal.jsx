@@ -7,6 +7,11 @@ import { useAuth } from '../../context/AuthContext'
 import Autocomplete from './Autocomplete'
 import { casablancaWallTimeToISO } from '../../utils/casablancaTime'
 
+// Planchers tarifaires par sous-catégorie. Le backend porte cette table (entrées NOMMÉES
+// seulement, sans les défauts par type _immobilier/etc.) dans
+// shoofly-backend/src/constants/missionCategories.js (SUBCATEGORY_MIN_PRICES) et l'applique
+// comme plancher dur à la création (D1, audit régression 360° v4). Toute modification de prix
+// ici DOIT être répercutée là-bas, et inversement.
 const MIN_PRICES = {
   // Immobilier
   'Airbnb':              170,
