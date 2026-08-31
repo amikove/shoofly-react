@@ -170,15 +170,25 @@ const refuse = async (id) => {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
           <div className="stat-card">
             <div className="text-xs text-[#AAA] mb-1">{t('oeilDashboard.stats.completed')}</div>
-            <div className="text-2xl font-bold">{stats?.completed || 0}</div>
+            {earningsError ? (
+              <div className="text-sm text-[#AAA]">{t('oeilDashboard.stats.unavailable')}</div>
+            ) : (
+              <div className="text-2xl font-bold">{stats?.completed || 0}</div>
+            )}
           </div>
           <div className="stat-card">
             <div className="text-xs text-[#AAA] mb-1">{t('oeilDashboard.stats.avgRating')}</div>
-            <div className="text-2xl font-bold text-yellow-400">
-              {stats?.rating ? `${stats.rating}★` : '—'}
-            </div>
-            {stats?.rating_count > 0 && (
-              <div className="text-xs text-[#AAA] mt-1">{t('oeilDashboard.stats.reviewsCount', { count: stats.rating_count })}</div>
+            {earningsError ? (
+              <div className="text-sm text-[#AAA]">{t('oeilDashboard.stats.unavailable')}</div>
+            ) : (
+              <>
+                <div className="text-2xl font-bold text-yellow-400">
+                  {stats?.rating ? `${stats.rating}★` : '—'}
+                </div>
+                {stats?.rating_count > 0 && (
+                  <div className="text-xs text-[#AAA] mt-1">{t('oeilDashboard.stats.reviewsCount', { count: stats.rating_count })}</div>
+                )}
+              </>
             )}
           </div>
           <div className="stat-card">
