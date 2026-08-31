@@ -16,7 +16,9 @@ export const missionsAPI = {
   list:     (params) => api.get('/api/missions', { params }),
   get:      (id)     => api.get(`/api/missions/${id}`),
   create:   (data)   => api.post('/api/missions', data),
-  accept:   (id)     => api.post(`/api/missions/${id}/accept`),
+  // `accept` (POST /:id/accept) retiré 2026-08-31 (RG3) : bouton « Accepter » mort depuis
+  // ~2026-06-23, route fermée en 403 côté backend. Le flux de prise de mission par l'Œil passe
+  // par `interest` (candidature) puis affectation client/admin.
   interest:  (id)    => api.post(`/api/missions/${id}/interest`),
   interests: (id)    => api.get(`/api/missions/${id}/interests`),
   candidateConfirm: (id) => api.post(`/api/missions/${id}/candidate-confirm`),
