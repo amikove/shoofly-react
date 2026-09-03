@@ -49,6 +49,8 @@ const ADVANCED_DEFAULTS = {
   candidate_batch_size: 10,
   candidate_confirmation_minutes: 10,
   candidate_tiebreak_window_minutes: 5,
+  candidate_batch_max_waves: 2,
+  activity_photo_interval_minutes: 45,
   transfer_cooldown_before_hours: 3,
   presence_confirmation_deadline_minutes: 120,
   presence_confirmation_deadline_minutes_sameday: 45,
@@ -71,6 +73,7 @@ const ADVANCED_DEFAULTS = {
   late_cancel_penalty_tier3_points: -50,
   late_cancel_penalty_tier1_threshold_hours: 24,
   late_cancel_penalty_tier2_threshold_hours: 2,
+  late_cancel_penalty_tier1_enabled: false,
   presence_confirmation_deadline_minutes_h45: 15,
   password_reset_token_expiry_hours: 1,
   // Anti-fraude (backend routes/antiFraud.js) — défauts identiques aux valeurs précédemment
@@ -93,7 +96,7 @@ const ADVANCED_DEFAULTS = {
 // Réglages stockés en base comme fraction (0.20, 0.5) — affichés / saisis en pourcentage.
 const PERCENT_FIELDS = ['refund_partial_rate', 'commission']
 // Réglages stockés en 'true' / 'false' — affichés comme interrupteur.
-const BOOLEAN_FIELDS = ['five_star_bonus_active']
+const BOOLEAN_FIELDS = ['five_star_bonus_active', 'late_cancel_penalty_tier1_enabled']
 
 // storage (base) → valeur affichée dans le champ
 const toDisplay = (key, stored) => {
@@ -153,12 +156,13 @@ const ADVANCED_GROUPS = [
   { key: 'platformPricing', category: 'tarification', basic: true, fields: ['commission', 'min_price', 'five_star_bonus_active', 'five_star_bonus_percent'] },
   { key: 'refund',          category: 'tarification', fields: ['refund_partial_threshold_hours', 'refund_partial_rate'] },
   // ⏱️ Délais mission
-  { key: 'candidateCascade',    category: 'delaisMission', fields: ['candidate_batch_size', 'candidate_confirmation_minutes', 'candidate_tiebreak_window_minutes'] },
+  { key: 'candidateCascade',    category: 'delaisMission', fields: ['candidate_batch_size', 'candidate_confirmation_minutes', 'candidate_tiebreak_window_minutes', 'candidate_batch_max_waves'] },
   { key: 'missionEdit',         category: 'delaisMission', fields: ['mission_edit_approval_minutes', 'mission_edit_approval_minutes_urgent', 'mission_edit_urgent_threshold_hours'] },
   { key: 'scheduleConflict',    category: 'delaisMission', fields: ['schedule_conflict_window_hours'] },
   { key: 'staleMission',        category: 'delaisMission', fields: ['stale_mission_hours', 'stale_mission_min_lead_hours'] },
   { key: 'reminders',           category: 'delaisMission', fields: ['reminder_before_mission_minutes_early', 'reminder_before_mission_minutes_late'] },
   { key: 'presenceConfirmation', category: 'delaisMission', fields: ['presence_confirmation_deadline_minutes', 'presence_confirmation_deadline_minutes_sameday', 'presence_confirmation_deadline_minutes_h45'] },
+  { key: 'activityPhoto',       category: 'delaisMission', fields: ['activity_photo_interval_minutes'] },
   // 🔄 Transferts & cooldowns
   { key: 'transferGrace',      category: 'transferts', fields: ['transfer_grace_minutes_queue', 'transfer_grace_minutes_other'] },
   { key: 'cooldowns',          category: 'transferts', fields: ['transfer_cooldown_hours', 'abandon_during_mission_cooldown_hours', 'transfer_cooldown_before_hours'] },
@@ -173,7 +177,7 @@ const ADVANCED_GROUPS = [
   // ⭐ Fiabilité
   { key: 'newOeil',            category: 'fiabilite', fields: ['new_oeil_mission_threshold'] },
   { key: 'reactivation',       category: 'fiabilite', fields: ['reactivation_default_score'] },
-  { key: 'lateCancelPenalty',  category: 'fiabilite', fields: ['late_cancel_penalty_tier1_threshold_hours', 'late_cancel_penalty_tier1_points', 'late_cancel_penalty_tier2_threshold_hours', 'late_cancel_penalty_tier2_points', 'late_cancel_penalty_tier3_points'] },
+  { key: 'lateCancelPenalty',  category: 'fiabilite', fields: ['late_cancel_penalty_tier1_enabled', 'late_cancel_penalty_tier1_threshold_hours', 'late_cancel_penalty_tier1_points', 'late_cancel_penalty_tier2_threshold_hours', 'late_cancel_penalty_tier2_points', 'late_cancel_penalty_tier3_points'] },
   { key: 'responseTime',       category: 'fiabilite', fields: ['response_time_max_valid_minutes', 'response_time_min_turns'] },
   // 📱 Communication
   { key: 'urgentWhatsappWaves', category: 'communication', fields: ['urgent_mission_whatsapp_batch_size', 'urgent_mission_whatsapp_batch_delay_minutes'] },

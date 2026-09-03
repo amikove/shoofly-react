@@ -2827,6 +2827,10 @@
         "title": "Confirmation de présence de l'Œil",
         "note": "Vérifie activement la présence de l'Œil à trois moments : la veille au soir, puis deux contrôles rapprochés de la mission (H-2 et H-45, chacun systématique même si déjà confirmé précédemment). Sans confirmation dans le délai, la mission est automatiquement remise en recherche d'un autre Œil."
       },
+      "activityPhoto": {
+        "title": "Photos de suivi de mission active",
+        "note": "Détection d'un abandon sans traçage GPS : pendant qu'une mission est en cours, le système attend une photo de l'Œil assigné à intervalle régulier. Chaque photo reçue relance le compte à rebours ; si l'échéance passe sans photo, le client et les admins reçoivent une alerte « absence de nouvelles ». Aucune pénalité ni changement de statut automatique — l'alerte seule."
+      },
       "refund": {
         "title": "Remboursement à l'annulation",
         "note": "Si un client annule plus de {{refundThresholdH}}h avant l'heure prévue, il est remboursé de {{refundRatePct}} % ; en dessous, aucun remboursement. Ex : sur une mission à 300 MAD annulée à temps, {{refundExampleBack}} MAD lui sont rendus."
@@ -2847,7 +2851,7 @@
       },
       "lateCancelPenalty": {
         "title": "Barème d'annulation tardive par l'Œil",
-        "note": "⚠️ Barème actuellement inatteignable en production (aucune route ne peut plus l'exercer) — conservé et rendu configurable pour cohérence avec le reste des réglages de fiabilité. Ex : annulation par l'Œil moins de {{lateCancelTier2H}}h avant la mission → {{lateCancelTier3Pts}} points (palier le plus sévère)."
+        "note": "Pénalité de fiabilité quand un Œil se décharge tardivement d'une mission assignée. Le barème est exercé aujourd'hui via la requalification par un admin d'une déclaration d'urgence jugée non légitime — l'annulation directe par l'Œil est, elle, bloquée en amont. Trois paliers selon le préavis donné : le palier 1 (préavis long) ne retire des points que si l'interrupteur « Palier 1 actif » de ce groupe est activé ; les paliers 2 et 3 (préavis plus courts) s'appliquent toujours. Ex : annulation moins de {{lateCancelTier2H}}h avant la mission → {{lateCancelTier3Pts}} points (palier le plus sévère)."
       },
       "ticketResolve": {
         "title": "Auto-résolution des tickets"
@@ -2907,6 +2911,8 @@
       "candidate_batch_size": "Taille du lot (nb d'Œils sollicités)",
       "candidate_confirmation_minutes": "Délai de confirmation du lot (min)",
       "candidate_tiebreak_window_minutes": "Fenêtre de départage (min)",
+      "candidate_batch_max_waves": "Nombre maximum de lots successifs",
+      "activity_photo_interval_minutes": "Intervalle entre deux photos de suivi (min)",
       "transfer_cooldown_before_hours": "Cooldown transfert avant démarrage (h)",
       "presence_confirmation_deadline_minutes": "Confirmation présence — rappel J-1 (min)",
       "presence_confirmation_deadline_minutes_sameday": "Confirmation présence — contrôle H-2 (min)",
@@ -2924,6 +2930,7 @@
       "transfer_during_no_replacement_debit_cap_mad": "Pendant la mission — plafond débit (MAD)",
       "transfer_before_no_replacement_penalty_points": "Avant démarrage, sans remplaçant — pénalité (points)",
       "transfer_before_replacement_bonus_points": "Avant démarrage, avec remplaçant — bonus (points)",
+      "late_cancel_penalty_tier1_enabled": "Palier 1 actif (préavis long)",
       "late_cancel_penalty_tier1_threshold_hours": "Seuil palier 1 (h avant la mission)",
       "late_cancel_penalty_tier1_points": "Pénalité palier 1 (points)",
       "late_cancel_penalty_tier2_threshold_hours": "Seuil palier 2 (h avant la mission)",
@@ -2976,6 +2983,8 @@
       "candidate_batch_size": "Les 10 Œils les mieux classés (fiabilité puis note) sont sollicités simultanément à chaque tirage de lot.",
       "candidate_confirmation_minutes": "Si aucun Œil du lot ne confirme sa disponibilité en 10 min, ce lot est abandonné et un nouveau lot est tiré.",
       "candidate_tiebreak_window_minutes": "Dès la première confirmation reçue, les autres Œils du lot ont encore 5 min pour confirmer avant que le mieux classé des confirmés soit assigné.",
+      "candidate_batch_max_waves": "Nombre de lots d'Œils sollicités tour à tour sur invitation avant d'arrêter la cascade (2 par défaut). Une fois ce plafond atteint sans confirmation, la mission bascule en recherche élargie : elle devient visible par tous les Œils disponibles de sa ville et le client en est informé, sans être resollicité pour un choix. Le compteur repart de zéro à chaque nouvelle libération de la mission.",
+      "activity_photo_interval_minutes": "Pendant qu'une mission est en cours, l'Œil assigné doit envoyer une photo (sans visage) dans la messagerie à cet intervalle (45 min par défaut). Chaque photo reçue repousse l'échéance d'autant. Passé le délai sans photo, le client et les admins sont alertés d'une possible absence — aucune pénalité de fiabilité ni transfert automatique.",
       "transfer_cooldown_before_hours": "Un Œil qui transfère une mission avant son démarrage est bloqué de 1h avant le créneau jusqu'à (ce délai − 1h) après. Ex : mission à 14h, délai de 3h → indisponible de 13h à 16h, quelle que soit l'heure réelle du transfert.",
       "presence_confirmation_deadline_minutes": "Après le rappel envoyé la veille à 20h, l'Œil a 120 min pour confirmer sa présence (jusque vers 22h) avant réattribution automatique de la mission.",
       "presence_confirmation_deadline_minutes_sameday": "Un second contrôle a lieu environ 2h avant la mission, que la présence ait déjà été confirmée la veille ou non : l'Œil a 45 min pour (re)confirmer avant réattribution automatique.",
@@ -2993,8 +3002,9 @@
       "transfer_during_no_replacement_debit_cap_mad": "Jusqu'à 100 MAD sont débités du portefeuille de l'Œil, plafonnés à son solde réel disponible.",
       "transfer_before_no_replacement_penalty_points": "Si aucun remplaçant n'est trouvé après un transfert avant le démarrage de la mission, l'Œil perd 10 points de fiabilité (s'ajoute au bonus déjà accordé à l'ouverture du transfert, voir le champ suivant — solde net -5 par défaut).",
       "transfer_before_replacement_bonus_points": "Accordé dès l'ouverture d'un transfert avant démarrage, avant même de savoir si un remplaçant sera trouvé. ⚠️ Actuellement inatteignable en production : la seule route encore active qui ouvre ce type de transfert (déclaration d'urgence) passe systématiquement par le chemin \"sans pénalité\".",
-      "late_cancel_penalty_tier1_threshold_hours": "Au-delà de ce seuil (ou si la mission n'a pas d'heure programmée), la pénalité la plus légère du barème s'applique.",
-      "late_cancel_penalty_tier1_points": "Annulation par l'Œil au-delà du seuil du palier 1 : pénalité la plus légère du barème.",
+      "late_cancel_penalty_tier1_enabled": "Désactivé par défaut : une annulation par l'Œil (ou une déclaration d'urgence requalifiée non légitime par un admin) avec un préavis au moins égal au seuil du palier 1 ne retire alors aucun point. Activé, ce cas retire la « Pénalité palier 1 » ci-dessous. Sans effet sur les paliers 2 et 3, toujours appliqués.",
+      "late_cancel_penalty_tier1_threshold_hours": "Au-delà de ce seuil (ou si la mission n'a pas d'heure programmée), c'est le palier 1 qui s'applique — sans retrait de points tant que « Palier 1 actif » reste désactivé.",
+      "late_cancel_penalty_tier1_points": "Nombre de points retirés dans le cas du palier 1 (préavis long). N'est retiré que si « Palier 1 actif » est activé ; c'est la pénalité la plus légère du barème.",
       "late_cancel_penalty_tier2_threshold_hours": "En dessous de ce seuil, la pénalité du palier 3 (la plus sévère) s'applique à la place de celle du palier 2.",
       "late_cancel_penalty_tier2_points": "Annulation par l'Œil entre le seuil du palier 2 et celui du palier 1 : pénalité intermédiaire, classée événement grave.",
       "late_cancel_penalty_tier3_points": "Annulation par l'Œil en dessous du seuil du palier 2, donc très tardive : pénalité la plus sévère de ce barème.",
