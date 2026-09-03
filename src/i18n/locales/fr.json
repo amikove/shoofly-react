@@ -2720,6 +2720,7 @@
     "save": "Enregistrer",
     "saving": "Sauvegarde...",
     "categories": {
+      "fraud": "Anti-fraude",
       "missions": "Missions & délais",
       "reliability": "Fiabilité",
       "support": "Support",
@@ -2727,6 +2728,26 @@
       "account": "Compte"
     },
     "groups": {
+      "fraudOeil": {
+        "title": "Détection Œil (prestataire)",
+        "note": "Fenêtres d'analyse du comportement d'un Œil pour son score de risque. Élargir détecte plus de cas mais génère plus de faux positifs ; resserrer fait l'inverse."
+      },
+      "fraudRating": {
+        "title": "Manipulation de note",
+        "note": "Une seule fenêtre avant/après : on compare les notes 5★ reçues sur cette période récente à la moyenne des notes plus anciennes que cette même période."
+      },
+      "fraudClient": {
+        "title": "Détection client",
+        "note": "Fenêtres d'analyse du comportement d'un client pour son score de risque."
+      },
+      "fraudMessages": {
+        "title": "Scan de la messagerie",
+        "note": "Recherche d'un partage de coordonnées directes (téléphone, réseaux sociaux) dans les messages des missions, pour le score de risque."
+      },
+      "fraudDashboard": {
+        "title": "Écran Anti-fraude",
+        "note": "Horizon de temps des listes et compteurs de l'écran Anti-fraude. N'affecte que l'affichage, jamais le score de risque ni les blocages automatiques."
+      },
       "candidateCascade": {
         "title": "Cascade de candidats par lot",
         "note": "Un lot d'Œils est sollicité simultanément (mieux classés d'abord). Ils ont un délai pour confirmer leur disponibilité ; dès la première confirmation, une fenêtre de départage s'ouvre pour laisser une chance aux autres du même lot avant d'attribuer au mieux classé des confirmés. Ex : lot de 10, personne ne confirme en 10 min → lot suivant tiré ; un Œil confirme à la 3ᵉ minute → 5 min de plus pour les autres avant attribution."
@@ -2826,6 +2847,18 @@
       }
     },
     "fields": {
+      "fraud_oeil_cancel_lookback_days": "Annulations Œil — fenêtre (jours)",
+      "fraud_oeil_nomedia_lookback_days": "Missions sans média — fenêtre (jours)",
+      "fraud_oeil_too_fast_lookback_days": "Missions trop rapides — fenêtre (jours)",
+      "fraud_oeil_too_fast_seconds": "Seuil « mission trop rapide » (secondes)",
+      "fraud_rating_spike_window_hours": "Fenêtre avant / après (heures)",
+      "fraud_client_cancel_lookback_days": "Annulations client — fenêtre (jours)",
+      "fraud_client_refund_lookback_days": "Demandes de remboursement — fenêtre (jours)",
+      "fraud_client_fake_mission_lookback_days": "Missions fictives — fenêtre (jours)",
+      "fraud_client_fake_mission_seconds": "Seuil « acceptée puis annulée » (secondes)",
+      "fraud_message_scan_lookback_days": "Scan messagerie — fenêtre (jours)",
+      "fraud_dashboard_recent_days": "Activité récente — fenêtre (jours)",
+      "fraud_dashboard_cancellations_days": "Compteur annulations — fenêtre (jours)",
       "transfer_grace_minutes_queue": "File d'attente (min)",
       "transfer_grace_minutes_other": "Autres types de mission (min)",
       "mission_edit_approval_minutes": "Délai standard (min)",
@@ -2883,6 +2916,18 @@
       "password_reset_token_expiry_hours": "Expiration du lien de réinitialisation (h)"
     },
     "fieldExplanations": {
+      "fraud_oeil_cancel_lookback_days": "Un Œil qui annule au moins 3 missions sur cette période (7 jours par défaut) est signalé pour annulations répétées.",
+      "fraud_oeil_nomedia_lookback_days": "Un Œil avec au moins 2 missions terminées sans aucune photo ni vidéo sur cette période (30 jours par défaut) est signalé.",
+      "fraud_oeil_too_fast_lookback_days": "Période sur laquelle on compte les missions que l'Œil a terminées anormalement vite (30 jours par défaut).",
+      "fraud_oeil_too_fast_seconds": "En dessous de cette durée entre le début et la fin d'une mission (300 s, soit 5 min, par défaut), la mission est comptée comme terminée trop vite.",
+      "fraud_rating_spike_window_hours": "Une hausse brutale de notes 5★ sur cette période récente (48 h par défaut), comparée à la moyenne d'avant, est traitée comme une possible manipulation de note.",
+      "fraud_client_cancel_lookback_days": "Un client qui annule au moins 3 missions après leur démarrage sur cette période (30 jours par défaut) est signalé pour annulations abusives.",
+      "fraud_client_refund_lookback_days": "Un client qui dépose au moins 2 réclamations sur cette période (14 jours par défaut) est signalé pour demandes de remboursement répétées.",
+      "fraud_client_fake_mission_lookback_days": "Période sur laquelle on compte les missions du client acceptées puis annulées presque aussitôt (30 jours par défaut).",
+      "fraud_client_fake_mission_seconds": "En dessous de ce délai entre la création et l'annulation d'une mission (600 s, soit 10 min, par défaut), la mission est comptée comme fictive.",
+      "fraud_message_scan_lookback_days": "Ancienneté maximale des messages analysés à la recherche d'un numéro de téléphone ou d'un compte de réseau social partagé (7 jours par défaut).",
+      "fraud_dashboard_recent_days": "Les listes « missions suspectes » et « messages suspects » de l'écran Anti-fraude n'affichent que les éléments de cette période (7 jours par défaut).",
+      "fraud_dashboard_cancellations_days": "Période du compteur d'annulations affiché dans les statistiques de l'écran Anti-fraude (30 jours par défaut).",
       "transfer_grace_minutes_queue": "Pour une mission \"file d'attente\" transférée, la cascade a 45 min pour trouver un remplaçant avant annulation et remboursement intégral du client.",
       "transfer_grace_minutes_other": "Pour les autres types de mission, ce délai est de 60 min avant annulation automatique.",
       "transfer_cooldown_hours": "Un Œil qui refuse une mission déjà assignée ne peut candidater à aucune autre pendant 4h.",

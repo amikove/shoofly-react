@@ -63,6 +63,21 @@ const ADVANCED_DEFAULTS = {
   late_cancel_penalty_tier2_threshold_hours: 2,
   presence_confirmation_deadline_minutes_h45: 15,
   password_reset_token_expiry_hours: 1,
+  // Anti-fraude (backend routes/antiFraud.js) — défauts identiques aux valeurs précédemment
+  // codées en dur (voir settingsDefaults.js côté backend). Fenêtres de détection en JOURS,
+  // sauf fraud_rating_spike_window_hours (heures) et les 2 seuils *_seconds.
+  fraud_oeil_cancel_lookback_days: 7,
+  fraud_oeil_nomedia_lookback_days: 30,
+  fraud_oeil_too_fast_lookback_days: 30,
+  fraud_oeil_too_fast_seconds: 300,
+  fraud_rating_spike_window_hours: 48,
+  fraud_client_cancel_lookback_days: 30,
+  fraud_client_refund_lookback_days: 14,
+  fraud_client_fake_mission_lookback_days: 30,
+  fraud_client_fake_mission_seconds: 600,
+  fraud_message_scan_lookback_days: 7,
+  fraud_dashboard_recent_days: 7,
+  fraud_dashboard_cancellations_days: 30,
 }
 
 // rate stockée en base comme fraction (0.5) — affichée en % dans le formulaire
@@ -95,9 +110,17 @@ const ADVANCED_GROUPS = [
   { key: 'responseTime',     category: 'support',     fields: ['response_time_max_valid_minutes', 'response_time_min_turns'] },
   { key: 'dashboardAlerts',  category: 'dashboard',    fields: ['dashboard_stuck_pending_hours', 'dashboard_low_reliability_threshold'] },
   { key: 'passwordReset',    category: 'account',     fields: ['password_reset_token_expiry_hours'] },
+  // Anti-fraude — mêmes clés que le backend (routes/antiFraud.js). Regroupées par cible
+  // (Œil / client / messagerie / affichage dashboard), pas par valeur : deux fenêtres à
+  // "30 jours" aujourd'hui restent des réglages distincts.
+  { key: 'fraudOeil',       category: 'fraud', fields: ['fraud_oeil_cancel_lookback_days', 'fraud_oeil_nomedia_lookback_days', 'fraud_oeil_too_fast_lookback_days', 'fraud_oeil_too_fast_seconds'] },
+  { key: 'fraudRating',     category: 'fraud', fields: ['fraud_rating_spike_window_hours'] },
+  { key: 'fraudClient',     category: 'fraud', fields: ['fraud_client_cancel_lookback_days', 'fraud_client_refund_lookback_days', 'fraud_client_fake_mission_lookback_days', 'fraud_client_fake_mission_seconds'] },
+  { key: 'fraudMessages',   category: 'fraud', fields: ['fraud_message_scan_lookback_days'] },
+  { key: 'fraudDashboard',  category: 'fraud', fields: ['fraud_dashboard_recent_days', 'fraud_dashboard_cancellations_days'] },
 ]
 
-const CATEGORY_ORDER = ['missions', 'reliability', 'support', 'dashboard', 'account']
+const CATEGORY_ORDER = ['missions', 'reliability', 'support', 'dashboard', 'fraud', 'account']
 
 // Les 4 réglages "de base" (cartes du haut) n'ont pas d'entrée adminAdvancedSettings.fields.* —
 // libellés utilisés par le tableau d'aperçu de la réinitialisation (voir ci-dessous).
