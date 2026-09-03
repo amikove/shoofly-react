@@ -2714,19 +2714,36 @@
     }
   },
   "adminAdvancedSettings": {
+    "screenTitle": "الإعدادات",
     "sectionTitle": "الإعدادات المتقدمة",
     "sectionIntro": "مهل وعتبات داخلية للمنصة. عدّلها بحذر: لها تأثير مباشر على المهام الجارية.",
     "save": "حفظ",
     "saving": "جارٍ الحفظ...",
+    "savedToast": "تم حفظ الإعدادات ✓",
+    "saveError": "خطأ أثناء الحفظ",
+    "loadError": "خطأ في تحميل الإعدادات",
+    "searchPlaceholder": "ابحث عن إعداد (بالاسم أو الوصف)…",
+    "searchClear": "مسح البحث",
+    "searchResultsCount": "تم العثور على {{count}} إعداد",
+    "searchNoResults": "لا يوجد إعداد يطابق « {{query}} »",
+    "categoryNavLabel": "فئات الإعدادات",
+    "resetFieldTitle": "الافتراضي: {{value}} — إعادة تعيين هذا الحقل",
+    "enabled": "مُفعّل",
+    "disabled": "مُعطّل",
     "categories": {
-      "fraud": "مكافحة الاحتيال",
-      "missions": "المهام والمهل",
-      "reliability": "الموثوقية",
-      "support": "الدعم",
-      "dashboard": "لوحة التحكم",
-      "account": "الحساب"
+      "tarification": "التسعير",
+      "delaisMission": "مهل المهمة",
+      "transferts": "التحويلات وفترات التهدئة",
+      "validation": "التحقق والنزاعات",
+      "fiabilite": "الموثوقية",
+      "communication": "التواصل",
+      "antifraude": "مكافحة الاحتيال",
+      "securite": "الأمان"
     },
     "groups": {
+      "platformPricing": {
+        "title": "تسعير المنصة"
+      },
       "fraudOeil": {
         "title": "كشف سلوك العين (مزوّد الخدمة)",
         "note": "نوافذ تحليل سلوك العين لاحتساب درجة خطورته. التوسيع يكشف حالات أكثر لكن مع مزيد من الإنذارات الكاذبة، والتضييق العكس."

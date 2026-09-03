@@ -2715,19 +2715,36 @@
     }
   },
   "adminAdvancedSettings": {
+    "screenTitle": "Paramètres",
     "sectionTitle": "Réglages avancés",
     "sectionIntro": "Délais et seuils internes de la plateforme. À modifier avec précaution : impact direct sur les missions en cours.",
     "save": "Enregistrer",
     "saving": "Sauvegarde...",
+    "savedToast": "Réglages enregistrés ✓",
+    "saveError": "Erreur lors de l'enregistrement",
+    "loadError": "Erreur de chargement des réglages",
+    "searchPlaceholder": "Rechercher un réglage (nom ou description)…",
+    "searchClear": "Effacer la recherche",
+    "searchResultsCount": "{{count}} réglage(s) trouvé(s)",
+    "searchNoResults": "Aucun réglage ne correspond à « {{query}} »",
+    "categoryNavLabel": "Catégories de réglages",
+    "resetFieldTitle": "Défaut : {{value}} — réinitialiser ce champ",
+    "enabled": "Activé",
+    "disabled": "Désactivé",
     "categories": {
-      "fraud": "Anti-fraude",
-      "missions": "Missions & délais",
-      "reliability": "Fiabilité",
-      "support": "Support",
-      "dashboard": "Dashboard",
-      "account": "Compte"
+      "tarification": "Tarification",
+      "delaisMission": "Délais mission",
+      "transferts": "Transferts & cooldowns",
+      "validation": "Validation & litiges",
+      "fiabilite": "Fiabilité",
+      "communication": "Communication",
+      "antifraude": "Anti-fraude",
+      "securite": "Sécurité"
     },
     "groups": {
+      "platformPricing": {
+        "title": "Tarification plateforme"
+      },
       "fraudOeil": {
         "title": "Détection Œil (prestataire)",
         "note": "Fenêtres d'analyse du comportement d'un Œil pour son score de risque. Élargir détecte plus de cas mais génère plus de faux positifs ; resserrer fait l'inverse."
@@ -2750,35 +2767,35 @@
       },
       "candidateCascade": {
         "title": "Cascade de candidats par lot",
-        "note": "Un lot d'Œils est sollicité simultanément (mieux classés d'abord). Ils ont un délai pour confirmer leur disponibilité ; dès la première confirmation, une fenêtre de départage s'ouvre pour laisser une chance aux autres du même lot avant d'attribuer au mieux classé des confirmés. Ex : lot de 10, personne ne confirme en 10 min → lot suivant tiré ; un Œil confirme à la 3ᵉ minute → 5 min de plus pour les autres avant attribution."
+        "note": "Un lot d'Œils est sollicité simultanément (mieux classés d'abord). Ils ont un délai pour confirmer leur disponibilité ; dès la première confirmation, une fenêtre de départage s'ouvre pour laisser une chance aux autres du même lot avant d'attribuer au mieux classé des confirmés. Ex : lot de {{batchSize}}, personne ne confirme en {{confirmMin}} min → lot suivant tiré ; un Œil confirme tôt → {{tiebreakMin}} min de plus pour les autres avant attribution."
       },
       "transferGrace": {
         "title": "Délai de grâce après transfert",
-        "note": "Temps laissé pour trouver un remplaçant avant que la mission ne soit annulée faute de prestataire. Ex : 45 min pour une mission \"file d'attente\", 60 min pour les autres types."
+        "note": "Temps laissé pour trouver un remplaçant avant que la mission ne soit annulée faute de prestataire. Ex : {{graceQueue}} min pour une mission \"file d'attente\", {{graceOther}} min pour les autres types."
       },
       "missionEdit": {
         "title": "Modification de mission — délai de réponse de l'Œil",
-        "note": "Le délai standard est réduit automatiquement si la mission a lieu avant le seuil ci-dessous. Ex : mission dans 3h (< 4h) → 30 min pour répondre au lieu de 120."
+        "note": "Le délai standard est réduit automatiquement si la mission a lieu avant le seuil ci-dessous. Ex : mission à moins de {{editThresholdH}}h → {{editUrgentMin}} min pour répondre au lieu de {{editStdMin}}."
       },
       "clientValidation": {
         "title": "Validation client & paiement",
-        "note": "⚠️ Le premier délai est utilisé à 3 endroits qui doivent rester synchronisés : fenêtre de réclamation, délai affiché au client, et déclenchement du paiement automatique de l'Œil. Ex : mission terminée à 9h → paiement automatique et fin de la fenêtre de réclamation à 21h si rien n'est signalé. Un rappel intermédiaire est aussi envoyé au client à mi-parcours (second délai), avant l'auto-validation silencieuse."
+        "note": "⚠️ Le premier délai est utilisé à 3 endroits qui doivent rester synchronisés : fenêtre de réclamation, délai affiché au client, et déclenchement du paiement automatique de l'Œil. Ex : mission terminée à 9h → paiement automatique et fin de la fenêtre de réclamation à {{validationExampleEnd}}h si rien n'est signalé. Un rappel intermédiaire est aussi envoyé au client {{validationReminderH}}h après la clôture, avant l'auto-validation silencieuse."
       },
       "scheduleConflict": {
         "title": "Conflit de créneau",
-        "note": "Écart minimum requis entre deux missions d'un même Œil pour éviter un chevauchement. Ex : une mission à 14h bloque toute autre mission du même Œil entre 10h et 18h."
+        "note": "Écart minimum requis entre deux missions d'un même Œil pour éviter un chevauchement. Ex : une mission à 14h bloque toute autre mission du même Œil entre {{conflictBefore}}h et {{conflictAfter}}h."
       },
       "cooldowns": {
         "title": "Cooldown après transfert ou abandon",
-        "note": "Empêche l'Œil d'accepter une nouvelle mission immédiatement après avoir transféré/refusé une mission (délai court), abandonné une mission déjà en cours (délai aggravé, sans remplaçant trouvé), ou transféré une mission avant son démarrage (délai ancré sur l'heure du créneau, pas sur l'heure du clic). Ex : 4h après un refus, 48h après un abandon en cours de mission, ou de 1h avant à 2h après le créneau pour un transfert avant démarrage (délai de 3h)."
+        "note": "Empêche l'Œil d'accepter une nouvelle mission immédiatement après avoir transféré/refusé une mission (délai court), abandonné une mission déjà en cours (délai aggravé, sans remplaçant trouvé), ou transféré une mission avant son démarrage (délai ancré sur l'heure du créneau, pas sur l'heure du clic). Ex : {{cdRefusH}}h après un refus, {{cdAbandonH}}h après un abandon en cours de mission, ou de 1h avant à {{cdBeforeAfterH}}h après le créneau pour un transfert avant démarrage (délai de {{cdBeforeH}}h)."
       },
       "staleMission": {
         "title": "Mission sans prestataire trouvé",
-        "note": "L'admin est alerté si la mission attend depuis le premier délai ET que son créneau est encore éloigné d'au moins le second délai. Ex : mission créée il y a 12h, toujours sans Œil, et dont le créneau est encore à plus de 4h."
+        "note": "L'admin est alerté si la mission attend depuis le premier délai ET que son créneau est encore éloigné d'au moins le second délai. Ex : mission créée il y a {{staleH}}h, toujours sans Œil, et dont le créneau est encore à plus de {{staleLeadH}}h."
       },
       "urgentWhatsappWaves": {
         "title": "Notifications WhatsApp — missions urgentes",
-        "note": "Si la mission urgente n'a toujours pas d'Œil, une nouvelle vague de candidats est contactée par WhatsApp après ce délai, jusqu'à épuisement des Œils disponibles dans la ville. Ex : 15 Œils éligibles → les 10 mieux classés contactés immédiatement, les 5 restants 30 min plus tard si la mission est toujours sans Œil."
+        "note": "Si la mission urgente n'a toujours pas d'Œil, une nouvelle vague de candidats est contactée par WhatsApp après ce délai, jusqu'à épuisement des Œils disponibles dans la ville. Ex : les {{urgentBatch}} Œils les mieux classés contactés immédiatement, les suivants {{urgentDelayMin}} min plus tard si la mission est toujours sans Œil."
       },
       "candidatureWhatsapp": {
         "title": "Notification WhatsApp au client — seuil de candidatures",
@@ -2800,11 +2817,11 @@
       },
       "lateStart": {
         "title": "Retard au démarrage",
-        "note": "Séquence liée : alerte à l'Œil/l'admin au premier délai, puis transfert automatique au second (qui doit rester supérieur au premier). Ex : alerte à 30 min de retard, transfert automatique et pénalité à 60 min."
+        "note": "Séquence liée : alerte à l'Œil/l'admin au premier délai, puis transfert automatique au second (qui doit rester supérieur au premier). Ex : alerte à {{lateAlertMin}} min de retard, transfert automatique et pénalité à {{lateTransferMin}} min."
       },
       "reminders": {
         "title": "Rappels avant mission",
-        "note": "Notifications envoyées à l'Œil avant le début de sa mission (marge de ±10 min autour de chaque valeur). Ex : mission à 14h → rappels vers 12h puis 13h30."
+        "note": "Notifications envoyées à l'Œil avant le début de sa mission (marge de ±10 min autour de chaque valeur). Ex : rappels {{reminderEarlyMin}} min puis {{reminderLateMin}} min avant l'heure de la mission."
       },
       "presenceConfirmation": {
         "title": "Confirmation de présence de l'Œil",
@@ -2812,7 +2829,7 @@
       },
       "refund": {
         "title": "Remboursement à l'annulation",
-        "note": "Si un client annule une mission de 300 MAD plus de 2h avant l'heure prévue, il est remboursé de 150 MAD (50%) ; moins de 2h avant, aucun remboursement."
+        "note": "Si un client annule plus de {{refundThresholdH}}h avant l'heure prévue, il est remboursé de {{refundRatePct}} % ; en dessous, aucun remboursement. Ex : sur une mission à 300 MAD annulée à temps, {{refundExampleBack}} MAD lui sont rendus."
       },
       "paymentRetry": {
         "title": "Nouvel essai de paiement PayZone",
@@ -2830,14 +2847,14 @@
       },
       "lateCancelPenalty": {
         "title": "Barème d'annulation tardive par l'Œil",
-        "note": "⚠️ Barème actuellement inatteignable en production (aucune route ne peut plus l'exercer) — conservé et rendu configurable pour cohérence avec le reste des réglages de fiabilité. Ex : annulation par l'Œil 1h avant la mission → -50 points (palier le plus sévère, sous le seuil de 2h)."
+        "note": "⚠️ Barème actuellement inatteignable en production (aucune route ne peut plus l'exercer) — conservé et rendu configurable pour cohérence avec le reste des réglages de fiabilité. Ex : annulation par l'Œil moins de {{lateCancelTier2H}}h avant la mission → {{lateCancelTier3Pts}} points (palier le plus sévère)."
       },
       "ticketResolve": {
         "title": "Auto-résolution des tickets"
       },
       "responseTime": {
         "title": "Calcul du temps de réponse",
-        "note": "Filtre le bruit : ignore les délais de réponse trop longs ou les Œils avec trop peu d'échanges pour être significatifs. Ex : un délai de plus de 24h est ignoré, et sous 3 échanges aucune moyenne n'est affichée."
+        "note": "Filtre le bruit : ignore les délais de réponse trop longs ou les Œils avec trop peu d'échanges pour être significatifs. Ex : un délai de plus de {{responseMaxH}}h est ignoré, et sous {{responseMinTurns}} échanges aucune moyenne n'est affichée."
       },
       "dashboardAlerts": {
         "title": "Alertes du dashboard admin"
