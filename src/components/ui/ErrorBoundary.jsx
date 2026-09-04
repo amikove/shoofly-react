@@ -1,4 +1,5 @@
 import { Component } from 'react'
+import * as Sentry from '@sentry/react'
 
 // Filet de dernier recours pour les erreurs de RENDU (une exception levée pendant le rendu d'un
 // composant fait, sans ce garde, disparaître tout l'arbre React → écran blanc). React n'expose pas
@@ -42,6 +43,10 @@ export default class ErrorBoundary extends Component {
       error?.message,
       errorInfo?.componentStack,
     )
+    // captureReactException (plutôt que captureException) attache correctement le
+    // componentStack — API Sentry dédiée aux erreurs remontées à un ErrorBoundary React. Vient
+    // en plus du console.error ci-dessus, ne le remplace pas.
+    Sentry.captureReactException(error, errorInfo)
   }
 
   render() {
