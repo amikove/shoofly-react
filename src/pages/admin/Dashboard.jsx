@@ -62,6 +62,9 @@ export default function AdminDashboard() {
   // ── Services ──
   const [servicesData, setServicesData] = useState(null)
   const [loadingServices, setLoadingServices] = useState(true)
+  // Seuil rouge du « délai moyen validation » = réglage admin client_validation_hours
+  // (défaut 12). null tant que non chargé → repli sur 12 au rendu.
+  const [clientValidationHours, setClientValidationHours] = useState(null)
 
   // ── Campagnes ──
   const [campagnesData, setCampagnesData] = useState(null)
@@ -310,6 +313,20 @@ export default function AdminDashboard() {
       .finally(() => setLoadingServices(false))
   }, [tab, range, compareRange])
 
+  // Réglage client_validation_hours pour le seuil d'alerte de l'onglet Services.
+  // Chargé une fois à l'ouverture de l'onglet, sans toast : sur échec (réseau, ou
+  // admin sans permission « finance » sur GET /admin/settings) le rendu garde 12 et
+  // on réessaie au prochain passage sur l'onglet.
+  useEffect(() => {
+    if (tab !== 'services' || clientValidationHours !== null) return
+    adminAPI.settings()
+      .then(({ data }) => {
+        const h = Number(data?.settings?.client_validation_hours)
+        if (Number.isFinite(h) && h > 0) setClientValidationHours(h)
+      })
+      .catch(() => {})
+  }, [tab, clientValidationHours])
+
   useEffect(() => {
     if (tab !== 'experience' || !range?.from || !range?.to) return
     setLoadingExperience(true)
@@ -556,7 +573,7 @@ export default function AdminDashboard() {
                             <td className="text-yellow-400">
                               {s.avg_rating > 0 ? `${s.avg_rating} ★` : '—'}
                             </td>
-                            <td className={parseFloat(s.delai_moyen_validation) > 12 ? 'text-red-400' : 'text-white'}>
+                            <td className={parseFloat(s.delai_moyen_validation) > (clientValidationHours ?? 12) ? 'text-red-400' : 'text-white'}>
                               <ComparisonCell current={s.delai_moyen_validation} compare={cmp?.delai_moyen_validation} suffix="h" invert hasComparison={!!servicesData.comparison} />
                             </td>
                           </tr>
