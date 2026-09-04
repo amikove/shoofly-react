@@ -374,6 +374,19 @@ export default function AdminParametres() {
   const saveCategory = async (catKey) => {
     setSavingCat(catKey)
     try {
+      // C3 (audit valeurs-temps, 2026-09-03) — garde de cohérence côté écran (le backend
+      // PUT /admin/settings re-vérifie et refuse un 400 identique) : dans la catégorie
+      // « Validation », client_validation_reminder_hours doit rester STRICTEMENT inférieur à
+      // client_validation_hours (les 2 champs du groupe clientValidation), sinon le rappel
+      // « à mi-parcours » partirait après l'auto-validation — cf. note du groupe.
+      if (catKey === 'validation') {
+        const vh = Number(advanced.client_validation_hours)
+        const rh = Number(advanced.client_validation_reminder_hours)
+        if (Number.isFinite(vh) && Number.isFinite(rh) && rh >= vh) {
+          toast(t('adminAdvancedSettings.clientValidationReminderTooLate'), 'error')
+          return
+        }
+      }
       const keys = groupsByCategory(catKey).flatMap((g) => g.fields)
       const payload = {}
       for (const key of keys) {

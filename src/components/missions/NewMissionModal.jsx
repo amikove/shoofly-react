@@ -173,6 +173,11 @@ const DEFAULT_PAYMENT_METHOD = PAYMENT_METHODS.find((m) => m.enabled)?.value || 
 // Même tolérance que le backend (missions.js, SCHEDULED_AT_PAST_TOLERANCE_MS — chantier
 // audit-360 v2, point 7) : POST /missions refuse déjà un scheduled_at de plus de 5 min dans le
 // passé, cette vérification côté formulaire ne fait qu'anticiper le même refus avant l'appel API.
+// C9 (audit valeurs-temps, 2026-09-01, §Étape 3) : cette micro-tolérance d'ergonomie n'est
+// délibérément PAS un réglage admin (ni ici, ni côté backend où c'est une const nue, pas un
+// getSetting). Les deux copies doivent rester égales — si l'une change, changer l'autre dans
+// le même commit. C'est le seul garde-fou nécessaire : un désaccord des 2 valeurs exige de
+// toute façon un déploiement, jamais une simple modification de réglage.
 const SCHEDULED_AT_PAST_TOLERANCE_MS = 5 * 60 * 1000
 
 export default function NewMissionModal({ open, onClose, onCreated, preselectedOeil }) {

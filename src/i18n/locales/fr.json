@@ -504,7 +504,7 @@
       "default": "Confirmer l'annulation ?",
       "assignedCash": "⚠️ Cette mission est déjà assignée à un Œil et payée en espèces.\n\nElle ne peut plus être annulée depuis l'application. Si vous rencontrez un problème, contactez le support Shoofly.",
       "assignedRefund50": "⚠️ Cette mission est déjà assignée à un Œil.\n\nConformément aux CGV, le remboursement dans votre wallet sera de 50% du montant payé.\n\nConfirmer l'annulation ?",
-      "assignedNoRefund": "⚠️ Cette mission débute dans moins de 2 heures.\n\nConformément aux CGV, aucun remboursement ne sera effectué en cas d'annulation dans ce délai.\n\nConfirmer l'annulation ?"
+      "assignedNoRefund": "⚠️ Cette mission débute dans moins de {{hours}} heures.\n\nConformément aux CGV, aucun remboursement ne sera effectué en cas d'annulation dans ce délai.\n\nConfirmer l'annulation ?"
     },
     "errors": {
       "selectProblemType": "Sélectionnez un type de problème",
@@ -2723,6 +2723,7 @@
     "savedToast": "Réglages enregistrés ✓",
     "saveError": "Erreur lors de l'enregistrement",
     "loadError": "Erreur de chargement des réglages",
+    "clientValidationReminderTooLate": "Le rappel intermédiaire de validation doit rester strictement inférieur au délai d'auto-validation. Sans cet écart, le rappel « à mi-parcours » serait envoyé après l'auto-validation de la mission : il perdrait tout son sens et cesserait même d'être déclenché.",
     "searchPlaceholder": "Rechercher un réglage (nom ou description)…",
     "searchClear": "Effacer la recherche",
     "searchResultsCount": "{{count}} réglage(s) trouvé(s)",

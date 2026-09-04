@@ -230,13 +230,17 @@ const cancel = async (id) => {
     // messages assignedRefund50/assignedNoRefund ci-dessous ne s'appliquent donc plus qu'à
     // payment_method='payzone' — conservés tels quels pour la réactivation prévue de PayZone,
     // où le remboursement wallet redevient réel.
+    // C9 (audit valeurs-temps, 2026-09-03) : seuil lu depuis la réponse API
+    // (refund_partial_threshold_hours, cf. GET /missions) au lieu d'un « 2 » recopié en dur —
+    // sinon le dialogue devient trompeur dès qu'un admin change refund_partial_threshold_hours.
+    const refundThresholdHours = mission?.refund_partial_threshold_hours ?? 2
     let confirmMsg = t('clientMissions.cancelConfirm.default')
     if (isAssigned && mission?.payment_method === 'cash') {
       confirmMsg = t('clientMissions.cancelConfirm.assignedCash')
-    } else if (isAssigned && hoursBeforeMission > 2) {
+    } else if (isAssigned && hoursBeforeMission > refundThresholdHours) {
       confirmMsg = t('clientMissions.cancelConfirm.assignedRefund50')
-    } else if (isAssigned && hoursBeforeMission <= 2) {
-      confirmMsg = t('clientMissions.cancelConfirm.assignedNoRefund')
+    } else if (isAssigned && hoursBeforeMission <= refundThresholdHours) {
+      confirmMsg = t('clientMissions.cancelConfirm.assignedNoRefund', { hours: refundThresholdHours })
     }
 
     if (!window.confirm(confirmMsg)) return
@@ -366,8 +370,12 @@ const cancel = async (id) => {
 
                     {m.status === 'completed' && !m.validated_at && m.completed_by_oeil_at && (
                       (() => {
+                        // C9 (audit valeurs-temps, 2026-09-03) : fenêtre lue depuis la réponse
+                        // API (client_validation_hours, cf. GET /missions) au lieu d'un « 12 »
+                        // recopié en dur — sinon les boutons disparaissent avant la fin réelle
+                        // de la fenêtre de validation/réclamation quand l'admin l'allonge.
                         const hours = (Date.now() - new Date(m.completed_by_oeil_at).getTime()) / 3600000;
-                        return hours < 12 ? (
+                        return hours < (m.client_validation_hours ?? 12) ? (
                           <>
                             <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); validateMission(m.id); }}
                               className="btn btn-ghost btn-sm text-green-400" title={t('clientMissions.actions.validate')}>✅</button>
@@ -470,8 +478,10 @@ const cancel = async (id) => {
 
           {m.status === 'completed' && !m.validated_at && m.completed_by_oeil_at && (
   (() => {
+    // C9 (audit valeurs-temps, 2026-09-03) : cf. bloc desktop — fenêtre lue depuis
+    // client_validation_hours (réponse API) au lieu du « 12 » recopié en dur.
     const hours = (Date.now() - new Date(m.completed_by_oeil_at).getTime()) / 3600000;
-    return hours < 12 ? (
+    return hours < (m.client_validation_hours ?? 12) ? (
       <>
         <button onClick={() => validateMission(m.id)} className="btn btn-ghost btn-sm text-green-400">{t('clientMissions.mobile.validate')}</button>
         <button onClick={() => setClaimMission(m)} className="btn btn-ghost btn-sm text-orange-400">{t('clientMissions.mobile.claim')}</button>
