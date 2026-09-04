@@ -133,6 +133,7 @@ export const adminAPI = {
   settings:       ()       => api.get('/api/users/admin/settings'),
   settingsDefaults: ()     => api.get('/api/users/admin/settings/defaults'),
   saveSettings:   (data)   => api.put('/api/users/admin/settings', data),
+  settingsHistory: (params) => api.get('/api/users/admin/settings/history', { params }),
   claims:         ()       => api.get('/api/users/admin/claims'),
   flaggedMessages: () => api.get('/api/users/admin/flagged-messages'),
   warnUser: (userId, data) => api.post(`/api/anti-fraud/warn/${userId}`, data),

@@ -3,7 +3,8 @@ import { useTranslation } from 'react-i18next'
 import AppLayout from '../../components/layout/AppLayout'
 import Topbar from '../../components/layout/Topbar'
 import { adminAPI } from '../../api'
-import { toast, Spinner } from '../../components/ui'
+import { toast, Spinner, Pagination } from '../../components/ui'
+import { CASABLANCA_TZ } from '../../utils/casablancaTime'
 
 // ── Réglages plateforme — valeurs par défaut EXACTEMENT identiques aux valeurs seedées
 // côté backend (config/settingsDefaults.js). Les 4 réglages de tarification plateforme
@@ -235,6 +236,20 @@ export default function AdminParametres() {
   const [resetLoading, setResetLoading] = useState(false)
   const [resetApplying, setResetApplying] = useState(false)
 
+  // ── Historique des modifications (chantier "historique des réglages", 2026-09-04) — accès
+  // global depuis le Topbar (même emplacement que "Réinitialiser aux valeurs par défaut"
+  // ci-dessus), pas un lien par catégorie : settings_history est paginée côté serveur sur
+  // TOUTES les clés, un filtre par catégorie forcerait à paginer côté client sur un
+  // sous-ensemble déjà tronqué par page. Le filtre `historyKey` (optionnel, une seule clé à la
+  // fois — même contrat que GET /admin/settings/history) suffit à retrouver un réglage précis
+  // sans dupliquer un mécanisme de filtrage différent de celui du backend.
+  const [historyOpen, setHistoryOpen] = useState(false)
+  const [historyLoading, setHistoryLoading] = useState(false)
+  const [historyRows, setHistoryRows] = useState([])
+  const [historyPage, setHistoryPage] = useState(1)
+  const [historyPages, setHistoryPages] = useState(1)
+  const [historyKey, setHistoryKey] = useState('')
+
   // Extrait de l'useEffect de montage pour être ré-appelable après une réinitialisation :
   // les champs reflètent immédiatement les valeurs restaurées sans recharger la page.
   const loadSettings = async () => {
@@ -436,6 +451,29 @@ export default function AdminParametres() {
     }
   }
 
+  // ── Historique des modifications — chargement paginé, uniquement pendant que le modal est
+  // ouvert (pas de fetch au montage de l'écran). Mêmes conventions que WalletReconciliation.jsx :
+  // garde d'annulation (cancelled) contre une réponse périmée, page remise à 1 sur changement de
+  // filtre. ──
+  useEffect(() => {
+    if (!historyOpen) return
+    let cancelled = false
+    setHistoryLoading(true)
+    adminAPI.settingsHistory({ page: historyPage, limit: 20, ...(historyKey ? { setting_key: historyKey } : {}) })
+      .then(({ data }) => {
+        if (cancelled) return
+        setHistoryRows(data.history || [])
+        setHistoryPages(data.pages || 1)
+      })
+      .catch(() => { if (!cancelled) toast(t('adminSettingsHistory.loadError'), 'error') })
+      .finally(() => { if (!cancelled) setHistoryLoading(false) })
+    return () => { cancelled = true }
+  }, [historyOpen, historyPage, historyKey, t])
+
+  useEffect(() => { setHistoryPage(1) }, [historyKey])
+
+  const openHistory = () => { setHistoryKey(''); setHistoryPage(1); setHistoryOpen(true) }
+
   const displayValue = (key, raw) => {
     if (raw === undefined || raw === null) return '—'
     if (BOOLEAN_FIELDS.includes(key)) return raw === 'true' ? t('adminAdvancedSettings.enabled') : t('adminAdvancedSettings.disabled')
@@ -455,9 +493,14 @@ export default function AdminParametres() {
       <Topbar
         title={t('adminAdvancedSettings.screenTitle')}
         actions={
-          <button onClick={openResetPreview} disabled={resetLoading} className="btn btn-ghost btn-sm disabled:opacity-60">
-            {resetLoading ? t('adminSettingsReset.loading') : t('adminSettingsReset.button')}
-          </button>
+          <div className="flex gap-2">
+            <button onClick={openHistory} className="btn btn-ghost btn-sm">
+              {t('adminSettingsHistory.button')}
+            </button>
+            <button onClick={openResetPreview} disabled={resetLoading} className="btn btn-ghost btn-sm disabled:opacity-60">
+              {resetLoading ? t('adminSettingsReset.loading') : t('adminSettingsReset.button')}
+            </button>
+          </div>
         }
       />
 
@@ -702,6 +745,65 @@ export default function AdminParametres() {
                 </div>
               </>
             )}
+          </div>
+        </div>
+      )}
+
+      {historyOpen && (
+        <div className="fixed inset-0 bg-black/80 z-[70] flex items-center justify-center p-4 backdrop-blur-sm">
+          <div className="bg-[#181818] border border-white/10 rounded-2xl p-6 w-full max-w-2xl shadow-xl max-h-[85vh] overflow-y-auto">
+            <h2 className="font-bold text-base mb-1">{t('adminSettingsHistory.modalTitle')}</h2>
+            <p className="text-[11px] text-[#777] mb-4">{t('adminSettingsHistory.trackedSinceNotice')}</p>
+
+            <select
+              className="input mb-4"
+              value={historyKey}
+              onChange={(e) => setHistoryKey(e.target.value)}
+              aria-label={t('adminSettingsHistory.filterLabel')}
+            >
+              <option value="">{t('adminSettingsHistory.filterAll')}</option>
+              {CATEGORIES.map((cat) => (
+                <optgroup key={cat.key} label={`${cat.icon} ${t(`adminAdvancedSettings.categories.${cat.key}`)}`}>
+                  {groupsByCategory(cat.key).flatMap((g) => g.fields).map((key) => (
+                    <option key={key} value={key}>{stripTrailingUnit(fieldLabel(key))}</option>
+                  ))}
+                </optgroup>
+              ))}
+            </select>
+
+            {historyLoading ? (
+              <div className="flex justify-center py-10"><Spinner size="md" /></div>
+            ) : historyRows.length === 0 ? (
+              <p className="text-sm text-[#AAA] my-6 text-center">{t('adminSettingsHistory.empty')}</p>
+            ) : (
+              <>
+                <div className="space-y-3">
+                  {historyRows.map((entry) => (
+                    <div key={entry.id} className="bg-[#141414] border border-white/5 rounded-xl p-3">
+                      <div className="flex items-center justify-between text-[11px] text-[#AAA] mb-1.5">
+                        <span className="font-medium text-white/80">{entry.admin_name || t('adminSettingsHistory.unknownAdmin')}</span>
+                        <span>
+                          {new Date(entry.changed_at).toLocaleDateString('fr-FR', { timeZone: CASABLANCA_TZ, day: 'numeric', month: 'short', year: 'numeric' })}
+                          {' · '}
+                          {new Date(entry.changed_at).toLocaleTimeString('fr-FR', { timeZone: CASABLANCA_TZ, hour: '2-digit', minute: '2-digit' })}
+                        </span>
+                      </div>
+                      <div className="text-xs">
+                        <span className="text-[#AAA]">{stripTrailingUnit(fieldLabel(entry.setting_key))}: </span>
+                        <span className="text-white/50 line-through">{displayValue(entry.setting_key, entry.old_value)}</span>
+                        <span className="text-[#AAA] mx-1">→</span>
+                        <span className="text-[#FF4D00] font-medium">{displayValue(entry.setting_key, entry.new_value)}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <Pagination page={historyPage} pages={historyPages} onPageChange={setHistoryPage} />
+              </>
+            )}
+
+            <button onClick={() => setHistoryOpen(false)} className="btn btn-ghost w-full justify-center mt-5">
+              {t('adminSettingsHistory.close')}
+            </button>
           </div>
         </div>
       )}

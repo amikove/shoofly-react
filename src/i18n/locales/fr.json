@@ -3035,5 +3035,16 @@
     "successToast": "Réglages réinitialisés ✓",
     "errorToast": "Erreur lors de la réinitialisation",
     "loadErrorToast": "Erreur de chargement des valeurs par défaut"
+  },
+  "adminSettingsHistory": {
+    "button": "Historique des modifications",
+    "modalTitle": "Historique des modifications",
+    "trackedSinceNotice": "Le suivi ne couvre que les modifications effectuées depuis la mise en place de cet historique — aucune donnée rétroactive n'est disponible pour les changements antérieurs.",
+    "filterLabel": "Filtrer par réglage",
+    "filterAll": "Tous les réglages",
+    "empty": "Aucune modification enregistrée pour le moment.",
+    "unknownAdmin": "Administrateur",
+    "close": "Fermer",
+    "loadError": "Erreur de chargement de l'historique"
   }
 }
