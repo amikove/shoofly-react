@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import AppLayout from '../../components/layout/AppLayout'
 import Topbar from '../../components/layout/Topbar'
@@ -17,6 +17,7 @@ import InterestsModal from '../../components/missions/InterestsModal'
 import NewTicketModal from '../../components/tickets/NewTicketModal'
 import { Pagination } from '../../components/ui'
 import { getChatAccessState } from '../../utils/chatAccess'
+import { friendlyMissionError, isStaleMissionError } from '../../utils/missionErrors'
 
 const TYPE_ICONS = { immobilier:'🏠', file_attente:'⏳', audit:'🔎', personnalisee:'🎯' }
 
@@ -168,6 +169,23 @@ export default function ClientMissions() {
     const [totalPages, setTotalPages]       = useState(1)
   const { pendingAction, clearPending } = useNotif()
 
+  // Anti-double-clic sur « Valider » / « Annuler » (même patron que la candidature Œil,
+  // oeil/Missions.jsx : submittingInterestRef) : le ref est testé de façon SYNCHRONE avant
+  // tout await pour bloquer une 2e soumission pendant la requête en vol ; le Set en state
+  // ne pilote que l'affichage (bouton désactivé + libellé « … »). Les boutons Valider et
+  // Annuler d'une même ligne sont mutuellement exclusifs (statuts différents), une seule
+  // clé par mission suffit.
+  const actingRef = useRef(new Set())
+  const [actingIds, setActingIds] = useState(() => new Set())
+  const setActing = (id, on) => {
+    if (on) actingRef.current.add(id); else actingRef.current.delete(id)
+    setActingIds((prev) => {
+      const next = new Set(prev)
+      if (on) next.add(id); else next.delete(id)
+      return next
+    })
+  }
+
 // Traiter l'action en attente depuis une notification (chat ou intéressés)
 useEffect(() => {
   if (!pendingAction) return
@@ -217,6 +235,14 @@ useEffect(() => {
     load()
   }, [load])
 
+  const handleActionError = (err) => {
+    toast(friendlyMissionError(err, t), isStaleMissionError(err) ? 'info' : 'error')
+    // État périmé (2e requête d'un double-clic, action depuis un onglet non rafraîchi) ou
+    // coupure réseau : resynchroniser la liste pour retirer les boutons obsolètes plutôt
+    // que laisser l'utilisateur recliquer (cf. rapport UX technique, bonus 3).
+    if (isStaleMissionError(err)) load()
+  }
+
 const cancel = async (id) => {
     const mission = missions.find(m => m.id === id)
     const isAssigned = mission?.status === 'assigned'
@@ -244,23 +270,31 @@ const cancel = async (id) => {
     }
 
     if (!window.confirm(confirmMsg)) return
+    if (actingRef.current.has(id)) return   // latch synchrone : bloque une 2e soumission en vol
+    setActing(id, true)
     try {
       await missionsAPI.status(id, { status: 'cancelled' })
       setMissions(prev => prev.map(m => m.id === id ? { ...m, status: 'cancelled' } : m))
       toast(t('clientMissions.cancelledToast'), 'info')
     } catch (err) {
-      toast(err.response?.data?.error || t('clientMissions.errors.generic'), 'error')
+      handleActionError(err)
+    } finally {
+      setActing(id, false)
     }
   }
 
   const validateMission = async (id) => {
   if (!window.confirm(t('clientMissions.validateConfirm'))) return
+  if (actingRef.current.has(id)) return   // latch synchrone : bloque une 2e soumission en vol
+  setActing(id, true)
   try {
     await missionsAPI.validate(id)
     setMissions(prev => prev.map(m => m.id === id ? { ...m, validated_at: new Date().toISOString() } : m))
     toast(t('clientMissions.validatedToast'), 'success')
   } catch (err) {
-    toast(err.response?.data?.error || t('clientMissions.errors.generic'), 'error')
+    handleActionError(err)
+  } finally {
+    setActing(id, false)
   }
 }
 
@@ -378,7 +412,8 @@ const cancel = async (id) => {
                         return hours < (m.client_validation_hours ?? 12) ? (
                           <>
                             <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); validateMission(m.id); }}
-                              className="btn btn-ghost btn-sm text-green-400" title={t('clientMissions.actions.validate')}>✅</button>
+                              disabled={actingIds.has(m.id)}
+                              className="btn btn-ghost btn-sm text-green-400 disabled:opacity-50" title={t('clientMissions.actions.validate')}>{actingIds.has(m.id) ? '…' : '✅'}</button>
                             <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); setClaimMission(m); }}
                               className="btn btn-ghost btn-sm text-orange-400" title={t('clientMissions.actions.claim')}>🚨</button>
                           </>
@@ -398,7 +433,8 @@ const cancel = async (id) => {
 
                     {['pending','assigned'].includes(m.status) && (
                       <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); cancel(m.id); }}
-                        className="btn btn-ghost btn-sm text-red-400">{t('clientMissions.actions.cancel')}</button>
+                        disabled={actingIds.has(m.id)}
+                        className="btn btn-ghost btn-sm text-red-400 disabled:opacity-50">{actingIds.has(m.id) ? '…' : t('clientMissions.actions.cancel')}</button>
                     )}
 
 
@@ -443,7 +479,8 @@ const cancel = async (id) => {
             )
           )}
           {['pending','assigned'].includes(m.status) && (
-            <button onClick={() => cancel(m.id)} className="btn btn-ghost btn-sm text-red-400">{t('clientMissions.mobile.cancel')}</button>
+            <button onClick={() => cancel(m.id)} disabled={actingIds.has(m.id)}
+              className="btn btn-ghost btn-sm text-red-400 disabled:opacity-50">{actingIds.has(m.id) ? '…' : t('clientMissions.mobile.cancel')}</button>
           )}
           {m.status === 'completed' && (
             <>
@@ -483,7 +520,8 @@ const cancel = async (id) => {
     const hours = (Date.now() - new Date(m.completed_by_oeil_at).getTime()) / 3600000;
     return hours < (m.client_validation_hours ?? 12) ? (
       <>
-        <button onClick={() => validateMission(m.id)} className="btn btn-ghost btn-sm text-green-400">{t('clientMissions.mobile.validate')}</button>
+        <button onClick={() => validateMission(m.id)} disabled={actingIds.has(m.id)}
+          className="btn btn-ghost btn-sm text-green-400 disabled:opacity-50">{actingIds.has(m.id) ? '…' : t('clientMissions.mobile.validate')}</button>
         <button onClick={() => setClaimMission(m)} className="btn btn-ghost btn-sm text-orange-400">{t('clientMissions.mobile.claim')}</button>
       </>
     ) : null;

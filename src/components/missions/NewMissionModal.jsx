@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { missionsAPI, usersAPI } from '../../api'
 import { VILLES, VILLES_LIST } from '../../constants/villes'
@@ -170,6 +170,18 @@ const PAYMENT_METHODS = [
 ]
 const DEFAULT_PAYMENT_METHOD = PAYMENT_METHODS.find((m) => m.enabled)?.value || 'cash'
 
+// État vierge du formulaire — source unique pour l'init, la remise à zéro après création, et
+// la comparaison « le formulaire est-il sale ? » du filet anti-perte ci-dessous.
+const EMPTY_FORM = { title: '', address: '', city: '', quartier: '', price: '', description: '', scheduled_date: '', scheduled_time: '', payment_method: DEFAULT_PAYMENT_METHOD }
+
+// Filet anti-perte (porté de oeil/AuditReport.jsx + AirbnbReport.jsx, RG7). Clé DISTINCTE des
+// clés RG7 (shoofly_audit_draft_${missionId} / shoofly_airbnb_draft_${missionId}) — aucune
+// collision. NewMissionModal n'a pas de brouillon serveur : on miroite la saisie en
+// localStorage tant que la modale est ouverte, on garde beforeunload/pagehide, et on propose
+// un bandeau de restauration à la réouverture (jamais appliqué d'office).
+const DRAFT_KEY = 'shoofly_newmission_draft'
+const PRISTINE_DRAFT_JSON = JSON.stringify({ type: 'immobilier', subcategory: '', form: EMPTY_FORM, promoCode: '' })
+
 // Même tolérance que le backend (missions.js, SCHEDULED_AT_PAST_TOLERANCE_MS — chantier
 // audit-360 v2, point 7) : POST /missions refuse déjà un scheduled_at de plus de 5 min dans le
 // passé, cette vérification côté formulaire ne fait qu'anticiper le même refus avant l'appel API.
@@ -186,14 +198,77 @@ export default function NewMissionModal({ open, onClose, onCreated, preselectedO
   const [type, setType]   = useState('immobilier')
   const [subcategory, setSub] = useState('')
   const [loading, setLoading] = useState(false)
-  const [form, setForm]   = useState({ title: '', address: '', city: '', quartier: '', price: '', description: '', scheduled_date: '', scheduled_time: '', payment_method: DEFAULT_PAYMENT_METHOD })
+  const [form, setForm]   = useState(EMPTY_FORM)
   const availablePaymentMethods = PAYMENT_METHODS.filter((m) => m.enabled)
   const [promoCode, setPromoCode]     = useState('')
   const [promoResult, setPromoResult] = useState(null)
   const [promoLoading, setPromoLoading] = useState(false)
+  // Brouillon local d'une session antérieure, lu UNE fois au montage (à chaque chargement de
+  // page / navigation client vers un écran qui monte cette modale). Jamais appliqué d'office :
+  // proposé via le bandeau de restauration. Les brouillons écrits pendant la session courante
+  // sont déjà couverts par l'état React conservé entre deux ouvertures + le miroir ci-dessous.
+  const [localDraft, setLocalDraft] = useState(() => {
+    try {
+      const raw = localStorage.getItem(DRAFT_KEY)
+      if (!raw) return null
+      const parsed = JSON.parse(raw)
+      // Ignore un brouillon stocké mais vide (ne devrait pas arriver — le miroir n'écrit que
+      // si sale — mais évite un bandeau inutile si une version antérieure en a laissé un).
+      const parsedJSON = JSON.stringify({ type: parsed.type, subcategory: parsed.subcategory, form: parsed.form, promoCode: parsed.promoCode })
+      return parsedJSON === PRISTINE_DRAFT_JSON ? null : parsed
+    } catch { return null }
+  })
 
   const set = (k) => (e) => setForm((f) => ({ ...f, [k]: e.target.value }))
   const setVal = (k) => (v) => setForm((f) => ({ ...f, [k]: v }))
+
+  // Instantané de la seule saisie utilisateur (promoResult exclu : re-validé côté serveur).
+  const draftSnapshotJSON = JSON.stringify({ type, subcategory, form, promoCode })
+  const isDirty = draftSnapshotJSON !== PRISTINE_DRAFT_JSON
+
+  // Miroir localStorage pendant la saisie. N'écrit QUE si la modale est ouverte ET le
+  // formulaire sale — ne supprime jamais la clé ici (ce serait effacer un brouillon d'une
+  // session antérieure dès l'ouverture, avant que l'utilisateur ait pu le restaurer). Le
+  // nettoyage se fait explicitement : bouton « Ignorer » du bandeau, ou création réussie.
+  useEffect(() => {
+    if (!open || !isDirty) return
+    try {
+      localStorage.setItem(DRAFT_KEY, JSON.stringify({ type, subcategory, form, promoCode, savedAt: new Date().toISOString() }))
+    } catch { /* quota dépassé / navigation privée */ }
+  }, [open, isDirty, type, subcategory, form, promoCode])
+
+  // Garde de sortie : avertit avant un rechargement / fermeture d'onglet si une saisie non
+  // envoyée existe (armée uniquement dans ce cas). pagehide en complément — beforeunload ne se
+  // déclenche pas partout (Safari mobile, onglet en arrière-plan).
+  useEffect(() => {
+    if (!open || !isDirty) return
+    const persist = () => {
+      try { localStorage.setItem(DRAFT_KEY, JSON.stringify({ type, subcategory, form, promoCode, savedAt: new Date().toISOString() })) } catch { /* ignore */ }
+    }
+    const onBeforeUnload = (e) => { persist(); e.preventDefault(); e.returnValue = '' }
+    window.addEventListener('beforeunload', onBeforeUnload)
+    window.addEventListener('pagehide', persist)
+    return () => {
+      window.removeEventListener('beforeunload', onBeforeUnload)
+      window.removeEventListener('pagehide', persist)
+    }
+  }, [open, isDirty, type, subcategory, form, promoCode])
+
+  const restoreDraft = () => {
+    const d = localDraft
+    if (!d) return
+    setType(d.type || 'immobilier')
+    setSub(d.subcategory || '')
+    setForm({ ...EMPTY_FORM, ...(d.form || {}) })
+    setPromoCode(d.promoCode || '')
+    setPromoResult(null)   // un éventuel code promo devra être re-validé
+    setLocalDraft(null)
+  }
+  // Utilisé par le bouton « Ignorer » du bandeau ET par le chemin succès de submit().
+  const discardDraft = () => {
+    setLocalDraft(null)
+    try { localStorage.removeItem(DRAFT_KEY) } catch { /* ignore */ }
+  }
 
   const validatePromo = async () => {
     if (!promoCode.trim()) return
@@ -284,11 +359,12 @@ if (parseFloat(form.price) < minPrice) {
       const { data } = await missionsAPI.create(payload)
       onCreated?.(data.mission)
       onClose()
-      setForm({ title: '', address: '', city: '', quartier: '', price: '', description: '', scheduled_date: '', scheduled_time: '', payment_method: DEFAULT_PAYMENT_METHOD })
+      setForm(EMPTY_FORM)
       setType('immobilier')
       setSub('')
       setPromoCode('')
       setPromoResult(null)
+      discardDraft()   // mission créée : le brouillon local n'a plus lieu d'être
     } catch (err) {
       toast(err.response?.data?.error || t('newMissionModal.errors.creationError'), 'error')
     } finally {
@@ -322,6 +398,27 @@ if (parseFloat(form.price) < minPrice) {
           </div>
           <button onClick={onClose} aria-label={t('common.close')} className="text-[#AAA] hover:text-white text-lg">✕</button>
         </div>
+
+        {/* Bandeau de restauration de brouillon (filet anti-perte, RG7) */}
+        {localDraft && (
+          <div className="mb-5 p-3 bg-amber-500/10 border border-amber-500/30 rounded-xl">
+            <p className="text-xs text-amber-300 mb-2">
+              {t('newMissionModal.localDraft.notice', {
+                time: localDraft.savedAt
+                  ? new Date(localDraft.savedAt).toLocaleString('fr-FR', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })
+                  : '—',
+              })}
+            </p>
+            <div className="flex gap-2">
+              <button type="button" onClick={restoreDraft} className="btn btn-primary btn-sm">
+                {t('newMissionModal.localDraft.restore')}
+              </button>
+              <button type="button" onClick={discardDraft} className="btn btn-ghost btn-sm">
+                {t('newMissionModal.localDraft.discard')}
+              </button>
+            </div>
+          </div>
+        )}
 
         {/* Bannière Œil pré-sélectionné */}
         {preselectedOeil && (

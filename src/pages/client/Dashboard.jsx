@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import AppLayout from '../../components/layout/AppLayout'
 import Topbar from '../../components/layout/Topbar'
@@ -11,6 +11,7 @@ import InterestsModal from '../../components/missions/InterestsModal'
 import OeilProfileModal from '../../components/missions/OeilProfileModal'
 import RateModal from '../../components/missions/RateModal'
 import { translateLocation } from '../../constants/villesTranslations'
+import { friendlyMissionError, isStaleMissionError } from '../../utils/missionErrors'
 
 function formatTimeLeft(t, deadline, now) {
   const diffMs = new Date(deadline).getTime() - now
@@ -34,6 +35,9 @@ export default function ClientDashboard() {
   const [ratingMission, setRatingMission] = useState(null)
   const [now, setNow] = useState(Date.now())
   const [validatingIds, setValidatingIds] = useState(new Set())
+  // Latch synchrone anti-double-clic (même patron que oeil/Missions.jsx : testé avant tout
+  // await) ; validatingIds ne sert qu'à l'affichage (bouton désactivé + « ... »).
+  const validatingRef = useRef(new Set())
   const [statsError, setStatsError] = useState(false)
 
   useEffect(() => {
@@ -87,15 +91,22 @@ export default function ClientDashboard() {
   }, [])
 
   const validateMission = async (id) => {
+    if (validatingRef.current.has(id)) return
     if (!window.confirm(t('clientMissions.validateConfirm'))) return
+    if (validatingRef.current.has(id)) return   // latch synchrone (2e appel pendant le confirm)
+    validatingRef.current.add(id)
     setValidatingIds((prev) => new Set(prev).add(id))
     try {
       await missionsAPI.validate(id)
       toast(t('clientMissions.validatedToast'), 'success')
       loadActionsRequired()
     } catch (err) {
-      toast(err.response?.data?.error || t('clientMissions.errors.generic'), 'error')
+      toast(friendlyMissionError(err, t), isStaleMissionError(err) ? 'info' : 'error')
+      // État périmé / coupure réseau : resynchroniser les « actions requises » plutôt que
+      // laisser un bouton « Valider » obsolète (cf. rapport UX technique, bonus 3).
+      if (isStaleMissionError(err)) loadActionsRequired()
     } finally {
+      validatingRef.current.delete(id)
       setValidatingIds((prev) => { const next = new Set(prev); next.delete(id); return next })
     }
   }
