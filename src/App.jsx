@@ -5,49 +5,51 @@ import { useAuth } from './context/AuthContext'
 import { trackPageView } from './utils/googleAnalytics'
 import { Spinner } from './components/ui'
 import ErrorBoundary from './components/ui/ErrorBoundary'
-import VerificationIdentite from './pages/oeil/VerificationIdentite'
 
-
-
-
-// Auth pages
+// Auth pages + landing — chargées d'emblée : seuls écrans qu'un visiteur non connecté voit.
 import Login    from './pages/auth/Login'
 import Register from './pages/auth/Register'
 import ForgotPassword from './pages/auth/ForgotPassword'
 import ResetPassword  from './pages/auth/ResetPassword'
 import Landing from './pages/Landing'
-import Confidentialite from './pages/legal/Confidentialite'
-import CGV from './pages/legal/CGV'
-import MentionsLegales from './pages/legal/MentionsLegales'
-import Verification from './pages/legal/Verification'
+
+// Pages légales, client, Œil et partagées — lazy-loaded (audit perf 2026-09-07, F3) : même
+// motif que les pages admin ci-dessous. Un visiteur non connecté ne télécharge plus que
+// `auth` + `landing` ; chaque groupe de routes n'arrive qu'à la navigation. Les gardes
+// `RequireAuth` restent EXACTEMENT en place autour de chaque page dans <Routes> — passer de
+// `import` à `lazy(() => import())` ne change que la déclaration, pas l'ordre garde→rendu :
+// React n'invoque le import() paresseux qu'au moment où RequireAuth rend enfin {children}
+// (une route refusée ne télécharge donc jamais son chunk). Le <Suspense> unique de haut
+// niveau (dans le return) sert de fallback à tous ces groupes, comme il le fait déjà pour admin.
+const Confidentialite = lazy(() => import('./pages/legal/Confidentialite'))
+const CGV = lazy(() => import('./pages/legal/CGV'))
+const MentionsLegales = lazy(() => import('./pages/legal/MentionsLegales'))
+const Verification = lazy(() => import('./pages/legal/Verification'))
 
 // Client pages
-import ClientDashboard  from './pages/client/Dashboard'
-import ClientMissions   from './pages/client/Missions'
-import ClientCompte     from './pages/client/Compte'
-import AirbnbReportView from './pages/client/AirbnbReportView'
-import AuditReportView from './pages/client/AuditReportView'
-import ClientMessagerie from './pages/shared/Messagerie'
-import ClientMesSignalements from './pages/shared/MesSignalements'
-import ClientMesTickets from './pages/shared/MesTickets'
-import ClientPaiements from './pages/client/Paiements'
-import PaymentReturn from './pages/client/PaymentReturn'
+const ClientDashboard  = lazy(() => import('./pages/client/Dashboard'))
+const ClientMissions   = lazy(() => import('./pages/client/Missions'))
+const ClientCompte     = lazy(() => import('./pages/client/Compte'))
+const AirbnbReportView = lazy(() => import('./pages/client/AirbnbReportView'))
+const AuditReportView = lazy(() => import('./pages/client/AuditReportView'))
+const ClientMessagerie = lazy(() => import('./pages/shared/Messagerie'))
+const ClientMesSignalements = lazy(() => import('./pages/shared/MesSignalements'))
+const ClientMesTickets = lazy(() => import('./pages/shared/MesTickets'))
+const ClientPaiements = lazy(() => import('./pages/client/Paiements'))
+const PaymentReturn = lazy(() => import('./pages/client/PaymentReturn'))
 
 // Oeil pages
-import OeilDashboard from './pages/oeil/Dashboard'
-import OeilMissions  from './pages/oeil/Missions'
-import OeilCompte    from './pages/oeil/Compte'
-import AirbnbReport  from './pages/oeil/AirbnbReport'
-import AuditReport from './pages/oeil/AuditReport'
-import OeilMessagerie from './pages/shared/Messagerie'
-import OeilMesSignalements from './pages/shared/MesSignalements'
-import OeilMesTickets from './pages/shared/MesTickets'
-import OeilGains from './pages/oeil/Gains'
-
-
-
-
-import CompteSuspendu from './pages/oeil/CompteSuspendu'
+const OeilDashboard = lazy(() => import('./pages/oeil/Dashboard'))
+const OeilMissions  = lazy(() => import('./pages/oeil/Missions'))
+const OeilCompte    = lazy(() => import('./pages/oeil/Compte'))
+const AirbnbReport  = lazy(() => import('./pages/oeil/AirbnbReport'))
+const AuditReport = lazy(() => import('./pages/oeil/AuditReport'))
+const OeilMessagerie = lazy(() => import('./pages/shared/Messagerie'))
+const OeilMesSignalements = lazy(() => import('./pages/shared/MesSignalements'))
+const OeilMesTickets = lazy(() => import('./pages/shared/MesTickets'))
+const OeilGains = lazy(() => import('./pages/oeil/Gains'))
+const VerificationIdentite = lazy(() => import('./pages/oeil/VerificationIdentite'))
+const CompteSuspendu = lazy(() => import('./pages/oeil/CompteSuspendu'))
 
 // Admin pages — lazy-loaded : ces 16 pages (dont AdminDashboard, qui embarque toute la librairie
 // de graphiques `recharts`) ne sont jamais utilisées par un client/oeil, inutile de les faire
