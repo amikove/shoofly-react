@@ -155,7 +155,7 @@ useEffect(() => {
     return () => { clearTimeout(resync); clearInterval(iv) }
   }, [candidateMission])
 
-const load = useCallback((t) => {
+const load = useCallback((tab) => {
   setLoading(true)
   setError('')
 
@@ -177,25 +177,25 @@ const load = useCallback((t) => {
   }).catch(() => {})
 
   let params = {}
-  if (t === 'priority') {
+  if (tab === 'priority') {
     params = { mode: 'available', is_priority: true }
-  } else if (t === 'available') {
+  } else if (tab === 'available') {
       // Tri fixe par date d'exécution la plus proche (missions urgentes en premier)
       params = { mode: 'available', sort: 'scheduled_asc', page, limit: 20, ...(quartier ? { quartier } : {}) }
-  } else if (t === 'active') {
+  } else if (tab === 'active') {
       params = { mode: 'mine', limit: 200 } // Aligné avec le compteur pour éviter la troncature par défaut (limit=20)
   } else {
       params = { mode: 'mine', status: 'completed', limit: 200 } // Aligné avec le compteur pour éviter la troncature par défaut (limit=20)
   }
   return missionsAPI.list(params)
       .then(({ data }) => {
-        if (t === 'available') setTotalPages(data.pages || 1)
+        if (tab === 'available') setTotalPages(data.pages || 1)
         let ms = data.missions || []
-        if (t === 'priority') {
+        if (tab === 'priority') {
         ms = ms.filter(m => m.is_priority)
-      } else if (t === 'available') {
+      } else if (tab === 'available') {
         ms = ms.filter(m => !m.is_priority)
-      } else if (t === 'active') {
+      } else if (tab === 'active') {
         ms = ms.filter((m) => ['assigned','en_route','active','sous_reclamation'].includes(m.status))
       }
       setMissions(ms)
@@ -206,6 +206,10 @@ const load = useCallback((t) => {
       toast(msg, 'error')
     })
     .finally(() => setLoading(false))
+  // t (i18n) volontairement hors dépendances : seulement lu dans le .catch pour un libellé
+  // d'erreur de repli ; le réinclure recréerait load() et re-fetcherait toute la liste à
+  // chaque changement de langue, sans bénéfice. Même schéma que l'effet pendingAction plus haut.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
 }, [quartier, page])
 
   // Revenir à la page 1 si le filtre quartier change (évite une page vide hors limites)
