@@ -39,6 +39,21 @@ export default function Topbar({ title, actions }) {
   // Chargement initial
   useEffect(() => { loadNotifs() }, [loadNotifs])
 
+  // L19 — filet de repli si le temps réel (Socket.io) est indisponible : re-synchro
+  // périodique + au retour de focus de l'onglet. Sans ça, un utilisateur dont le socket a
+  // coupé (réseau mobile, onglet en arrière-plan throttlé, veille) ne voyait plus AUCUNE
+  // notification jusqu'au rechargement complet de la page. loadNotifs() fait un remplacement
+  // complet depuis le serveur (source de vérité) — aucun doublon avec la prepend temps réel.
+  useEffect(() => {
+    const interval = setInterval(loadNotifs, 60_000)
+    const onVisible = () => { if (document.visibilityState === 'visible') loadNotifs() }
+    document.addEventListener('visibilitychange', onVisible)
+    return () => {
+      clearInterval(interval)
+      document.removeEventListener('visibilitychange', onVisible)
+    }
+  }, [loadNotifs])
+
   // Mise à jour temps réel via Socket.io
   useEffect(() => {
     if (!onEvent) return

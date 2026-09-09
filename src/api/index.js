@@ -201,3 +201,11 @@ export const ticketsAPI = {
   adminAll:       (params)        => api.get('/api/tickets/admin/all', { params }),
   adminSetStatus: (id, status)    => api.put(`/api/tickets/admin/${id}/status`, { status }),
 }
+
+// PUSH (Web Push / VAPID) — chantier notifications push, Phase 2
+export const pushAPI = {
+  vapidKey:    ()     => api.get('/api/push/vapid-public-key'),
+  subscribe:   (data) => api.post('/api/push/subscribe', data),
+  // axios : le corps d'un DELETE passe par `{ data }`
+  unsubscribe: (endpoint) => api.delete('/api/push/subscribe', { data: { endpoint } }),
+}

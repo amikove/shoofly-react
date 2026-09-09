@@ -1924,9 +1924,14 @@
   },
   "notificationBanner": {
     "title": "Activer les notifications",
-    "desc": "Recevez une alerte quand vous avez un nouveau message ou une nouvelle mission.",
+    "desc": "Soyez prévenu immédiatement : nouveau message, mission, confirmation de présence, décision sur une réclamation…",
     "allow": "Activer",
-    "later": "Plus tard"
+    "later": "Plus tard",
+    "gotIt": "J'ai compris",
+    "iosTitle": "Installez SHOOFLY pour recevoir les notifications",
+    "iosStep1": "Appuyez sur le bouton Partager (⬆️) en bas de Safari.",
+    "iosStep2": "Choisissez « Sur l'écran d'accueil ».",
+    "iosStep3": "Ouvrez SHOOFLY depuis l'icône ajoutée, puis activez les notifications."
   },
   "presenceConfirmation": {
     "text": "Je confirme la mission de {{clientName}} qui se déroulera {{day}} à {{time}}",
