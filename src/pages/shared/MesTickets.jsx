@@ -7,6 +7,7 @@ import { ticketsAPI } from '../../api'
 import { Spinner, EmptyState, toast, Pagination } from '../../components/ui'
 import { useAuth } from '../../context/AuthContext'
 import NewTicketModal from '../../components/tickets/NewTicketModal'
+import AssistanceModal from '../../components/missions/AssistanceModal'
 import { CASABLANCA_TZ } from '../../utils/casablancaTime'
 
 const STATUS_VARIANT = {
@@ -26,6 +27,10 @@ export default function MesTickets() {
   const [pages, setPages] = useState(1)
   const [selected, setSelected] = useState(null)
   const [showNewTicket, setShowNewTicket] = useState(false)
+  // F-L6 — quand un Œil tente un ticket urgence sur une mission en cours, NewTicketModal
+  // renvoie ici la mission pour ouvrir « Demander assistance » (POST /:id/assistance) à la
+  // place : c'est le seul flux qui libère la mission et cherche un remplaçant.
+  const [assistanceMission, setAssistanceMission] = useState(null)
 
   const load = useCallback(() => {
     setLoading(true)
@@ -105,7 +110,16 @@ export default function MesTickets() {
         open={showNewTicket}
         onClose={() => setShowNewTicket(false)}
         onCreated={load}
+        onRedirectToAssistance={(mission) => { setShowNewTicket(false); setAssistanceMission(mission) }}
       />
+
+      {assistanceMission && (
+        <AssistanceModal
+          mission={assistanceMission}
+          onClose={() => setAssistanceMission(null)}
+          onSuccess={() => setAssistanceMission(null)}
+        />
+      )}
     </AppLayout>
   )
 }

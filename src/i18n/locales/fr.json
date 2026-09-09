@@ -2648,7 +2648,12 @@
     "created": "Ticket {{reference}} créé ✓",
     "createError": "Erreur lors de la création du ticket",
     "missingCategory": "Sélectionnez une catégorie",
-    "missingMessage": "Décrivez votre demande"
+    "missingMessage": "Décrivez votre demande",
+    "assistanceRedirect": {
+      "title": "Urgence sur une mission en cours",
+      "body": "Un ticket ne libère pas ta mission et ne déclenche aucune recherche de remplaçant. Pour être remplacé immédiatement, utilise « Demander assistance ».",
+      "cta": "🆘 Demander assistance"
+    }
   },
   "mesTickets": {
     "title": "Mes tickets",

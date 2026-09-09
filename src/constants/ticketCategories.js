@@ -9,6 +9,11 @@
 // la création du ticket (l'utilisateur peut quand même créer le ticket).
 // manualNote      : si true, aucune route de redirection n'existe — un message est
 // ajouté au message initial pour indiquer un traitement manuel par un admin.
+// redirectToAssistance : (Œil uniquement) si true ET qu'une mission liée est en cours
+// (assigned/en_route/active), NewTicketModal BLOQUE la création du ticket et renvoie
+// vers « Demander assistance » (POST /:id/assistance) — seul flux qui libère la mission
+// et déclenche la recherche d'un remplaçant. Un ticket, lui, ne touche jamais la mission
+// (F-L6, rapport-chantier-verification-L4-L6-2026-09-08).
 
 export const TICKET_CATEGORIES = [
   {
@@ -17,12 +22,22 @@ export const TICKET_CATEGORIES = [
     icon: '🚨',
     color: '#E11D2E',
     roles: ['client', 'oeil'],
-    subcategories: [
-      { label: 'Accident pendant la mission', missionRelevant: true },
-      { label: 'Agression, vol ou menace', missionRelevant: true },
-      { label: 'Hospitalisation', missionRelevant: true },
-      { label: 'Situation dangereuse', missionRelevant: true },
-    ],
+    subcategoriesByRole: {
+      client: [
+        { label: 'Accident pendant la mission', missionRelevant: true },
+        { label: 'Agression, vol ou menace', missionRelevant: true },
+        { label: 'Hospitalisation', missionRelevant: true },
+        { label: 'Situation dangereuse', missionRelevant: true },
+      ],
+      // Pour l'Œil, une urgence sur une mission en cours doit passer par « Demander
+      // assistance » : voir redirectToAssistance ci-dessus (F-L6).
+      oeil: [
+        { label: 'Accident pendant la mission', missionRelevant: true, redirectToAssistance: true },
+        { label: 'Agression, vol ou menace', missionRelevant: true, redirectToAssistance: true },
+        { label: 'Hospitalisation', missionRelevant: true, redirectToAssistance: true },
+        { label: 'Situation dangereuse', missionRelevant: true, redirectToAssistance: true },
+      ],
+    },
   },
   {
     value: 'mission',

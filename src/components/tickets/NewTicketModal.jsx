@@ -8,10 +8,17 @@ import {
 } from '../../constants/ticketCategories'
 import TicketRedirectNotice from './TicketRedirectNotice'
 
+// Statuts d'une mission « en cours » : sur ces statuts, une urgence déclarée par l'Œil
+// doit libérer la mission via « Demander assistance » (POST /:id/assistance), jamais via
+// un ticket qui ne toucherait pas la mission (F-L6).
+const ACTIVE_MISSION_STATUSES = ['assigned', 'en_route', 'active']
+
 // Remplace l'ancien ReportModal inline (client/Missions.jsx, oeil/Missions.jsx) : point
 // d'entrée unique de création de ticket, avec pré-remplissage optionnel depuis une page
 // mission (presetMissionId/presetCategory) — voir étape 7.3 de la migration.
-export default function NewTicketModal({ open, onClose, onCreated, presetMissionId, presetCategory }) {
+// onRedirectToAssistance(mission) : fourni par le parent (MesTickets) pour ouvrir le flux
+// « Demander assistance » quand l'Œil tente un ticket urgence sur une mission en cours.
+export default function NewTicketModal({ open, onClose, onCreated, presetMissionId, presetCategory, onRedirectToAssistance }) {
   const { t } = useTranslation()
   const { user } = useAuth()
   const role = user?.role
@@ -30,6 +37,22 @@ export default function NewTicketModal({ open, onClose, onCreated, presetMission
   const subcategories = getSubcategoriesForRole(selectedCategory, role)
   const selectedSubcategory = subcategories.find((s) => s.label === subcategoryLabel) || null
   const showMissionField = selectedSubcategory?.missionRelevant || false
+  const selectedMission = missions.find((m) => String(m.id) === String(missionId)) || null
+
+  // F-L6 : un Œil qui signale une urgence sur une mission EN COURS via un ticket
+  // laisserait sa mission active sans qu'aucun remplaçant ne soit cherché (le ticket
+  // ne touche jamais la mission — cf. rapport-chantier-verification-L4-L6-2026-09-08).
+  // On bloque alors la création du ticket et on renvoie vers « Demander assistance »
+  // (POST /:id/assistance), seul flux qui libère la mission. Hors périmètre, laissés
+  // tels quels : urgence sans mission liée (scénario C du rapport), mission liée déjà
+  // completed/cancelled, rôle client.
+  const mustRedirectToAssistance = Boolean(
+    role === 'oeil'
+    && selectedSubcategory?.redirectToAssistance
+    && onRedirectToAssistance
+    && selectedMission
+    && ACTIVE_MISSION_STATUSES.includes(selectedMission.status)
+  )
 
   useEffect(() => {
     if (!open) return
@@ -59,6 +82,10 @@ export default function NewTicketModal({ open, onClose, onCreated, presetMission
 
   const submit = async () => {
     if (!categoryValue || !message.trim()) return
+    // Garde-fou F-L6 : le bouton est déjà désactivé dans ce cas, mais si on y arrive
+    // quand même (Entrée clavier, etc.), on route vers « Demander assistance » au lieu
+    // de créer un ticket sans effet sur la mission.
+    if (mustRedirectToAssistance) { onRedirectToAssistance(selectedMission); return }
     setSubmitting(true)
     try {
       const finalMessage = selectedSubcategory?.manualNote
@@ -148,8 +175,24 @@ export default function NewTicketModal({ open, onClose, onCreated, presetMission
           </div>
         )}
 
+        {/* F-L6 — urgence Œil sur une mission en cours : on bloque le ticket et on
+            renvoie vers « Demander assistance » (seul flux qui libère la mission). */}
+        {mustRedirectToAssistance && (
+          <div className="rounded-xl border border-[#E11D2E]/50 bg-[#E11D2E]/10 p-3.5 space-y-2">
+            <p className="text-xs font-semibold text-white">{t('newTicket.assistanceRedirect.title')}</p>
+            <p className="text-xs text-white/75 leading-relaxed">{t('newTicket.assistanceRedirect.body')}</p>
+            <button
+              type="button"
+              onClick={() => onRedirectToAssistance(selectedMission)}
+              className="w-full px-3 py-2 rounded-lg bg-[#E11D2E] text-white text-xs font-semibold hover:bg-[#c4162a] transition-colors"
+            >
+              {t('newTicket.assistanceRedirect.cta')}
+            </button>
+          </div>
+        )}
+
         {/* Message */}
-        {(selectedCategory) && (
+        {selectedCategory && !mustRedirectToAssistance && (
           <div>
             <label className="label">{t('newTicket.messageLabel')}</label>
             <textarea
@@ -161,7 +204,7 @@ export default function NewTicketModal({ open, onClose, onCreated, presetMission
           </div>
         )}
 
-        {!submitting && (!categoryValue || !message.trim()) && (
+        {!submitting && !mustRedirectToAssistance && (!categoryValue || !message.trim()) && (
           <p className="text-xs text-[#FF4D00]">
             {!categoryValue ? t('newTicket.missingCategory') : t('newTicket.missingMessage')}
           </p>
@@ -170,7 +213,7 @@ export default function NewTicketModal({ open, onClose, onCreated, presetMission
         <div className="flex gap-2 pt-1">
           <button
             onClick={submit}
-            disabled={submitting || !categoryValue || !message.trim()}
+            disabled={submitting || !categoryValue || !message.trim() || mustRedirectToAssistance}
             className="btn btn-primary flex-1 justify-center disabled:opacity-50"
           >
             {submitting ? '…' : t('newTicket.submit')}
