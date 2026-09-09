@@ -20,6 +20,19 @@ let redirectingOn401 = false
 api.interceptors.response.use(
   (res) => res,
   (err) => {
+    // Compte bloqué (is_active=false) — chantier L4. Le middleware renvoie 403 + un champ
+    // `deactivation_context` sur toute route hors whitelist de recours (jamais 401, sinon le
+    // bloc ci-dessous effacerait la session). Ce cas n'arrive que si le compte est bloqué EN
+    // COURS de session : on le pose sur l'écran de contestation sans toucher au token (il en a
+    // besoin pour y accéder). `deactivation_context` peut valoir null → tester la présence de
+    // la clé, pas sa valeur.
+    if (err.response?.status === 403
+        && err.response.data && 'deactivation_context' in err.response.data
+        && !window.location.pathname.startsWith('/compte-bloque')
+        && !window.location.pathname.startsWith('/login')) {
+      window.location.href = '/compte-bloque'
+      return Promise.reject(err)
+    }
     if (err.response?.status === 401) {
       localStorage.removeItem('shoofly_token')
       localStorage.removeItem('shoofly_user')

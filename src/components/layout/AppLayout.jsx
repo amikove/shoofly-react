@@ -44,6 +44,7 @@ const MENUS = {
     { to: '/admin/fiabilite',    icon: '📊',  label: 'Fiabilité',    section: 'Gestion',     permission: 'identity' },
     { to: '/admin/problemes',    icon: '🚨',  label: 'Problèmes',    section: 'Gestion',     permission: 'moderation', badge: 'problems' },
     { to: '/admin/tickets',      icon: '🎫',  label: 'Tickets',      section: 'Gestion',     permission: 'moderation' },
+    { to: '/admin/block-appeals', icon: '🔓', label: 'Contestations blocage', section: 'Gestion', permission: 'moderation' },
     { to: '/admin/finance',      icon: '💰',  label: 'Finance',      section: 'Gestion',     permission: 'finance' },
     { to: '/admin/wallet-reconciliation', icon: '⚖️', label: 'Réconciliation', section: 'Gestion', permission: 'finance' },
     { to: '/admin/clients-suspendus', icon: '🚫', label: 'Clients suspendus', section: 'Gestion', permission: 'users' },

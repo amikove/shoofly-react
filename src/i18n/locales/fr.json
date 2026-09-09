@@ -1350,6 +1350,36 @@
     "sending": "Envoi...",
     "submitButton": "Envoyer ma demande →"
   },
+  "compteBloque": {
+    "logout": "Se déconnecter",
+    "loadingError": "Erreur de chargement",
+    "messageTooShortError": "Détaillez votre situation (min. 10 caractères)",
+    "requestSentToast": "Contestation envoyée ✓",
+    "genericError": "Erreur",
+    "fraudHeading": "Compte bloqué",
+    "fraudSubtitle": "Activité frauduleuse suspectée",
+    "fraudBody": "Votre compte a été bloqué à la suite d'une activité jugée non conforme à nos conditions d'utilisation. Si vous estimez qu'il s'agit d'une erreur, vous pouvez adresser une contestation à notre équipe ci-dessous. Elle sera examinée une seule fois.",
+    "clientHeading": "Compte désactivé",
+    "clientSubtitle": "Accès temporairement suspendu",
+    "clientBody": "Votre compte a été désactivé. Vous pouvez expliquer votre situation à notre équipe ci-dessous : votre demande sera examinée individuellement et vous serez notifié de la décision.",
+    "previousAppeals": "Vos contestations précédentes",
+    "status": {
+      "approved": "✅ Approuvée",
+      "rejected": "❌ Refusée",
+      "pending": "⏳ En attente"
+    },
+    "yourMessage": "Votre message : {{message}}",
+    "teamResponseLabel": "Réponse de l'équipe Shoofly :",
+    "inProgressTitle": "Contestation en cours d'examen",
+    "inProgressDesc": "Notre équipe examine votre dossier. Vous serez notifié de la décision.",
+    "appealTitle": "Contester le blocage",
+    "appealDescFraud": "Expliquez pourquoi vous estimez que ce blocage est une erreur. Vous ne pourrez déposer qu'une seule contestation.",
+    "appealDescClient": "Expliquez les circonstances — notre équipe étudiera votre demande individuellement.",
+    "messagePlaceholder": "Décrivez votre situation en détail...",
+    "sending": "Envoi...",
+    "submitButton": "Envoyer ma contestation →",
+    "appealClosed": "Votre contestation a été examinée. Aucun autre recours n'est disponible dans l'application pour ce type de blocage."
+  },
   "oeilAuditReport": {
     "topbar": {
       "loadingTitle": "Rapport d'audit",

@@ -168,6 +168,14 @@ export const reliabilityAPI = {
     adminAllScores: (params)     => api.get('/api/reliability/admin/all-scores', { params }),
     adminReactivate: (oeilId, data) => api.post(`/api/reliability/admin/${oeilId}/reactivate`, data),
   }
+
+// CONTESTATION DE BLOCAGE (compte is_active=false) — chantier L4
+export const blockAppealsAPI = {
+    mine:        ()           => api.get('/api/block-appeals/mine'),
+    create:      (data)       => api.post('/api/block-appeals', data),
+    adminList:   (status)     => api.get('/api/block-appeals/admin', { params: { status } }),
+    decide:      (id, data)   => api.post(`/api/block-appeals/admin/${id}/decide`, data),
+  }
 // MEDIA
 export const mediaAPI = {
     upload: (missionId, formData) =>

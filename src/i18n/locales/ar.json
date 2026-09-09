@@ -1351,6 +1351,36 @@
     "sending": "جارٍ الإرسال...",
     "submitButton": "إرسال طلبي ←"
   },
+  "compteBloque": {
+    "logout": "تسجيل الخروج",
+    "loadingError": "خطأ في التحميل",
+    "messageTooShortError": "فصّل وضعيتك (10 أحرف على الأقل)",
+    "requestSentToast": "تم إرسال الاعتراض ✓",
+    "genericError": "خطأ",
+    "fraudHeading": "الحساب محظور",
+    "fraudSubtitle": "يُشتبه في نشاط احتيالي",
+    "fraudBody": "تم حظر حسابك إثر نشاط اعتُبر مخالفًا لشروط الاستخدام. إذا كنت تعتقد أن هذا خطأ، يمكنك تقديم اعتراض إلى فريقنا أدناه. ستتم مراجعته مرة واحدة فقط.",
+    "clientHeading": "الحساب معطَّل",
+    "clientSubtitle": "الوصول موقوف مؤقتًا",
+    "clientBody": "تم تعطيل حسابك. يمكنك شرح وضعيتك لفريقنا أدناه: سيُدرَس طلبك بشكل فردي وستُبلَّغ بالقرار.",
+    "previousAppeals": "اعتراضاتك السابقة",
+    "status": {
+      "approved": "✅ مقبول",
+      "rejected": "❌ مرفوض",
+      "pending": "⏳ قيد الانتظار"
+    },
+    "yourMessage": "رسالتك: {{message}}",
+    "teamResponseLabel": "رد فريق شووفلي:",
+    "inProgressTitle": "الاعتراض قيد المراجعة",
+    "inProgressDesc": "فريقنا يراجع ملفك. ستُبلَّغ بالقرار.",
+    "appealTitle": "الاعتراض على الحظر",
+    "appealDescFraud": "اشرح لماذا تعتقد أن هذا الحظر خطأ. لن تتمكن من تقديم سوى اعتراض واحد.",
+    "appealDescClient": "اشرح الظروف — سيدرس فريقنا طلبك بشكل فردي.",
+    "messagePlaceholder": "صف وضعيتك بالتفصيل...",
+    "sending": "جارٍ الإرسال...",
+    "submitButton": "إرسال اعتراضي ←",
+    "appealClosed": "تمت مراجعة اعتراضك. لا يتوفر أي طعن آخر داخل التطبيق لهذا النوع من الحظر."
+  },
   "oeilAuditReport": {
     "topbar": {
       "loadingTitle": "تقرير التدقيق",

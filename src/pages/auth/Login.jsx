@@ -61,6 +61,11 @@ export default function Login() {
     setLoading(true)
     try {
       const user = await login(email.trim().toLowerCase(), pwd)
+      // Compte bloqué (is_active=false) — chantier L4 : le backend émet désormais un token
+      // normal (au lieu d'un 403 sec), l'accès est restreint côté middleware à l'écran de
+      // contestation. RequireAuth y renverrait de toute façon ; redirection explicite = pas de
+      // flash sur l'espace normal.
+      if (user.is_active === false) { navigate('/compte-bloque'); return }
       const routes = { client: '/client', oeil: '/oeil', admin: '/admin' }
       navigate(routes[user.role] || '/client')
     } catch (err) {

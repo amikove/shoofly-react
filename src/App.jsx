@@ -50,6 +50,8 @@ const OeilMesTickets = lazy(() => import('./pages/shared/MesTickets'))
 const OeilGains = lazy(() => import('./pages/oeil/Gains'))
 const VerificationIdentite = lazy(() => import('./pages/oeil/VerificationIdentite'))
 const CompteSuspendu = lazy(() => import('./pages/oeil/CompteSuspendu'))
+// Recours d'un compte bloqué (is_active=false) — chantier L4. Écran standalone (pas d'AppLayout).
+const CompteBloque = lazy(() => import('./pages/CompteBloque'))
 
 // Admin pages — lazy-loaded : ces 16 pages (dont AdminDashboard, qui embarque toute la librairie
 // de graphiques `recharts`) ne sont jamais utilisées par un client/oeil, inutile de les faire
@@ -72,6 +74,7 @@ const AdminWalletReconciliation = lazy(() => import('./pages/admin/WalletReconci
 const AdminClientsSuspendus = lazy(() => import('./pages/admin/ClientsSuspendus'))
 const AdminMissionsProchesValidation = lazy(() => import('./pages/admin/MissionsProchesValidation'))
 const UserProfile = lazy(() => import('./pages/admin/UserProfile'))
+const AdminBlockAppeals = lazy(() => import('./pages/admin/AdminBlockAppeals'))
 
 
 // Route guard
@@ -83,6 +86,16 @@ function RequireAuth({ children, allowedRoles, requiredPermission }) {
     </div>
   )
   if (!user) return <Navigate to="/login" replace />
+  // Compte bloqué (is_active=false) — chantier L4. Aucune route de l'espace normal ne lui est
+  // accessible (backend : 403 hors whitelist de recours) : on le renvoie systématiquement vers
+  // l'écran de contestation, quel que soit son rôle. Même principe que la redirection
+  // is_suspended → /oeil/suspendu (AppLayout.jsx), mais en amont car ici RIEN d'autre n'est
+  // atteignable. Sur /compte-bloque lui-même : on laisse rendre l'écran.
+  if (user.is_active === false) {
+    return window.location.pathname === '/compte-bloque'
+      ? children
+      : <Navigate to="/compte-bloque" replace />
+  }
   const roleDenied = allowedRoles && !allowedRoles.includes(user.role)
   const permissionDenied = requiredPermission && !(isSuperAdmin || hasPermission(requiredPermission))
   if (roleDenied || permissionDenied) {
@@ -174,6 +187,11 @@ export default function App() {
       <Route path="/oeil/verification-identite" element={<RequireAuth allowedRoles={['oeil']}><VerificationIdentite /></RequireAuth>} />
       <Route path="/oeil/suspendu" element={<RequireAuth allowedRoles={['oeil']}><CompteSuspendu /></RequireAuth>} />
 
+      {/* Recours compte bloqué (is_active=false) — chantier L4. allowedRoles client+oeil ; la
+          garde is_active=false de RequireAuth court-circuite le contrôle de rôle en amont, donc
+          un admin bloqué (cas anti-fraude, rare) y accède aussi. */}
+      <Route path="/compte-bloque" element={<RequireAuth allowedRoles={['client','oeil']}><CompteBloque /></RequireAuth>} />
+
       {/* Admin */}
       {/* /admin (dash) volontairement sans requiredPermission : c'est la cible de repli de
           RequireAuth pour le rôle admin (voir routes[user.role] ci-dessus) — la gater sur
@@ -196,6 +214,7 @@ export default function App() {
       <Route path="/admin/clients-suspendus" element={<RequireAuth allowedRoles={['admin']} requiredPermission="users"><AdminClientsSuspendus /></RequireAuth>} />
       <Route path="/admin/missions-proches-validation" element={<RequireAuth allowedRoles={['admin']} requiredPermission="missions"><AdminMissionsProchesValidation /></RequireAuth>} />
       <Route path="/admin/users/:userId" element={<RequireAuth allowedRoles={['admin']} requiredPermission="users"><UserProfile /></RequireAuth>} />
+      <Route path="/admin/block-appeals" element={<RequireAuth allowedRoles={['admin']} requiredPermission="moderation"><AdminBlockAppeals /></RequireAuth>} />
 
 
       <Route path="*" element={<Navigate to="/" replace />} />
