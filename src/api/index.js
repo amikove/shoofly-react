@@ -16,6 +16,10 @@ export const missionsAPI = {
   list:     (params) => api.get('/api/missions', { params }),
   get:      (id)     => api.get(`/api/missions/${id}`),
   create:   (data)   => api.post('/api/missions', data),
+  // Planchers tarifaires par sous-catégorie + plancher global, pour l'affichage temps réel du
+  // formulaire de création (NewMissionModal). Même source que la validation serveur — chantier
+  // « planchers éditables » 2026-09-10.
+  subcategoryMinPrices: () => api.get('/api/missions/subcategory-min-prices'),
   // `accept` (POST /:id/accept) retiré 2026-08-31 (RG3) : bouton « Accepter » mort depuis
   // ~2026-06-23, route fermée en 403 côté backend. Le flux de prise de mission par l'Œil passe
   // par `interest` (candidature) puis affectation client/admin.
@@ -134,6 +138,8 @@ export const adminAPI = {
   settingsDefaults: ()     => api.get('/api/users/admin/settings/defaults'),
   saveSettings:   (data)   => api.put('/api/users/admin/settings', data),
   settingsHistory: (params) => api.get('/api/users/admin/settings/history', { params }),
+  subcategoryMinPrices:     ()     => api.get('/api/users/admin/subcategory-min-prices'),
+  saveSubcategoryMinPrices: (data) => api.put('/api/users/admin/subcategory-min-prices', data),
   claims:         ()       => api.get('/api/users/admin/claims'),
   flaggedMessages: () => api.get('/api/users/admin/flagged-messages'),
   warnUser: (userId, data) => api.post(`/api/anti-fraud/warn/${userId}`, data),

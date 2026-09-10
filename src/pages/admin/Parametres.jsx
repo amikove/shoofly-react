@@ -221,6 +221,146 @@ const valuesEqual = (a, b) => {
 // Accent-insensible + minuscules, pour la recherche globale (nom OU description).
 const fold = (s) => (s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase()
 
+// ── Planchers tarifaires par sous-catégorie (chantier « planchers éditables », 2026-09-10) ──
+// Sous-section de la catégorie 💰 Tarification. Contrairement aux 4 réglages plateforme
+// (settings), ces 49 planchers vivent dans une table dédiée (subcategory_min_prices) : état,
+// chargement et sauvegarde AUTONOMES, séparés de `advanced`. Route lue par la validation
+// serveur ET par le formulaire de création — source unique. Regroupé par type (comme le
+// formulaire de mission) ; les 4 lignes `_type` = plancher par défaut d'une sous-catégorie
+// non listée / « Autre ». Groupes repliables (49 lignes).
+const SUBCAT_MIN_GROUPS = [
+  { key: 'immobilier',    labelKey: 'newMissionModal.categories.immobilier' },
+  { key: 'file_attente',  labelKey: 'newMissionModal.categories.fileAttente' },
+  { key: 'audit',         labelKey: 'newMissionModal.categories.audit' },
+  { key: 'personnalisee', labelKey: 'newMissionModal.categories.personnalisee' },
+]
+const SUBCAT_TYPE_DEFAULT_LABELKEY = {
+  _immobilier: 'newMissionModal.categories.immobilier',
+  _file_attente: 'newMissionModal.categories.fileAttente',
+  _audit: 'newMissionModal.categories.audit',
+  _personnalisee: 'newMissionModal.categories.personnalisee',
+}
+
+function SubcategoryMinPrices() {
+  const { t } = useTranslation()
+  const [rows, setRows] = useState(null)   // [{subcategory, category, min_price}] tel que chargé (null = en cours)
+  const [draft, setDraft] = useState({})   // { [subcategory]: number | '' }
+  const [saving, setSaving] = useState(false)
+  const [openGroups, setOpenGroups] = useState({})
+
+  const load = () => {
+    adminAPI.subcategoryMinPrices()
+      .then(({ data }) => {
+        const r = data.rows || []
+        setRows(r)
+        setDraft(Object.fromEntries(r.map((x) => [x.subcategory, x.min_price])))
+      })
+      .catch(() => toast(t('adminSubcategoryMinPrices.loadError'), 'error'))
+  }
+  useEffect(load, []) // eslint-disable-line react-hooks/exhaustive-deps
+
+  const loadedMap = useMemo(() => Object.fromEntries((rows || []).map((r) => [r.subcategory, r.min_price])), [rows])
+  const isRowDirty = (sub) => Number(draft[sub]) !== Number(loadedMap[sub])
+  const dirtyKeys = () => Object.keys(draft).filter(isRowDirty)
+  const rowLabel = (sub) => sub.startsWith('_')
+    ? t(SUBCAT_TYPE_DEFAULT_LABELKEY[sub] || sub)
+    : t(`newMissionModal.subcategories.${sub}`, { defaultValue: sub })
+
+  const save = async () => {
+    const keys = dirtyKeys()
+    if (keys.length === 0) return
+    const payload = {}
+    for (const k of keys) {
+      const n = parseFloat(draft[k])
+      if (!Number.isFinite(n) || n <= 0) {
+        toast(t('adminSubcategoryMinPrices.invalidValue', { name: rowLabel(k) }), 'error')
+        return
+      }
+      payload[k] = n
+    }
+    setSaving(true)
+    try {
+      await adminAPI.saveSubcategoryMinPrices(payload)
+      toast(t('adminSubcategoryMinPrices.savedToast'), 'success')
+      load()
+    } catch (e) {
+      toast(e.response?.data?.error || t('adminSubcategoryMinPrices.saveError'), 'error')
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  if (rows === null) return <div className="mb-6 pb-6 border-b border-white/10 flex justify-center py-6"><Spinner size="md" /></div>
+
+  const named = SUBCAT_MIN_GROUPS.map((g) => ({
+    ...g, items: rows.filter((r) => !r.subcategory.startsWith('_') && r.category === g.key),
+  }))
+  const typeDefaults = rows.filter((r) => r.subcategory.startsWith('_'))
+  const totalDirty = dirtyKeys().length
+
+  // Fonctions de rendu locales (pas des composants : appelées, pas instanciées en JSX) — elles
+  // ferment sur draft/openGroups/… et ne doivent PAS être déclarées comme composants imbriqués
+  // (réinitialiserait leur état à chaque rendu — react-hooks/no-nested-components).
+  const renderRow = (r) => (
+    <div key={r.subcategory} className="flex items-center justify-between gap-2 py-1.5">
+      <span className="text-[12px] text-[#CCC] flex-1 min-w-0 truncate" title={rowLabel(r.subcategory)}>{rowLabel(r.subcategory)}</span>
+      <div className="flex items-center gap-1.5 shrink-0">
+        <input
+          type="number" step="any" min="1"
+          className="input !w-24 !py-1 text-right"
+          value={draft[r.subcategory] ?? ''}
+          onChange={(e) => setDraft((d) => ({ ...d, [r.subcategory]: e.target.value === '' ? '' : parseFloat(e.target.value) }))}
+        />
+        <span className="text-[11px] text-[#777] w-8">MAD</span>
+        <button
+          type="button"
+          onClick={() => setDraft((d) => ({ ...d, [r.subcategory]: loadedMap[r.subcategory] }))}
+          disabled={!isRowDirty(r.subcategory)}
+          title={t('adminSubcategoryMinPrices.resetField')}
+          className={`text-[11px] leading-none ${isRowDirty(r.subcategory) ? 'text-[#FF4D00] hover:opacity-80' : 'text-[#444] cursor-default'}`}
+        >↺</button>
+      </div>
+    </div>
+  )
+
+  const renderGroup = (id, title, items) => {
+    const open = openGroups[id] ?? false
+    const gDirty = items.filter((r) => isRowDirty(r.subcategory)).length
+    return (
+      <div key={id} className="border border-white/10 rounded-lg mb-2">
+        <button
+          type="button"
+          onClick={() => setOpenGroups((g) => ({ ...g, [id]: !open }))}
+          className="w-full flex items-center justify-between px-3 py-2 text-[12px] font-semibold text-white/90 hover:bg-white/5"
+        >
+          <span>{title} <span className="text-[#777] font-normal">({items.length})</span></span>
+          <span className="flex items-center gap-2">
+            {gDirty > 0 && <span className="text-[10px] text-[#FF4D00]">{t('adminSubcategoryMinPrices.dirtyBadge', { count: gDirty })}</span>}
+            <span className="text-[#777]">{open ? '▾' : '▸'}</span>
+          </span>
+        </button>
+        {open && <div className="px-3 pb-2 divide-y divide-white/5">{items.map(renderRow)}</div>}
+      </div>
+    )
+  }
+
+  return (
+    <div className="mb-6 pb-6 border-b border-white/10">
+      <h3 className="text-[13px] font-semibold mb-1">{t('adminSubcategoryMinPrices.title')}</h3>
+      <p className="text-[10px] text-[#777] mb-3 max-w-2xl">{t('adminSubcategoryMinPrices.intro')}</p>
+      {named.map((g) => renderGroup(g.key, t(g.labelKey), g.items))}
+      {renderGroup('_defaults', t('adminSubcategoryMinPrices.groupTypeDefaults'), typeDefaults)}
+      <button
+        onClick={save}
+        disabled={saving || totalDirty === 0}
+        className="btn btn-primary btn-sm mt-2 disabled:opacity-50"
+      >
+        {saving ? t('adminSubcategoryMinPrices.saving') : t('adminSubcategoryMinPrices.save', { count: totalDirty })}
+      </button>
+    </div>
+  )
+}
+
 export default function AdminParametres() {
   const { t, i18n } = useTranslation()
   const [advanced, setAdvanced] = useState(ADVANCED_DEFAULTS)
@@ -695,6 +835,10 @@ export default function AdminParametres() {
               >
                 {savingCat === activeCat ? t('adminAdvancedSettings.saving') : t('adminAdvancedSettings.save')}
               </button>
+
+              {/* Planchers tarifaires par sous-catégorie — table dédiée, sauvegarde autonome
+                  (chantier « planchers éditables », 2026-09-10). */}
+              {activeCat === 'tarification' && <div className="mt-6 pt-6 border-t border-white/10"><SubcategoryMinPrices /></div>}
             </div>
           </div>
         </div>

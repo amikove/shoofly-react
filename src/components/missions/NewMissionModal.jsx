@@ -7,85 +7,34 @@ import { useAuth } from '../../context/AuthContext'
 import Autocomplete from './Autocomplete'
 import { casablancaWallTimeToISO } from '../../utils/casablancaTime'
 
-// Planchers tarifaires par sous-catégorie. Le backend porte cette table (entrées NOMMÉES
-// seulement, sans les défauts par type _immobilier/etc.) dans
-// shoofly-backend/src/constants/missionCategories.js (SUBCATEGORY_MIN_PRICES) et l'applique
-// comme plancher dur à la création (D1, audit régression 360° v4). Toute modification de prix
-// ici DOIT être répercutée là-bas, et inversement.
-const MIN_PRICES = {
-  // Immobilier
-  'Airbnb':              170,
-  'Booking':             170,
-  'Avito':               129,
-  'Mubawab':             129,
-  'Agence immobilière':  149,
-  'Particulier':         129,
-  // File d'attente
-  'Hôpital & clinique':          99,
-  'Cabinet de spécialiste':      85,
-  'Laboratoire':                 69,
-  'Centre de visite technique':  79,
-    'CNSS':                       129,
-    'ANCFCC':                     109,
-    "Services d'état civil":       85,
-    'Tribunal':                   109,
-    "Centre d'immatriculation":    99,
-    'Préfectures / Annexes administratives': 85,
-    'Douane':                     129,
-    'Bureau des passeports / Cartes nationales': 99,
-    'Adoul / Notaires':           109,
-    'CRI / Centres régionaux d\'investissement': 109,
-    'Impôts (DGI)':                99,
-  'ONEE':                        85,
-  'REDAL':                       85,
-  'RADEEMA':                     85,
-  'Consulat étranger':          169,
-  'Centre de visas':            149,
-  'Attijariwafa':                69,
-  'CIH Bank':                    69,
-  'Banque Populaire':            69,
-  'BMCE':                        69,
-  'BMCI':                        69,
-  'Al Barid Bank':               69,
-  'Inscription universitaire':   99,
-  'École privée':                85,
-  'Bourse & dossier étudiant':   99,
-  // Audit
-  'Restaurant (Temps d\'attente, Propreté, Qualité du service)': 209,
-  'Café (Accueil, Rapidité, Propreté)':                         169,
-  'Hôtel (Check-in, Service client, Propreté)':                 299,
-  'Salle de sport (Accueil commercial, État des équipements, Suivi coachs)': 249,
-  'Concession automobile (Qualité vendeur, Temps de prise en charge, Suivi commercial)': 249,
-  'Agence immobilière (Qualité accueil, Réactivité, Compétence commerciale)': 209,
-  // Personnalisée
-  'Présence physique':  85,
-  'Accompagnement':    129,
-  'Vérification':       99,
-  'Livraison':          69,
-  // Défaut par type
-  '_immobilier':        129,
-  '_file_attente':       85,
-  '_audit':             209,
-  '_personnalisee':      85,
-  '_default':            50,
-}
-
-function getMinPrice(type, sub) {
-  // Les sous-catégories « file d'attente » sont émises préfixées du libellé de groupe
-  // (ex. 'Consulats et visas — Consulat étranger'), alors que MIN_PRICES est indexé sur la
-  // clé nue ('Consulat étranger'). On dérive la clé nue avant lookup — no-op pour les autres
-  // types, dont aucune valeur ne contient ' — '. La valeur préfixée elle-même n'est pas
-  // touchée : elle reste la value du <select> et le champ envoyé au backend, qui l'exige
-  // sous cette forme (isValidSubcategory / constants/missionCategories.js).
+// Planchers tarifaires par sous-catégorie — SOURCE UNIQUE EN BASE depuis le chantier
+// « planchers éditables » (2026-09-10). Plus de table en dur ici : on lit
+// GET /api/missions/subcategory-min-prices ({ global_min, floors }), la MÊME source que la
+// validation serveur (prepareMissionInsert) — aucune désynchronisation possible. `floors`
+// contient les 45 sous-catégories nommées (clé nue) + les 4 défauts par type
+// ('_immobilier' / '_file_attente' / '_audit' / '_personnalisee').
+//
+// resolveMinPrice reproduit EXACTEMENT la résolution serveur (utils/subcategoryMinPrices.js +
+// prepareMissionInsert) : plancher nommé, sinon défaut par type, sinon plancher global, le tout
+// borné par `Math.max(global_min, …)`. Les sous-catégories « file d'attente » arrivent
+// préfixées du libellé de groupe ('Consulats et visas — Consulat étranger') alors que `floors`
+// est indexé sur la clé nue — on dérive la clé nue avant lookup (no-op pour les autres types).
+// Si ces deux résolutions divergeaient un jour, le formulaire mentirait sur le plancher que le
+// serveur appliquera : garder ce bloc et son jumeau backend rigoureusement alignés.
+function resolveMinPrice(floorData, type, sub) {
+  if (!floorData) return null
+  const { global_min, floors } = floorData
   const bareSub = sub ? sub.split(' — ').pop() : sub
-  if (bareSub && MIN_PRICES[bareSub]) return MIN_PRICES[bareSub]
-  return MIN_PRICES[`_${type}`] || MIN_PRICES['_default']
+  let specific
+  if (bareSub && floors[bareSub] != null) specific = floors[bareSub]
+  else if (floors[`_${type}`] != null) specific = floors[`_${type}`]
+  return specific != null ? Math.max(global_min, specific) : global_min
 }
 
 // ── Catégories et sous-catégories ─────────────────────────
-// Note : les libellés de sous-catégories servent aussi de valeurs de données
-// (clé de lookup MIN_PRICES + valeur envoyée au backend) : la value ne change jamais,
-// seul le texte affiché est traduit via newMissionModal.subcategories/groupLabels.
+// Note : les libellés de sous-catégories servent aussi de valeurs de données (clé de lookup
+// des planchers `floors` renvoyés par le backend + valeur envoyée au backend) : la value ne
+// change jamais, seul le texte affiché est traduit via newMissionModal.subcategories/groupLabels.
 const CATEGORIES = {
   immobilier: {
     icon: '🏠', labelKey: 'immobilier',
@@ -203,6 +152,22 @@ export default function NewMissionModal({ open, onClose, onCreated, preselectedO
   const [promoCode, setPromoCode]     = useState('')
   const [promoResult, setPromoResult] = useState(null)
   const [promoLoading, setPromoLoading] = useState(false)
+  // Planchers tarifaires — chargés depuis le backend (source unique, cf. resolveMinPrice en
+  // haut de fichier). Rechargés à chaque ouverture de la modale : une modification admin est
+  // ainsi prise en compte sans recharger l'app. Tant que non chargés (ou en cas d'échec
+  // réseau), minPrice vaut null → le formulaire n'impose pas de plancher côté client et laisse
+  // le serveur trancher (message d'erreur honnête à la soumission), plutôt que d'inventer une
+  // valeur qui pourrait diverger.
+  const [floorData, setFloorData] = useState(null)
+  useEffect(() => {
+    if (!open) return
+    let cancelled = false
+    missionsAPI.subcategoryMinPrices()
+      .then(({ data }) => { if (!cancelled) setFloorData(data) })
+      .catch(() => { if (!cancelled) setFloorData(null) })
+    return () => { cancelled = true }
+  }, [open])
+  const minPrice = resolveMinPrice(floorData, type, subcategory)
   // Brouillon local d'une session antérieure, lu UNE fois au montage (à chaque chargement de
   // page / navigation client vers un écran qui monte cette modale). Jamais appliqué d'office :
   // proposé via le bandeau de restauration. Les brouillons écrits pendant la session courante
@@ -303,8 +268,9 @@ if (!form.title || !form.city || !form.price) {
       return
     }
 
-const minPrice = getMinPrice(type, subcategory)
-if (parseFloat(form.price) < minPrice) {
+// minPrice (résolu plus haut depuis floorData). null = planchers non chargés / échec réseau :
+// on laisse passer, le serveur applique le vrai plancher et renvoie un message clair.
+if (minPrice != null && parseFloat(form.price) < minPrice) {
   toast(t('newMissionModal.errors.budgetBelowMin', { min: minPrice }), 'error')
   return
 }
@@ -319,6 +285,9 @@ if (parseFloat(form.price) < minPrice) {
       return
     }
     const scheduledAtISO = casablancaWallTimeToISO(form.scheduled_date, form.scheduled_time)
+    // Date.now() ici est dans un gestionnaire d'événement (submit), pas dans le rendu — l'heure
+    // courante EST la bonne référence pour « le créneau choisi est-il dans le passé ? ».
+    // eslint-disable-next-line react-hooks/purity
     if (new Date(scheduledAtISO).getTime() < Date.now() - SCHEDULED_AT_PAST_TOLERANCE_MS) {
       toast(t('newMissionModal.errors.scheduledAtPast'), 'error')
       return
@@ -539,11 +508,11 @@ if (parseFloat(form.price) < minPrice) {
           <div>
             <label className="label">{t('newMissionModal.budgetLabel')}</label>
             <input type="number" className="input" value={form.price} onChange={set('price')}
-              placeholder={t('newMissionModal.budgetPlaceholder', { min: getMinPrice(type, subcategory) })}
-              min={getMinPrice(type, subcategory)} required />
-            {subcategory && (
+              placeholder={minPrice != null ? t('newMissionModal.budgetPlaceholder', { min: minPrice }) : t('newMissionModal.budgetLabel')}
+              min={minPrice ?? undefined} required />
+            {subcategory && minPrice != null && (
               <p className="text-[11px] text-[#AAA] mt-1">
-                {t('newMissionModal.budgetMinNotice')} <span className="text-[#FF4D00] font-semibold">{t('newMissionModal.budgetMinValue', { min: getMinPrice(type, subcategory) })}</span>
+                {t('newMissionModal.budgetMinNotice')} <span className="text-[#FF4D00] font-semibold">{t('newMissionModal.budgetMinValue', { min: minPrice })}</span>
               </p>
             )}
 

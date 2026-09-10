@@ -3093,5 +3093,20 @@
     "unknownAdmin": "Administrateur",
     "close": "Fermer",
     "loadError": "Erreur de chargement de l'historique"
+  },
+  "adminSubcategoryMinPrices": {
+    "title": "Planchers tarifaires par sous-catégorie",
+    "intro": "Budget minimum imposé à la création d'une mission, par sous-catégorie. Le plancher réellement appliqué est le plus élevé entre ce montant et le tarif minimum global. Les lignes « défaut par type » s'appliquent aux missions sans sous-catégorie précise (ou « Autre »).",
+    "groupTypeDefaults": "Défauts par type (sous-catégorie non listée / « Autre »)",
+    "dirtyBadge": "{{count}} modifié",
+    "dirtyBadge_other": "{{count}} modifiés",
+    "resetField": "Annuler la modification",
+    "invalidValue": "Plancher invalide pour « {{name}} » — nombre strictement positif attendu.",
+    "save": "Enregistrer les planchers",
+    "save_other": "Enregistrer {{count}} planchers modifiés",
+    "saving": "Enregistrement…",
+    "savedToast": "Planchers tarifaires enregistrés",
+    "saveError": "Erreur lors de l'enregistrement des planchers",
+    "loadError": "Erreur de chargement des planchers tarifaires"
   }
 }
