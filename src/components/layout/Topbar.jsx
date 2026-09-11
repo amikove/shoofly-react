@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import { usersAPI } from '../../api'
@@ -16,16 +16,7 @@ export default function Topbar({ title, actions }) {
   const [notifs, setNotifs]       = useState([])
   const [unread, setUnread]       = useState(0)
   const [showNotifs, setShowNotifs] = useState(false)
-  const notifRef = useRef(null)
   const { setPending } = useNotif()
-
-  // Ferme le panneau au clic en dehors (bouton cloche + dropdown)
-  useEffect(() => {
-    if (!showNotifs) return
-    const handler = (e) => { if (notifRef.current && !notifRef.current.contains(e.target)) setShowNotifs(false) }
-    document.addEventListener('mousedown', handler)
-    return () => document.removeEventListener('mousedown', handler)
-  }, [showNotifs])
 
   const loadNotifs = useCallback(() => {
     usersAPI.notifications()
@@ -191,7 +182,7 @@ const handleClick = (n) => {
 
       <div className="flex items-center gap-2">
         {/* Notifications */}
-        <div className="relative" ref={notifRef}>
+        <div className="relative">
           <button
             onClick={toggleNotifs}
             aria-label={t('common.notifications')}
@@ -209,12 +200,19 @@ const handleClick = (n) => {
           </button>
 
           {showNotifs && (
-            <div className="absolute end-0 top-10 w-[300px] max-w-[calc(100vw-2rem)] bg-[#181818] border border-white/20 rounded-xl shadow-[0_16px_40px_rgba(0,0,0,0.5)] overflow-hidden z-50">
-              <div className="flex items-center justify-between px-4 py-2.5 border-b border-white/12">
-                <span className="text-sm font-semibold">{t('notifications.title')}</span>
-                <button onClick={markAll} className="text-[11px] text-[#FF4D00]">{t('notifications.markAllRead')}</button>
-              </div>
-              <div className="max-h-[300px] overflow-y-auto">
+            <div
+              className="fixed inset-0 bg-black/75 z-50 flex items-center justify-center p-4 backdrop-blur-sm"
+              onClick={(e) => e.target === e.currentTarget && setShowNotifs(false)}
+            >
+              <div className="bg-[#181818] border border-white/20 rounded-2xl w-full max-w-sm max-h-[85vh] flex flex-col shadow-[0_24px_60px_rgba(0,0,0,0.6)] overflow-hidden">
+                <div className="flex items-center justify-between px-4 py-2.5 border-b border-white/12 flex-shrink-0">
+                  <span className="text-sm font-semibold">{t('notifications.title')}</span>
+                  <div className="flex items-center gap-3">
+                    <button onClick={markAll} className="text-[11px] text-[#FF4D00]">{t('notifications.markAllRead')}</button>
+                    <button onClick={() => setShowNotifs(false)} aria-label={t('common.close')} className="text-[#AAA] hover:text-white text-base leading-none">✕</button>
+                  </div>
+                </div>
+                <div className="flex-1 min-h-0 overflow-y-auto">
                 {!notifs.length ? (
                   <div className="py-8 text-center text-xs text-[#AAA]">{t('notifications.empty')}</div>
                 ) : notifs.slice(0, 10).map((n, i) => {
@@ -246,6 +244,7 @@ const handleClick = (n) => {
                   </div>
                   )
                 })}
+                </div>
               </div>
             </div>
           )}
