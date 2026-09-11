@@ -5,6 +5,7 @@ import { VILLES, VILLES_LIST } from '../../constants/villes'
 import { toast } from '../ui'
 import { useAuth } from '../../context/AuthContext'
 import Autocomplete from './Autocomplete'
+import MissionCreatedModal from './MissionCreatedModal'
 import { casablancaWallTimeToISO } from '../../utils/casablancaTime'
 
 // Planchers tarifaires par sous-catégorie — SOURCE UNIQUE EN BASE depuis le chantier
@@ -147,6 +148,13 @@ export default function NewMissionModal({ open, onClose, onCreated, preselectedO
   const [type, setType]   = useState('immobilier')
   const [subcategory, setSub] = useState('')
   const [loading, setLoading] = useState(false)
+  // Popup opt-in WhatsApp après création réussie : factorisé ici (plutôt que dupliqué dans
+  // chaque page appelante) pour uniformiser les 3 points d'entrée (Dashboard, "Mes missions",
+  // "Commander cet Œil") sans dupliquer d'état. `open` reste piloté par le parent, mais tant
+  // que ce popup est affiché la modale reste montée (voir le garde `!open && !createdModalOpen`
+  // plus bas) — c'est CE composant qui appelle `onClose()` du parent une fois l'opt-in traité,
+  // pas la soumission elle-même.
+  const [createdModalOpen, setCreatedModalOpen] = useState(false)
   const [form, setForm]   = useState(EMPTY_FORM)
   const availablePaymentMethods = PAYMENT_METHODS.filter((m) => m.enabled)
   const [promoCode, setPromoCode]     = useState('')
@@ -327,7 +335,7 @@ if (minPrice != null && parseFloat(form.price) < minPrice) {
       // n'est plus appelé depuis cet écran ; son code backend n'est pas touché.
       const { data } = await missionsAPI.create(payload)
       onCreated?.(data.mission)
-      onClose()
+      setCreatedModalOpen(true)
       setForm(EMPTY_FORM)
       setType('immobilier')
       setSub('')
@@ -341,7 +349,23 @@ if (minPrice != null && parseFloat(form.price) < minPrice) {
     }
   }
 
-  if (!open) return null
+  if (!open && !createdModalOpen) return null
+
+  if (createdModalOpen) {
+    return (
+      <MissionCreatedModal
+        oeilName={preselectedOeil?.first_name}
+        onWhatsApp={() => {
+          setCreatedModalOpen(false)
+          const waMessage = encodeURIComponent(t('clientDashboard.whatsappOptIn.message'))
+          window.location.href = `https://wa.me/212661064492?text=${waMessage}`
+          onClose()
+        }}
+        onClose={() => { setCreatedModalOpen(false); onClose() }}
+      />
+    )
+  }
+
   const cat = CATEGORIES[type]
   const instructionsPlaceholder = type === 'immobilier'   ? t('newMissionModal.instructionsPlaceholder.immobilier') :
               type === 'file_attente' ? t('newMissionModal.instructionsPlaceholder.fileAttente') :

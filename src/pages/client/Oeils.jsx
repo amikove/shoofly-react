@@ -219,7 +219,10 @@ export default function ClientOeils() {
         onClose={handleClose}
         preselectedOeil={selectedOeil}
         onCreated={() => {
-          handleClose()
+          // Ne PAS appeler handleClose() ici : selectedOeil doit rester peuplé le temps que
+          // NewMissionModal affiche son popup WhatsApp interne (texte adapté "dès que {nom}
+          // est en route"). C'est NewMissionModal qui appelle onClose (= handleClose) une fois
+          // ce popup traité par l'utilisateur.
           toast(
             selectedOeil
               ? t('clientOeils.missionAssignedToast', { name: selectedOeil.first_name })

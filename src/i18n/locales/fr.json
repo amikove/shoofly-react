@@ -1070,6 +1070,9 @@
       "active": "En cours",
       "done": "Terminées"
     },
+    "whatsappOptIn": {
+      "message": "Bonjour, j'ai postulé pour une mission sur Shoofly. Je voudrais être informé par WhatsApp de son évolution."
+    },
     "toasts": {
       "selectProblemTypeFull": "Sélectionnez un type de problème",
       "selectProblemType": "Sélectionnez un type",
@@ -1818,7 +1821,14 @@
   "missionCreatedModal": {
   "title": "Mission créée avec succès",
   "description": "Souhaitez-vous être informé instantanément par WhatsApp dès qu'un Œil se manifeste pour votre mission ?",
+  "descriptionAssigned": "Souhaitez-vous être informé instantanément par WhatsApp dès que {{name}} est en route pour votre mission ?",
   "whatsappButton": "Oui, me tenir informé sur WhatsApp",
+  "laterButton": "Non merci"
+  },
+  "candidatureSentModal": {
+  "title": "Candidature envoyée avec succès",
+  "description": "Souhaitez-vous être informé par WhatsApp de l'évolution de cette mission ?",
+  "whatsappButton": "Oui, m'informer sur WhatsApp",
   "laterButton": "Non merci"
   },
 

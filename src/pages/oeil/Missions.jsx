@@ -15,6 +15,7 @@ import MissionHistoryModal from '../../components/missions/MissionHistoryModal'
 import MissionSummaryModal from '../../components/missions/MissionSummaryModal'
 import RateClientModal from '../../components/missions/RateClientModal'
 import ComplianceModal from '../../components/missions/ComplianceModal'
+import CandidatureSentModal from '../../components/missions/CandidatureSentModal'
 import AssistanceModal from '../../components/missions/AssistanceModal'
 import MissionPhotosModal from '../../components/missions/MissionPhotosModal'
 import { getChatAccessState } from '../../utils/chatAccess'
@@ -321,6 +322,15 @@ const load = useCallback((tab) => {
     }
   }
 
+  // Popup opt-in WhatsApp après candidature ("Je suis intéressé" / onglet priorité) : état
+  // local uniquement (même patron que missionCreatedModal côté client Dashboard.jsx — un
+  // popup post-action immédiat n'a pas besoin de persister au-delà de la session). Un
+  // rechargement de page ou un changement d'onglet ne peut pas le rouvrir pour la même
+  // mission : il n'est déclenché que par un appel interest()/interestPriority() réussi, et
+  // le bouton "Je suis intéressé" disparaît (interested:true) dès ce succès — il ne peut donc
+  // plus être recliqué pour la même mission, refresh ou pas.
+  const [waOptInPrompt, setWaOptInPrompt] = useState(false)
+
   // "Je suis intéressé" (onglet "Disponibles") : appel réseau direct, PAS de ComplianceModal.
   // Le rappel des règles ("Rappel avant démarrage") est présenté plus tard, quand l'Œil
   // assigné démarre effectivement la mission (voir `advance`, transition -> "en_route").
@@ -331,6 +341,7 @@ const load = useCallback((tab) => {
       await missionsAPI.interest(id)
       setMissions((prev) => prev.map((m) => m.id === id ? { ...m, interested: true } : m))
       toast(t('oeilMissions.toasts.interestExpressed'), 'success')
+      setWaOptInPrompt(true)
     } catch (err) {
       handleInterestError(err, id)
     } finally {
@@ -346,6 +357,7 @@ const load = useCallback((tab) => {
     try {
       await missionsAPI.interest(id)
       toast(t('oeilMissions.toasts.interestExpressedShort'), 'success')
+      setWaOptInPrompt(true)
       load(tab)
     } catch (err) {
       handleInterestError(err, id)
@@ -807,6 +819,17 @@ try {
         setComplianceAdvance(null)
       }
     }} />
+  )}
+
+  {waOptInPrompt && (
+    <CandidatureSentModal
+      onWhatsApp={() => {
+        setWaOptInPrompt(false)
+        const waMessage = encodeURIComponent(t('oeilMissions.whatsappOptIn.message'))
+        window.location.href = `https://wa.me/212661064492?text=${waMessage}`
+      }}
+      onClose={() => setWaOptInPrompt(false)}
+    />
   )}
 
       {chatMission && (

@@ -1,12 +1,7 @@
 import { useTranslation } from 'react-i18next'
 
-export default function MissionCreatedModal({ onWhatsApp, onClose, oeilName }) {
+export default function CandidatureSentModal({ onWhatsApp, onClose }) {
   const { t } = useTranslation()
-  // Mission pré-assignée (flux "Commander cet Œil") : le texte générique "dès qu'un Œil se
-  // manifeste" ne s'applique pas puisque l'Œil est déjà choisi — on l'adapte par son prénom.
-  const description = oeilName
-    ? t('missionCreatedModal.descriptionAssigned', { name: oeilName })
-    : t('missionCreatedModal.description')
   return (
     <div className="fixed inset-0 bg-black/80 z-[70] flex items-center justify-center p-4 backdrop-blur-sm">
       <div className="bg-[#181818] border border-green-500/30 rounded-2xl p-6 w-full max-w-md shadow-xl">
@@ -14,17 +9,17 @@ export default function MissionCreatedModal({ onWhatsApp, onClose, oeilName }) {
           <div className="w-10 h-10 rounded-xl bg-green-500/10 flex items-center justify-center text-xl flex-shrink-0">
             ✅
           </div>
-          <h2 className="font-bold text-base">{t('missionCreatedModal.title')}</h2>
+          <h2 className="font-bold text-base">{t('candidatureSentModal.title')}</h2>
         </div>
         <p className="text-sm text-white/80 leading-relaxed mb-5">
-          {description}
+          {t('candidatureSentModal.description')}
         </p>
         <div className="flex flex-col gap-2">
           <button onClick={onWhatsApp} className="btn btn-primary w-full justify-center">
-            {t('missionCreatedModal.whatsappButton')}
+            {t('candidatureSentModal.whatsappButton')}
           </button>
           <button onClick={onClose} className="btn btn-ghost w-full justify-center">
-            {t('missionCreatedModal.laterButton')}
+            {t('candidatureSentModal.laterButton')}
           </button>
         </div>
       </div>
