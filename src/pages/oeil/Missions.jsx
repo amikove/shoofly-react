@@ -41,7 +41,6 @@ function formatEditFieldValue(key, value, t) {
 
 export default function OeilMissions() {
   const { t, i18n } = useTranslation()
-  const [complianceMission, setComplianceMission] = useState(null)
   // Garde anti-double-clic pour la candidature ("Je suis intéressé", onglets normal + priorité) :
   // le ref est vérifié de façon synchrone (avant tout re-render) pour bloquer un 2e clic
   // pendant la requête en vol ; le Set en state pilote juste l'affichage désactivé/label.
@@ -322,8 +321,10 @@ const load = useCallback((tab) => {
     }
   }
 
+  // "Je suis intéressé" (onglet "Disponibles") : appel réseau direct, PAS de ComplianceModal.
+  // Le rappel des règles ("Rappel avant démarrage") est présenté plus tard, quand l'Œil
+  // assigné démarre effectivement la mission (voir `advance`, transition -> "en_route").
   const interest = async (id) => {
-    if (!complianceMission) { setComplianceMission(id); return }
     if (submittingInterestRef.current.has(id)) return
     setInterestSubmitting(id, true)
     try {
@@ -333,7 +334,6 @@ const load = useCallback((tab) => {
     } catch (err) {
       handleInterestError(err, id)
     } finally {
-      setComplianceMission(null)
       setInterestSubmitting(id, false)
     }
   }
@@ -798,9 +798,6 @@ try {
 )}
 
 
-  {complianceMission && (
-    <ComplianceModal onAccept={() => interest(complianceMission)} />
-  )}
   {complianceAdvance && (
     <ComplianceModal onAccept={async () => {
       const m = complianceAdvance
