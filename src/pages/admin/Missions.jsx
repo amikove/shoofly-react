@@ -27,20 +27,37 @@ export default function AdminMissions() {
     const [cancelModal, setCancelModal] = useState(null)
     const [cancelling, setCancelling]   = useState(false)
     const [overrideWarningModal, setOverrideWarningModal] = useState(null) // { message, reason } à confirmer avant affectation forcée (suspendu/bloqué proactif, ou 409 réactif ex. cooldown de transfert)
+    // { mission, reason, exemptPenalty, exemptReason, submitting } — remplace l'ancien window.prompt
+    // (correctif 2026-09-12, RAPPORT_PENALITES_FIABILITE.md) : la pénalité -70 étant désormais
+    // appliquée par défaut si aucun remplaçant n'est trouvé à temps, l'admin a besoin d'un vrai
+    // formulaire pour exempter explicitement un cas jugé légitime (perte de contact, doute...),
+    // jamais une case cochée par défaut — même exigence que overrideWarningModal ci-dessus.
+    const [forceReassignModal, setForceReassignModal] = useState(null)
 
     // PROMPT 2 point 4 (2026-08-17) — force une mission active/en_route à repasser en recherche
-    // de remplaçant, sans pénalité pour l'Œil au déclenchement (même mécanique que la déclaration
-    // d'urgence de l'Œil lui-même — un admin peut ensuite requalifier a posteriori depuis
-    // AdminFiabilite.jsx si l'origine s'avère être un abandon).
-    const doForceReassign = async (mission) => {
-      const reason = window.prompt("Motif de la réattribution forcée (visible par l'Œil concerné) :")
-      if (!reason || !reason.trim()) return
+    // de remplaçant. Depuis 2026-09-12, la pénalité de fiabilité -70 s'applique par défaut si
+    // aucun remplaçant n'est trouvé à temps (plus de skip inconditionnel) — voir forceReassignModal.
+    const doForceReassign = (mission) => {
+      setForceReassignModal({ mission, reason: '', exemptPenalty: false, exemptReason: '', submitting: false })
+    }
+
+    const submitForceReassign = async () => {
+      const { mission, reason, exemptPenalty, exemptReason } = forceReassignModal
+      if (!reason.trim()) return
+      if (exemptPenalty && !exemptReason.trim()) return
+      setForceReassignModal(m => ({ ...m, submitting: true }))
       try {
-        await missionsAPI.forceReassign(mission.id, { reason: reason.trim() })
+        await missionsAPI.forceReassign(mission.id, {
+          reason: reason.trim(),
+          exempt_penalty: exemptPenalty,
+          ...(exemptPenalty ? { exempt_reason: exemptReason.trim() } : {}),
+        })
         toast('Réattribution lancée ✓', 'success')
+        setForceReassignModal(null)
         load()
       } catch (err) {
         toast(err.response?.data?.error || 'Erreur', 'error')
+        setForceReassignModal(m => ({ ...m, submitting: false }))
       }
     }
 
@@ -561,6 +578,71 @@ const doAssign = async (overrideWarning = false, overrideReason = '') => {
               </button>
               <button
                 onClick={() => setOverrideWarningModal(null)}
+                className="btn btn-ghost flex-1 justify-center"
+              >
+                Annuler
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {forceReassignModal && (
+        <div className="fixed inset-0 bg-black/80 z-[90] flex items-center justify-center p-4 backdrop-blur-sm">
+          <div className="bg-[#181818] border border-amber-500/30 rounded-2xl p-6 w-full max-w-md shadow-xl">
+            <div className="flex items-center gap-3 mb-4">
+              <span className="text-2xl">⚠️</span>
+              <h2 className="font-bold text-base">Forcer la réattribution</h2>
+            </div>
+            <div className="mb-4">
+              <label className="label">Motif (visible par l'Œil concerné)</label>
+              <textarea
+                className="input"
+                rows={2}
+                value={forceReassignModal.reason}
+                onChange={(e) => setForceReassignModal(m => ({ ...m, reason: e.target.value }))}
+                placeholder="Ex : Œil injoignable depuis 20 min, client signale une absence..."
+                autoFocus
+              />
+            </div>
+            <div className="mb-2 p-3 rounded-lg bg-white/5 border border-white/10">
+              <label className="flex items-start gap-2 cursor-pointer">
+                <input
+                  type="checkbox"
+                  className="mt-1"
+                  checked={forceReassignModal.exemptPenalty}
+                  onChange={(e) => setForceReassignModal(m => ({ ...m, exemptPenalty: e.target.checked }))}
+                />
+                <span className="text-sm text-white/80">
+                  Exempter cette réattribution de la pénalité de fiabilité (-70 pts)
+                  <br />
+                  <span className="text-xs text-white/50">
+                    Par défaut, si aucun remplaçant n'est trouvé avant l'expiration du délai, l'Œil perd -70 pts de fiabilité (le maximum du barème). Ne cocher que pour un cas jugé légitime (perte de contact, situation à vérifier...).
+                  </span>
+                </span>
+              </label>
+              {forceReassignModal.exemptPenalty && (
+                <textarea
+                  className="input mt-3"
+                  rows={2}
+                  value={forceReassignModal.exemptReason}
+                  onChange={(e) => setForceReassignModal(m => ({ ...m, exemptReason: e.target.value }))}
+                  placeholder="Raison de l'exemption (obligatoire)"
+                  autoFocus
+                />
+              )}
+            </div>
+            <div className="flex gap-2 mt-4">
+              <button
+                onClick={submitForceReassign}
+                disabled={forceReassignModal.submitting || !forceReassignModal.reason.trim() || (forceReassignModal.exemptPenalty && !forceReassignModal.exemptReason.trim())}
+                className="btn btn-primary flex-1 justify-center disabled:opacity-50"
+              >
+                {forceReassignModal.submitting ? '...' : 'Lancer la réattribution'}
+              </button>
+              <button
+                onClick={() => setForceReassignModal(null)}
+                disabled={forceReassignModal.submitting}
                 className="btn btn-ghost flex-1 justify-center"
               >
                 Annuler
