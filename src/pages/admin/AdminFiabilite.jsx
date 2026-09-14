@@ -20,7 +20,7 @@ export default function AdminFiabilite() {
 
   return (
     <AppLayout>
-      <Topbar title="🛡️ Fiabilité des Œils" />
+      <Topbar title="Œils suspendus" />
       <div className="p-6">
         {/* Onglets principaux */}
         <div className="flex gap-1 bg-[#222] rounded-xl p-1 w-fit mb-5">
