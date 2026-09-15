@@ -8,7 +8,7 @@ import Topbar from '../../components/layout/Topbar'
 import { missionsAPI, reportsAPI, mediaAPI } from '../../api'
 import { StatusBadge, Spinner, EmptyState, toast, Pagination, Stars } from '../../components/ui'
 import { useNotif } from '../../context/NotifContext'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
 import { useSocket } from '../../context/SocketContext'
 import MissionHistoryModal from '../../components/missions/MissionHistoryModal'
@@ -19,7 +19,7 @@ import CandidatureSentModal from '../../components/missions/CandidatureSentModal
 import AssistanceModal from '../../components/missions/AssistanceModal'
 import MissionPhotosModal from '../../components/missions/MissionPhotosModal'
 import { getChatAccessState } from '../../utils/chatAccess'
-import { CASABLANCA_TZ } from '../../utils/casablancaTime'
+import { CASABLANCA_TZ, casablancaDisplayDateTime } from '../../utils/casablancaTime'
 
 const TABS = ['priority', 'available', 'active', 'done']
 const TYPE_ICONS = { immobilier:'🏠', file_attente:'⏳', audit:'🔎', personnalisee:'🎯' }
@@ -59,7 +59,8 @@ export default function OeilMissions() {
   // Pagination (uniquement sur l'onglet "Disponibles")
   const [page, setPage] = useState(1)
   const [totalPages, setTotalPages] = useState(1)
-  const { pendingAction, clearPending } = useNotif()
+  const { pendingAction, setPending, clearPending } = useNotif()
+  const [searchParams, setSearchParams] = useSearchParams()
   const { user } = useAuth()
   const { onEvent } = useSocket() || {}
   const [historyMission, setHistoryMission] = useState(null)
@@ -78,6 +79,26 @@ export default function OeilMissions() {
 
 
 
+
+  // Deep-link push (app fermée/arrière-plan, chantier "deep-link push" 2026-09-13) : le clic sur
+  // la notification atterrit ici via l'URL (?pending=chat|candidate_confirm&missionId=...),
+  // service-worker → sw.js → notify.js/deepLinkFor, plutôt que via un setPending() déclenché par
+  // Topbar.jsx (app déjà ouverte, cloche cliquée). On traduit une seule fois au montage en un
+  // setPending() identique pour rejoindre EXACTEMENT la même file de traitement que les 2 effets
+  // ci-dessous (aucune duplication de logique d'ouverture), puis on nettoie l'URL pour ne pas
+  // rejouer l'ouverture à un rechargement ultérieur de cette même page.
+  useEffect(() => {
+    const pending = searchParams.get('pending')
+    const missionId = searchParams.get('missionId')
+    if (pending && missionId) {
+      setPending(pending, missionId)
+      const next = new URLSearchParams(searchParams)
+      next.delete('pending')
+      next.delete('missionId')
+      setSearchParams(next, { replace: true })
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   // Ouvrir le chat depuis une notification
 
@@ -328,8 +349,10 @@ const load = useCallback((tab) => {
   // rechargement de page ou un changement d'onglet ne peut pas le rouvrir pour la même
   // mission : il n'est déclenché que par un appel interest()/interestPriority() réussi, et
   // le bouton "Je suis intéressé" disparaît (interested:true) dès ce succès — il ne peut donc
-  // plus être recliqué pour la même mission, refresh ou pas.
-  const [waOptInPrompt, setWaOptInPrompt] = useState(false)
+  // plus être recliqué pour la même mission, refresh ou pas. On garde la mission entière (pas
+  // juste un booléen) : le texte du message WhatsApp pré-rempli a besoin de son titre/ville/
+  // date/réf pour l'identifier « à la simple lecture » (décision de chantier 2026-09-11).
+  const [waOptInMission, setWaOptInMission] = useState(null)
 
   // "Je suis intéressé" (onglet "Disponibles") : appel réseau direct, PAS de ComplianceModal.
   // Le rappel des règles ("Rappel avant démarrage") est présenté plus tard, quand l'Œil
@@ -341,7 +364,7 @@ const load = useCallback((tab) => {
       await missionsAPI.interest(id)
       setMissions((prev) => prev.map((m) => m.id === id ? { ...m, interested: true } : m))
       toast(t('oeilMissions.toasts.interestExpressed'), 'success')
-      setWaOptInPrompt(true)
+      setWaOptInMission(missions.find((m) => m.id === id) || null)
     } catch (err) {
       handleInterestError(err, id)
     } finally {
@@ -357,7 +380,7 @@ const load = useCallback((tab) => {
     try {
       await missionsAPI.interest(id)
       toast(t('oeilMissions.toasts.interestExpressedShort'), 'success')
-      setWaOptInPrompt(true)
+      setWaOptInMission(missions.find((m) => m.id === id) || null)
       load(tab)
     } catch (err) {
       handleInterestError(err, id)
@@ -821,14 +844,21 @@ try {
     }} />
   )}
 
-  {waOptInPrompt && (
+  {waOptInMission && (
     <CandidatureSentModal
       onWhatsApp={() => {
-        setWaOptInPrompt(false)
-        const waMessage = encodeURIComponent(t('oeilMissions.whatsappOptIn.message'))
+        const mission = waOptInMission
+        setWaOptInMission(null)
+        const { date, time } = casablancaDisplayDateTime(mission.scheduled_at)
+        const ref = mission.id ? `MIS-${mission.id.slice(-6).toUpperCase()}` : ''
+        const waMessage = encodeURIComponent(t('oeilMissions.whatsappOptIn.message', {
+          title: mission.title || '',
+          city: mission.city ? translateLocation(mission.city, i18n.language) : '',
+          date, time, ref,
+        }))
         window.location.href = `https://wa.me/212661064492?text=${waMessage}`
       }}
-      onClose={() => setWaOptInPrompt(false)}
+      onClose={() => setWaOptInMission(null)}
     />
   )}
 

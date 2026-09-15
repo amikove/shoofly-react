@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useLocation } from 'react-router-dom'
+import { useLocation, useSearchParams } from 'react-router-dom'
 import AppLayout from '../../components/layout/AppLayout'
 import Topbar from '../../components/layout/Topbar'
 import { ticketsAPI } from '../../api'
@@ -21,6 +21,7 @@ export default function MesTickets() {
   const { t } = useTranslation()
   const { user } = useAuth()
   const location = useLocation()
+  const [searchParams, setSearchParams] = useSearchParams()
   const [tickets, setTickets] = useState([])
   const [loading, setLoading] = useState(true)
   const [page, setPage] = useState(1)
@@ -42,17 +43,34 @@ export default function MesTickets() {
 
   useEffect(() => { load() }, [load])
 
-  // Ouverture directe depuis une notification (voir Topbar.jsx handleClick)
-  useEffect(() => {
-    const openId = location.state?.openTicketId
-    if (openId) openTicket(openId)
-  }, [location.state])
-
   const openTicket = (id) => {
     ticketsAPI.get(id)
       .then(({ data }) => setSelected(data))
       .catch(() => toast(t('mesTickets.loadError'), 'error'))
   }
+
+  // Ouverture directe depuis une notification (voir Topbar.jsx handleClick) — app déjà ouverte,
+  // navigate(path, {state}) depuis la cloche.
+  useEffect(() => {
+    const openId = location.state?.openTicketId
+    if (openId) openTicket(openId)
+  }, [location.state])
+
+  // Deep-link push (app fermée/arrière-plan, chantier "deep-link push" 2026-09-13) : le clic sur
+  // la notification atterrit ici via l'URL (?openTicketId=...), service-worker → sw.js →
+  // notify.js/deepLinkFor — `location.state` n'existe pas dans ce cas (navigation par URL, pas
+  // par navigate() React Router), d'où ce 2e déclencheur indépendant. Nettoie l'URL ensuite pour
+  // ne pas rouvrir le même ticket à un rechargement ultérieur de cette page.
+  useEffect(() => {
+    const openId = searchParams.get('openTicketId')
+    if (openId) {
+      openTicket(openId)
+      const next = new URLSearchParams(searchParams)
+      next.delete('openTicketId')
+      setSearchParams(next, { replace: true })
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   return (
     <AppLayout>

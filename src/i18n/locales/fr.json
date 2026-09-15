@@ -417,7 +417,7 @@
     "errorLoading": "Erreur de chargement",
     "whatsappOptIn": {
       "toastText": "Mission créée ✓ — Appuyez ici pour suivre la mission par WhatsApp",
-      "message": "Bonjour, je viens de créer une mission sur Shoofly. Je voudrais être informé par WhatsApp quand des Œils postulent."
+      "message": "Bonjour, je viens de créer une mission sur Shoofly : \"{{title}}\" à {{city}}, le {{date}} à {{time}} (réf. {{ref}}). Je voudrais être informé par WhatsApp quand des Œils postulent."
     },
     "stats": {
       "total": "Missions totales",
@@ -747,10 +747,7 @@
   "newMissionModal": {
     "immobilierNotice": "L'avis de l'Œil reflète l'état du bien au moment de sa visite. Pour une décision éclairée, basez-vous en priorité sur les photos et vidéos du rapport plutôt que sur la seule note attribuée.",
     "title": "Nouvelle mission",
-    "subtitleDirect": "Mission directe pour {{name}}",
     "subtitleVisible": "Visible par tous les Œils disponibles",
-    "directAssignment": "Attribution directe • {{city}}",
-    "directBadge": "Direct",
     "categories": {
       "immobilier": "Immobilier",
       "fileAttente": "File d'attente",
@@ -862,7 +859,6 @@
     "promoApply": "Appliquer",
     "promoAppliedToast": "Code \"{{code}}\" appliqué — {{discount}} MAD de réduction ✓",
     "submitLoading": "Envoi en cours...",
-    "submitAssign": "Assigner à {{name}} →",
     "submitSend": "Envoyer la mission →",
     "cancel": "Annuler",
     "errors": {
@@ -1071,7 +1067,7 @@
       "done": "Terminées"
     },
     "whatsappOptIn": {
-      "message": "Bonjour, j'ai postulé pour une mission sur Shoofly. Je voudrais être informé par WhatsApp de son évolution."
+      "message": "Bonjour, j'ai postulé sur Shoofly pour la mission \"{{title}}\" à {{city}}, le {{date}} à {{time}} (réf. {{ref}}). Je voudrais être informé par WhatsApp de son évolution."
     },
     "toasts": {
       "selectProblemTypeFull": "Sélectionnez un type de problème",
@@ -1821,7 +1817,6 @@
   "missionCreatedModal": {
   "title": "Mission créée avec succès",
   "description": "Souhaitez-vous être informé instantanément par WhatsApp dès qu'un Œil se manifeste pour votre mission ?",
-  "descriptionAssigned": "Souhaitez-vous être informé instantanément par WhatsApp dès que {{name}} est en route pour votre mission ?",
   "whatsappButton": "Oui, me tenir informé sur WhatsApp",
   "laterButton": "Non merci"
   },

@@ -47,6 +47,16 @@ export function casablancaDateTimeInputParts(iso) {
   return { date: `${get('year')}-${get('month')}-${get('day')}`, time: `${get('hour')}:${get('minute')}` }
 }
 
+// Date+heure lisibles (JJ/MM + HH:MM) telles que vues à Casablanca — dérivé de
+// casablancaDateTimeInputParts, pour un affichage humain (ex. message WhatsApp pré-rempli)
+// plutôt qu'un <input type="date"/"time">.
+export function casablancaDisplayDateTime(iso) {
+  const { date, time } = casablancaDateTimeInputParts(iso)
+  if (!date) return { date: '', time: '' }
+  const [, month, day] = date.split('-')
+  return { date: `${day}/${month}`, time }
+}
+
 // Date (jour civil) d'un instant telle que vue à Casablanca, format Y-M-D — utilisé pour comparer
 // deux instants "même jour ?" sans jamais retomber sur le jour civil du fuseau navigateur.
 export function casablancaYMD(date) {

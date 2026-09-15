@@ -2,11 +2,12 @@ import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { missionsAPI, usersAPI } from '../../api'
 import { VILLES, VILLES_LIST } from '../../constants/villes'
+import { translateLocation } from '../../constants/villesTranslations'
 import { toast } from '../ui'
 import { useAuth } from '../../context/AuthContext'
 import Autocomplete from './Autocomplete'
 import MissionCreatedModal from './MissionCreatedModal'
-import { casablancaWallTimeToISO } from '../../utils/casablancaTime'
+import { casablancaWallTimeToISO, casablancaDisplayDateTime } from '../../utils/casablancaTime'
 
 // Planchers tarifaires par sous-catégorie — SOURCE UNIQUE EN BASE depuis le chantier
 // « planchers éditables » (2026-09-10). Plus de table en dur ici : on lit
@@ -142,19 +143,22 @@ const PRISTINE_DRAFT_JSON = JSON.stringify({ type: 'immobilier', subcategory: ''
 // toute façon un déploiement, jamais une simple modification de réglage.
 const SCHEDULED_AT_PAST_TOLERANCE_MS = 5 * 60 * 1000
 
-export default function NewMissionModal({ open, onClose, onCreated, preselectedOeil }) {
-  const { t }             = useTranslation()
+export default function NewMissionModal({ open, onClose, onCreated }) {
+  const { t, i18n }       = useTranslation()
   const { user }          = useAuth()
   const [type, setType]   = useState('immobilier')
   const [subcategory, setSub] = useState('')
   const [loading, setLoading] = useState(false)
   // Popup opt-in WhatsApp après création réussie : factorisé ici (plutôt que dupliqué dans
-  // chaque page appelante) pour uniformiser les 3 points d'entrée (Dashboard, "Mes missions",
-  // "Commander cet Œil") sans dupliquer d'état. `open` reste piloté par le parent, mais tant
-  // que ce popup est affiché la modale reste montée (voir le garde `!open && !createdModalOpen`
-  // plus bas) — c'est CE composant qui appelle `onClose()` du parent une fois l'opt-in traité,
-  // pas la soumission elle-même.
+  // chaque page appelante) pour uniformiser les 2 points d'entrée (Dashboard, "Mes missions")
+  // sans dupliquer d'état. `open` reste piloté par le parent, mais tant que ce popup est
+  // affiché la modale reste montée (voir le garde `!open && !createdModalOpen` plus bas) —
+  // c'est CE composant qui appelle `onClose()` du parent une fois l'opt-in traité, pas la
+  // soumission elle-même. `createdMission` (la ligne renvoyée par POST /missions) alimente le
+  // texte du message WhatsApp pré-rempli (titre/ville/date/réf — identification de la mission
+  // « à la simple lecture », décision de chantier 2026-09-11).
   const [createdModalOpen, setCreatedModalOpen] = useState(false)
+  const [createdMission, setCreatedMission] = useState(null)
   const [form, setForm]   = useState(EMPTY_FORM)
   const availablePaymentMethods = PAYMENT_METHODS.filter((m) => m.enabled)
   const [promoCode, setPromoCode]     = useState('')
@@ -320,7 +324,6 @@ if (minPrice != null && parseFloat(form.price) < minPrice) {
         payment_method: form.payment_method,
         scheduled_at: scheduledAtISO,
       }
-      if (preselectedOeil?.id) payload.oeil_id = preselectedOeil.id
       if (promoResult) {
         payload.promo_code      = promoResult.code
         payload.discount        = promoResult.discount
@@ -335,6 +338,7 @@ if (minPrice != null && parseFloat(form.price) < minPrice) {
       // n'est plus appelé depuis cet écran ; son code backend n'est pas touché.
       const { data } = await missionsAPI.create(payload)
       onCreated?.(data.mission)
+      setCreatedMission(data.mission)
       setCreatedModalOpen(true)
       setForm(EMPTY_FORM)
       setType('immobilier')
@@ -354,10 +358,15 @@ if (minPrice != null && parseFloat(form.price) < minPrice) {
   if (createdModalOpen) {
     return (
       <MissionCreatedModal
-        oeilName={preselectedOeil?.first_name}
         onWhatsApp={() => {
           setCreatedModalOpen(false)
-          const waMessage = encodeURIComponent(t('clientDashboard.whatsappOptIn.message'))
+          const { date, time } = casablancaDisplayDateTime(createdMission?.scheduled_at)
+          const ref = createdMission?.id ? `MIS-${createdMission.id.slice(-6).toUpperCase()}` : ''
+          const waMessage = encodeURIComponent(t('clientDashboard.whatsappOptIn.message', {
+            title: createdMission?.title || '',
+            city: createdMission?.city ? translateLocation(createdMission.city, i18n.language) : '',
+            date, time, ref,
+          }))
           window.location.href = `https://wa.me/212661064492?text=${waMessage}`
           onClose()
         }}
@@ -383,11 +392,7 @@ if (minPrice != null && parseFloat(form.price) < minPrice) {
         <div className="flex items-start justify-between mb-5">
           <div>
             <h2 className="font-display font-bold text-base">{t('newMissionModal.title')}</h2>
-            <p className="text-xs text-[#AAA] mt-0.5">
-              {preselectedOeil
-                ? t('newMissionModal.subtitleDirect', { name: `${preselectedOeil.first_name} ${preselectedOeil.last_name}` })
-                : t('newMissionModal.subtitleVisible')}
-            </p>
+            <p className="text-xs text-[#AAA] mt-0.5">{t('newMissionModal.subtitleVisible')}</p>
           </div>
           <button onClick={onClose} aria-label={t('common.close')} className="text-[#AAA] hover:text-white text-lg">✕</button>
         </div>
@@ -410,20 +415,6 @@ if (minPrice != null && parseFloat(form.price) < minPrice) {
                 {t('newMissionModal.localDraft.discard')}
               </button>
             </div>
-          </div>
-        )}
-
-        {/* Bannière Œil pré-sélectionné */}
-        {preselectedOeil && (
-          <div className="flex items-center gap-3 mb-5 p-3 bg-[#FF4D00]/10 border border-[#FF4D00]/25 rounded-xl">
-            <div className="w-9 h-9 rounded-full bg-[#FF4D00]/20 flex items-center justify-center text-sm font-bold text-[#FF4D00]">
-              {preselectedOeil.first_name?.[0]}{preselectedOeil.last_name?.[0]}
-            </div>
-            <div>
-              <div className="text-sm font-semibold">👁️ {preselectedOeil.first_name} {preselectedOeil.last_name}</div>
-              <div className="text-xs text-[#AAA]">{t('newMissionModal.directAssignment', { city: preselectedOeil.city })}</div>
-            </div>
-            <span className="ms-auto badge badge-orange text-[10px]">{t('newMissionModal.directBadge')}</span>
           </div>
         )}
 
@@ -599,7 +590,7 @@ if (minPrice != null && parseFloat(form.price) < minPrice) {
           <div className="flex gap-3 pt-2">
             <button type="submit" disabled={loading}
               className="btn btn-primary btn-lg flex-1 justify-center disabled:opacity-60">
-              {loading ? t('newMissionModal.submitLoading') : (preselectedOeil ? t('newMissionModal.submitAssign', { name: preselectedOeil.first_name }) : t('newMissionModal.submitSend'))}
+              {loading ? t('newMissionModal.submitLoading') : t('newMissionModal.submitSend')}
             </button>
             <button type="button" onClick={onClose} className="btn btn-ghost btn-lg">{t('newMissionModal.cancel')}</button>
           </div>

@@ -1,12 +1,8 @@
 import { useTranslation } from 'react-i18next'
 
-export default function MissionCreatedModal({ onWhatsApp, onClose, oeilName }) {
+export default function MissionCreatedModal({ onWhatsApp, onClose }) {
   const { t } = useTranslation()
-  // Mission pré-assignée (flux "Commander cet Œil") : le texte générique "dès qu'un Œil se
-  // manifeste" ne s'applique pas puisque l'Œil est déjà choisi — on l'adapte par son prénom.
-  const description = oeilName
-    ? t('missionCreatedModal.descriptionAssigned', { name: oeilName })
-    : t('missionCreatedModal.description')
+  const description = t('missionCreatedModal.description')
   return (
     <div className="fixed inset-0 bg-black/80 z-[70] flex items-center justify-center p-4 backdrop-blur-sm">
       <div className="bg-[#181818] border border-green-500/30 rounded-2xl p-6 w-full max-w-md shadow-xl">

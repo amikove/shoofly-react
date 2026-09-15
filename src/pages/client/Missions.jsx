@@ -11,7 +11,7 @@ import RateModal from '../../components/missions/RateModal'
 import ChatModal from '../../components/missions/ChatModal'
 import { useAuth } from '../../context/AuthContext'
 import { useNotif } from '../../context/NotifContext'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import MissionDetailModal from '../../components/missions/MissionDetailModal'
 import InterestsModal from '../../components/missions/InterestsModal'
 import NewTicketModal from '../../components/tickets/NewTicketModal'
@@ -167,7 +167,8 @@ export default function ClientMissions() {
     const [typeFilter, setType]             = useState('')
     const [page, setPage]                   = useState(1)
     const [totalPages, setTotalPages]       = useState(1)
-  const { pendingAction, clearPending } = useNotif()
+  const { pendingAction, setPending, clearPending } = useNotif()
+  const [searchParams, setSearchParams] = useSearchParams()
 
   // Anti-double-clic sur « Valider » / « Annuler » (même patron que la candidature Œil,
   // oeil/Missions.jsx : submittingInterestRef) : le ref est testé de façon SYNCHRONE avant
@@ -185,6 +186,26 @@ export default function ClientMissions() {
       return next
     })
   }
+
+// Deep-link push (app fermée/arrière-plan, chantier "deep-link push" 2026-09-13) : le clic sur
+// la notification atterrit ici via l'URL (?pending=chat|interests_modal|mission_detail&
+// missionId=...), service-worker → sw.js → notify.js/deepLinkFor, plutôt que via un setPending()
+// déclenché par Topbar.jsx (app déjà ouverte, cloche cliquée). On traduit une seule fois au
+// montage en un setPending() identique pour rejoindre EXACTEMENT la même file de traitement que
+// l'effet ci-dessous (aucune duplication de logique d'ouverture), puis on nettoie l'URL pour ne
+// pas rejouer l'ouverture à un rechargement ultérieur de cette même page.
+useEffect(() => {
+  const pending = searchParams.get('pending')
+  const missionId = searchParams.get('missionId')
+  if (pending && missionId) {
+    setPending(pending, missionId)
+    const next = new URLSearchParams(searchParams)
+    next.delete('pending')
+    next.delete('missionId')
+    setSearchParams(next, { replace: true })
+  }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+}, [])
 
 // Traiter l'action en attente depuis une notification (chat ou intéressés)
 useEffect(() => {
