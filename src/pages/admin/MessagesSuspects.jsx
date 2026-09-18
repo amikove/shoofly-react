@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import AppLayout from '../../components/layout/AppLayout'
 import Topbar from '../../components/layout/Topbar'
 import { adminAPI } from '../../api'
@@ -19,6 +20,7 @@ function timeAgo(dateStr) {
 }
 
 export default function AdminMessagesSuspects() {
+  const navigate = useNavigate()
   const [messages, setMessages] = useState([])
   const [loading, setLoading]   = useState(true)
   const [chatMission, setChatMission] = useState(null)
@@ -50,7 +52,13 @@ export default function AdminMessagesSuspects() {
                   <span className="text-xs text-[#555]">{timeAgo(m.created_at)}</span>
                 </div>
                 <div className="text-xs text-[#AAA] mt-0.5">
-                  Envoyé par <span className="text-white">{m.sender_name}</span>
+                  Envoyé par{' '}
+                  <span
+                    className="text-white cursor-pointer hover:text-[#FF4D00] hover:underline"
+                    onClick={() => navigate(`/admin/users/${m.sender_id}`)}
+                  >
+                    {m.sender_name}
+                  </span>
                   <span className="ms-1 text-[#555]">({m.sender_role})</span>
                   {' '}dans <span className="text-white">{m.mission_title}</span>
                 </div>

@@ -79,27 +79,6 @@ export default function UserProfile() {
   const applyDateFilter = () => load(page, dateFrom, dateTo)
   const clearDateFilter = () => { setDateFrom(''); setDateTo(''); load(page, '', '') }
 
-  // Désactivation manuelle d'un compte client (FE-3 constat 08) — équivalent du bouton déjà en
-  // place sur Oeils.jsx (Suspendre/Activer), même route PUT /admin/:id/toggle-active, qui gère
-  // déjà correctement is_active pour un client (branche non-Œil, avec déclenchement de
-  // handleClientDisabled sur toute mission en cours — voir routes/users.js). Raison demandée
-  // uniquement à la désactivation, jamais à la réactivation — même logique que Oeils.jsx.
-  const toggleClientActive = async () => {
-    let reason
-    if (data.user.is_active) {
-      const input = window.prompt('Pourquoi désactivez-vous ce compte client ?')
-      if (input === null) return
-      reason = input.trim() || undefined
-    }
-    try {
-      await adminAPI.toggleActive(data.user.id, reason ? { reason } : undefined)
-      toast('Statut modifié', 'info')
-      load()
-    } catch {
-      toast('Erreur', 'error')
-    }
-  }
-
   if (loading && !data) {
     return (
       <AppLayout>
@@ -123,6 +102,27 @@ export default function UserProfile() {
   const tabs = isOeil ? [...TABS_BASE, TAB_FIABILITE] : TABS_BASE
   const status = statusBadge(user, isOeil, reliability)
 
+  // Suspension/désactivation d'un compte (Œil OU client) — même route PUT /admin/:id/toggle-active
+  // que Oeils.jsx (Suspendre/Activer), qui branche déjà côté backend sur is_suspended pour un Œil
+  // vs is_active pour un client (voir routes/users.js). Raison demandée uniquement au moment de la
+  // suspension/désactivation, jamais à la réactivation — même logique que Oeils.jsx.
+  const isSuspendedState = isOeil ? !!reliability?.is_suspended : !user.is_active
+  const toggleSuspension = async () => {
+    let reason
+    if (!isSuspendedState) {
+      const input = window.prompt(isOeil ? 'Pourquoi suspendez-vous ce compte ?' : 'Pourquoi désactivez-vous ce compte client ?')
+      if (input === null) return
+      reason = input.trim() || undefined
+    }
+    try {
+      await adminAPI.toggleActive(user.id, reason ? { reason } : undefined)
+      toast('Statut modifié', 'info')
+      load()
+    } catch {
+      toast('Erreur', 'error')
+    }
+  }
+
   return (
     <AppLayout>
       <Topbar title={`${user.first_name} ${user.last_name}`} />
@@ -142,11 +142,9 @@ export default function UserProfile() {
             </p>
             <p className="text-xs text-[#555] mt-0.5">Inscrit le {fmtDate(user.created_at)}</p>
           </div>
-          {!isOeil && (
-            <button onClick={toggleClientActive} className={`btn btn-ghost btn-sm ${user.is_active ? 'text-red-400' : 'text-green-400'}`}>
-              {user.is_active ? 'Désactiver' : 'Activer'}
-            </button>
-          )}
+          <button onClick={toggleSuspension} className={`btn btn-ghost btn-sm ${isSuspendedState ? 'text-green-400' : 'text-red-400'}`}>
+            {isSuspendedState ? 'Activer' : (isOeil ? 'Suspendre' : 'Désactiver')}
+          </button>
           <button onClick={() => navigate(-1)} className="btn btn-ghost btn-sm">← Retour</button>
         </div>
 
