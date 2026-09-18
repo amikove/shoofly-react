@@ -5,22 +5,43 @@ import Topbar from '../../components/layout/Topbar'
 import { adminAPI } from '../../api'
 import { Spinner, EmptyState, Avatar, toast } from '../../components/ui'
 
+const TABS = [
+  { key: 'all', label: 'Tous' },
+  { key: 'active', label: 'Actifs' },
+  { key: 'inactive', label: 'Inactifs' },
+]
+
 export default function AdminClients() {
   const navigate = useNavigate()
   const [clients, setClients] = useState([])
   const [loading, setLoading] = useState(true)
+  const [tab, setTab] = useState('all')
 
   useEffect(() => {
-    adminAPI.users({ role: 'client' })
-      .then(({ data }) => setClients(data.users || []))
-      .catch(() => toast('Erreur', 'error'))
-      .finally(() => setLoading(false))
-  }, [])
+    let cancelled = false
+    setLoading(true)
+    const params = { role: 'client' }
+    if (tab === 'active') params.is_active = '1'
+    else if (tab === 'inactive') params.is_active = '0'
+    adminAPI.users(params)
+      .then(({ data }) => { if (!cancelled) setClients(data.users || []) })
+      .catch(() => { if (!cancelled) toast('Erreur', 'error') })
+      .finally(() => { if (!cancelled) setLoading(false) })
+    return () => { cancelled = true }
+  }, [tab])
 
   return (
     <AppLayout>
       <Topbar title="Gestion des clients" />
-      <div className="p-6">
+      <div className="p-6 space-y-4">
+        <div className="flex gap-1 bg-[#222] rounded-xl p-1 w-fit max-w-full overflow-x-auto">
+          {TABS.map((s) => (
+            <button key={s.key} onClick={() => setTab(s.key)}
+              className={`px-4 py-2 rounded-lg text-xs font-medium transition-all ${tab === s.key ? 'bg-[#2A2A2A] text-white' : 'text-[#AAA] hover:text-white'}`}>
+              {s.label}
+            </button>
+          ))}
+        </div>
         {loading ? (
           <div className="flex justify-center py-20"><Spinner size="lg" /></div>
         ) : clients.length === 0 ? (
