@@ -1,0 +1,39 @@
+name: CI
+
+# Audit santé technique 2026-09-18, §1.6 — le script "lint" existe déjà (package.json) mais
+# n'était déclenché par rien d'automatique. Ce workflow attrape les erreurs de lint et un build
+# cassé avant la prod — ce n'est PAS une suite de tests fonctionnels (aucun framework de test
+# dans ce dépôt), voir le rapport de chantier pour le détail de ce qui est/n'est pas couvert.
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  lint-and-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      # ⚠️ continue-on-error TEMPORAIRE, à retirer dès que possible — vérifié en local le
+      # 2026-09-18 (avant même ce chantier, sur du code déjà commité, sans rapport avec ses 6
+      # points) : `npm run lint` échoue aujourd'hui avec 97 erreurs / 25 avertissements, presque
+      # tous react-hooks/set-state-in-effect (règle probablement récente d'eslint-plugin-react-
+      # hooks, sur des useEffect préexistants dans plusieurs pages). Le bloquer tel quel aurait
+      # rendu ce tout nouveau CI rouge dès le premier commit — signalé au rapport de chantier
+      # plutôt que tranché seul : à retirer une fois cette dette nettoyée (chantier dédié), ou à
+      # rendre bloquant immédiatement si tu préfères forcer le nettoyage maintenant.
+      - name: Lint (non bloquant pour l'instant — voir commentaire ci-dessus)
+        run: npm run lint
+        continue-on-error: true
+
+      - name: Build
+        run: npm run build
