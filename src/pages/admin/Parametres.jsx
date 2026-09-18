@@ -48,6 +48,7 @@ const ADVANCED_DEFAULTS = {
   dashboard_low_reliability_threshold: 70,
   urgent_mission_whatsapp_batch_size: 10,
   urgent_mission_whatsapp_batch_delay_minutes: 30,
+  new_mission_whatsapp_delay_hours: 2,
   candidate_batch_size: 10,
   candidate_confirmation_minutes: 10,
   candidate_tiebreak_window_minutes: 5,
@@ -183,6 +184,7 @@ const ADVANCED_GROUPS = [
   { key: 'lateCancelPenalty',  category: 'fiabilite', fields: ['late_cancel_penalty_tier1_enabled', 'late_cancel_penalty_tier1_threshold_hours', 'late_cancel_penalty_tier1_points', 'late_cancel_penalty_tier2_threshold_hours', 'late_cancel_penalty_tier2_points', 'late_cancel_penalty_tier3_points'] },
   { key: 'responseTime',       category: 'fiabilite', fields: ['response_time_max_valid_minutes', 'response_time_min_turns'] },
   // 📱 Communication
+  { key: 'newMissionWhatsappDelay', category: 'communication', fields: ['new_mission_whatsapp_delay_hours'] },
   { key: 'urgentWhatsappWaves', category: 'communication', fields: ['urgent_mission_whatsapp_batch_size', 'urgent_mission_whatsapp_batch_delay_minutes'] },
   { key: 'candidatureWhatsapp', category: 'communication', fields: ['candidature_whatsapp_seuil_count', 'candidature_whatsapp_seuil_minutes'] },
   { key: 'candidatureRelance',  category: 'communication', fields: ['candidature_relance_first_after_minutes', 'candidature_relance_interval_minutes', 'candidature_relance_imminent_threshold_minutes'] },
@@ -448,6 +450,7 @@ export default function AdminParametres() {
       cdBeforeAfterH: Math.max(0, n(A.transfer_cooldown_before_hours) - 1),
       staleH: n(A.stale_mission_hours),
       staleLeadH: n(A.stale_mission_min_lead_hours),
+      newMissionWaveDelayH: n(A.new_mission_whatsapp_delay_hours),
       urgentBatch: n(A.urgent_mission_whatsapp_batch_size),
       urgentDelayMin: n(A.urgent_mission_whatsapp_batch_delay_minutes),
       lateAlertMin: n(A.late_start_alert_window_minutes),

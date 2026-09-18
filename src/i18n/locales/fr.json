@@ -2855,9 +2855,13 @@
         "title": "Mission jamais assignée, créneau dépassé",
         "note": "Distinct du groupe ci-dessus : ici, le créneau prévu de la mission est déjà passé et aucun Œil n'a jamais été trouvé. L'admin est alerté immédiatement (une seule fois), puis la mission est annulée automatiquement après ce délai — le client est remboursé intégralement si la mission était payée en ligne, rien pour le cash."
       },
+      "newMissionWhatsappDelay": {
+        "title": "Relance WhatsApp — mission sans candidature",
+        "note": "Si une mission (urgente ou non) n'a reçu aucune candidature après ce délai, une 1ère vague WhatsApp est envoyée aux Œils éligibles de la ville — voir le groupe ci-dessous pour la suite (taille des vagues, délai entre elles). Ex : mission créée il y a {{newMissionWaveDelayH}}h, toujours aucune candidature → 1ère vague envoyée maintenant."
+      },
       "urgentWhatsappWaves": {
-        "title": "Notifications WhatsApp — missions urgentes",
-        "note": "Si la mission urgente n'a toujours pas d'Œil, une nouvelle vague de candidats est contactée par WhatsApp après ce délai, jusqu'à épuisement des Œils disponibles dans la ville. Ex : les {{urgentBatch}} Œils les mieux classés contactés immédiatement, les suivants {{urgentDelayMin}} min plus tard si la mission est toujours sans Œil."
+        "title": "Vagues WhatsApp — mission toujours sans Œil",
+        "note": "Une fois la 1ère vague déclenchée (voir réglage ci-dessus), si la mission n'a toujours pas d'Œil, une nouvelle vague de candidats est contactée par WhatsApp après ce délai, jusqu'à épuisement des Œils disponibles dans la ville. Ex : les {{urgentBatch}} Œils les mieux classés contactés d'abord, les suivants {{urgentDelayMin}} min plus tard si la mission est toujours sans Œil."
       },
       "candidatureWhatsapp": {
         "title": "Notification WhatsApp au client — seuil de candidatures",
@@ -2969,6 +2973,7 @@
       "response_time_min_turns": "Nombre minimum de tours d'échange",
       "dashboard_stuck_pending_hours": "Missions \"bloquées\" après (h)",
       "dashboard_low_reliability_threshold": "Seuil \"Œil à risque\" (score <)",
+      "new_mission_whatsapp_delay_hours": "Délai avant 1ère relance WhatsApp (h)",
       "urgent_mission_whatsapp_batch_size": "Nombre d'Œils contactés par vague",
       "urgent_mission_whatsapp_batch_delay_minutes": "Délai avant la vague suivante (min)",
       "candidate_batch_size": "Taille du lot (nb d'Œils sollicités)",
@@ -3042,8 +3047,9 @@
       "response_time_min_turns": "Sous 3 échanges au total, le temps de réponse moyen de l'Œil n'est pas affiché, faute de données suffisantes.",
       "dashboard_stuck_pending_hours": "Compte les missions encore sans Œil depuis plus de 24h, affiché comme alerte sur le dashboard admin.",
       "dashboard_low_reliability_threshold": "Compte les Œils actifs dont le score de fiabilité est sous 70, affiché comme alerte sur le dashboard admin.",
-      "urgent_mission_whatsapp_batch_size": "Les 10 Œils les mieux classés (fiabilité puis note) de la ville sont contactés par WhatsApp dès la création de la mission urgente.",
-      "urgent_mission_whatsapp_batch_delay_minutes": "Si la mission urgente n'a toujours pas d'Œil 30 min après une vague, la vague suivante contacte les Œils restants.",
+      "new_mission_whatsapp_delay_hours": "Si une mission n'a reçu aucune candidature 2h après sa création, les Œils éligibles de la ville sont contactés par WhatsApp (urgente ou non — plus de distinction).",
+      "urgent_mission_whatsapp_batch_size": "Les 10 Œils les mieux classés (fiabilité puis note) de la ville sont contactés par WhatsApp à chaque vague.",
+      "urgent_mission_whatsapp_batch_delay_minutes": "Si la mission n'a toujours pas d'Œil 30 min après une vague, la vague suivante contacte les Œils restants.",
       "candidate_batch_size": "Les 10 Œils les mieux classés (fiabilité puis note) sont sollicités simultanément à chaque tirage de lot.",
       "candidate_confirmation_minutes": "Si aucun Œil du lot ne confirme sa disponibilité en 10 min, ce lot est abandonné et un nouveau lot est tiré.",
       "candidate_tiebreak_window_minutes": "Dès la première confirmation reçue, les autres Œils du lot ont encore 5 min pour confirmer avant que le mieux classé des confirmés soit assigné.",
