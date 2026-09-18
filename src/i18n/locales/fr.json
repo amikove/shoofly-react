@@ -2154,6 +2154,10 @@
     "staleMissionAdminBody": "Aucun Œil n'a encore été trouvé pour \"{{missionTitle}}\", en attente depuis plus de 12h.",
     "staleMissionClientTitle": "💡 Toujours aucun Œil pour votre mission",
     "staleMissionClientBody": "Votre mission \"{{missionTitle}}\" n'a pas encore trouvé d'Œil après 12h. Augmenter le budget peut attirer plus de candidats. Consultez votre mission pour l'ajuster.",
+    "pendingExpiredAdminTitle": "⏰ Mission jamais assignée, créneau dépassé",
+    "pendingExpiredAdminBody": "\"{{missionTitle}}\" est toujours sans Œil alors que son créneau prévu est déjà passé.",
+    "pendingExpiredCancelledClientTitle": "❌ Mission annulée automatiquement",
+    "pendingExpiredCancelledClientBody": "Aucun Œil n'a été trouvé pour \"{{missionTitle}}\" et le créneau prévu est dépassé. La mission a été annulée automatiquement.",
     "editRequestPendingOeilTitle": "✏️ Modification proposée",
     "editRequestPendingOeilBody": "Le client propose une modification sur \"{{missionTitle}}\". Vous avez {{delayLabel}} pour répondre.",
     "editRequestApprovedClientTitle": "✅ Modification acceptée",
@@ -2847,6 +2851,10 @@
         "title": "Mission sans prestataire trouvé",
         "note": "L'admin est alerté si la mission attend depuis le premier délai ET que son créneau est encore éloigné d'au moins le second délai. Ex : mission créée il y a {{staleH}}h, toujours sans Œil, et dont le créneau est encore à plus de {{staleLeadH}}h."
       },
+      "pendingExpiration": {
+        "title": "Mission jamais assignée, créneau dépassé",
+        "note": "Distinct du groupe ci-dessus : ici, le créneau prévu de la mission est déjà passé et aucun Œil n'a jamais été trouvé. L'admin est alerté immédiatement (une seule fois), puis la mission est annulée automatiquement après ce délai — le client est remboursé intégralement si la mission était payée en ligne, rien pour le cash."
+      },
       "urgentWhatsappWaves": {
         "title": "Notifications WhatsApp — missions urgentes",
         "note": "Si la mission urgente n'a toujours pas d'Œil, une nouvelle vague de candidats est contactée par WhatsApp après ce délai, jusqu'à épuisement des Œils disponibles dans la ville. Ex : les {{urgentBatch}} Œils les mieux classés contactés immédiatement, les suivants {{urgentDelayMin}} min plus tard si la mission est toujours sans Œil."
@@ -2946,6 +2954,7 @@
       "abandon_during_mission_cooldown_hours": "Cooldown abandon en cours de mission (h)",
       "stale_mission_hours": "Ancienneté avant alerte (h)",
       "stale_mission_min_lead_hours": "Marge minimum avant le créneau (h)",
+      "pending_mission_expiration_hours": "Délai avant annulation automatique (h après le créneau)",
       "mission_overdue_verification_hours": "Seuil d'alerte vérification (h)",
       "late_start_alert_window_minutes": "Alerte après (min)",
       "late_start_auto_transfer_minutes": "Transfert automatique après (min)",
@@ -3018,6 +3027,7 @@
       "schedule_conflict_window_hours": "Deux missions du même Œil prévues à moins de 4h d'écart sont bloquées comme conflit de créneau.",
       "stale_mission_hours": "Une mission publiée depuis plus de 12h sans aucun Œil positionné déclenche une alerte admin.",
       "stale_mission_min_lead_hours": "L'alerte n'est envoyée que si le créneau est encore à plus de 4h — inutile d'alerter pour une mission sur le point de commencer.",
+      "pending_mission_expiration_hours": "Si aucun Œil n'a été trouvé alors que le créneau prévu est déjà passé depuis ce délai, la mission est annulée automatiquement et le client remboursé intégralement (rien pour une mission payée en cash).",
       "mission_overdue_verification_hours": "Une mission jamais marquée terminée alors que son créneau prévu date de plus de 24h déclenche une alerte \"à vérifier\".",
       "late_start_alert_window_minutes": "30 min après l'heure prévue sans démarrage, l'Œil et l'admin reçoivent une alerte — sans pénalité à ce stade.",
       "late_start_auto_transfer_minutes": "60 min après l'heure prévue, la mission est retirée à l'Œil (-100 MAD, -20 points de fiabilité) et relancée.",
