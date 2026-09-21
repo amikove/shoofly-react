@@ -50,7 +50,7 @@ export default function AdminClients() {
           <div className="card p-0">
             <div className="table-wrap">
               <table>
-                <thead><tr><th>Client</th><th>Email</th><th>Ville</th><th>Missions</th><th>Statut</th></tr></thead>
+                <thead><tr><th>Client</th><th>Email</th><th>Ville</th><th>Missions</th><th>Statut</th><th>Raison</th></tr></thead>
                 <tbody>
                   {clients.map((c) => (
                     <tr key={c.id}>
@@ -64,6 +64,7 @@ export default function AdminClients() {
                       <td className="text-[#AAA]">{c.city || '—'}</td>
                       <td className="text-center">{c.total_missions || 0}</td>
                       <td><span className={`badge ${c.is_active ? 'badge-green' : 'badge-gray'}`}>{c.is_active ? 'Actif' : 'Inactif'}</span></td>
+                      <td className="text-[#AAA] text-xs">{c.suspended_reason || '—'}</td>
                     </tr>
                   ))}
                 </tbody>
