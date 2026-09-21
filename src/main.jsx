@@ -8,6 +8,7 @@ import { SocketProvider } from './context/SocketContext'
 import { NotifProvider } from './context/NotifContext'
 import ToastContainer from './components/ui/ToastContainer'
 import { i18nReady } from './i18n/config'
+import { offlineQueue } from './utils/offlineQueueInstance'
 import './index.css'
 // v2
 
@@ -26,6 +27,10 @@ function mount() {
       </BrowserRouter>
     </React.StrictMode>
   )
+  // File d'actions terrain hors-ligne (PW-5) : écoute `online` + relance périodique tant qu'elle n'est pas
+  // vide, une seule fois pour toute la durée de vie de l'app (start() est idempotent — StrictMode/HMR).
+  // Après le rendu initial : si des actions attendent d'un lancement précédent, leur issue s'affiche en toast.
+  offlineQueue.start()
 }
 
 // F1 (audit perf 2026-09-07) : l'init i18n est désormais asynchrone (locale active chargée à

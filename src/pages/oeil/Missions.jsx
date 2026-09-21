@@ -20,6 +20,9 @@ import AssistanceModal from '../../components/missions/AssistanceModal'
 import MissionPhotosModal from '../../components/missions/MissionPhotosModal'
 import { getChatAccessState } from '../../utils/chatAccess'
 import { CASABLANCA_TZ, casablancaDisplayDateTime } from '../../utils/casablancaTime'
+import { isNetworkError } from '../../utils/offlineQueue'
+import { offlineQueue } from '../../utils/offlineQueueInstance'
+import { useOfflineQueueProcessed } from '../../hooks/useOfflineQueue'
 
 const TABS = ['priority', 'available', 'active', 'done']
 const TYPE_ICONS = { immobilier:'🏠', file_attente:'⏳', audit:'🔎', personnalisee:'🎯' }
@@ -252,6 +255,10 @@ const load = useCallback((tab) => {
     return () => window.removeEventListener('online', handleOnline)
   }, [tab, load])
 
+  // Après le rejeu d'une action mise en file (confirmation de disponibilité envoyée au retour du réseau —
+  // acceptée ou refusée par le serveur), on recharge l'onglet pour refléter l'état réel de la mission.
+  useOfflineQueueProcessed(() => load(tab))
+
 
   const approveEditRequest = async (editRequestId) => {
     try {
@@ -403,7 +410,15 @@ const load = useCallback((tab) => {
         'success'
       )
     } catch (err) {
-      toast(err.response?.data?.error || t('oeilMissions.toasts.genericError'), 'error')
+      // Coupure réseau (pas de réponse HTTP) : la confirmation est mise en file au lieu d'échouer — elle
+      // partira au retour du réseau (idempotent : un rejeu renvoie already_confirmed) ; si la sollicitation
+      // n'a plus d'objet à ce moment-là, le serveur la refuse clairement. Toute réponse serveur garde le
+      // comportement d'avant.
+      if (isNetworkError(err) && offlineQueue.enqueue('candidate-confirm', candidateMission.id).queued) {
+        toast(t('offlineQueue.queuedToast.candidate-confirm'), 'info')
+      } else {
+        toast(err.response?.data?.error || t('oeilMissions.toasts.genericError'), 'error')
+      }
     } finally {
       setCandidateActing(null)
       setCandidateMission(null)

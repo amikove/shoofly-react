@@ -4,6 +4,9 @@ import { missionsAPI } from '../../api'
 import { toast } from '../ui'
 import { useAuth } from '../../context/AuthContext'
 import { CASABLANCA_TZ, casablancaYMD } from '../../utils/casablancaTime'
+import { isNetworkError } from '../../utils/offlineQueue'
+import { offlineQueue } from '../../utils/offlineQueueInstance'
+import { useOfflineQueueProcessed } from '../../hooks/useOfflineQueue'
 
 function dayLabel(scheduledAt, t) {
   const missionYMD  = casablancaYMD(new Date(scheduledAt))
@@ -29,7 +32,9 @@ export default function PresenceConfirmationBanner() {
 
   const fetchPending = useCallback(() => {
     missionsAPI.pendingConfirmations()
-      .then(({ data }) => setPending(data.pending_confirmations || []))
+      // Une confirmation déjà mise en file (réseau perdu, utils/offlineQueue.js) n'est pas re-proposée :
+      // elle partira toute seule au retour du réseau.
+      .then(({ data }) => setPending((data.pending_confirmations || []).filter((m) => !offlineQueue.isQueued('confirm-presence', m.id))))
       .catch(() => {})
   }, [])
 
@@ -39,6 +44,9 @@ export default function PresenceConfirmationBanner() {
     const interval = setInterval(fetchPending, 60000)
     return () => clearInterval(interval)
   }, [user, fetchPending])
+
+  // Après le rejeu d'une confirmation en attente (acceptée OU refusée par le serveur), on se resynchronise.
+  useOfflineQueueProcessed(fetchPending)
 
   if (user?.role !== 'oeil' || pending.length === 0) return null
 
@@ -54,7 +62,16 @@ export default function PresenceConfirmationBanner() {
       setIndex(0)
       toast(t('presenceConfirmation.confirmedToast'), 'success')
     } catch (err) {
-      toast(err.response?.data?.error || t('presenceConfirmation.errorToast'), 'error')
+      // Coupure réseau (pas de réponse HTTP) : l'action est mise en file au lieu d'échouer — le serveur
+      // la traitera au retour du réseau (idempotent) ou la refusera clairement si elle est devenue sans
+      // objet. Toute réponse serveur (4xx/5xx) garde le comportement d'avant : message d'erreur.
+      if (isNetworkError(err) && offlineQueue.enqueue('confirm-presence', current.id).queued) {
+        setPending((list) => list.filter((m) => m.id !== current.id))
+        setIndex(0)
+        toast(t('offlineQueue.queuedToast.confirm-presence'), 'info')
+      } else {
+        toast(err.response?.data?.error || t('presenceConfirmation.errorToast'), 'error')
+      }
     } finally {
       setConfirming(false)
     }

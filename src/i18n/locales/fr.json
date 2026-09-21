@@ -1950,6 +1950,25 @@
     "next": "Suivant",
     "counter": "{{current}}/{{total}}"
   },
+  "offlineQueue": {
+    "banner": "En attente d'envoi ({{count}}) — envoi automatique au retour du réseau",
+    "actions": {
+      "confirm-presence": "La confirmation de présence",
+      "candidate-confirm": "La confirmation de disponibilité"
+    },
+    "queuedToast": {
+      "confirm-presence": "Pas de réseau : votre confirmation de présence est en attente d'envoi. Elle partira automatiquement au retour du réseau.",
+      "candidate-confirm": "Pas de réseau : votre confirmation de disponibilité est en attente d'envoi. Elle partira automatiquement au retour du réseau."
+    },
+    "sentToast": {
+      "confirm-presence": "Présence confirmée ✓ (envoyée au retour du réseau)",
+      "candidate-confirm": "Disponibilité confirmée ✓ (envoyée au retour du réseau)"
+    },
+    "rejectedToast": "{{action}} n'a pas été prise en compte : {{reason}}",
+    "expiredToast": "{{action}} a été abandonnée : elle datait de plus de 24 h.",
+    "failedToast": "{{action}} n'a pas pu être envoyée. Réessayez depuis l'écran de la mission.",
+    "unknownReason": "la situation a changé entre-temps"
+  },
   "clientDisabledBanner": {
     "text": "Le compte du client de la mission « {{missionTitle}} » a été désactivé. Que souhaitez-vous faire ?",
     "honorButton": "Continuer la mission",

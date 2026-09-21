@@ -1949,6 +1949,25 @@
     "next": "التالي",
     "counter": "{{current}}/{{total}}"
   },
+  "offlineQueue": {
+    "banner": "في انتظار الإرسال ({{count}}) — سيتم الإرسال تلقائيًا عند عودة الشبكة",
+    "actions": {
+      "confirm-presence": "تأكيد الحضور",
+      "candidate-confirm": "تأكيد التوفر"
+    },
+    "queuedToast": {
+      "confirm-presence": "لا توجد شبكة: تأكيد حضورك في انتظار الإرسال وسيُرسل تلقائيًا عند عودة الشبكة.",
+      "candidate-confirm": "لا توجد شبكة: تأكيد توفرك في انتظار الإرسال وسيُرسل تلقائيًا عند عودة الشبكة."
+    },
+    "sentToast": {
+      "confirm-presence": "تم تأكيد الحضور ✓ (أُرسل عند عودة الشبكة)",
+      "candidate-confirm": "تم تأكيد التوفر ✓ (أُرسل عند عودة الشبكة)"
+    },
+    "rejectedToast": "لم يُؤخذ {{action}} بعين الاعتبار: {{reason}}",
+    "expiredToast": "تم التخلي عن {{action}}: مرّ عليه أكثر من 24 ساعة.",
+    "failedToast": "تعذّر إرسال {{action}}. أعد المحاولة من شاشة المهمة.",
+    "unknownReason": "تغيّرت الحالة في الأثناء"
+  },
   "clientDisabledBanner": {
     "text": "تم تعطيل حساب عميل المهمة « {{missionTitle}} ». ماذا تريد أن تفعل؟",
     "honorButton": "متابعة المهمة",
