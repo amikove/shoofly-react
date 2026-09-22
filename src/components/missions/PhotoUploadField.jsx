@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { mediaAPI } from '../../api'
 import { useAuth } from '../../context/AuthContext'
 import { toast } from '../ui'
+import { compressImageIfPossible } from '../../utils/imageCompression'
 
 // Widget réutilisable "photos obligatoires" (PROMPT 4, 2026-08-18) — réutilise le pipeline
 // d'upload existant (mediaAPI -> POST /api/media/:missionId, validations MIME/taille déjà
@@ -38,11 +39,24 @@ export default function PhotoUploadField({ missionId, minRequired = 1, disabled 
     if (files.length === 0) return
     setUploading(true)
     try {
+      // PW-1 (audit perf/résilience 2026-09-19/21) — compression côté navigateur AVANT l'envoi :
+      // sur un réseau 3G moyen, un lot de 10 photos brutes (30-50 Mo) échoue systématiquement
+      // dans le budget de 15s d'api/client.js ; compressées (~0,3-0,5 Mo chacune), le lot entier
+      // tient largement. Séquentiel (pas Promise.all) : évite un pic mémoire si l'Œil sélectionne
+      // 10 photos d'un coup sur un téléphone d'entrée de gamme. En cas d'échec de compression
+      // pour un fichier donné (format non décodable par ce navigateur, fichier corrompu...), ce
+      // fichier précis part inchangé (voir compressImageIfPossible) — jamais de blocage de
+      // l'envoi. L'aperçu affiché après envoi (ci-dessous, photos state) vient toujours de
+      // l'URL réellement stockée côté serveur (mediaAPI.list, jamais un aperçu local séparé) :
+      // il reflète donc déjà exactement ce qui a été envoyé, sans code supplémentaire nécessaire.
+      const compressed = []
+      for (const f of files) compressed.push(await compressImageIfPossible(f))
+
       // media.js plafonne à 10 fichiers par requête (upload.array('files', 10)) — on
       // découpe en lots pour rester correct même si l'utilisateur sélectionne plus de 10
       // photos d'un coup.
-      for (let i = 0; i < files.length; i += 10) {
-        const chunk = files.slice(i, i + 10)
+      for (let i = 0; i < compressed.length; i += 10) {
+        const chunk = compressed.slice(i, i + 10)
         const formData = new FormData()
         chunk.forEach(f => formData.append('files', f))
         await mediaAPI.upload(missionId, formData)
