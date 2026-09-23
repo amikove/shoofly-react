@@ -1941,6 +1941,8 @@
   "installPwaBanner": {
     "textClient": "Suivez vos missions en direct : ajoutez un raccourci Shoofly sur votre écran d'accueil pour être alerté immédiatement. Aucune installation nécessaire.",
     "textOeil": "Ne ratez plus aucune mission : ajoutez un raccourci Shoofly sur votre écran d'accueil pour être alerté immédiatement. Aucune installation nécessaire.",
+    "textClientAndroid": "Suivez vos missions en direct : ajoutez un raccourci Shoofly sur votre écran d'accueil pour être alerté immédiatement. Sans Play Store, rien à télécharger.",
+    "textOeilAndroid": "Ne ratez plus aucune mission : ajoutez un raccourci Shoofly sur votre écran d'accueil pour être alerté immédiatement. Sans Play Store, rien à télécharger.",
     "install": "Ajouter le raccourci",
     "howTo": "Comment faire ?",
     "howToAndroid": "Comment faire ?",
@@ -1948,7 +1950,8 @@
   },
   "accountShortcut": {
     "title": "Raccourci sur l'écran d'accueil",
-    "text": "Ajoutez Shoofly à votre écran d'accueil pour être alerté immédiatement, par exemple après un changement de téléphone. Aucune installation nécessaire."
+    "text": "Ajoutez Shoofly à votre écran d'accueil pour être alerté immédiatement, par exemple après un changement de téléphone. Aucune installation nécessaire.",
+    "textAndroid": "Ajoutez Shoofly à votre écran d'accueil pour être alerté immédiatement, par exemple après un changement de téléphone. Sans Play Store, rien à télécharger."
   },
   "presenceConfirmation": {
     "text": "Je confirme la mission de {{clientName}} qui se déroulera {{day}} à {{time}}",

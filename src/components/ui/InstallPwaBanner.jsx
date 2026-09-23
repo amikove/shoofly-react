@@ -38,7 +38,11 @@ export default function InstallPwaBanner() {
   const android = isAndroid()
   if (!ios && !android && status !== 'available') return null
 
-  const textKey = user.role === 'oeil' ? 'installPwaBanner.textOeil' : 'installPwaBanner.textClient'
+  // Variante Android (option A validée BOSS 2026-09-23) : "Sans Play Store, rien à télécharger"
+  // au lieu de "Aucune installation nécessaire" — seul Android est concerné, iOS et les autres
+  // cas gardent le texte existant inchangé.
+  const androidSuffix = android ? 'Android' : ''
+  const textKey = user.role === 'oeil' ? `installPwaBanner.textOeil${androidSuffix}` : `installPwaBanner.textClient${androidSuffix}`
   const androidFallback = android && status !== 'available'
   const showManualGuide = ios || androidFallback
 

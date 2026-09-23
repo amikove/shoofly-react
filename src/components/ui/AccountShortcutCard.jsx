@@ -32,6 +32,8 @@ export default function AccountShortcutCard() {
   if (!ios && !android && status !== 'available') return null
 
   const showManualGuide = ios || (android && status !== 'available')
+  // Même variante Android que InstallPwaBanner (option A validée BOSS 2026-09-23).
+  const textKey = android ? 'accountShortcut.textAndroid' : 'accountShortcut.text'
 
   return (
     <div className="card mt-4 md:mt-6">
@@ -39,7 +41,7 @@ export default function AccountShortcutCard() {
         <div className="text-lg flex-shrink-0">📲</div>
         <div className="flex-1 min-w-0">
           <h2 className="font-semibold text-sm">{t('accountShortcut.title')}</h2>
-          <p className="text-xs text-[#AAA] mt-1">{t('accountShortcut.text')}</p>
+          <p className="text-xs text-[#AAA] mt-1">{t(textKey)}</p>
         </div>
         {showManualGuide ? (
           <button type="button" onClick={() => setShowGuide((v) => !v)} aria-expanded={showGuide} className="btn btn-primary btn-sm flex-shrink-0">
