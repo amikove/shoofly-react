@@ -64,7 +64,7 @@ export default function Messagerie() {
   return (
     <AppLayout>
       <Topbar title={totalUnread > 0 ? t('messagerie.titleWithUnread', { count: totalUnread }) : t('messagerie.title')} />
-      <div className="p-4 md:p-6 max-w-2xl mx-auto">
+      <div className="p-4 md:p-6 max-w-2xl mx-auto w-full">
         {loading ? (
           <div className="flex justify-center py-20"><Spinner size="lg" /></div>
         ) : inbox.length === 0 ? (
@@ -88,7 +88,7 @@ export default function Messagerie() {
 
                   {/* Contenu */}
                   <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 min-w-0">
                       <span className="font-semibold text-sm truncate">{m.title}</span>
                       <span className={`text-[11px] shrink-0 ${st.color}`}>{statusLabel}</span>
                     </div>
