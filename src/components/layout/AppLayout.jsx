@@ -11,7 +11,7 @@ import InstallPwaBanner from '../ui/InstallPwaBanner'
 import PresenceConfirmationBanner from '../missions/PresenceConfirmationBanner'
 import ClientDisabledBanner from '../missions/ClientDisabledBanner'
 import ResumeH30Banner from '../missions/ResumeH30Banner'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { authAPI, missionsAPI, adminAPI } from '../../api'
 import HoverTooltip from '../ui/HoverTooltip'
 
@@ -336,6 +336,29 @@ useEffect(() => {
       .then(({ data }) => updateUser({ pwa_installed_at: data.pwa_installed_at }))
       .catch(() => {})
   }, [user])
+
+  // Langue capturée côté serveur (chantier langue des notifications push, 2026-09-23 — révisé
+  // après revue BOSS) — tous rôles (contrairement à pwa_installed_at, l'admin n'est pas exclu
+  // ici). i18n.language normalisé ('fr-FR' -> 'fr', cas de la détection navigateur avant tout
+  // changeLanguage() explicite) et restreint à la liste blanche 'fr'/'ar' (SUPPORTED_LNGS,
+  // i18n/config.js) avant tout envoi. `languageSyncAttempted` (ref, pas state — ne doit jamais
+  // déclencher de re-rendu) mémorise la DERNIÈRE valeur tentée, succès ou échec confondus :
+  // contrairement à la garde `user.language===lang` seule (qui suffit après un succès, même motif
+  // que pwa_installed_at), un échec ne fait pas bouger `user.language` — sans ce 2e verrou, un
+  // `updateUser` totalement sans rapport (ex. l'effet pwa_installed_at) changerait la référence
+  // `user` et redéclencherait un nouvel essai à chaque re-rendu. Un changement de langue réel
+  // (nouvelle valeur de `lang`) ou un rechargement de page (ref réinitialisée) autorise un nouvel
+  // essai — jamais une boucle sur le même échec.
+  const languageSyncAttempted = useRef(null)
+  useEffect(() => {
+    const lang = i18n.language?.split('-')[0]
+    if (!user || !['fr', 'ar'].includes(lang) || user.language === lang) return
+    if (languageSyncAttempted.current === lang) return
+    languageSyncAttempted.current = lang
+    authAPI.setLanguage(lang)
+      .then(({ data }) => updateUser({ language: data.language }))
+      .catch(() => {})
+  }, [user, i18n.language])
 
   useNotifications({ onChatOpen: (missionId) => {
   window.__notifChatMissionId = missionId

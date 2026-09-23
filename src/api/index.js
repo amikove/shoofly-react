@@ -10,6 +10,7 @@ export const authAPI = {
   forgotPassword: (data) => api.post('/api/auth/forgot-password', data),
   resetPassword:  (data) => api.post('/api/auth/reset-password', data),
   markPwaInstalled: () => api.post('/api/auth/pwa-installed'),
+  setLanguage: (language) => api.post('/api/auth/language', { language }),
 }
 
 // MISSIONS
