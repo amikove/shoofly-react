@@ -78,6 +78,16 @@
     .mobile-nav a.active { color: #FF4D00; }
     .mobile-nav a span.icon { font-size: 20px; line-height: 1; }
   }
+
+  /* ── Bandeau notifications (NotificationBanner.jsx) ── */
+  .notification-banner { bottom: 1.5rem; } /* = bottom-6 Tailwind, desktop inchangé */
+  @media (max-width: 768px) {
+    /* Retour BOSS après test téléphone réel (2026-09-23) : le bandeau (bottom-6 fixe) était
+       recouvert à moitié par .mobile-nav. Hauteur de .mobile-nav mesurée à 71px (contenu, hors
+       safe-area — mêmes 768px de point de rupture que ci-dessus) + la vraie safe-area de
+       l'appareil + un espacement de 16px. */
+    .notification-banner { bottom: calc(71px + env(safe-area-inset-bottom) + 16px); }
+  }
 }
 
 @keyframes toastIn { from { transform: translateX(20px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
