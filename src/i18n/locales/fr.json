@@ -1933,10 +1933,10 @@
     "allow": "Activer",
     "later": "Plus tard",
     "gotIt": "J'ai compris",
-    "iosTitle": "Ajoutez un raccourci SHOOFLY pour recevoir les notifications",
+    "iosTitle": "Ajoutez un raccourci Shoofly pour recevoir les notifications",
     "iosStep1": "Appuyez sur le bouton Partager (⬆️) en bas de Safari.",
     "iosStep2": "Choisissez « Sur l'écran d'accueil ».",
-    "iosStep3": "Ouvrez SHOOFLY depuis l'icône ajoutée, puis activez les notifications."
+    "iosStep3": "Ouvrez Shoofly depuis l'icône ajoutée, puis activez les notifications."
   },
   "installPwaBanner": {
     "textClient": "Suivez vos missions en direct : ajoutez un raccourci Shoofly sur votre écran d'accueil pour être alerté immédiatement. Aucune installation nécessaire.",
@@ -2166,7 +2166,7 @@
     "reviewRequestRejectedTitle": "❌ Demande refusée",
     "reviewRequestRejectedBody": "Votre demande d'examen a été refusée. {{response}}",
     "accountReactivatedAdminBody": "Votre compte a été réactivé par un administrateur. Score de réintégration : {{score}}%.",
-    "welcomeTitle": "Bienvenue sur SHOOFLY 👁️",
+    "welcomeTitle": "Bienvenue sur Shoofly 👁️",
     "welcomeBodyOeil": "Votre profil sera vérifié sous 24h.",
     "welcomeBodyClient": "Vous pouvez commander votre première mission.",
     "mediaReceivedTitle": "📸 Médias reçus",
