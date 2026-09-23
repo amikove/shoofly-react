@@ -1946,6 +1946,10 @@
     "howToAndroid": "Comment faire ?",
     "androidGuide": "Appuyez sur ⋮ en haut de l'écran, puis sur « Ajouter à l'écran d'accueil » (ou l'option équivalente)."
   },
+  "accountShortcut": {
+    "title": "Raccourci sur l'écran d'accueil",
+    "text": "Ajoutez Shoofly à votre écran d'accueil pour être alerté immédiatement, par exemple après un changement de téléphone. Aucune installation nécessaire."
+  },
   "presenceConfirmation": {
     "text": "Je confirme la mission de {{clientName}} qui se déroulera {{day}} à {{time}}",
     "today": "aujourd'hui",
