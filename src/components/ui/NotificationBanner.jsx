@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { requestPushPermission, pushSupported, isIOS, isStandalone } from '../../hooks/useNotifications'
+import { useAuth } from '../../context/AuthContext'
 
 // Bannière d'activation des notifications.
 //  - Navigateur standard, permission « default » : bouton « Activer » -> demande la permission
@@ -9,21 +10,34 @@ import { requestPushPermission, pushSupported, isIOS, isStandalone } from '../..
 //    l'écran d'accueil (exigence Apple). On affiche alors le GUIDE d'installation à la place du
 //    bouton — le geste « Partager -> Sur l'écran d'accueil » doit être fait AVANT toute demande
 //    de permission.
+//  - Décision produit BOSS 2026-09-23 : ce mode 'ios-install' fait doublon avec le guide iOS
+//    d'InstallPwaBanner.jsx (AppLayout) pour Client/Œil — celui-ci reste affiché en permanence
+//    tant que l'app n'est pas installée, donc le même conseil ne doit pas apparaître deux fois à
+//    l'écran. InstallPwaBanner EXCLUT l'admin : pour lui, rien ne fait doublon, ce mode reste
+//    donc actif exactement comme avant. Seul ce cas précis est concerné — permission « default »
+//    standard ('ask', tous rôles/plateformes confondus, y compris Android) est INCHANGÉ.
 export default function NotificationBanner() {
   const { t } = useTranslation()
+  const { user } = useAuth()
   const [show, setShow] = useState(false)
 
   // Dérivés synchrones et stables sur la vie du composant (pas de setState dans un effet).
   // 'granted' -> l'abonnement est (re)fait par le hook au montage ; 'denied' -> on n'insiste pas.
   const shouldOffer = 'Notification' in window && Notification.permission === 'default'
-  const mode = isIOS() && !isStandalone() && !pushSupported() ? 'ios-install' : 'ask'
+  const iosNeedsInstall = isIOS() && !isStandalone() && !pushSupported()
+  const isAdmin = user?.role === 'admin'
+  // Client/Œil hors PWA installée : InstallPwaBanner couvre déjà ce guide, bannière masquée en
+  // entier (pas de repli sur le mode 'ask' — la Push API n'y fonctionnerait de toute façon pas
+  // tant que l'app n'est pas installée, ce serait un bouton mort).
+  const suppressForInstallBanner = iosNeedsInstall && !isAdmin
+  const mode = iosNeedsInstall ? 'ios-install' : 'ask'
 
   useEffect(() => {
-    if (!shouldOffer) return
+    if (!shouldOffer || suppressForInstallBanner) return
     // Laisser respirer l'arrivée sur l'app avant de solliciter.
     const timer = setTimeout(() => setShow(true), 3000)
     return () => clearTimeout(timer)
-  }, [shouldOffer])
+  }, [shouldOffer, suppressForInstallBanner])
 
   const allow = async () => {
     await requestPushPermission()

@@ -27,6 +27,10 @@ export function isIOS() {
     // iPadOS 13+ se présente comme un Mac tactile
     || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)
 }
+export function isAndroid() {
+  if (typeof navigator === 'undefined') return false
+  return /Android/.test(navigator.userAgent)
+}
 export function isStandalone() {
   return window.navigator.standalone === true
     || window.matchMedia('(display-mode: standalone)').matches

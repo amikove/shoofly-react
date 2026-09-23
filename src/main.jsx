@@ -9,6 +9,7 @@ import { NotifProvider } from './context/NotifContext'
 import ToastContainer from './components/ui/ToastContainer'
 import { i18nReady } from './i18n/config'
 import { offlineQueue } from './utils/offlineQueueInstance'
+import './utils/pwaInstallPrompt' // écoute `beforeinstallprompt` dès l'entrée du bundle, cf. commentaire du fichier
 import './index.css'
 // v2
 

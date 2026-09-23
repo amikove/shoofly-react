@@ -7,6 +7,7 @@ import { useNotifications } from '../../hooks/useNotifications'
 import NotificationBanner from '../ui/NotificationBanner'
 import ConnectionLostBanner from '../ui/ConnectionLostBanner'
 import OfflineQueueBanner from '../ui/OfflineQueueBanner'
+import InstallPwaBanner from '../ui/InstallPwaBanner'
 import PresenceConfirmationBanner from '../missions/PresenceConfirmationBanner'
 import ClientDisabledBanner from '../missions/ClientDisabledBanner'
 import ResumeH30Banner from '../missions/ResumeH30Banner'
@@ -540,6 +541,7 @@ useEffect(() => {
         <ResumeH30Banner />
         <OfflineQueueBanner />
         <ConnectionLostBanner />
+        <InstallPwaBanner />
       </div>
     </div>
   )
