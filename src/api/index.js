@@ -9,6 +9,7 @@ export const authAPI = {
   password: (data) => api.put('/api/auth/password', data),
   forgotPassword: (data) => api.post('/api/auth/forgot-password', data),
   resetPassword:  (data) => api.post('/api/auth/reset-password', data),
+  markPwaInstalled: () => api.post('/api/auth/pwa-installed'),
 }
 
 // MISSIONS

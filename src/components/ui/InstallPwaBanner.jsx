@@ -30,7 +30,7 @@ export default function InstallPwaBanner() {
   const { status, promptInstall } = usePwaInstallPrompt()
   const [showGuide, setShowGuide] = useState(false)
 
-  if (!user || user.role === 'admin') return null
+  if (!user || user.role === 'admin' || user.pwa_installed_at) return null
   if (isStandalone()) return null
   if (status === 'installed') return null
 

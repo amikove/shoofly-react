@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next'
 
 import { useAuth } from '../../context/AuthContext'
 import { Avatar } from '../ui'
-import { useNotifications } from '../../hooks/useNotifications'
+import { useNotifications, isStandalone } from '../../hooks/useNotifications'
 import NotificationBanner from '../ui/NotificationBanner'
 import ConnectionLostBanner from '../ui/ConnectionLostBanner'
 import OfflineQueueBanner from '../ui/OfflineQueueBanner'
@@ -12,7 +12,7 @@ import PresenceConfirmationBanner from '../missions/PresenceConfirmationBanner'
 import ClientDisabledBanner from '../missions/ClientDisabledBanner'
 import ResumeH30Banner from '../missions/ResumeH30Banner'
 import { useState, useEffect } from 'react'
-import { missionsAPI, adminAPI } from '../../api'
+import { authAPI, missionsAPI, adminAPI } from '../../api'
 import HoverTooltip from '../ui/HoverTooltip'
 
 const MENUS = {
@@ -264,7 +264,7 @@ function AdminMenuHelp({ help }) {
 }
 
 export default function AppLayout({ children }) {
-  const { user, logout, hasPermission, isSuperAdmin } = useAuth()
+  const { user, logout, hasPermission, isSuperAdmin, updateUser } = useAuth()
   const { t, i18n } = useTranslation()
   const navigate               = useNavigate()
   const location = window.location.pathname
@@ -324,6 +324,18 @@ useEffect(() => {
   return () => clearInterval(interval)
 }, [user])
 
+  // Marque serveur "raccourci PWA déjà ajouté" (chantier InstallPwaBanner, 2026-09-23) — corrige
+  // le bandeau qui reste affiché en permanence dans Safari iOS après installation (stockage
+  // séparé de l'app ajoutée à l'écran d'accueil, cf. InstallPwaBanner.jsx). Jamais pour l'admin.
+  // Garde `user.pwa_installed_at` = anti-boucle : redevient fausse dès le 1er succès (updateUser),
+  // aucun flag "déjà appelé" ad hoc nécessaire — même motif que subscribeToPush (useNotifications.js).
+  useEffect(() => {
+    if (!user || user.role === 'admin') return
+    if (!isStandalone() || user.pwa_installed_at) return
+    authAPI.markPwaInstalled()
+      .then(({ data }) => updateUser({ pwa_installed_at: data.pwa_installed_at }))
+      .catch(() => {})
+  }, [user])
 
   useNotifications({ onChatOpen: (missionId) => {
   window.__notifChatMissionId = missionId
