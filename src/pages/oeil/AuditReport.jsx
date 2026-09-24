@@ -416,9 +416,9 @@ export default function AuditReport() {
             <div className={`text-3xl font-bold mt-1 ${scoreColor}`}>{score}/100</div>
             <div className={`text-sm font-medium mt-0.5 ${scoreColor}`}>{scoreLbl}</div>
           </div>
-          <div className="text-right">
+          <div className="text-right min-w-0">
             <div className="text-xs text-[#AAA] mb-1">{t('oeilAuditReport.scoreCard.missionLabel')}</div>
-            <div className="font-semibold text-sm">{mission?.title}</div>
+            <div className="font-semibold text-sm break-words">{mission?.title}</div>
             <div className="text-xs text-[#AAA] mt-0.5">📍 {translateLocation(mission?.city, i18n.language)}</div>
           </div>
         </div>

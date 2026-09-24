@@ -175,8 +175,8 @@ export default function AirbnbReportView() {
         {/* Header */}
         <div className="card mb-4">
           <div className="flex items-start justify-between">
-            <div>
-              <div className="font-semibold">{mission?.title}</div>
+            <div className="min-w-0">
+              <div className="font-semibold break-words">{mission?.title}</div>
               <div className="text-xs text-[#AAA]">📍 {translateLocation(mission?.city, i18n.language)} · {mission?.subcategory ? t(`newMissionModal.subcategories.${mission.subcategory}`, mission.subcategory) : ''}</div>
             </div>
             {report.submitted

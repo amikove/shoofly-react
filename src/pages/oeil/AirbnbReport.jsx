@@ -336,8 +336,8 @@ const validateAirbnb = () => {
 
         {/* Mission info */}
         <div className="card mb-4 flex items-center justify-between">
-          <div>
-            <div className="font-semibold text-sm">{mission?.title}</div>
+          <div className="min-w-0">
+            <div className="font-semibold text-sm break-words">{mission?.title}</div>
             <div className="text-xs text-[#AAA]">📍 {translateLocation(mission?.city, i18n.language)} · {mission?.subcategory ? t(`newMissionModal.subcategories.${mission.subcategory}`, mission.subcategory) : ''}</div>
           </div>
           {submitted && <span className="badge badge-green">{t('oeilAirbnbReport.submittedBadge')}</span>}

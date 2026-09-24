@@ -134,8 +134,8 @@ export default function AuditReportView() {
         {/* Header */}
         <div className="card mb-4">
           <div className="flex items-start justify-between">
-            <div>
-              <div className="font-semibold">{mission?.title}</div>
+            <div className="min-w-0">
+              <div className="font-semibold break-words">{mission?.title}</div>
               <div className="text-xs text-[#AAA] mt-0.5">📍 {translateLocation(mission?.city, i18n.language)}</div>
               {d.date_visite && <div className="text-xs text-[#AAA] mt-0.5">📅 {d.date_visite} {d.heure_visite && t('clientAuditReportView.at', { time: d.heure_visite })}</div>}
               {d.duree_visite && <div className="text-xs text-[#AAA] mt-0.5">⏱ {t('clientAuditReportView.duration', { minutes: d.duree_visite })}</div>}

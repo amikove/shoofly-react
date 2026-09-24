@@ -76,7 +76,7 @@ export default function CompteSuspendu() {
           ) : (
             <div className="bg-[#222] rounded-xl p-3">
               <p className="text-[10px] text-[#777] mb-1">{t('compteSuspendu.adminReasonLabel')}</p>
-              <p className="text-xs text-white/80">{data?.suspended_reason}</p>
+              <p className="text-xs text-white/80 break-words">{data?.suspended_reason}</p>
               {data?.suspended_at && (
                 <p className="text-xs text-[#AAA] mt-2">{t('compteSuspendu.suspendedSince', { date: new Date(data.suspended_at).toLocaleDateString('fr-FR', { timeZone: CASABLANCA_TZ }) })}</p>
               )}
