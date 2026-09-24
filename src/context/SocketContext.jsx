@@ -59,7 +59,7 @@ export function SocketProvider({ children }) {
       setConnected(false)
     })
 
-    socketRef.current.on('reconnect', (attempt) => {
+    socketRef.current.on('reconnect', () => {
       setConnected(true)
     })
 

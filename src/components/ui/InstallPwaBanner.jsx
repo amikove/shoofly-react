@@ -57,11 +57,11 @@ export default function InstallPwaBanner() {
             {t(textKey)}
           </div>
           {showManualGuide ? (
-            <button onClick={() => setShowGuide((v) => !v)} className="btn btn-primary btn-sm flex-shrink-0">
+            <button type="button" onClick={() => setShowGuide((v) => !v)} aria-expanded={showGuide} className="btn btn-primary btn-sm flex-shrink-0">
               {t(ios ? 'installPwaBanner.howTo' : 'installPwaBanner.howToAndroid')}
             </button>
           ) : (
-            <button onClick={promptInstall} className="btn btn-primary btn-sm flex-shrink-0">
+            <button type="button" onClick={promptInstall} className="btn btn-primary btn-sm flex-shrink-0">
               {t('installPwaBanner.install')}
             </button>
           )}

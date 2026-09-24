@@ -59,7 +59,7 @@ export default function OeilCompte() {
   
   const parseDispo = (d) => {
   if (!d) return defaultDispo()
-  if (typeof d === 'string') { try { return JSON.parse(d) } catch {} }
+  if (typeof d === 'string') { try { return JSON.parse(d) } catch { /* JSON invalide : on retombe volontairement sur defaultDispo() ci-dessous */ } }
   if (Array.isArray(d) && d.length) return d
   return defaultDispo()
 }
