@@ -82,10 +82,6 @@ export function SocketProvider({ children }) {
     socketRef.current?.emit('send_message', { missionId, content })
   }
 
-  const sendLocation = (missionId, lat, lng) => {
-    socketRef.current?.emit('location_update', { missionId, lat, lng })
-  }
-
   const onEvent = (event, callback) => {
     if (!socketRef.current) return () => {}
     socketRef.current.on(event, callback)
@@ -93,7 +89,7 @@ export function SocketProvider({ children }) {
   }
 
   return (
-    <SocketContext.Provider value={{ joinMission, leaveMission, sendMessage, sendLocation, onEvent, socket: socketRef, connected }}>
+    <SocketContext.Provider value={{ joinMission, leaveMission, sendMessage, onEvent, socket: socketRef, connected }}>
       {children}
     </SocketContext.Provider>
   )

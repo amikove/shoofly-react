@@ -33,7 +33,6 @@ export const missionsAPI = {
   hire:      (id, oeilId)   => api.post(`/api/missions/${id}/hire/${oeilId}`),
   refuse:   (id, ignore = false) => api.post(`/api/missions/${id}/refuse`, { ignore }),
   status:   (id, data) => api.post(`/api/missions/${id}/status`, data),
-  location: (id, data) => api.post(`/api/missions/${id}/location`, data),
   message:  (id, data) => api.post(`/api/missions/${id}/messages`, data),
   report:   (id, data) => api.post(`/api/missions/${id}/report`, data),
   rate:     (id, data) => api.post(`/api/missions/${id}/rate`, data),
