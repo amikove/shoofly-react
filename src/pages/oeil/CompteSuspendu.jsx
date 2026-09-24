@@ -54,7 +54,7 @@ export default function CompteSuspendu() {
   return (
     <AppLayout>
       <Topbar title={t('compteSuspendu.title')} />
-      <div className="p-4 md:p-6 max-w-lg mx-auto">
+      <div className="p-4 md:p-6 max-w-lg mx-auto w-full">
 
         <div className="card mb-6 border border-red-500/30">
           <div className="flex items-center gap-3 mb-4">

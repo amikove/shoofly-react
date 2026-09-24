@@ -332,7 +332,7 @@ const validateAirbnb = () => {
   return (
     <AppLayout>
       <Topbar title={t('oeilAirbnbReport.title')} />
-      <div className="p-4 md:p-6 max-w-2xl mx-auto pb-32">
+      <div className="p-4 md:p-6 max-w-2xl mx-auto w-full pb-32">
 
         {/* Mission info */}
         <div className="card mb-4 flex items-center justify-between">

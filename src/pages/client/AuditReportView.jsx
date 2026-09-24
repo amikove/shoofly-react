@@ -129,7 +129,7 @@ export default function AuditReportView() {
   return (
     <AppLayout>
       <Topbar title={t('clientAuditReportView.pageTitle')} />
-      <div className="p-4 md:p-6 max-w-2xl mx-auto">
+      <div className="p-4 md:p-6 max-w-2xl mx-auto w-full">
 
         {/* Header */}
         <div className="card mb-4">

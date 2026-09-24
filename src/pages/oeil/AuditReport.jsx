@@ -407,7 +407,7 @@ export default function AuditReport() {
   return (
     <AppLayout>
       <Topbar title={t('oeilAuditReport.topbar.title')} onBack={() => navigate(-1)} />
-      <div className="p-4 md:p-6 pb-28 max-w-2xl mx-auto">
+      <div className="p-4 md:p-6 pb-28 max-w-2xl mx-auto w-full">
 
         {/* Score live */}
         <div className="card mb-4 flex items-center justify-between">
