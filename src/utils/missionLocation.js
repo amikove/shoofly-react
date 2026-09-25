@@ -53,6 +53,7 @@ export const wazeUrl = (lat, lng) => `https://waze.com/ul?ll=${lat},${lng}&navig
 export function mapsLinkErrorKey(status, code) {
   if (status === 400) return 'invalid'
   if (status === 422 && code === 'OUT_OF_AREA') return 'outOfArea'
+  if (status === 422 && code === 'NAMED_PLACE') return 'namedPlace' // lieu désigné par son nom, sans position
   if (status === 422) return 'unrecognized'
   if (status === 429) return 'tooMany'
   if (status === 502 || status === 504) return 'unavailable'

@@ -31,7 +31,8 @@
     },
     "link": {
       "applied": "Position du lien placée sur la carte. Vérifiez l'épingle.",
-      "invalid": "Lien invalide : collez un lien Google Maps (maps.app.goo.gl ou google.com/maps).",
+      "invalid": "Lien invalide : collez un lien Google Maps (maps.app.goo.gl, share.google ou google.com/maps).",
+      "namedPlace": "Ce lien désigne un lieu par son nom, sans position précise. Dans Google Maps, appuyez longuement sur l'endroit exact pour poser une épingle, puis Partager ; ou placez directement l'épingle sur la carte.",
       "unrecognized": "Lien non reconnu : placez l'épingle sur la carte.",
       "outOfArea": "Ce lien indique un lieu hors du Maroc.",
       "tooMany": "Trop de liens analysés. Réessayez dans 15 minutes ou placez l'épingle à la main.",
