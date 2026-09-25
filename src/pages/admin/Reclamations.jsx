@@ -180,7 +180,7 @@ export default function AdminReclamations() {
 
         <div className="pt-4">
           <h2 className="text-base font-semibold text-white mb-1">
-            Commission en attente (litiges "client absent", cash)
+            Commission en attente (cash : litiges "client absent" et déclarations d'assistance)
           </h2>
           <p className="text-xs text-[#888] mb-3">
             ⚠️ Ne débitez la commission que si vous avez une preuve que le client a bien payé l'Œil (message, appel, autre trace) — dans le doute, libérez-la.
@@ -223,7 +223,7 @@ export default function AdminReclamations() {
               ))}
               {assistanceCommissionPending.map((a) => (
                 <div key={`assistance-${a.id}`} className="card space-y-2">
-                  <div className="text-xs text-[#555]">Auto-validée après délai (silence du client) — {a.mission_title}</div>
+                  <div className="text-xs text-[#555]">{a.status === 'validated' ? 'Déclaration confirmée par le client' : 'Auto-validée après délai (silence du client)'} — {a.mission_title}</div>
                   <div className="text-sm">
                     Œil :{' '}
                     <span className="text-white cursor-pointer hover:text-[#FF4D00] hover:underline" onClick={() => navigate(`/admin/users/${a.oeil_id}`)}>

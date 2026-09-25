@@ -16,6 +16,8 @@ import { toast } from '../ui'
 // Ceci ne confond pas avec l'ancien flux de réclamation classique (POST /:id/claim) : celui-ci
 // n'est atteignable que depuis une mission déjà 'completed' et n'écrit jamais ce content_key.
 export default function AssistanceRequestPanel({ mission, onUpdated }) {
+  // Mission payée en espèces : Shoofly ne verse rien à l'Œil (textes dédiés, décision BOSS 2026-09-25).
+  const isCash = mission?.payment_method === 'cash'
   const { t } = useTranslation()
   const [loading, setLoading] = useState(true)
   const [pendingReason, setPendingReason] = useState(null)
@@ -56,11 +58,11 @@ export default function AssistanceRequestPanel({ mission, onUpdated }) {
   if (!pendingReason && !disputedAlready && !resolved) return null
 
   const validate = async () => {
-    if (!window.confirm(t('assistanceRequestPanel.validateConfirm'))) return
+    if (!window.confirm(t(isCash ? 'assistanceRequestPanel.validateConfirmCash' : 'assistanceRequestPanel.validateConfirm'))) return
     setSubmitting(true)
     try {
       await missionsAPI.assistanceRespond(mission.id, { action: 'validate' })
-      toast(t('assistanceRequestPanel.validatedToast'), 'success')
+      toast(t(isCash ? 'assistanceRequestPanel.validatedToastCash' : 'assistanceRequestPanel.validatedToast'), 'success')
       setPendingReason(null)
       setResolved('validated')
       onUpdated?.()
@@ -90,7 +92,7 @@ export default function AssistanceRequestPanel({ mission, onUpdated }) {
       <h3 className="text-sm font-semibold">{t('assistanceRequestPanel.title')}</h3>
 
       {resolved === 'validated' && (
-        <p className="text-xs text-green-400">{t('assistanceRequestPanel.validatedToast')}</p>
+        <p className="text-xs text-green-400">{t(isCash ? 'assistanceRequestPanel.validatedToastCash' : 'assistanceRequestPanel.validatedToast')}</p>
       )}
 
       {showDisputedNotice && (

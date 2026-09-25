@@ -128,7 +128,7 @@ export default function AssistanceModal({ mission, onClose, onSuccess }) {
               </div>
             </div>
             <div className="bg-orange-500/5 border border-orange-500/20 rounded-xl p-4 mb-4">
-              <p className="text-xs text-white/80">{t('oeilMissions.assistanceModal.missionView.warning')}</p>
+              <p className="text-xs text-white/80">{t(mission.payment_method === 'cash' ? 'oeilMissions.assistanceModal.missionView.warningCash' : 'oeilMissions.assistanceModal.missionView.warning')}</p>
             </div>
             <div className="mb-5">
               <label className="label">{t('oeilMissions.assistanceModal.reasonLabel')}</label>

@@ -1230,6 +1230,7 @@
       },
       "missionView": {
         "title": "Problème sur la mission",
+        "warningCash": "Le client va être notifié et devra confirmer ou contester votre déclaration. La mission est mise en attente. Mission payée en espèces : Shoofly ne vous verse rien, le règlement se fait directement avec le client. Si le client confirme ou ne répond pas dans le délai, la mission est clôturée et un administrateur décide de la commission. En cas de contestation, un administrateur tranche.",
         "warning": "Le client va être notifié et devra valider ou contester votre déclaration. La mission est mise en attente ; vous êtes payé intégralement si le client valide (ou en l'absence de réponse de sa part).",
         "confirm": "Envoyer au client →",
         "confirming": "..."
@@ -1963,8 +1964,10 @@
     "hint": "Confirmez si vous validez cette déclaration.",
     "validate": "✅ Valider",
     "dispute": "🚨 Contester",
+    "validateConfirmCash": "Confirmer la déclaration de l'Œil ? La mission sera clôturée. Mission payée en espèces : aucun paiement ne passe par Shoofly.",
     "validateConfirm": "Valider la déclaration de l'Œil ? La mission sera clôturée et l'Œil payé intégralement.",
     "validating": "Validation...",
+    "validatedToastCash": "Déclaration confirmée — mission clôturée.",
     "validatedToast": "Déclaration validée — l'Œil a été payé intégralement.",
     "disputeCommentLabel": "Expliquez votre version",
     "disputeCommentPlaceholder": "Décrivez ce qui s'est réellement passé...",
@@ -2272,6 +2275,8 @@
     "clientNoShowWarningTitle": "⚠️ Avertissement",
     "clientNoShowWarningBody": "Un litige \"client absent\" a été résolu en faveur de l'Œil sur une mission récente. En cas de récidive, votre compte pourra être suspendu.",
     "commissionReleasedOeilTitle": "Commission libérée",
+    "assistanceValidatedPendingCommissionOeilTitle": "✅ Déclaration confirmée",
+    "assistanceValidatedPendingCommissionOeilBody": "Le client a confirmé votre déclaration sur \"{{missionTitle}}\". La mission est clôturée ; un administrateur décidera de la commission (mission payée en espèces).",
     "commissionReleasedOeilBody": "Un administrateur a décidé de ne pas prélever de commission sur \"{{missionTitle}}\".",
     "assistanceAutoValidatedPendingCommissionOeilTitle": "Mission clôturée automatiquement",
     "assistanceAutoValidatedPendingCommissionOeilBody": "Délai écoulé sans réponse du client — \"{{missionTitle}}\" clôturée. La décision concernant la commission (débitée ou libérée) vous sera communiquée séparément par un administrateur.",
