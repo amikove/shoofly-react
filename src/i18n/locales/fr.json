@@ -10,7 +10,7 @@
     "pasteButton": "Utiliser",
     "pasteLoading": "Lecture…",
     "privateLabel": "Il s'agit d'un logement privé (domicile)",
-    "privateHelp": "Les Œils ne verront qu'une zone d'environ 500 m jusqu'à ce que vous en choisissiez un.",
+    "privateHelp": "Les Œils ne verront qu'une zone d'environ 100 m jusqu'à ce que vous en choisissiez un.",
     "privateWarning": "Attention : cocher cette case après la publication ne masque pas ce que les Œils ont déjà pu voir. Elle ne peut plus être modifiée dès qu'un Œil a postulé.",
     "loadingMap": "Chargement de la carte…",
     "pickerAria": "Carte : déplacez-la pour placer l'épingle sur le lieu de la mission",
@@ -2605,7 +2605,7 @@
         "intro": "Vos données peuvent être partagées avec :",
         "items": [
           "Les autres utilisateurs de la plateforme dans le strict cadre de l'exécution d'une mission (nom, note, ville)",
-          "Le lieu d'une mission est visible par les Œils de la ville concernée afin qu'ils puissent décider d'y postuler. Lorsque le client indique qu'il s'agit d'un logement privé, seule une zone d'environ 500 m est visible par les Œils ; la position exacte et l'adresse ne sont communiquées qu'à l'Œil retenu pour la mission (jusqu'à 48 heures après sa clôture), et restent accessibles au client et à l'équipe SHOOFLY.",
+          "Le lieu d'une mission est visible par les Œils de la ville concernée afin qu'ils puissent décider d'y postuler. Lorsque le client indique qu'il s'agit d'un logement privé, seule une zone d'environ 100 m est visible par les Œils ; la position exacte et l'adresse ne sont communiquées qu'à l'Œil retenu pour la mission (jusqu'à 48 heures après sa clôture), et restent accessibles au client et à l'équipe SHOOFLY.",
           "Nos prestataires techniques (hébergement, paiement, notifications, mesure d'audience) dans le cadre de leurs missions",
           "Les autorités compétentes marocaines sur demande légale"
         ],
