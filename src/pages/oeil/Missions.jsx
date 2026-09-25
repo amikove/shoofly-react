@@ -756,7 +756,7 @@ try {
                   </div>
                 )}
 
-                <div className="flex gap-2 mt-4 pt-3 border-t border-white/10">
+                <div className="flex flex-wrap sm:flex-nowrap gap-2 mt-4 pt-3 border-t border-white/10">
 
                   {tab === 'available' && (
                       <>
