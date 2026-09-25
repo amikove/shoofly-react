@@ -372,19 +372,22 @@ export default function AdminDashboard() {
       <Topbar title="Vue globale" />
       <div className="p-4 md:p-6 space-y-5">
 
-        {/* Onglets principaux */}
-        <div className="flex gap-1 bg-[#222] rounded-xl p-1 w-fit">
-          {MAIN_TABS.map(t => (
-            <button key={t.id} onClick={() => setTab(t.id)}
-              className={`px-4 py-2 rounded-lg text-xs font-medium transition-all flex items-center gap-2 ${tab === t.id ? 'bg-[#2A2A2A] text-white' : 'text-[#AAA] hover:text-white'}`}>
-              {t.label}
-              {t.id === 'claims' && claims.length > 0 && (
-                <span className="bg-[#FF4D00] text-white text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center">
-                  {claims.length}
-                </span>
-              )}
-            </button>
-          ))}
+        {/* Onglets principaux — conteneur défilant : la rangée (plus large que l'écran sur mobile)
+            ne doit pas élargir la page, sinon la barre du bas fixe sort de l'écran. */}
+        <div className="overflow-x-auto" style={{ scrollbarWidth: 'none' }}>
+          <div className="flex gap-1 bg-[#222] rounded-xl p-1 w-fit">
+            {MAIN_TABS.map(t => (
+              <button key={t.id} onClick={() => setTab(t.id)}
+                className={`px-4 py-2 rounded-lg text-xs font-medium transition-all flex items-center gap-2 ${tab === t.id ? 'bg-[#2A2A2A] text-white' : 'text-[#AAA] hover:text-white'}`}>
+                {t.label}
+                {t.id === 'claims' && claims.length > 0 && (
+                  <span className="bg-[#FF4D00] text-white text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center">
+                    {claims.length}
+                  </span>
+                )}
+              </button>
+            ))}
+          </div>
         </div>
 
         {tab === 'executif' && (
