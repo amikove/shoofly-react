@@ -5,6 +5,7 @@ import { Spinner, Stars } from '../ui'
 import { useNavigate } from 'react-router-dom'
 import { translateLocation } from '../../constants/villesTranslations'
 import { CASABLANCA_TZ } from '../../utils/casablancaTime'
+import MissionLocationPanel from '../map/MissionLocationPanel'
 
 function useStatusConfig() {
   const { t } = useTranslation()
@@ -35,6 +36,7 @@ export default function MissionSummaryModal({ mission, onClose }) {
   const navigate = useNavigate()
   const [history, setHistory]   = useState([])
   const [rating, setRating]     = useState(null)
+  const [freshMission, setFreshMission] = useState(null)
   const [hasReport, setHasReport] = useState(false)
   const [loading, setLoading]   = useState(true)
 
@@ -48,6 +50,9 @@ export default function MissionSummaryModal({ mission, onClose }) {
       setHistory(hRes.data.history || [])
       setHasReport(!!rRes.data.report?.submitted)
       setRating(mRes.data.rating || null)
+      // Lieu relu au moment de l'ouverture : 48 h après la clôture, un logement privé ne revient
+      // plus qu'en zone approximative pour l'Œil (le serveur tranche, voir MissionLocationPanel).
+      setFreshMission(mRes.data.mission || null)
     }).finally(() => setLoading(false))
   }, [mission?.id])
 
@@ -75,6 +80,8 @@ export default function MissionSummaryModal({ mission, onClose }) {
         </div>
 
         <div className="flex-1 overflow-y-auto space-y-4">
+
+          {freshMission?.id === mission.id && <MissionLocationPanel mission={freshMission} scope="oeil-summary" alwaysOpen height={160} />}
 
           {/* Statut + Paiement */}
           <div className="bg-[#222] rounded-xl p-4 flex items-center justify-between">

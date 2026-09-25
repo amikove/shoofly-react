@@ -13,6 +13,8 @@ import { useAuth } from '../../context/AuthContext'
 import { useSocket } from '../../context/SocketContext'
 import MissionHistoryModal from '../../components/missions/MissionHistoryModal'
 import MissionSummaryModal from '../../components/missions/MissionSummaryModal'
+import MissionLocationPanel from '../../components/map/MissionLocationPanel'
+import { googleMapsUrl, toCoord } from '../../utils/missionLocation'
 import RateClientModal from '../../components/missions/RateClientModal'
 import ComplianceModal from '../../components/missions/ComplianceModal'
 import CandidatureSentModal from '../../components/missions/CandidatureSentModal'
@@ -613,6 +615,7 @@ try {
               {parseFloat(m.oeil_earning || m.price).toFixed(0)} MAD
             </div>
           </div>
+          <MissionLocationPanel mission={m} scope="oeil-missions-priority" className="mb-2" />
           {bonusCampaign.active && (
             <div className="text-[11px] text-[#FF4D00] mb-2">
               {t('oeilDashboard.fiveStarBonusHint', { bonus: (parseFloat(m.oeil_earning || m.price) * bonusCampaign.percent / 100).toFixed(0) })}
@@ -711,6 +714,9 @@ try {
                   </div>
                 </div>
 
+                {/* Lieu tel que servi par le serveur ; Google Maps / Waze seulement si l'exact est reçu */}
+                <MissionLocationPanel mission={m} scope={`oeil-missions-${tab}`} navButtons={tab === 'active'} className="mt-3" />
+
                 {tab === 'active' && m.pending_edit_request && (
                   <div className="mt-3 bg-[#FF4D00]/5 border border-[#FF4D00]/20 rounded-xl p-3">
                     <div className="flex items-center justify-between gap-2 mb-2 flex-wrap">
@@ -720,7 +726,17 @@ try {
                       </span>
                     </div>
                     <div className="space-y-1.5 mb-3">
-                      {Object.entries(m.pending_edit_request.proposed_changes).map(([key, value]) => (
+                      {Object.entries(m.pending_edit_request.proposed_changes).filter(([key]) => key !== 'location_lng').map(([key, value]) => key === 'location_lat' ? (
+                        // Nouveau lieu proposé : un lien vers la nouvelle position (paire lat/lng), pas deux nombres.
+                        <div key={key} className="text-xs">
+                          <span className="text-[#AAA]">{t('missionLocation.editRequest.field')}: </span>
+                          {toCoord(value) !== null && toCoord(m.pending_edit_request.proposed_changes.location_lng) !== null ? (
+                            <a href={googleMapsUrl(toCoord(value), toCoord(m.pending_edit_request.proposed_changes.location_lng))} target="_blank" rel="noopener noreferrer" className="text-[#FF4D00] font-medium underline">
+                              {t('missionLocation.editRequest.newPosition')}
+                            </a>
+                          ) : <span className="text-[#FF4D00] font-medium">—</span>}
+                        </div>
+                      ) : (
                         <div key={key} className="text-xs">
                           <span className="text-[#AAA]">{t(`oeilMissions.editRequest.fields.${EDIT_FIELD_LABELS[key] || key}`)}: </span>
                           <span className="text-white/50 line-through">{formatEditFieldValue(key, m[key], t)}</span>
@@ -899,6 +915,9 @@ try {
             <p className="text-sm text-[#CCC] mb-4">
               {t('oeilMissions.candidateConfirmModal.body', { missionTitle: candidateMission.title })}
             </p>
+
+            {/* Candidat pas encore retenu : zone si logement privé, selon ce que sert GET /:id */}
+            <MissionLocationPanel mission={candidateMission} scope="oeil-candidate" alwaysOpen height={160} className="mb-4" />
 
             {candidateMinutesLeft !== null && (
               <p className={`text-xs font-semibold mb-5 ${candidateMinutesLeft > 0 ? 'text-[#FF4D00]' : 'text-red-400'}`}>

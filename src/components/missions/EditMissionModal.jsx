@@ -4,6 +4,8 @@ import { missionsAPI } from '../../api'
 import { VILLES, VILLES_LIST } from '../../constants/villes'
 import { toast } from '../ui'
 import Autocomplete from './Autocomplete'
+import LocationPicker from './LocationPicker'
+import { toCoord } from '../../utils/missionLocation'
 import { casablancaWallTimeToISO, casablancaDateTimeInputParts } from '../../utils/casablancaTime'
 
 function toDateInput(iso) {
@@ -26,6 +28,12 @@ export default function EditMissionModal({ mission, onClose, onSaved }) {
     scheduled_time: toTimeInput(mission.scheduled_at),
     duration_est: mission.duration_est ?? '',
   })
+  // Lieu (phase 2) : facultatif en modification (mission antérieure sans lieu). Les colonnes
+  // NUMERIC arrivent en chaînes → Number(). Le propriétaire reçoit toujours l'exact.
+  const initialLat = toCoord(mission.location_lat)
+  const initialLng = toCoord(mission.location_lng)
+  const [pickedLocation, setPickedLocation] = useState(initialLat !== null && initialLng !== null ? { lat: initialLat, lng: initialLng } : null)
+  const [isPrivate, setIsPrivate] = useState(!!mission.is_private_residence)
 
   const set = (k) => (e) => setForm((f) => ({ ...f, [k]: e.target.value }))
   const setVal = (k) => (v) => setForm((f) => ({ ...f, [k]: v }))
@@ -59,6 +67,11 @@ export default function EditMissionModal({ mission, onClose, onSaved }) {
     if (scheduledAt !== new Date(mission.scheduled_at).toISOString()) changes.scheduled_at = scheduledAt
     const durationValue = form.duration_est === '' ? null : parseInt(form.duration_est, 10)
     if (durationValue !== (mission.duration_est ?? null)) changes.duration_est = durationValue
+    if (pickedLocation && (pickedLocation.lat !== initialLat || pickedLocation.lng !== initialLng)) {
+      changes.location_lat = pickedLocation.lat
+      changes.location_lng = pickedLocation.lng
+    }
+    if (isPrivate !== !!mission.is_private_residence) changes.is_private_residence = isPrivate
 
     if (Object.keys(changes).length === 0) {
       toast(t('editMissionModal.errors.noChanges'), 'error')
@@ -76,7 +89,9 @@ export default function EditMissionModal({ mission, onClose, onSaved }) {
       onSaved?.(data)
       onClose()
     } catch (err) {
-      toast(err.response?.data?.error || t('editMissionModal.errors.generic'), 'error')
+      // Verrou « logement privé » (un Œil a déjà postulé) : message dédié, jamais générique.
+      if (err.response?.data?.code === 'PRIVATE_RESIDENCE_LOCKED') toast(t('missionLocation.errors.privateLocked'), 'error')
+      else toast(err.response?.data?.error || t('editMissionModal.errors.generic'), 'error')
     } finally {
       setLoading(false)
     }
@@ -125,6 +140,14 @@ export default function EditMissionModal({ mission, onClose, onSaved }) {
               disabled={!form.city}
             />
           </div>
+
+          <LocationPicker
+            city={form.city}
+            value={pickedLocation}
+            onChange={setPickedLocation}
+            isPrivate={isPrivate}
+            onPrivateChange={setIsPrivate}
+          />
 
           <div>
             <label className="label">{t('editMissionModal.addressLabel')}</label>

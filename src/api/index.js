@@ -22,6 +22,9 @@ export const missionsAPI = {
   // formulaire de création (NewMissionModal). Même source que la validation serveur — chantier
   // « planchers éditables » 2026-09-10.
   subcategoryMinPrices: () => api.get('/api/missions/subcategory-min-prices'),
+  // Lien Google Maps collé dans le formulaire → { lat, lng } (chantier « lieu de mission »). Le
+  // serveur suit lui-même les liens courts (maps.app.goo.gl), sous liste blanche.
+  resolveMapsLink: (url) => api.post('/api/missions/resolve-maps-link', { url }),
   // `accept` (POST /:id/accept) retiré 2026-08-31 (RG3) : bouton « Accepter » mort depuis
   // ~2026-06-23, route fermée en 403 côté backend. Le flux de prise de mission par l'Œil passe
   // par `interest` (candidature) puis affectation client/admin.

@@ -7,6 +7,8 @@ import { toast } from '../ui'
 import { useAuth } from '../../context/AuthContext'
 import Autocomplete from './Autocomplete'
 import MissionCreatedModal from './MissionCreatedModal'
+import LocationPicker from './LocationPicker'
+import { defaultIsPrivateResidence } from '../../utils/missionLocation'
 import { casablancaWallTimeToISO, casablancaDisplayDateTime } from '../../utils/casablancaTime'
 
 // Planchers tarifaires par sous-catégorie — SOURCE UNIQUE EN BASE depuis le chantier
@@ -123,7 +125,10 @@ const DEFAULT_PAYMENT_METHOD = PAYMENT_METHODS.find((m) => m.enabled)?.value || 
 
 // État vierge du formulaire — source unique pour l'init, la remise à zéro après création, et
 // la comparaison « le formulaire est-il sale ? » du filet anti-perte ci-dessous.
-const EMPTY_FORM = { title: '', address: '', city: '', quartier: '', price: '', description: '', scheduled_date: '', scheduled_time: '', payment_method: DEFAULT_PAYMENT_METHOD }
+// Lieu de mission (phase 2, 2026-09-24) : location_lat/lng = épingle choisie (obligatoire à l'envoi) ;
+// is_private_residence = null tant que le client n'a pas touché la case (elle suit alors le type,
+// voir defaultIsPrivateResidence), puis son choix explicite. Conservés dans le brouillon local.
+const EMPTY_FORM = { title: '', address: '', city: '', quartier: '', price: '', description: '', scheduled_date: '', scheduled_time: '', payment_method: DEFAULT_PAYMENT_METHOD, location_lat: null, location_lng: null, is_private_residence: null }
 
 // Filet anti-perte (porté de oeil/AuditReport.jsx + AirbnbReport.jsx, RG7). Clé DISTINCTE des
 // clés RG7 (shoofly_audit_draft_${missionId} / shoofly_airbnb_draft_${missionId}) — aucune
@@ -268,6 +273,9 @@ export default function NewMissionModal({ open, onClose, onCreated }) {
   // Quartiers disponibles selon la ville sélectionnée
   const quartiersDispos = VILLES[form.city] || VILLES_LIST
 
+  const pickedLocation = form.location_lat != null && form.location_lng != null ? { lat: form.location_lat, lng: form.location_lng } : null
+  const isPrivate = form.is_private_residence ?? defaultIsPrivateResidence(type)
+
 const submit = async (e) => {
       e.preventDefault()
 
@@ -308,6 +316,11 @@ if (minPrice != null && parseFloat(form.price) < minPrice) {
       toast(t('newMissionModal.errors.subcategoryRequired'), 'error')
       return
     }
+    // Lieu obligatoire (décision Q1) — le serveur refuse de toute façon (400) sans lui.
+    if (!pickedLocation) {
+      toast(t('missionLocation.errors.required'), 'error')
+      return
+    }
 
     setLoading(true)
     try {
@@ -323,6 +336,9 @@ if (minPrice != null && parseFloat(form.price) < minPrice) {
         description:  form.description,
         payment_method: form.payment_method,
         scheduled_at: scheduledAtISO,
+        location_lat: pickedLocation.lat,
+        location_lng: pickedLocation.lng,
+        is_private_residence: isPrivate,
       }
       if (promoResult) {
         payload.promo_code      = promoResult.code
@@ -468,6 +484,16 @@ if (minPrice != null && parseFloat(form.price) < minPrice) {
               disabled={!form.city}
             />
           </div>
+
+          {/* Lieu de la mission (carte) — après ville/quartier, avant l'adresse texte (audit §3.2) */}
+          <LocationPicker
+            city={form.city}
+            value={pickedLocation}
+            onChange={(v) => setForm((f) => ({ ...f, location_lat: v.lat, location_lng: v.lng }))}
+            isPrivate={isPrivate}
+            onPrivateChange={(checked) => setForm((f) => ({ ...f, is_private_residence: checked }))}
+            required
+          />
 
           {/* Adresse complète */}
           <div>

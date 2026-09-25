@@ -4,6 +4,8 @@ import { missionsAPI } from '../../api'
 import { VILLES, VILLES_LIST } from '../../constants/villes'
 import { toast, Spinner } from '../ui'
 import Autocomplete from './Autocomplete'
+import LocationPicker from './LocationPicker'
+import { toCoord } from '../../utils/missionLocation'
 import { casablancaWallTimeToISO, casablancaDateTimeInputParts, CASABLANCA_TZ } from '../../utils/casablancaTime'
 
 // Sous-catégories valides par type — copie de la source de vérité frontend
@@ -54,6 +56,7 @@ const EDIT_FIELD_LABELS = {
   title: 'Titre', description: 'Description', address: 'Adresse', city: 'Ville', quartier: 'Quartier',
   scheduled_at: 'Date/heure', duration_est: 'Durée estimée', type: 'Type', subcategory: 'Sous-catégorie',
   replacement_preference: 'Préférence de remplacement',
+  location_lat: 'Latitude (lieu)', location_lng: 'Longitude (lieu)', is_private_residence: 'Logement privé',
 }
 
 function formatHistoryValue(key, value, t) {
@@ -62,6 +65,7 @@ function formatHistoryValue(key, value, t) {
     return `${new Date(value).toLocaleDateString('fr-FR', { timeZone: CASABLANCA_TZ, day: 'numeric', month: 'short', year: 'numeric' })} ${new Date(value).toLocaleTimeString('fr-FR', { timeZone: CASABLANCA_TZ, hour: '2-digit', minute: '2-digit' })}`
   }
   if (key === 'duration_est') return `${value} min`
+  if (key === 'is_private_residence') return value ? 'Oui' : 'Non'
   if (key === 'subcategory') return t(`newMissionModal.subcategories.${value}`, value)
   if (key === 'type') return TYPE_OPTIONS.find((o) => o.value === value)?.label || value
   return String(value)
@@ -88,6 +92,11 @@ export default function AdminEditMissionModal({ mission, onClose, onSaved }) {
     subcategory: mission.subcategory || '',
     replacement_preference: mission.replacement_preference || 'fast',
   })
+  // Lieu (phase 2) : facultatif ici aussi (mission antérieure sans lieu). L'admin reçoit l'exact.
+  const initialLat = toCoord(mission.location_lat)
+  const initialLng = toCoord(mission.location_lng)
+  const [pickedLocation, setPickedLocation] = useState(initialLat !== null && initialLng !== null ? { lat: initialLat, lng: initialLng } : null)
+  const [isPrivate, setIsPrivate] = useState(!!mission.is_private_residence)
 
   useEffect(() => {
     missionsAPI.adminEditsHistory(mission.id)
@@ -131,6 +140,11 @@ export default function AdminEditMissionModal({ mission, onClose, onSaved }) {
     if (form.type !== mission.type) changes.type = form.type
     if ((form.subcategory || null) !== (mission.subcategory || null)) changes.subcategory = form.subcategory || null
     if (form.replacement_preference !== (mission.replacement_preference || 'fast')) changes.replacement_preference = form.replacement_preference
+    if (pickedLocation && (pickedLocation.lat !== initialLat || pickedLocation.lng !== initialLng)) {
+      changes.location_lat = pickedLocation.lat
+      changes.location_lng = pickedLocation.lng
+    }
+    if (isPrivate !== !!mission.is_private_residence) changes.is_private_residence = isPrivate
 
     if (Object.keys(changes).length === 0) {
       toast(t('adminEditMissionModal.errors.noChanges'), 'error')
@@ -144,7 +158,9 @@ export default function AdminEditMissionModal({ mission, onClose, onSaved }) {
       onSaved?.(data.mission)
       onClose()
     } catch (err) {
-      toast(err.response?.data?.error || t('adminEditMissionModal.errors.generic'), 'error')
+      // Verrou « logement privé » : s'applique aussi au Super Admin (phase 1 §3).
+      if (err.response?.data?.code === 'PRIVATE_RESIDENCE_LOCKED') toast(t('missionLocation.errors.privateLocked'), 'error')
+      else toast(err.response?.data?.error || t('adminEditMissionModal.errors.generic'), 'error')
     } finally {
       setLoading(false)
     }
@@ -209,6 +225,14 @@ export default function AdminEditMissionModal({ mission, onClose, onSaved }) {
               disabled={!form.city}
             />
           </div>
+
+          <LocationPicker
+            city={form.city}
+            value={pickedLocation}
+            onChange={setPickedLocation}
+            isPrivate={isPrivate}
+            onPrivateChange={setIsPrivate}
+          />
 
           <div>
             <label className="label">{t('adminEditMissionModal.addressLabel')}</label>

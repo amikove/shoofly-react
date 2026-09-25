@@ -10,6 +10,7 @@ import ChatModal from '../../components/missions/ChatModal'
 import AssistanceModal from '../../components/missions/AssistanceModal'
 import { translateLocation } from '../../constants/villesTranslations'
 import { CASABLANCA_TZ } from '../../utils/casablancaTime'
+import MissionLocationPanel from '../../components/map/MissionLocationPanel'
 
 export default function OeilDashboard() {
   const { t, i18n } = useTranslation()
@@ -244,6 +245,8 @@ const refuse = async (id) => {
                     {parseFloat(m.oeil_earning || m.price).toFixed(0)} MAD
                   </div>
                 </div>
+                {/* Lieu : épingle si l'exact est servi, cercle si seule la zone l'est (serveur) */}
+                <MissionLocationPanel mission={m} scope="oeil-dash-priority" className="mb-2" />
                 {bonusCampaign.active && (
                   <div className="text-[11px] text-[#FF4D00] mt-1 mb-2">
                     {t('oeilDashboard.fiveStarBonusHint', { bonus: (parseFloat(m.oeil_earning || m.price) * bonusCampaign.percent / 100).toFixed(0) })}
@@ -294,6 +297,7 @@ const refuse = async (id) => {
                   </div>
 
                 </div>
+                <MissionLocationPanel mission={m} scope="oeil-dash-available" className="mb-3" />
                 {bonusCampaign.active && (
                   <div className="text-[11px] text-[#FF4D00] mb-2">
                     {t('oeilDashboard.fiveStarBonusHint', { bonus: (parseFloat(m.oeil_earning || m.price) * bonusCampaign.percent / 100).toFixed(0) })}
@@ -350,6 +354,8 @@ const refuse = async (id) => {
                   </div>
                   <StatusBadge status={m.status} />
                 </div>
+                {/* Mission en cours : Google Maps / Waze seulement si l'exact est reçu */}
+                <MissionLocationPanel mission={m} scope="oeil-dash-active" navButtons className="mt-2" />
                 <div className="flex gap-2 mt-3">
                   <button
                     onClick={() => setChatMission(m)}

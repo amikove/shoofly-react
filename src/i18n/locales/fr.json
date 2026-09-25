@@ -1,4 +1,52 @@
 {
+  "missionLocation": {
+    "sectionTitle": "Lieu de la mission",
+    "pickerHint": "Déplacez la carte : l'épingle au centre marque le lieu exact. Vous pouvez aussi utiliser « Ma position » ou coller un lien Google Maps.",
+    "pinPlaced": "✓ Épingle placée. Vérifiez qu'elle est bien sur le lieu.",
+    "pinMissing": "Aucun lieu choisi pour l'instant.",
+    "myPosition": "Ma position",
+    "locating": "Localisation en cours…",
+    "pasteLabel": "Coller un lien Google Maps",
+    "pasteButton": "Utiliser",
+    "pasteLoading": "Lecture…",
+    "privateLabel": "Il s'agit d'un logement privé (domicile)",
+    "privateHelp": "Les Œils ne verront qu'une zone d'environ 500 m jusqu'à ce que vous en choisissiez un.",
+    "privateWarning": "Attention : cocher cette case après la publication ne masque pas ce que les Œils ont déjà pu voir. Elle ne peut plus être modifiée dès qu'un Œil a postulé.",
+    "loadingMap": "Chargement de la carte…",
+    "pickerAria": "Carte : déplacez-la pour placer l'épingle sur le lieu de la mission",
+    "mapAriaExact": "Carte du lieu de la mission",
+    "mapAriaZone": "Carte de la zone approximative de la mission",
+    "showMap": "📍 Voir le lieu",
+    "hideMap": "Masquer la carte",
+    "zoneCaption": "Zone approximative d'environ {{radius}} m : le lieu exact est communiqué à l'Œil retenu.",
+    "openGoogleMaps": "Google Maps",
+    "openWaze": "Waze",
+    "geo": {
+      "applied": "Votre position a été placée sur la carte. Ajustez-la si besoin.",
+      "denied": "Accès à votre position refusé. Autorisez la localisation dans votre navigateur, ou placez l'épingle à la main.",
+      "unavailable": "Position indisponible pour le moment. Placez l'épingle à la main.",
+      "timeout": "La localisation a pris trop de temps. Réessayez ou placez l'épingle à la main.",
+      "unsupported": "Votre navigateur ne permet pas la localisation. Placez l'épingle à la main.",
+      "outOfArea": "Votre position semble hors du Maroc. Placez l'épingle à la main."
+    },
+    "link": {
+      "applied": "Position du lien placée sur la carte. Vérifiez l'épingle.",
+      "invalid": "Lien invalide : collez un lien Google Maps (maps.app.goo.gl ou google.com/maps).",
+      "unrecognized": "Lien non reconnu : placez l'épingle sur la carte.",
+      "outOfArea": "Ce lien indique un lieu hors du Maroc.",
+      "tooMany": "Trop de liens analysés. Réessayez dans 15 minutes ou placez l'épingle à la main.",
+      "unavailable": "Google Maps ne répond pas pour le moment : placez l'épingle sur la carte.",
+      "generic": "Impossible de lire ce lien : placez l'épingle sur la carte."
+    },
+    "errors": {
+      "required": "Indiquez le lieu de la mission : déplacez la carte, utilisez « Ma position » ou collez un lien Google Maps.",
+      "privateLocked": "Le caractère « logement privé » ne peut plus être modifié : un Œil a déjà postulé à cette mission."
+    },
+    "editRequest": {
+      "field": "Lieu (carte)",
+      "newPosition": "Voir la nouvelle position ↗"
+    }
+  },
   "common": {
     "close": "Fermer",
     "back": "Retour",
@@ -2506,7 +2554,7 @@
     },
     "confidentialite": {
       "pageTitle": "Politique de confidentialité",
-      "lastUpdated": "Dernière mise à jour : juillet 2026",
+      "lastUpdated": "Dernière mise à jour : septembre 2026",
       "section1": {
         "title": "1. Identité du responsable de traitement",
         "body": "[RAISON SOCIALE EN COURS DE CONSTITUTION — AutoEntrepreneur ou société en cours de création], dont le siège social est situé à [ADRESSE], Rabat, Maroc, est responsable du traitement de vos données personnelles conformément à la loi n° 09-08 relative à la protection des personnes physiques à l'égard du traitement des données à caractère personnel."
@@ -2519,7 +2567,7 @@
           "Données de contact : adresse e-mail, numéro de téléphone, ville et quartier",
           "Données de connexion : adresse IP, historique de connexion, type d'appareil",
           "Données de transaction : historique des missions, montants, paiements",
-          "Données de géolocalisation : position GPS pendant les missions (Œils uniquement)",
+          "Lieu de la mission : l'adresse et la position sur carte du lieu où la mission doit se dérouler, indiquées par le client lors de la création ou de la modification d'une mission. Le bouton « Ma position » utilise la localisation de votre appareil uniquement au moment où vous l'actionnez, pour placer l'épingle ; elle n'est ni suivie ni enregistrée en dehors du lieu de mission que vous validez.",
           "Données de communication : messages échangés sur la plateforme",
           "Données d'évaluation : notes et avis laissés par les utilisateurs",
           "Données d'origine d'inscription : source d'acquisition (ex : campagne publicitaire ayant conduit à votre inscription), le cas échéant"
@@ -2548,7 +2596,7 @@
         "items": [
           "Données de compte : conservées pendant toute la durée de votre inscription, puis 3 ans après la clôture du compte",
           "Données de transaction : 10 ans conformément aux obligations comptables marocaines",
-          "Données de géolocalisation : 6 mois après la fin de la mission",
+          "Lieu de la mission : conservé avec l'historique de la mission, pendant la même durée que les données de transaction",
           "Messages : 2 ans après la clôture de la mission concernée"
         ]
       },
@@ -2557,6 +2605,7 @@
         "intro": "Vos données peuvent être partagées avec :",
         "items": [
           "Les autres utilisateurs de la plateforme dans le strict cadre de l'exécution d'une mission (nom, note, ville)",
+          "Le lieu d'une mission est visible par les Œils de la ville concernée afin qu'ils puissent décider d'y postuler. Lorsque le client indique qu'il s'agit d'un logement privé, seule une zone d'environ 500 m est visible par les Œils ; la position exacte et l'adresse ne sont communiquées qu'à l'Œil retenu pour la mission (jusqu'à 48 heures après sa clôture), et restent accessibles au client et à l'équipe SHOOFLY.",
           "Nos prestataires techniques (hébergement, paiement, notifications, mesure d'audience) dans le cadre de leurs missions",
           "Les autorités compétentes marocaines sur demande légale"
         ],

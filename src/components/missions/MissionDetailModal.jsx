@@ -3,6 +3,7 @@ import MissionHistoryTimeline from './MissionHistoryTimeline'
 import AssistanceRequestPanel from './AssistanceRequestPanel'
 import { formatHistoryDate } from '../../utils/missionHistoryFormat'
 import { translateLocation } from '../../constants/villesTranslations'
+import MissionLocationPanel from '../map/MissionLocationPanel'
 
 const TYPE_ICONS = { immobilier: '🏠', file_attente: '⏳', audit: '🔎', personnalisee: '🎯' }
 const TYPE_LABEL_KEYS = { immobilier: 'immobilier', file_attente: 'fileAttente', audit: 'audit', personnalisee: 'personnalisee' }
@@ -56,6 +57,9 @@ export default function MissionDetailModal({ mission, onClose, onUpdated }) {
             )}
 
             <Field label={t('missionDetailModal.fields.address')} value={addressParts.join(', ') || '—'} />
+
+            {/* Fiche du client propriétaire : il reçoit toujours la position exacte */}
+            <MissionLocationPanel mission={mission} scope="client-detail" alwaysOpen />
 
             <Field label={t('missionDetailModal.fields.scheduledAt')} value={formatHistoryDate(mission.scheduled_at) || '—'} />
 

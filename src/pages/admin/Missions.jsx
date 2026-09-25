@@ -8,6 +8,8 @@ import { CASABLANCA_TZ } from '../../utils/casablancaTime'
 import { useAuth } from '../../context/AuthContext'
 import { useSocket } from '../../context/SocketContext'
 import AdminEditMissionModal from '../../components/missions/AdminEditMissionModal'
+import MissionLocationPanel from '../../components/map/MissionLocationPanel'
+import { readMissionLocation } from '../../utils/missionLocation'
 
 export default function AdminMissions() {
  const navigate = useNavigate()
@@ -15,6 +17,7 @@ export default function AdminMissions() {
  const { user } = useAuth()
  const { onEvent } = useSocket() || {}
  const [editModal, setEditModal] = useState(null)
+ const [locationModal, setLocationModal] = useState(null) // mission dont on affiche le lieu (carte)
  const [missions, setMissions]       = useState([])
   const [loading, setLoading]         = useState(true)
   const [search, setSearch]           = useState(location.state?.search || '')
@@ -336,6 +339,11 @@ const doAssign = async (overrideWarning = false, overrideReason = '') => {
                         )}
                         <td><StatusBadge status={m.status} /></td>
                       <td>
+                        {readMissionLocation(m) && (
+                          <button onClick={() => setLocationModal(m)} className="btn btn-ghost btn-sm text-white/70">
+                            📍 Lieu
+                          </button>
+                        )}
                         {user?.is_super_admin && (
                           <button
                             onClick={() => setEditModal(m)}
@@ -378,6 +386,23 @@ const doAssign = async (overrideWarning = false, overrideReason = '') => {
             </div>
           )}
         </div>
+        {/* Lieu de la mission (chantier « lieu de mission ») — l'admin reçoit toujours l'exact */}
+        {locationModal && (
+          <div className="fixed inset-0 bg-black/75 z-[60] flex items-center justify-center p-4 backdrop-blur-sm" onClick={(e) => e.target === e.currentTarget && setLocationModal(null)}>
+            <div className="bg-[#181818] border border-white/20 rounded-2xl p-5 w-full max-w-lg shadow-xl">
+              <div className="flex items-start justify-between mb-4">
+                <div className="min-w-0">
+                  <h2 className="font-semibold text-sm">Lieu de la mission</h2>
+                  <p className="text-xs text-[#AAA] mt-0.5 break-words">{locationModal.title}</p>
+                  <p className="text-xs text-[#AAA] mt-0.5">{locationModal.is_private_residence ? '🔒 Logement privé : les Œils non retenus ne voient qu’une zone approximative' : 'Lieu public : visible par les Œils de la ville'}</p>
+                </div>
+                <button onClick={() => setLocationModal(null)} aria-label="Fermer" className="text-[#AAA] hover:text-white text-lg">✕</button>
+              </div>
+              <MissionLocationPanel mission={locationModal} scope="admin-missions" alwaysOpen navButtons height={260} />
+            </div>
+          </div>
+        )}
+
         {/* Modal affectation manuelle */}
       {assignModal && (
         <div className="fixed inset-0 bg-black/80 z-[70] flex items-center justify-center p-4 backdrop-blur-sm">
