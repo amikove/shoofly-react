@@ -496,13 +496,13 @@ useEffect(() => {
               <div className="text-xs font-semibold truncate">{user?.first_name} {user?.last_name}</div>
               <div className="text-[11px] text-[#AAA]">{LABELS[role]}</div>
             </div>
-            <button
-              onClick={handleLogout}
-              className="text-[#AAA] hover:text-white text-xs px-1.5 py-1 rounded border border-white/12 hover:border-white/22 transition-all"
-              title={t('appLayout.logout')}
-              aria-label={t('appLayout.logout')}
-            >✕</button>
           </div>
+          <button
+            onClick={handleLogout}
+            className="flex items-center justify-center gap-1.5 w-full mt-2 text-[#AAA] hover:text-white text-xs px-1.5 py-1 rounded border border-white/12 hover:border-white/22 transition-all"
+            title={t('appLayout.logout')}
+            aria-label={t('appLayout.logout')}
+          ><span aria-hidden="true">↩</span>{t('appLayout.logout')}</button>
         </div>
       </aside>
 
@@ -522,7 +522,6 @@ useEffect(() => {
             >
               {i18n.language === 'ar' ? 'FR' : 'AR'}
             </button>
-            <button onClick={handleLogout} aria-label={t('appLayout.logout')} className="text-[#AAA] text-xs px-2 py-1 rounded border border-white/12">✕</button>
           </div>
         </div>
 
@@ -555,9 +554,11 @@ useEffect(() => {
               <span>{itemLabel(item)}</span>
             </NavLink>
           ))}
+        {/* Épinglée au bord de fin (droite en FR, gauche en AR) : reste visible et cliquable même
+            quand les entrées dépassent la largeur de l'écran (barre défilante, voir index.css). */}
         <button
           onClick={handleLogout}
-          style={{ flex:1, display:'flex', flexDirection:'column', alignItems:'center', gap:2, padding:'6px 4px', color:'#777', fontSize:10, fontWeight:500, background:'none', border:'none', cursor:'pointer' }}
+          style={{ flex:1, display:'flex', flexDirection:'column', alignItems:'center', gap:2, padding:'6px 4px', color:'#777', fontSize:10, fontWeight:500, background:'#181818', border:'none', cursor:'pointer', position:'sticky', insetInlineEnd:0 }}
         >
           <span style={{ fontSize:20 }}>↩</span>
           <span>{t('appLayout.logout')}</span>

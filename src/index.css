@@ -61,6 +61,10 @@
       border-top: 1px solid rgba(255,255,255,0.12);
       z-index: 100;
       padding: 6px 0 env(safe-area-inset-bottom);
+      /* Trop d'entrées pour la largeur (admin : 18) : la barre défile au lieu d'élargir la page
+         (sinon le viewport s'étend et la barre fixe sort de l'écran). */
+      overflow-x: auto;
+      scrollbar-width: none;
     }
     .mobile-nav a {
       flex: 1;
