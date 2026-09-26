@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useRef, useState } from 'react'
 import { io } from 'socket.io-client'
 import { useAuth } from './AuthContext'
+import { authUnavailableDelayMs } from '../api/client'
 
 const SocketContext = createContext(null)
 
@@ -54,9 +55,24 @@ export function SocketProvider({ children }) {
       }
     })
 
+    // SC-1 (audit scalabilité 2026-09-26) : un refus du handshake par le middleware serveur coupe
+    // la reconnexion automatique de socket.io-client (socket.active=false). Le serveur distingue
+    // désormais un jeton invalide (refus définitif, inchangé) d'une panne d'infrastructure
+    // (err.data.code 'AUTH_UNAVAILABLE') : dans ce 2e cas seulement, on relance nous-mêmes avec
+    // backoff (plafond 30 s) — sinon le temps réel resterait mort jusqu'au rechargement de page.
+    const socket = socketRef.current
+    let authRetryTimer = null
+    let authRetryAttempt = 0
+    socket.on('connect', () => { authRetryAttempt = 0 })
+
     socketRef.current.on('connect_error', (err) => {
       console.warn('Socket erreur:', err.message)
       setConnected(false)
+      if (err?.data?.code === 'AUTH_UNAVAILABLE' && !socket.active && !authRetryTimer) {
+        const delay = Math.min(30000, authUnavailableDelayMs(authRetryAttempt, err.data.retry_after))
+        authRetryAttempt++
+        authRetryTimer = setTimeout(() => { authRetryTimer = null; socket.connect() }, delay)
+      }
     })
 
     socketRef.current.on('reconnect', () => {
@@ -64,6 +80,7 @@ export function SocketProvider({ children }) {
     })
 
     return () => {
+      if (authRetryTimer) clearTimeout(authRetryTimer)
       socketRef.current?.disconnect()
     }
   }, [user])

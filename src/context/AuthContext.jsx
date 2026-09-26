@@ -52,8 +52,10 @@ export function AuthProvider({ children }) {
             setNetRetrying(false)
             setLoading(false)
             teardownRetry()
-          } else if (!err.response) {
-            // Erreur réseau (coupure, DNS, timeout axios) : ne JAMAIS effacer la session.
+          } else if (!err.response || err.response.status === 503) {
+            // Erreur réseau (coupure, DNS, timeout axios) ou serveur momentanément indisponible
+            // (503 — SC-1 : base/pool en panne pendant l'authentification, déjà rejoué avec
+            // backoff par api/client.js) : ne JAMAIS effacer la session.
             // On garde `loading` à true et on arme la reprise automatique.
             setNetRetrying(true)
             armRetry()
