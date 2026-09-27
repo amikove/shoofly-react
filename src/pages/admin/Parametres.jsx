@@ -208,6 +208,15 @@ const ADVANCED_GROUPS = [
 
 const groupsByCategory = (cat) => ADVANCED_GROUPS.filter((g) => g.category === cat)
 
+// Chantier 2 lot 1 bis — chaque relance WhatsApp de présence doit rester STRICTEMENT inférieure au
+// délai de réponse de son étape (sinon elle ne partirait jamais). Même garde côté backend
+// (PUT /admin/settings, code PRESENCE_RELANCE_NOT_BEFORE_DEADLINE).
+const PRESENCE_RELANCE_PAIRS = [
+  { step: 'J-1', relance: 'presence_whatsapp_relance_j1_minutes', deadline: 'presence_confirmation_deadline_minutes' },
+  { step: 'H-2', relance: 'presence_whatsapp_relance_h2_minutes', deadline: 'presence_confirmation_deadline_minutes_sameday' },
+  { step: 'H-45', relance: 'presence_whatsapp_relance_h45_minutes', deadline: 'presence_confirmation_deadline_minutes_h45' },
+]
+
 // Libellés des 4 réglages "de base" — servent AUSSI au tableau d'aperçu de la
 // réinitialisation (BASIC_FIELD_LABELS[key] || t(fields.key)).
 const BASIC_FIELD_LABELS = {
@@ -554,6 +563,16 @@ export default function AdminParametres() {
         }
       }
       const keys = groupsByCategory(catKey).flatMap((g) => g.fields)
+      // Relances de présence (lot 1 bis) : contrôlé dès que la catégorie contient l'une des 2 valeurs.
+      for (const p of PRESENCE_RELANCE_PAIRS) {
+        if (!keys.includes(p.relance) && !keys.includes(p.deadline)) continue
+        const relance = Number(advanced[p.relance])
+        const deadline = Number(advanced[p.deadline])
+        if (Number.isFinite(relance) && Number.isFinite(deadline) && relance >= deadline) {
+          toast(t('adminAdvancedSettings.presenceRelanceTooLate', { step: p.step, relance, deadline }), 'error')
+          return
+        }
+      }
       const payload = {}
       for (const key of keys) {
         const disp = advanced[key]
@@ -562,8 +581,10 @@ export default function AdminParametres() {
       }
       await adminAPI.saveSettings(payload)
       toast(t('adminAdvancedSettings.savedToast'), 'success')
-    } catch {
-      toast(t('adminAdvancedSettings.saveError'), 'error')
+    } catch (e) {
+      // Refus de la garde backend (valeur déjà en base dans l'autre catégorie) : message traduit.
+      const v = e.response?.data?.code === 'PRESENCE_RELANCE_NOT_BEFORE_DEADLINE' && e.response.data.violations?.[0]
+      toast(v ? t('adminAdvancedSettings.presenceRelanceTooLate', { step: v.step, relance: v.relance, deadline: v.deadline }) : t('adminAdvancedSettings.saveError'), 'error')
     } finally {
       setSavingCat(null)
     }

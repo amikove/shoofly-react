@@ -2887,6 +2887,7 @@
     "savedToast": "Réglages enregistrés ✓",
     "saveError": "Erreur lors de l'enregistrement",
     "loadError": "Erreur de chargement des réglages",
+    "presenceRelanceTooLate": "Relance WhatsApp {{step}} ({{relance}} min) : elle doit rester strictement inférieure au délai de réponse de cette étape ({{deadline}} min), sinon elle partirait après l'expiration de la demande et ne serait jamais envoyée. Rien n'a été enregistré.",
     "clientValidationReminderTooLate": "Le rappel intermédiaire de validation doit rester strictement inférieur au délai d'auto-validation. Sans cet écart, le rappel « à mi-parcours » serait envoyé après l'auto-validation de la mission : il perdrait tout son sens et cesserait même d'être déclenché.",
     "searchPlaceholder": "Rechercher un réglage (nom ou description)…",
     "searchClear": "Effacer la recherche",
@@ -2976,7 +2977,7 @@
       },
       "presenceWhatsappRelance": {
         "title": "Relance WhatsApp — confirmation de présence de l'Œil",
-        "note": "Chaque demande de confirmation de présence (veille au soir, H-2, H-45) part d'abord par notification (application + push). Si l'Œil n'a toujours pas confirmé après le délai ci-dessous, un WhatsApp de relance lui est envoyé — un seul par étape et par mission, jamais s'il a confirmé, s'il n'est plus l'Œil de la mission ou si le délai de réponse est déjà écoulé. Chaque délai doit rester inférieur au délai de réponse de son étape (groupe « Confirmation de présence de l'Œil »), sinon la relance ne part jamais."
+        "note": "Chaque demande de confirmation de présence (veille au soir, H-2, H-45) part d'abord par notification (application + push). Si l'Œil n'a toujours pas confirmé après le délai ci-dessous, un WhatsApp de relance lui est envoyé — un seul par étape, par mission et par Œil (un Œil remplaçant a le sien), jamais s'il a confirmé, s'il n'est plus l'Œil de la mission ou si le délai de réponse est déjà écoulé. Chaque délai doit rester strictement inférieur au délai de réponse de son étape (groupe « Confirmation de présence de l'Œil ») : l'enregistrement est refusé sinon."
       },
       "candidatureRelance": {
         "title": "Relance par notification — candidatures non choisies",
