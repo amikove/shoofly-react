@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { missionsAPI, usersAPI } from '../../api'
 import { VILLES, VILLES_LIST } from '../../constants/villes'
+import { PAYMENT_METHODS, DEFAULT_PAYMENT_METHOD } from '../../constants/paymentMethods'
 import { translateLocation } from '../../constants/villesTranslations'
 import { toast } from '../ui'
 import { useAuth } from '../../context/AuthContext'
@@ -114,14 +115,7 @@ function SubcategorySelector({ type, value, onChange, t }) {
   return null
 }
 
-// Options de paiement du formulaire — seule 'cash' est active aujourd'hui (PayZone n'a pas encore
-// de clés de production réelles, voir décision de session 2026-08-13). 'payzone' reste déclarée
-// ici, désactivée : la réactiver plus tard ne demande que enabled:true, aucun changement JSX.
-const PAYMENT_METHODS = [
-  { value: 'cash', labelKey: 'cash', enabled: true },
-  { value: 'payzone', labelKey: 'payzone', enabled: false },
-]
-const DEFAULT_PAYMENT_METHOD = PAYMENT_METHODS.find((m) => m.enabled)?.value || 'cash'
+// Options de paiement : voir constants/paymentMethods.js (PayZone désactivée, cash seul).
 
 // État vierge du formulaire — source unique pour l'init, la remise à zéro après création, et
 // la comparaison « le formulaire est-il sale ? » du filet anti-perte ci-dessous.
@@ -350,7 +344,7 @@ if (minPrice != null && parseFloat(form.price) < minPrice) {
 
       // Modèle de paiement cash (2026-08-13) : POST /missions est le seul chemin utilisé par ce
       // formulaire désormais, quel que soit le prix (payment_method='cash' tant que 'payzone'
-      // reste désactivée dans PAYMENT_METHODS ci-dessus). PayZone (POST /payments/payzone/init)
+      // reste désactivée dans constants/paymentMethods.js). PayZone (POST /payments/payzone/init)
       // n'est plus appelé depuis cet écran ; son code backend n'est pas touché.
       const { data } = await missionsAPI.create(payload)
       onCreated?.(data.mission)

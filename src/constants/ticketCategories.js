@@ -14,6 +14,15 @@
 // vers « Demander assistance » (POST /:id/assistance) — seul flux qui libère la mission
 // et déclenche la recherche d'un remplaçant. Un ticket, lui, ne touche jamais la mission
 // (F-L6, rapport-chantier-verification-L4-L6-2026-09-08).
+// requiresOnlinePayment : si true, la sous-catégorie n'est proposée que si le paiement en ligne
+// est activé (ONLINE_PAYMENT_ENABLED, constants/paymentMethods.js — même source que le choix du
+// mode de paiement dans NewMissionModal.jsx). Tant que seul le cash est actif, Shoofly n'encaisse
+// rien et ne rembourse rien : ces sujets ne concernent que d'anciennes missions payées en ligne.
+//
+// Sous-catégories retirées du formulaire (2026-09-27) : leurs traductions restent dans
+// fr.json/ar.json pour afficher les anciens tickets (colonne subcategory = libellé stocké).
+
+import { ONLINE_PAYMENT_ENABLED } from './paymentMethods'
 
 export const TICKET_CATEGORIES = [
   {
@@ -68,12 +77,12 @@ export const TICKET_CATEGORIES = [
     roles: ['client', 'oeil'],
     subcategoriesByRole: {
       client: [
-        { label: 'Paiement refusé', missionRelevant: true },
-        { label: 'Double paiement', missionRelevant: true },
-        { label: 'Demande de remboursement', missionRelevant: true },
+        { label: 'Paiement refusé', missionRelevant: true, requiresOnlinePayment: true },
+        { label: 'Double paiement', missionRelevant: true, requiresOnlinePayment: true },
+        { label: 'Demande de remboursement', missionRelevant: true, requiresOnlinePayment: true },
         { label: 'Coupon de réduction', missionRelevant: false },
-        { label: 'Solde du portefeuille', missionRelevant: false },
-        { label: 'Transaction inconnue', missionRelevant: false },
+        { label: 'Solde du portefeuille', missionRelevant: false, requiresOnlinePayment: true },
+        { label: 'Transaction inconnue', missionRelevant: false, requiresOnlinePayment: true },
       ],
       oeil: [
         { label: 'Paiement non reçu', missionRelevant: true },
@@ -97,8 +106,10 @@ export const TICKET_CATEGORIES = [
         { label: 'Supprimer mon compte', missionRelevant: false, redirectRoute: null },
       ],
       oeil: [
-        { label: 'Changer mon RIB', missionRelevant: false, redirectRoute: null },
+        // 'Changer mon RIB' retiré (2026-09-27) : aucun RIB n'est enregistré, l'Œil saisit ses
+        // coordonnées bancaires à chaque demande de retrait.
         { label: 'Mon compte est bloqué', missionRelevant: false, redirectRoute: '/oeil/suspendu' },
+        { label: 'Supprimer mon compte', missionRelevant: false, redirectRoute: null },
       ],
     },
   },
@@ -110,7 +121,7 @@ export const TICKET_CATEGORIES = [
     subcategories: [
       { label: 'Validation CIN', missionRelevant: false, redirectRoute: '/oeil/verification-identite' },
       { label: 'Validation selfie', missionRelevant: false, redirectRoute: '/oeil/verification-identite' },
-      { label: 'Validation IBAN', missionRelevant: false, redirectRoute: null },
+      // 'Validation IBAN' retiré (2026-09-27) : la vérification d'identité ne comporte pas d'IBAN.
     ],
   },
   {
@@ -184,14 +195,24 @@ export const TICKET_CATEGORIES = [
 export const MANUAL_NOTE_SUFFIX =
   "\n\n[Cette demande sera traitée manuellement par un administrateur — aucun processus automatisé n'est disponible pour ce type de demande.]"
 
+function rawSubcategoriesForRole(category, role) {
+  if (category.subcategoriesByRole) return category.subcategoriesByRole[role] || []
+  return category.subcategories || []
+}
+
+// Une catégorie dont TOUTES les sous-catégories sont masquées (requiresOnlinePayment) disparaît.
+// Une catégorie déclarée sans sous-catégorie ('autre' : message libre) reste affichée.
 export function getCategoriesForRole(role) {
-  return TICKET_CATEGORIES.filter((c) => c.roles.includes(role))
+  return TICKET_CATEGORIES.filter((c) => {
+    if (!c.roles.includes(role)) return false
+    const raw = rawSubcategoriesForRole(c, role)
+    return raw.length === 0 || getSubcategoriesForRole(c, role).length > 0
+  })
 }
 
 export function getSubcategoriesForRole(category, role) {
   if (!category) return []
-  if (category.subcategoriesByRole) return category.subcategoriesByRole[role] || []
-  return category.subcategories || []
+  return rawSubcategoriesForRole(category, role).filter((s) => !s.requiresOnlinePayment || ONLINE_PAYMENT_ENABLED)
 }
 
 // Correspondance documentée entre l'ancien champ libre "type" de
