@@ -6,6 +6,7 @@ import { paymentsAPI } from '../../api'
 import { Spinner, EmptyState, toast } from '../../components/ui'
 import { redirectToPaywall } from '../../utils/payzone'
 import { CASABLANCA_TZ } from '../../utils/casablancaTime'
+import { ONLINE_PAYMENT_ENABLED } from '../../constants/paymentMethods'
 
 const STATUS_VARIANT = {
   created:  'text-[#AAA]',
@@ -16,7 +17,9 @@ const STATUS_VARIANT = {
 export default function Paiements() {
   const { t } = useTranslation()
   const [attempts, setAttempts] = useState([])
-  const [loading, setLoading]   = useState(true)
+  // Paiement en ligne coupé (constants/paymentMethods.js) : le backend refuse failed-attempts
+  // (403 ONLINE_PAYMENT_DISABLED) — aucun appel, état vide directement, sans toast d'erreur.
+  const [loading, setLoading]   = useState(ONLINE_PAYMENT_ENABLED)
   const [retryingId, setRetryingId] = useState(null)
 
   const load = useCallback(() => {
@@ -27,7 +30,7 @@ export default function Paiements() {
       .finally(() => setLoading(false))
   }, [t])
 
-  useEffect(() => { load() }, [load])
+  useEffect(() => { if (ONLINE_PAYMENT_ENABLED) load() }, [load])
 
   const retry = async (attemptId) => {
     setRetryingId(attemptId)
