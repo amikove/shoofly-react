@@ -3249,5 +3249,69 @@
     "savedToast": "Planchers tarifaires enregistrés",
     "saveError": "Erreur lors de l'enregistrement des planchers",
     "loadError": "Erreur de chargement des planchers tarifaires"
+  },
+  "adminNotifStats": {
+    "tab": "🔔 Notifications",
+    "last7": "7 derniers jours",
+    "last30": "30 derniers jours",
+    "role": "Rôle",
+    "allRoles": "Tous les rôles",
+    "roles": {
+      "client": "Clients",
+      "oeil": "Œils",
+      "admin": "Admins"
+    },
+    "type": "Type",
+    "allTypes": "Tous les types",
+    "device": "Appareil",
+    "allDevices": "Tous les appareils",
+    "devices": {
+      "android": "Android",
+      "ios": "iPhone / iPad",
+      "desktop": "Ordinateur"
+    },
+    "loadError": "Impossible de charger les données. Réessayez plus tard.",
+    "pushReceived": "Réception push",
+    "ofSent": "{{a}} reçus / {{b}} envoyés",
+    "pushClicked": "Clic push",
+    "ofReceived": "{{a}} cliqués / {{b}} reçus",
+    "readGlobal": "Lecture globale",
+    "ofNotifs": "{{a}} lues / {{b}} notifications",
+    "readViaPush": "Lectures via le push",
+    "readSplit": "{{push}} via le push · {{app}} dans l'app",
+    "medianPush": "Délai médian de lecture — push",
+    "medianApp": "Délai médian de lecture — app",
+    "seconds": "{{n}} s",
+    "minutes": "{{n}} min",
+    "hours": "{{h}} h {{m}} min",
+    "note": "Réception et clic : seuls les push envoyés depuis la mise en place de la mesure comptent ; un appareil dont l'application n'a pas encore été rouverte peut ne pas accuser réception (sous-estimation temporaire). Le filtre « appareil » ne s'applique qu'aux indicateurs push. « Tout marquer comme lu » compte comme une lecture dans l'app.",
+    "byDevice": "Push par appareil",
+    "sent": "Envoyés",
+    "received": "Reçus",
+    "clicked": "Cliqués",
+    "noData": "Aucune donnée sur la période.",
+    "subscriptions": "Abonnements push par rôle",
+    "subscriptionsNote": "Utilisateurs actifs = comptes actifs non suspendus ayant reçu au moins une notification sur la période ; abonnement push actif à ce jour.",
+    "activeUsers": "Utilisateurs actifs",
+    "withPush": "Avec push actif",
+    "relances": "Relances WhatsApp",
+    "relancesNote": "Nécessaires = l'utilisateur n'avait pas réagi à la notification à l'échéance (WhatsApp envoyé, en échec ou sans numéro). Évitées = la notification a suffi.",
+    "relanceFamily": {
+      "presence": "Présence de l'Œil (J-1, H-2, H-45)",
+      "client": "Client — des Œils ont postulé"
+    },
+    "needed": "Nécessaires",
+    "avoided": "Évitées",
+    "outcomes": {
+      "sent": "Envoyé",
+      "failed": "Échec d'envoi (réessai automatique)",
+      "skipped_confirmed": "Évité — présence confirmée",
+      "skipped_read": "Évité — notification lue",
+      "skipped_viewed": "Évité — candidats consultés",
+      "skipped_obsolete": "Sans objet — Œil changé, mission plus en attente ou délai écoulé",
+      "skipped_no_phone": "Pas de numéro de téléphone",
+      "pending": "Programmé",
+      "sending": "Envoi en cours"
+    }
   }
 }

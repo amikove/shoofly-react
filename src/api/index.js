@@ -123,6 +123,8 @@ export const adminAPI = {
     dashboardFinancier: (params) => api.get('/api/users/admin/dashboard/financier', { params }),
     dashboardCampagnes: (params) => api.get('/api/users/admin/dashboard/campagnes', { params }),
     dashboardExperienceUtilisateur: (params) => api.get('/api/users/admin/dashboard/experience-utilisateur', { params }),
+    // Efficacité des notifications (chantier 2 lot 1 bis) — params : days (7|30), role, type, device.
+    dashboardNotifications: (params) => api.get('/api/users/admin/dashboard/notifications', { params }),
     addExpense: (data) => api.post('/api/users/admin/expenses', data),
     listExpenses: (params) => api.get('/api/users/admin/expenses', { params }),
     deleteExpense: (id) => api.delete(`/api/users/admin/expenses/${id}`),

@@ -46,9 +46,13 @@ i18nReady.catch(() => {}).then(mount)
 // (aucun cache, aucun handler fetch) — aucun risque de servir un bundle périmé. Échec
 // d'enregistrement (navigateur sans SW, iOS Safari hors PWA installée, contexte non sécurisé)
 // avalé silencieusement : le canal push est simplement indisponible, l'app fonctionne.
+// ?api= : adresse de l'API pour les accusés de réception/clic du push (chantier 2 lot 1 bis) — le
+// SW n'a pas accès aux variables Vite. Même scope '/' : le navigateur met simplement à jour le
+// SW existant, l'abonnement push (porté par l'enregistrement) est conservé.
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js').catch((err) => {
+    const swUrl = `/sw.js?api=${encodeURIComponent(import.meta.env.VITE_API_URL || 'http://localhost:3001')}`
+    navigator.serviceWorker.register(swUrl).catch((err) => {
       console.warn('[push] Enregistrement du service worker échoué :', err && err.message)
     })
   })

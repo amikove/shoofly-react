@@ -84,6 +84,9 @@ export async function subscribeToPush() {
     await pushAPI.subscribe({
       subscription: { endpoint: json.endpoint, keys: json.keys },
       platform: 'web',
+      // Appareil pour la mesure admin (lot 1 bis) — isIOS() reconnaît aussi l'iPad « Mac tactile »,
+      // que le user-agent seul confond avec un Mac.
+      device: isIOS() ? 'ios' : isAndroid() ? 'android' : 'desktop',
     })
     return { ok: true }
   } catch (e) {

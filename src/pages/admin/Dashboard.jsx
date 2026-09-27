@@ -7,6 +7,8 @@ import DateRangeFilter, { getPresetRange } from '../../components/dashboard/Date
 import { ComparisonCell, DeltaBadge, delta } from '../../components/dashboard/ComparisonCell'
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
 import { CASABLANCA_TZ, casablancaYMD } from '../../utils/casablancaTime'
+import { useTranslation } from 'react-i18next'
+import NotificationsStats from '../../components/dashboard/NotificationsStats'
 
 const MAIN_TABS = [
   { id: 'executif',    label: '📊 Exécutif' },
@@ -21,6 +23,8 @@ const MAIN_TABS = [
   { id: 'campagnes',   label: '🔗 Campagnes' },
   { id: 'experience',  label: '💬 Expérience Utilisateur' },
   { id: 'claims',      label: '📋 Réclamations' },
+  // Chantier 2 lot 1 bis : seul onglet traduit (FR/AR) — libellé via labelKey.
+  { id: 'notifications', labelKey: 'adminNotifStats.tab' },
 ]
 
 
@@ -44,6 +48,7 @@ const TYPE_LABELS = {
 
 
 export default function AdminDashboard() {
+  const { t: tr } = useTranslation()
   const [tab, setTab] = useState('executif')
 
   // ── État période (partagé, visible dans tous les onglets) ──
@@ -379,7 +384,7 @@ export default function AdminDashboard() {
             {MAIN_TABS.map(t => (
               <button key={t.id} onClick={() => setTab(t.id)}
                 className={`px-4 py-2 rounded-lg text-xs font-medium transition-all flex items-center gap-2 ${tab === t.id ? 'bg-[#2A2A2A] text-white' : 'text-[#AAA] hover:text-white'}`}>
-                {t.label}
+                {t.labelKey ? tr(t.labelKey) : t.label}
                 {t.id === 'claims' && claims.length > 0 && (
                   <span className="bg-[#FF4D00] text-white text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center">
                     {claims.length}
@@ -1418,6 +1423,8 @@ export default function AdminDashboard() {
             )}
           </>
         )}
+
+        {tab === 'notifications' && <NotificationsStats />}
 
         {tab === 'claims' && (
           <div className="space-y-3">
