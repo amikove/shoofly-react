@@ -2389,7 +2389,7 @@
   },
   "missionsProchesValidation": {
     "title": "⏰ Missions proches sans validation",
-    "subtitle": "Missions en attente de candidature choisie par le client, désormais trop proches de leur horaire prévu pour compter sur une simple relance WhatsApp.",
+    "subtitle": "Missions en attente de candidature choisie par le client, désormais trop proches de leur horaire prévu pour compter sur une simple relance.",
     "table": {
       "mission": "Mission",
       "client": "Client",
@@ -2961,23 +2961,23 @@
         "note": "Distinct du groupe ci-dessus : ici, le créneau prévu de la mission est déjà passé et aucun Œil n'a jamais été trouvé. L'admin est alerté immédiatement (une seule fois), puis la mission est annulée automatiquement après ce délai — le client est remboursé intégralement si la mission était payée en ligne, rien pour le cash."
       },
       "newMissionWhatsappDelay": {
-        "title": "Relance WhatsApp — mission sans candidature",
-        "note": "Si une mission (urgente ou non) n'a reçu aucune candidature après ce délai, une 1ère vague WhatsApp est envoyée aux Œils éligibles de la ville — voir le groupe ci-dessous pour la suite (taille des vagues, délai entre elles). Ex : mission créée il y a {{newMissionWaveDelayH}}h, toujours aucune candidature → 1ère vague envoyée maintenant."
+        "title": "Relance par notification — mission sans candidature",
+        "note": "Si une mission (urgente ou non) n'a reçu aucune candidature après ce délai, une 1ère vague de notifications est envoyée aux Œils éligibles de la ville — voir le groupe ci-dessous pour la suite (taille des vagues, délai entre elles). Ex : mission créée il y a {{newMissionWaveDelayH}}h, toujours aucune candidature → 1ère vague envoyée maintenant."
       },
       "urgentWhatsappWaves": {
-        "title": "Vagues WhatsApp — mission toujours sans Œil",
-        "note": "Une fois la 1ère vague déclenchée (voir réglage ci-dessus), si la mission n'a toujours pas d'Œil, une nouvelle vague de candidats est contactée par WhatsApp après ce délai, jusqu'à épuisement des Œils disponibles dans la ville. Ex : les {{urgentBatch}} Œils les mieux classés contactés d'abord, les suivants {{urgentDelayMin}} min plus tard si la mission est toujours sans Œil."
+        "title": "Vagues de notifications — mission toujours sans Œil",
+        "note": "Une fois la 1ère vague déclenchée (voir réglage ci-dessus), si la mission n'a toujours pas d'Œil, une nouvelle vague de candidats reçoit une notification après ce délai, jusqu'à épuisement des Œils disponibles dans la ville. Ex : les {{urgentBatch}} Œils les mieux classés contactés d'abord, les suivants {{urgentDelayMin}} min plus tard si la mission est toujours sans Œil."
       },
       "candidatureWhatsapp": {
         "title": "Notification WhatsApp au client — seuil de candidatures",
         "note": "Le client est notifié par WhatsApp qu'un Œil est intéressé dès que l'un des deux seuils ci-dessous est atteint (le premier déclenché suffit, un seul envoi par mission). Seules les candidatures d'Œils vérifiés comptent."
       },
       "candidatureRelance": {
-        "title": "Relance WhatsApp — candidatures non choisies",
-        "note": "Une fois le client notifié (seuil ci-dessus), s'il ne choisit toujours pas d'Œil, le même WhatsApp lui est renvoyé à intervalles réguliers. Si la mission devient trop proche de son créneau, la relance WhatsApp s'arrête et laisse place à une alerte admin unique (onglet \"Missions proches sans validation\") plutôt qu'un nouveau message au client."
+        "title": "Relance par notification — candidatures non choisies",
+        "note": "Une fois le client prévenu par le WhatsApp du seuil ci-dessus, s'il ne choisit toujours pas d'Œil, il reçoit une notification de rappel à intervalles réguliers. Si la mission devient trop proche de son créneau, la relance s'arrête et laisse place à une alerte admin unique (onglet \"Missions proches sans validation\") plutôt qu'un nouveau rappel au client."
       },
       "emailFallback": {
-        "title": "Relance par email si WhatsApp non lu",
+        "title": "Relance par email si la notification n'est pas lue",
         "note": "S'applique à deux notifications à délai de réponse court : la sollicitation d'un candidat en cascade (~10 min pour confirmer) et le contrôle de présence H-45 de l'Œil assigné. Si la notification reste non lue passé ce délai, un email reprenant le même message est envoyé en secours au même destinataire — un seul envoi par notification concernée."
       },
       "whatsappRetry": {
@@ -3078,7 +3078,7 @@
       "response_time_min_turns": "Nombre minimum de tours d'échange",
       "dashboard_stuck_pending_hours": "Missions \"bloquées\" après (h)",
       "dashboard_low_reliability_threshold": "Seuil \"Œil à risque\" (score <)",
-      "new_mission_whatsapp_delay_hours": "Délai avant 1ère relance WhatsApp (h)",
+      "new_mission_whatsapp_delay_hours": "Délai avant 1ère relance par notification (h)",
       "urgent_mission_whatsapp_batch_size": "Nombre d'Œils contactés par vague",
       "urgent_mission_whatsapp_batch_delay_minutes": "Délai avant la vague suivante (min)",
       "candidate_batch_size": "Taille du lot (nb d'Œils sollicités)",
@@ -3152,8 +3152,8 @@
       "response_time_min_turns": "Sous 3 échanges au total, le temps de réponse moyen de l'Œil n'est pas affiché, faute de données suffisantes.",
       "dashboard_stuck_pending_hours": "Compte les missions encore sans Œil depuis plus de 24h, affiché comme alerte sur le dashboard admin.",
       "dashboard_low_reliability_threshold": "Compte les Œils actifs dont le score de fiabilité est sous 70, affiché comme alerte sur le dashboard admin.",
-      "new_mission_whatsapp_delay_hours": "Si une mission n'a reçu aucune candidature 2h après sa création, les Œils éligibles de la ville sont contactés par WhatsApp (urgente ou non — plus de distinction).",
-      "urgent_mission_whatsapp_batch_size": "Les 10 Œils les mieux classés (fiabilité puis note) de la ville sont contactés par WhatsApp à chaque vague.",
+      "new_mission_whatsapp_delay_hours": "Si une mission n'a reçu aucune candidature 2h après sa création, les Œils éligibles de la ville reçoivent une notification de relance (urgente ou non — plus de distinction).",
+      "urgent_mission_whatsapp_batch_size": "Les 10 Œils les mieux classés (fiabilité puis note) de la ville reçoivent une notification à chaque vague.",
       "urgent_mission_whatsapp_batch_delay_minutes": "Si la mission n'a toujours pas d'Œil 30 min après une vague, la vague suivante contacte les Œils restants.",
       "candidate_batch_size": "Les 10 Œils les mieux classés (fiabilité puis note) sont sollicités simultanément à chaque tirage de lot.",
       "candidate_confirmation_minutes": "Si aucun Œil du lot ne confirme sa disponibilité en 10 min, ce lot est abandonné et un nouveau lot est tiré.",
@@ -3165,11 +3165,11 @@
       "presence_confirmation_deadline_minutes_sameday": "Un second contrôle a lieu environ 2h avant la mission, que la présence ait déjà été confirmée la veille ou non : l'Œil a 45 min pour (re)confirmer avant réattribution automatique.",
       "candidature_whatsapp_seuil_count": "Dès que 3 Œils vérifiés ont candidaté sur la mission, le client reçoit immédiatement un WhatsApp l'en informant.",
       "candidature_whatsapp_seuil_minutes": "Si ce nombre n'est jamais atteint, un cron envoie quand même le WhatsApp 60 min après la toute première candidature d'un Œil vérifié — un seul envoi au total par mission.",
-      "candidature_relance_first_after_minutes": "60 min après le premier WhatsApp de notification, le client reçoit un premier rappel s'il n'a toujours pas choisi d'Œil.",
+      "candidature_relance_first_after_minutes": "60 min après le WhatsApp du seuil de candidatures, le client reçoit une première notification de rappel s'il n'a toujours pas choisi d'Œil.",
       "candidature_relance_interval_minutes": "Si le client reste sans réponse, les rappels suivants sont espacés de 120 min chacun.",
-      "candidature_relance_imminent_threshold_minutes": "Dès que le créneau de la mission passe sous 120 min, la relance WhatsApp s'arrête : l'admin reçoit à la place une alerte unique dans l'onglet \"Missions proches sans validation\".",
-      "unread_whatsapp_email_fallback_minutes": "Si la notification WhatsApp/in-app reste non lue 5 min après son envoi, un email reprenant le même message part automatiquement — uniquement pour la cascade de candidats et le contrôle de présence H-45.",
-      "whatsapp_retry_max_attempts": "Un envoi WhatsApp échoué est retenté jusqu'à 3 fois par le cron de réessai ; au-delà, il reste visible comme échec définitif dans l'écran admin dédié.",
+      "candidature_relance_imminent_threshold_minutes": "Dès que le créneau de la mission passe sous 120 min, la relance par notification s'arrête : l'admin reçoit à la place une alerte unique dans l'onglet \"Missions proches sans validation\".",
+      "unread_whatsapp_email_fallback_minutes": "Si la notification reste non lue 5 min après son envoi, un email reprenant le même message part automatiquement — uniquement pour la cascade de candidats et le contrôle de présence H-45.",
+      "whatsapp_retry_max_attempts": "Un envoi WhatsApp échoué est retenté jusqu'à 3 fois par le cron de réessai ; au-delà, il reste visible comme échec définitif dans l'écran admin dédié. Seuls partent encore par WhatsApp : le message « des Œils ont postulé » au client et les alertes admin — les Œils ne reçoivent plus de WhatsApp.",
       "payment_attempt_abandoned_minutes": "Une tentative de paiement PayZone restée en statut « créée » plus de 30 min sans confirmation est considérée comme abandonnée et peut être relancée par le client.",
       "no_show_h30_penalty_points": "Un Œil qui n'a pas démarré sa mission 60 min après l'heure prévue perd 20 points de fiabilité, en plus du transfert automatique et du débit financier ci-dessous.",
       "no_show_h30_debit_cap_mad": "Jusqu'à 100 MAD sont débités du portefeuille de l'Œil, plafonnés à son solde réel disponible (jamais de solde négatif).",
