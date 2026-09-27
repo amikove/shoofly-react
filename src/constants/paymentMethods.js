@@ -10,5 +10,10 @@ export const PAYMENT_METHODS = [
 
 export const DEFAULT_PAYMENT_METHOD = PAYMENT_METHODS.find((m) => m.enabled)?.value || 'cash'
 
-// true dès qu'un mode de paiement autre que le cash est activé.
+// true dès qu'un mode de paiement autre que le cash est activé. Pilote aussi le menu client
+// (AppLayout.jsx : « Paiements » ou « Aide » dans la barre du bas).
+// ⚠️ DEUX réglages à basculer ENSEMBLE le jour de la réactivation de PayZone :
+//   - ici : payzone { enabled: true } ;
+//   - backend : variable d'environnement ONLINE_PAYMENT_ENABLED=true (Shoofly/backend,
+//     src/config/onlinePayment.js) — sinon init / retry / failed-attempts répondent 403.
 export const ONLINE_PAYMENT_ENABLED = PAYMENT_METHODS.some((m) => m.value !== 'cash' && m.enabled)

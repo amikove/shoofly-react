@@ -15,21 +15,28 @@ import { useState, useEffect, useRef } from 'react'
 import { authAPI, missionsAPI, adminAPI } from '../../api'
 import HoverTooltip from '../ui/HoverTooltip'
 import { useLogout } from '../../hooks/useLogout'
+import { ONLINE_PAYMENT_ENABLED } from '../../constants/paymentMethods'
 
 // Client / Œil (chantier « barre mobile réduite », 2026-09-27) : la barre du bas mobile affiche
 // EXACTEMENT 5 entrées — Accueil · Missions · Messages · Paiements (client) / Gains (Œil) · Compte.
 // Mêmes libellés dans la barre latérale desktop (harmonisation BOSS du 2026-09-27).
 //   desktopOnly  : entrée de la barre latérale seulement (Aide = tickets + signalements, joignable
 //                  sur mobile depuis la page Compte)
+//   hidden       : entrée retirée des deux barres
 //   alsoActiveOn : chemins où l'entrée est aussi mise en évidence (Aide est atteinte depuis Compte)
+// Client, paiement en ligne coupé (ONLINE_PAYMENT_ENABLED = false, constants/paymentMethods.js) :
+// « Paiements » (tentatives PayZone échouées, toujours vide pour un client en espèces) disparaît
+// des deux barres et « Aide » prend sa place (4e) dans la barre du bas. Retour automatique de
+// « Paiements » dès que le paiement en ligne est réactivé. /client/paiements reste joignable par
+// son URL (écran de retour PayZone).
 const MENUS = {
   client: [
       { to: '/client',           icon: '⊞',  label: 'menu.accueil'     },
       { to: '/client/missions',  icon: '📋',  label: 'menu.missions'    },
       { to: '/client/messages',  icon: '💬',  label: 'menu.messages'    },
-      { to: '/client/aide',      icon: '🛟',  label: 'menu.aide', desktopOnly: true },
-      { to: '/client/paiements', icon: '💳',  label: 'menu.paiements'   },
-      { to: '/client/compte',    icon: '👤',  label: 'menu.compte', alsoActiveOn: ['/client/aide'] },
+      { to: '/client/aide',      icon: '🛟',  label: 'menu.aide', desktopOnly: ONLINE_PAYMENT_ENABLED },
+      { to: '/client/paiements', icon: '💳',  label: 'menu.paiements', hidden: !ONLINE_PAYMENT_ENABLED },
+      { to: '/client/compte',    icon: '👤',  label: 'menu.compte', alsoActiveOn: ONLINE_PAYMENT_ENABLED ? ['/client/aide'] : [] },
     ],
 
   oeil: [
@@ -378,6 +385,7 @@ useEffect(() => {
 
   // Filtrer les items selon les permissions
   const items = (MENUS[role] || []).filter(item => {
+    if (item.hidden) return false
     if (item.superAdminOnly) return isSuperAdmin
     if (item.permission && role === 'admin') return isSuperAdmin || hasPermission(item.permission)
     return true
