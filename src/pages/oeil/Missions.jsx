@@ -17,11 +17,10 @@ import MissionLocationPanel from '../../components/map/MissionLocationPanel'
 import { googleMapsUrl, toCoord } from '../../utils/missionLocation'
 import RateClientModal from '../../components/missions/RateClientModal'
 import ComplianceModal from '../../components/missions/ComplianceModal'
-import CandidatureSentModal from '../../components/missions/CandidatureSentModal'
 import AssistanceModal from '../../components/missions/AssistanceModal'
 import MissionPhotosModal from '../../components/missions/MissionPhotosModal'
 import { getChatAccessState } from '../../utils/chatAccess'
-import { CASABLANCA_TZ, casablancaDisplayDateTime } from '../../utils/casablancaTime'
+import { CASABLANCA_TZ } from '../../utils/casablancaTime'
 import { isNetworkError } from '../../utils/offlineQueue'
 import { offlineQueue } from '../../utils/offlineQueueInstance'
 import { useOfflineQueueProcessed } from '../../hooks/useOfflineQueue'
@@ -352,16 +351,8 @@ const load = useCallback((tab) => {
     }
   }
 
-  // Popup opt-in WhatsApp après candidature ("Je suis intéressé" / onglet priorité) : état
-  // local uniquement (même patron que missionCreatedModal côté client Dashboard.jsx — un
-  // popup post-action immédiat n'a pas besoin de persister au-delà de la session). Un
-  // rechargement de page ou un changement d'onglet ne peut pas le rouvrir pour la même
-  // mission : il n'est déclenché que par un appel interest()/interestPriority() réussi, et
-  // le bouton "Je suis intéressé" disparaît (interested:true) dès ce succès — il ne peut donc
-  // plus être recliqué pour la même mission, refresh ou pas. On garde la mission entière (pas
-  // juste un booléen) : le texte du message WhatsApp pré-rempli a besoin de son titre/ville/
-  // date/réf pour l'identifier « à la simple lecture » (décision de chantier 2026-09-11).
-  const [waOptInMission, setWaOptInMission] = useState(null)
+  // (Chantier 2, 2026-09-26, décision D2 : le popup d'opt-in WhatsApp après candidature a été
+  // retiré — plus aucun WhatsApp vers les Œils ; notifications in-app + push uniquement.)
 
   // "Je suis intéressé" (onglet "Disponibles") : appel réseau direct, PAS de ComplianceModal.
   // Le rappel des règles ("Rappel avant démarrage") est présenté plus tard, quand l'Œil
@@ -373,7 +364,6 @@ const load = useCallback((tab) => {
       await missionsAPI.interest(id)
       setMissions((prev) => prev.map((m) => m.id === id ? { ...m, interested: true } : m))
       toast(t('oeilMissions.toasts.interestExpressed'), 'success')
-      setWaOptInMission(missions.find((m) => m.id === id) || null)
     } catch (err) {
       handleInterestError(err, id)
     } finally {
@@ -389,7 +379,6 @@ const load = useCallback((tab) => {
     try {
       await missionsAPI.interest(id)
       toast(t('oeilMissions.toasts.interestExpressedShort'), 'success')
-      setWaOptInMission(missions.find((m) => m.id === id) || null)
       load(tab)
     } catch (err) {
       handleInterestError(err, id)
@@ -873,24 +862,6 @@ try {
         setComplianceAdvance(null)
       }
     }} />
-  )}
-
-  {waOptInMission && (
-    <CandidatureSentModal
-      onWhatsApp={() => {
-        const mission = waOptInMission
-        setWaOptInMission(null)
-        const { date, time } = casablancaDisplayDateTime(mission.scheduled_at)
-        const ref = mission.id ? `MIS-${mission.id.slice(-6).toUpperCase()}` : ''
-        const waMessage = encodeURIComponent(t('oeilMissions.whatsappOptIn.message', {
-          title: mission.title || '',
-          city: mission.city ? translateLocation(mission.city, i18n.language) : '',
-          date, time, ref,
-        }))
-        window.location.href = `https://wa.me/212661064492?text=${waMessage}`
-      }}
-      onClose={() => setWaOptInMission(null)}
-    />
   )}
 
       {chatMission && (
