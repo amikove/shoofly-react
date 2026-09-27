@@ -90,9 +90,9 @@ export const TICKET_CATEGORIES = [
     subcategoriesByRole: {
       client: [
         { label: 'Problème de connexion', missionRelevant: false },
-        { label: 'Je ne reçois pas le code SMS', missionRelevant: false },
-        // 'Je ne reçois pas le code WhatsApp' retiré (2026-09-27) : aucun code n'est envoyé par
-        // WhatsApp. Sa traduction reste dans fr.json/ar.json pour afficher les anciens tickets.
+        // 'Je ne reçois pas le code SMS' et 'Je ne reçois pas le code WhatsApp' retirés
+        // (2026-09-27) : aucun code n'est envoyé, ni par SMS ni par WhatsApp. Leurs traductions
+        // restent dans fr.json/ar.json pour afficher les anciens tickets.
         { label: 'Mon compte est bloqué', missionRelevant: false },
         { label: 'Supprimer mon compte', missionRelevant: false, redirectRoute: null },
       ],
