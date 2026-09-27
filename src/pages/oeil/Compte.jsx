@@ -6,6 +6,7 @@ import Topbar from '../../components/layout/Topbar'
 import { useAuth } from '../../context/AuthContext'
 import { toast, Avatar, Stars } from '../../components/ui'
 import AccountShortcutCard from '../../components/ui/AccountShortcutCard'
+import AccountFooterLinks from '../../components/ui/AccountFooterLinks'
 import { authAPI, usersAPI } from '../../api'
 import { translateLocation } from '../../constants/villesTranslations'
 
@@ -257,6 +258,7 @@ const [dispo, setDispo] = useState(() => parseDispo(user?.disponibilites))
         </div>
 
         <AccountShortcutCard />
+        <AccountFooterLinks />
       </div>
     </AppLayout>
   )

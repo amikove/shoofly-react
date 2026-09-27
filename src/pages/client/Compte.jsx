@@ -6,6 +6,7 @@ import { authAPI } from '../../api'
 import { useAuth } from '../../context/AuthContext'
 import { toast, Avatar } from '../../components/ui'
 import AccountShortcutCard from '../../components/ui/AccountShortcutCard'
+import AccountFooterLinks from '../../components/ui/AccountFooterLinks'
 import { translateLocation } from '../../constants/villesTranslations'
 
 export default function ClientCompte() {
@@ -103,6 +104,7 @@ export default function ClientCompte() {
         </div>
 
         <AccountShortcutCard />
+        <AccountFooterLinks />
       </div>
     </AppLayout>
   )

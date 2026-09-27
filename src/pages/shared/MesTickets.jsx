@@ -17,7 +17,9 @@ const STATUS_VARIANT = {
   dismissed:   'text-[#555]',
 }
 
-export default function MesTickets() {
+// title / tabs (chantier « barre mobile réduite », 2026-09-27) : rendue par la page Aide
+// (pages/shared/Aide.jsx) avec son titre et sa barre d'onglets — logique inchangée.
+export default function MesTickets({ title, tabs = null }) {
   const { t } = useTranslation()
   const { user } = useAuth()
   const location = useLocation()
@@ -75,10 +77,11 @@ export default function MesTickets() {
   return (
     <AppLayout>
       <Topbar
-        title={t('mesTickets.title')}
+        title={title || t('mesTickets.title')}
         actions={<button onClick={() => setShowNewTicket(true)} className="btn btn-primary btn-sm">{t('mesTickets.newTicket')}</button>}
       />
       <div className="p-6">
+        {tabs}
         {loading ? (
           <div className="flex justify-center py-20"><Spinner size="lg" /></div>
         ) : tickets.length === 0 ? (

@@ -185,8 +185,8 @@ export function notifDeepLink(notif, role) {
     case 'admin_urgent_ticket':
     case 'admin_ticket_message':               return '/admin/tickets'
     case 'admin_block_appeals':                return '/admin/block-appeals'
-    case 'ticket_view':                        return role === 'oeil' ? '/oeil/tickets' : '/client/tickets'
-    case 'mes_signalements':                   return role === 'oeil' ? '/oeil/mes-signalements' : '/client/mes-signalements'
+    case 'ticket_view':                        return role === 'oeil' ? '/oeil/aide?tab=tickets' : '/client/aide?tab=tickets'
+    case 'mes_signalements':                   return role === 'oeil' ? '/oeil/aide?tab=signalements' : '/client/aide?tab=signalements'
     case 'reliability_page':                   return role === 'oeil' ? '/oeil/compte' : missionsRoute
     case 'gains_page':                         return '/oeil/gains'
     case 'verification_page':                  return '/oeil/verification-identite'

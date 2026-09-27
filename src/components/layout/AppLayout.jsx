@@ -1,4 +1,4 @@
-import { NavLink, useNavigate } from 'react-router-dom'
+import { NavLink, useNavigate, useLocation } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 
 import { useAuth } from '../../context/AuthContext'
@@ -14,26 +14,31 @@ import ResumeH30Banner from '../missions/ResumeH30Banner'
 import { useState, useEffect, useRef } from 'react'
 import { authAPI, missionsAPI, adminAPI } from '../../api'
 import HoverTooltip from '../ui/HoverTooltip'
+import { useLogout } from '../../hooks/useLogout'
 
+// Client / Œil (chantier « barre mobile réduite », 2026-09-27) : la barre du bas mobile affiche
+// EXACTEMENT 5 entrées — Accueil · Missions · Messages · Paiements (client) / Gains (Œil) · Compte.
+//   short        : libellé court de la barre du bas (le libellé long reste celui de la barre latérale)
+//   desktopOnly  : entrée de la barre latérale seulement (Aide = tickets + signalements, joignable
+//                  sur mobile depuis la page Compte)
+//   alsoActiveOn : chemins où l'entrée est aussi mise en évidence (Aide est atteinte depuis Compte)
 const MENUS = {
   client: [
-      { to: '/client',           icon: '⊞',  label: 'menu.dashboard'   },
+      { to: '/client',           icon: '⊞',  label: 'menu.dashboard', short: 'menu.accueil' },
       { to: '/client/missions',  icon: '📋',  label: 'menu.missions'    },
       { to: '/client/messages',  icon: '💬',  label: 'menu.messages'    },
-      { to: '/client/mes-signalements', icon: '🚨', label: 'menu.mesSignalements' },
-      { to: '/client/tickets',   icon: '🎫',  label: 'menu.mesTickets'  },
+      { to: '/client/aide',      icon: '🛟',  label: 'menu.aide', desktopOnly: true },
       { to: '/client/paiements', icon: '💳',  label: 'menu.paiements'   },
-      { to: '/client/compte',    icon: '👤',  label: 'menu.compte'      },
+      { to: '/client/compte',    icon: '👤',  label: 'menu.compte', alsoActiveOn: ['/client/aide'] },
     ],
 
   oeil: [
-      { to: '/oeil',                      icon: '⊞',  label: 'menu.dashboard'        },
+      { to: '/oeil',                      icon: '⊞',  label: 'menu.dashboard', short: 'menu.accueil' },
       { to: '/oeil/missions',             icon: '🎯',  label: 'menu.missions'         },
       { to: '/oeil/messages',             icon: '💬',  label: 'menu.messages'         },
-      { to: '/oeil/mes-signalements',     icon: '🚨',  label: 'menu.mesSignalements' },
-      { to: '/oeil/tickets',              icon: '🎫',  label: 'menu.mesTickets'      },
-      { to: '/oeil/gains',                icon: '💰',  label: 'menu.mesGains'        },
-      { to: '/oeil/compte',               icon: '👤',  label: 'menu.profil'           },
+      { to: '/oeil/aide',                 icon: '🛟',  label: 'menu.aide', desktopOnly: true },
+      { to: '/oeil/gains',                icon: '💰',  label: 'menu.mesGains', short: 'menu.gains' },
+      { to: '/oeil/compte',               icon: '👤',  label: 'menu.profil', short: 'menu.compte', alsoActiveOn: ['/oeil/aide'] },
     ],
 
   admin: [
@@ -264,10 +269,11 @@ function AdminMenuHelp({ help }) {
 }
 
 export default function AppLayout({ children }) {
-  const { user, logout, hasPermission, isSuperAdmin, updateUser } = useAuth()
+  const { user, hasPermission, isSuperAdmin, updateUser } = useAuth()
   const { t, i18n } = useTranslation()
   const navigate               = useNavigate()
   const location = window.location.pathname
+  const { pathname } = useLocation()
 
   const toggleLang = () => i18n.changeLanguage(i18n.language === 'ar' ? 'fr' : 'ar')
 
@@ -417,7 +423,11 @@ useEffect(() => {
     )
   }
 
-  const handleLogout = () => { logout(); navigate('/login') }
+  const handleLogout = useLogout()
+  // Barre du bas : client/Œil → 5 entrées (sans les entrées desktopOnly), déconnexion dans Compte ;
+  // admin → inchangé (toutes ses entrées, barre défilante, déconnexion épinglée).
+  const mobileItems = role === 'admin' ? items : items.filter((item) => !item.desktopOnly)
+  const mobileLabel = (item) => (role === 'admin' ? item.label : t(item.short || item.label))
 
   return (
     <div className="flex min-h-screen">
@@ -531,12 +541,12 @@ useEffect(() => {
       {/* BOTTOM NAV — mobile uniquement */}
       <nav className="mobile-nav">
 
-          {items.map((item) => (
+          {mobileItems.map((item) => (
             <NavLink
               key={item.to}
               to={item.to}
               end={item.to === '/client' || item.to === '/oeil' || item.to === '/admin'}
-              className={({ isActive }) => isActive ? 'active' : ''}
+              className={({ isActive }) => (isActive || item.alsoActiveOn?.includes(pathname)) ? 'active' : ''}
             >
               <span className="icon" style={{ position: 'relative', display: 'inline-block' }}>
                 {item.icon}
@@ -551,18 +561,21 @@ useEffect(() => {
                   </span>
                 )}
               </span>
-              <span>{itemLabel(item)}</span>
+              <span>{mobileLabel(item)}</span>
             </NavLink>
           ))}
-        {/* Épinglée au bord de fin (droite en FR, gauche en AR) : reste visible et cliquable même
-            quand les entrées dépassent la largeur de l'écran (barre défilante, voir index.css). */}
-        <button
-          onClick={handleLogout}
-          style={{ flex:1, display:'flex', flexDirection:'column', alignItems:'center', gap:2, padding:'6px 4px', color:'#777', fontSize:10, fontWeight:500, background:'#181818', border:'none', cursor:'pointer', position:'sticky', insetInlineEnd:0 }}
-        >
-          <span style={{ fontSize:20 }}>↩</span>
-          <span>{t('appLayout.logout')}</span>
-        </button>
+        {/* Admin uniquement (client/Œil : déconnexion en bas de la page Compte). Épinglée au bord
+            de fin (droite en FR, gauche en AR) : reste visible et cliquable même quand les entrées
+            dépassent la largeur de l'écran (barre défilante, voir index.css). */}
+        {role === 'admin' && (
+          <button
+            onClick={handleLogout}
+            style={{ flex:1, display:'flex', flexDirection:'column', alignItems:'center', gap:2, padding:'6px 4px', color:'#777', fontSize:10, fontWeight:500, background:'#181818', border:'none', cursor:'pointer', position:'sticky', insetInlineEnd:0 }}
+          >
+            <span style={{ fontSize:20 }}>↩</span>
+            <span>{t('appLayout.logout')}</span>
+          </button>
+        )}
       </nav>
 
       <NotificationBanner />

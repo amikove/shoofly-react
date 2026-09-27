@@ -138,7 +138,7 @@ const handleClick = (n) => {
       break
     case 'mes_signalements':
       setShowNotifs(false)
-      navigate(user?.role === 'oeil' ? '/oeil/mes-signalements' : '/client/mes-signalements')
+      navigate(user?.role === 'oeil' ? '/oeil/aide?tab=signalements' : '/client/aide?tab=signalements')
       break
     case 'reliability_page':
       if (user?.role === 'oeil') {
@@ -156,7 +156,7 @@ const handleClick = (n) => {
       break
     case 'ticket_view':
       setShowNotifs(false)
-      navigate(user?.role === 'oeil' ? '/oeil/tickets' : '/client/tickets', { state: { openTicketId: n.params?.ticketId } })
+      navigate(user?.role === 'oeil' ? '/oeil/aide?tab=tickets' : '/client/aide?tab=tickets', { state: { openTicketId: n.params?.ticketId } })
       break
     case 'admin_urgent_ticket':
     case 'admin_ticket_message':

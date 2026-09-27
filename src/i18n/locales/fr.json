@@ -79,7 +79,10 @@
     "lesOeils": "Les Œils",
     "compte": "Compte",
     "mesGains": "Mes gains",
-    "profil": "Profil"
+    "profil": "Profil",
+    "accueil": "Accueil",
+    "gains": "Gains",
+    "aide": "Aide"
   },
   "landing": {
     "faq": {
@@ -3250,6 +3253,16 @@
     "savedToast": "Planchers tarifaires enregistrés",
     "saveError": "Erreur lors de l'enregistrement des planchers",
     "loadError": "Erreur de chargement des planchers tarifaires"
+  },
+  "aide": {
+    "title": "Aide",
+    "tabs": {
+      "tickets": "Mes tickets",
+      "signalements": "Mes signalements"
+    }
+  },
+  "compteLinks": {
+    "aide": "Aide et réclamations"
   },
   "adminNotifStats": {
     "tab": "🔔 Notifications",

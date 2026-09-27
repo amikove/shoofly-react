@@ -13,7 +13,8 @@ const STATUS_LABEL_KEYS = {
   dismissed:   { key: 'dismissed', variant: 'text-[#555]' },
 }
 
-export default function MesSignalements() {
+// title / tabs : voir MesTickets.jsx (page Aide, chantier « barre mobile réduite »).
+export default function MesSignalements({ title, tabs = null }) {
   const { t } = useTranslation()
   const [reports, setReports] = useState([])
   const [loading, setLoading] = useState(true)
@@ -27,8 +28,9 @@ export default function MesSignalements() {
 
   return (
     <AppLayout>
-      <Topbar title={t('mesSignalements.title')} />
+      <Topbar title={title || t('mesSignalements.title')} />
       <div className="p-6">
+        {tabs}
         {loading ? (
           <div className="flex justify-center py-20"><Spinner size="lg" /></div>
         ) : reports.length === 0 ? (

@@ -33,8 +33,7 @@ const ClientCompte     = lazy(() => import('./pages/client/Compte'))
 const AirbnbReportView = lazy(() => import('./pages/client/AirbnbReportView'))
 const AuditReportView = lazy(() => import('./pages/client/AuditReportView'))
 const ClientMessagerie = lazy(() => import('./pages/shared/Messagerie'))
-const ClientMesSignalements = lazy(() => import('./pages/shared/MesSignalements'))
-const ClientMesTickets = lazy(() => import('./pages/shared/MesTickets'))
+const ClientAide = lazy(() => import('./pages/shared/Aide'))
 const ClientPaiements = lazy(() => import('./pages/client/Paiements'))
 const PaymentReturn = lazy(() => import('./pages/client/PaymentReturn'))
 
@@ -45,8 +44,7 @@ const OeilCompte    = lazy(() => import('./pages/oeil/Compte'))
 const AirbnbReport  = lazy(() => import('./pages/oeil/AirbnbReport'))
 const AuditReport = lazy(() => import('./pages/oeil/AuditReport'))
 const OeilMessagerie = lazy(() => import('./pages/shared/Messagerie'))
-const OeilMesSignalements = lazy(() => import('./pages/shared/MesSignalements'))
-const OeilMesTickets = lazy(() => import('./pages/shared/MesTickets'))
+const OeilAide = lazy(() => import('./pages/shared/Aide'))
 const OeilGains = lazy(() => import('./pages/oeil/Gains'))
 const VerificationIdentite = lazy(() => import('./pages/oeil/VerificationIdentite'))
 const CompteSuspendu = lazy(() => import('./pages/oeil/CompteSuspendu'))
@@ -103,6 +101,16 @@ function RequireAuth({ children, allowedRoles, requiredPermission }) {
     return <Navigate to={routes[user.role] || '/login'} replace />
   }
   return children
+}
+
+// Anciennes routes « Mes tickets » / « Mes signalements » (chantier « barre mobile réduite »,
+// 2026-09-27) → onglet de la page Aide. Conserve la query (ex. ?openTicketId= des push, construite
+// par le backend services/push.js deepLinkFor) et le state de navigation (openTicketId de la cloche).
+function RedirectToAide({ role, tab }) {
+  const location = useLocation()
+  const search = new URLSearchParams(location.search)
+  search.set('tab', tab)
+  return <Navigate to={{ pathname: `/${role}/aide`, search: `?${search}` }} state={location.state} replace />
 }
 
 function RouteTracker() {
@@ -165,8 +173,9 @@ export default function App() {
       <Route path="/client/missions" element={<RequireAuth allowedRoles={['client']}><ClientMissions /></RequireAuth>} />
         <Route path="/client/compte"    element={<RequireAuth allowedRoles={['client']}><ClientCompte /></RequireAuth>} />
       <Route path="/client/messages"  element={<RequireAuth allowedRoles={['client']}><ClientMessagerie /></RequireAuth>} />
-      <Route path="/client/mes-signalements" element={<RequireAuth allowedRoles={['client']}><ClientMesSignalements /></RequireAuth>} />
-      <Route path="/client/tickets" element={<RequireAuth allowedRoles={['client']}><ClientMesTickets /></RequireAuth>} />
+      <Route path="/client/aide" element={<RequireAuth allowedRoles={['client']}><ClientAide /></RequireAuth>} />
+      <Route path="/client/mes-signalements" element={<RequireAuth allowedRoles={['client']}><RedirectToAide role="client" tab="signalements" /></RequireAuth>} />
+      <Route path="/client/tickets" element={<RequireAuth allowedRoles={['client']}><RedirectToAide role="client" tab="tickets" /></RequireAuth>} />
       <Route path="/client/missions/:missionId/rapport" element={<RequireAuth allowedRoles={['client']}><AirbnbReportView /></RequireAuth>} />
       <Route path="/client/missions/:missionId/audit" element={<RequireAuth allowedRoles={['client']}><AuditReportView /></RequireAuth>} />
       <Route path="/client/paiements" element={<RequireAuth allowedRoles={['client']}><ClientPaiements /></RequireAuth>} />
@@ -179,8 +188,9 @@ export default function App() {
       <Route path="/oeil/missions"  element={<RequireAuth allowedRoles={['oeil']}><OeilMissions /></RequireAuth>} />
      <Route path="/oeil/compte"    element={<RequireAuth allowedRoles={['oeil']}><OeilCompte /></RequireAuth>} />
       <Route path="/oeil/messages"  element={<RequireAuth allowedRoles={['oeil']}><OeilMessagerie /></RequireAuth>} />
-      <Route path="/oeil/mes-signalements" element={<RequireAuth allowedRoles={['oeil']}><OeilMesSignalements /></RequireAuth>} />
-      <Route path="/oeil/tickets" element={<RequireAuth allowedRoles={['oeil']}><OeilMesTickets /></RequireAuth>} />
+      <Route path="/oeil/aide" element={<RequireAuth allowedRoles={['oeil']}><OeilAide /></RequireAuth>} />
+      <Route path="/oeil/mes-signalements" element={<RequireAuth allowedRoles={['oeil']}><RedirectToAide role="oeil" tab="signalements" /></RequireAuth>} />
+      <Route path="/oeil/tickets" element={<RequireAuth allowedRoles={['oeil']}><RedirectToAide role="oeil" tab="tickets" /></RequireAuth>} />
       <Route path="/oeil/gains" element={<RequireAuth allowedRoles={['oeil']}><OeilGains /></RequireAuth>} />
       <Route path="/oeil/missions/:missionId/audit" element={<RequireAuth allowedRoles={['oeil']}><AuditReport /></RequireAuth>} />
       <Route path="/oeil/missions/:missionId/rapport" element={<RequireAuth allowedRoles={['oeil']}><AirbnbReport /></RequireAuth>} />
