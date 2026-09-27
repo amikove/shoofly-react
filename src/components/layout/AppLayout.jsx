@@ -18,13 +18,13 @@ import { useLogout } from '../../hooks/useLogout'
 
 // Client / Œil (chantier « barre mobile réduite », 2026-09-27) : la barre du bas mobile affiche
 // EXACTEMENT 5 entrées — Accueil · Missions · Messages · Paiements (client) / Gains (Œil) · Compte.
-//   short        : libellé court de la barre du bas (le libellé long reste celui de la barre latérale)
+// Mêmes libellés dans la barre latérale desktop (harmonisation BOSS du 2026-09-27).
 //   desktopOnly  : entrée de la barre latérale seulement (Aide = tickets + signalements, joignable
 //                  sur mobile depuis la page Compte)
 //   alsoActiveOn : chemins où l'entrée est aussi mise en évidence (Aide est atteinte depuis Compte)
 const MENUS = {
   client: [
-      { to: '/client',           icon: '⊞',  label: 'menu.dashboard', short: 'menu.accueil' },
+      { to: '/client',           icon: '⊞',  label: 'menu.accueil'     },
       { to: '/client/missions',  icon: '📋',  label: 'menu.missions'    },
       { to: '/client/messages',  icon: '💬',  label: 'menu.messages'    },
       { to: '/client/aide',      icon: '🛟',  label: 'menu.aide', desktopOnly: true },
@@ -33,12 +33,12 @@ const MENUS = {
     ],
 
   oeil: [
-      { to: '/oeil',                      icon: '⊞',  label: 'menu.dashboard', short: 'menu.accueil' },
+      { to: '/oeil',                      icon: '⊞',  label: 'menu.accueil'          },
       { to: '/oeil/missions',             icon: '🎯',  label: 'menu.missions'         },
       { to: '/oeil/messages',             icon: '💬',  label: 'menu.messages'         },
       { to: '/oeil/aide',                 icon: '🛟',  label: 'menu.aide', desktopOnly: true },
-      { to: '/oeil/gains',                icon: '💰',  label: 'menu.mesGains', short: 'menu.gains' },
-      { to: '/oeil/compte',               icon: '👤',  label: 'menu.profil', short: 'menu.compte', alsoActiveOn: ['/oeil/aide'] },
+      { to: '/oeil/gains',                icon: '💰',  label: 'menu.gains'            },
+      { to: '/oeil/compte',               icon: '👤',  label: 'menu.compte', alsoActiveOn: ['/oeil/aide'] },
     ],
 
   admin: [
@@ -427,7 +427,6 @@ useEffect(() => {
   // Barre du bas : client/Œil → 5 entrées (sans les entrées desktopOnly), déconnexion dans Compte ;
   // admin → inchangé (toutes ses entrées, barre défilante, déconnexion épinglée).
   const mobileItems = role === 'admin' ? items : items.filter((item) => !item.desktopOnly)
-  const mobileLabel = (item) => (role === 'admin' ? item.label : t(item.short || item.label))
 
   return (
     <div className="flex min-h-screen">
@@ -561,7 +560,7 @@ useEffect(() => {
                   </span>
                 )}
               </span>
-              <span>{mobileLabel(item)}</span>
+              <span>{itemLabel(item)}</span>
             </NavLink>
           ))}
         {/* Admin uniquement (client/Œil : déconnexion en bas de la page Compte). Épinglée au bord

@@ -70,16 +70,11 @@
     "Dim": "الأحد"
   },
   "menu": {
-    "dashboard": "لوحة التحكم",
     "missions": "المهام",
     "messages": "الرسائل",
-    "mesSignalements": "تبليغاتي",
-    "mesTickets": "تذاكري",
     "paiements": "المدفوعات",
     "lesOeils": "العيون",
     "compte": "الحساب",
-    "mesGains": "أرباحي",
-    "profil": "الملف الشخصي",
     "accueil": "الرئيسية",
     "gains": "الأرباح",
     "aide": "المساعدة"
@@ -465,7 +460,7 @@
     }
   },
   "clientDashboard": {
-    "title": "لوحة التحكم",
+    "title": "الرئيسية",
     "newMissionButton": "+ مهمة جديدة",
     "newMissionButtonShort": "+",
     "errorLoading": "خطأ في التحميل",
@@ -1054,7 +1049,7 @@
     "submittedToast": "تم إرسال التقرير بنجاح 📄"
   },
   "oeilDashboard": {
-    "title": "لوحة التحكم",
+    "title": "الرئيسية",
     "genericError": "خطأ",
     "loadingError": "خطأ في التحميل",
     "interestExpressedToast": "تم إبداء الاهتمام 👁️ سيتواصل معك العميل.",
@@ -1266,7 +1261,7 @@
     "uploadError": "فشل إرسال الصورة — أعد المحاولة"
   },
   "oeilCompte": {
-    "title": "ملفي الشخصي",
+    "title": "حسابي",
     "avatarUpdatedToast": "تم تحديث صورة الملف الشخصي ✓",
     "uploadErrorToast": "خطأ أثناء الإرسال",
     "profileUpdatedToast": "تم تحديث الملف الشخصي ✓",
@@ -1303,7 +1298,7 @@
     }
   },
   "oeilGains": {
-    "title": "💰 أرباحي",
+    "title": "💰 الأرباح",
     "currentBalanceLabel": "الرصيد الحالي",
     "totalEarningsLabel": "إجمالي الأرباح",
     "summaryUnavailable": "غير متاح",

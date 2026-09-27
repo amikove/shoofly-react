@@ -70,16 +70,11 @@
     "Dim": "Dim"
   },
   "menu": {
-    "dashboard": "Dashboard",
     "missions": "Missions",
     "messages": "Messages",
-    "mesSignalements": "Mes signalements",
-    "mesTickets": "Mes tickets",
     "paiements": "Paiements",
     "lesOeils": "Les Œils",
     "compte": "Compte",
-    "mesGains": "Mes gains",
-    "profil": "Profil",
     "accueil": "Accueil",
     "gains": "Gains",
     "aide": "Aide"
@@ -463,7 +458,7 @@
     }
   },
   "clientDashboard": {
-    "title": "Tableau de bord",
+    "title": "Accueil",
     "newMissionButton": "+ Nouvelle mission",
     "newMissionButtonShort": "+",
     "errorLoading": "Erreur de chargement",
@@ -1053,7 +1048,7 @@
     "submittedToast": "Rapport soumis avec succès 📄"
   },
   "oeilDashboard": {
-    "title": "Tableau de bord",
+    "title": "Accueil",
     "genericError": "Erreur",
     "loadingError": "Erreur de chargement",
     "interestExpressedToast": "Intérêt exprimé 👁️ Le client va vous contacter.",
@@ -1265,7 +1260,7 @@
     "uploadError": "Échec de l'envoi de la photo — réessayez"
   },
   "oeilCompte": {
-    "title": "Mon profil",
+    "title": "Mon compte",
     "avatarUpdatedToast": "Photo de profil mise à jour ✓",
     "uploadErrorToast": "Erreur lors de l'envoi",
     "profileUpdatedToast": "Profil mis à jour ✓",
@@ -1302,7 +1297,7 @@
     }
   },
   "oeilGains": {
-    "title": "💰 Mes gains",
+    "title": "💰 Gains",
     "currentBalanceLabel": "Solde actuel",
     "totalEarningsLabel": "Gains totaux",
     "summaryUnavailable": "Indisponible",
