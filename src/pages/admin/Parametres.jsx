@@ -63,6 +63,11 @@ const ADVANCED_DEFAULTS = {
   candidature_relance_interval_minutes: 120,
   candidature_relance_imminent_threshold_minutes: 120,
   unread_whatsapp_email_fallback_minutes: 5,
+  // Chantier 2 lot 1 bis — WhatsApp en relance seulement (backend jobs/whatsappRelances.js).
+  presence_whatsapp_relance_j1_minutes: 60,
+  presence_whatsapp_relance_h2_minutes: 20,
+  presence_whatsapp_relance_h45_minutes: 10,
+  candidature_whatsapp_relance_minutes: 30,
   whatsapp_retry_max_attempts: 3,
   payment_attempt_abandoned_minutes: 30,
   no_show_h30_penalty_points: -20,
@@ -186,7 +191,8 @@ const ADVANCED_GROUPS = [
   // 📱 Communication
   { key: 'newMissionWhatsappDelay', category: 'communication', fields: ['new_mission_whatsapp_delay_hours'] },
   { key: 'urgentWhatsappWaves', category: 'communication', fields: ['urgent_mission_whatsapp_batch_size', 'urgent_mission_whatsapp_batch_delay_minutes'] },
-  { key: 'candidatureWhatsapp', category: 'communication', fields: ['candidature_whatsapp_seuil_count', 'candidature_whatsapp_seuil_minutes'] },
+  { key: 'candidatureWhatsapp', category: 'communication', fields: ['candidature_whatsapp_seuil_count', 'candidature_whatsapp_seuil_minutes', 'candidature_whatsapp_relance_minutes'] },
+  { key: 'presenceWhatsappRelance', category: 'communication', fields: ['presence_whatsapp_relance_j1_minutes', 'presence_whatsapp_relance_h2_minutes', 'presence_whatsapp_relance_h45_minutes'] },
   { key: 'candidatureRelance',  category: 'communication', fields: ['candidature_relance_first_after_minutes', 'candidature_relance_interval_minutes', 'candidature_relance_imminent_threshold_minutes'] },
   { key: 'emailFallback',       category: 'communication', fields: ['unread_whatsapp_email_fallback_minutes'] },
   { key: 'whatsappRetry',       category: 'communication', fields: ['whatsapp_retry_max_attempts'] },
