@@ -24,6 +24,9 @@ import { CASABLANCA_TZ } from '../../utils/casablancaTime'
 import { isNetworkError } from '../../utils/offlineQueue'
 import { offlineQueue } from '../../utils/offlineQueueInstance'
 import { useOfflineQueueProcessed } from '../../hooks/useOfflineQueue'
+import CashPlusRechargeModal from '../../components/payments/CashPlusRechargeModal'
+import { OeilWalletBanners, ApplyBlockInfo } from '../../components/missions/OeilApplyGate'
+import { isApplyBlocked, blockedApplyLabel } from '../../utils/oeilApplyGate'
 
 const TABS = ['priority', 'available', 'active', 'done']
 const TYPE_ICONS = { immobilier:'🏠', file_attente:'⏳', audit:'🔎', personnalisee:'🎯' }
@@ -70,6 +73,10 @@ export default function OeilMissions() {
   const [historyMission, setHistoryMission] = useState(null)
   const [assistanceMission, setAssistanceMission] = useState(null)
   const [bonusCampaign, setBonusCampaign] = useState({ active: false, percent: 0 })
+  // Chantier « première mission offerte + solde insuffisant » (2026-09-28) : oeil_wallet renvoyé
+  // par GET /missions?mode=available (solde, mission offerte, recharge active) — voir OeilApplyGate.
+  const [wallet, setWallet] = useState(null)
+  const [rechargeOpen, setRechargeOpen] = useState(false)
 
   // ── Cascade de confirmation par lot (candidate-confirm / candidate-decline) ──
   const [candidateMission, setCandidateMission] = useState(null)
@@ -191,6 +198,7 @@ const load = useCallback((tab) => {
       missionsAPI.list({ mode: 'mine', limit: 200 }),
       missionsAPI.list({ mode: 'mine', status: 'completed', limit: 200 }),
   ]).then(([prioRes, availRes, activeRes, doneRes]) => {
+    if (availRes.data.oeil_wallet) setWallet(availRes.data.oeil_wallet)
     const prio = (prioRes.data.missions || []).filter(m => m.is_priority)
     setPriorityMissions(prio)
     setCounts({
@@ -215,6 +223,7 @@ const load = useCallback((tab) => {
   return missionsAPI.list(params)
       .then(({ data }) => {
         if (tab === 'available') setTotalPages(data.pages || 1)
+        if (data.oeil_wallet) setWallet(data.oeil_wallet)
         let ms = data.missions || []
         if (tab === 'priority') {
         ms = ms.filter(m => m.is_priority)
@@ -346,6 +355,11 @@ const load = useCallback((tab) => {
       // Pas de toast générique ici : reconcileMission affiche le verdict définitif, plus
       // rassurant qu'un texte d'erreur brut sur un cas qui n'est pas forcément un échec.
       reconcileMission(id)
+    } else if (['INSUFFICIENT_BALANCE_TO_APPLY', 'FREE_MISSION_ALREADY_USED'].includes(err.response?.data?.code)) {
+      // Refus « solde » (chantier 2026-09-28) : l'écran était périmé (solde ou mission offerte
+      // changés ailleurs) — message du serveur + rechargement pour griser le bouton.
+      toast(err.response.data.error, 'error')
+      load(tab)
     } else {
       toast(err.response?.data?.error || t('oeilMissions.toasts.genericError'), 'error')
     }
@@ -361,9 +375,12 @@ const load = useCallback((tab) => {
     if (submittingInterestRef.current.has(id)) return
     setInterestSubmitting(id, true)
     try {
-      await missionsAPI.interest(id)
+      const { data } = await missionsAPI.interest(id)
       setMissions((prev) => prev.map((m) => m.id === id ? { ...m, interested: true } : m))
       toast(t('oeilMissions.toasts.interestExpressed'), 'success')
+      // Candidature offerte : les autres missions qu'il ne peut pas payer passent en « Mission
+      // offerte déjà utilisée » — l'état vient du serveur, on recharge l'onglet.
+      if (data?.free_offer) load(tab)
     } catch (err) {
       handleInterestError(err, id)
     } finally {
@@ -578,6 +595,7 @@ try {
     <EmptyState icon="🟢" title={t('oeilMissions.empty.priority.title')} description={t('oeilMissions.empty.priority.desc')} />
   ) : (
     <div className="space-y-3">
+      <OeilWalletBanners wallet={wallet} missions={priorityMissions} onRecharge={() => setRechargeOpen(true)} />
       <div className="bg-red-500/5 border border-red-500/20 rounded-xl p-3 mb-4">
         <p className="text-xs text-red-400 font-semibold">{t('oeilMissions.priorityBanner.text')}</p>
         <p className="text-xs text-[#AAA] mt-0.5">{t('oeilMissions.priorityBanner.subtext')}</p>
@@ -612,16 +630,22 @@ try {
           )}
           <button
             onClick={() => user?.is_verified ? interestPriority(m.id) : navigate('/oeil/verification-identite')}
-            disabled={submittingInterestIds.has(m.id)}
+            disabled={submittingInterestIds.has(m.id) || isApplyBlocked(m)}
             className="btn btn-sm w-full justify-center bg-red-500 text-white hover:bg-red-600 disabled:opacity-50"
           >
-            {submittingInterestIds.has(m.id) ? t('oeilMissions.priorityBanner.interestButtonSending') : t('oeilMissions.priorityBanner.interestButton')}
+            {isApplyBlocked(m)
+              ? blockedApplyLabel(m, t)
+              : submittingInterestIds.has(m.id) ? t('oeilMissions.priorityBanner.interestButtonSending') : t('oeilMissions.priorityBanner.interestButton')}
           </button>
+          <ApplyBlockInfo mission={m} wallet={wallet} onRecharge={() => setRechargeOpen(true)} className="mt-2" />
         </div>
       ))}
     </div>
   )
 )}
+    {tab === 'available' && !loading && (
+      <OeilWalletBanners wallet={wallet} missions={missions} onRecharge={() => setRechargeOpen(true)} />
+    )}
     {tab === 'available' && (
       <div className="mb-4">
         <select
@@ -751,14 +775,16 @@ try {
                       <>
                         <button
                           onClick={() => interest(m.id)}
-                          disabled={m.interested || m.has_interested || submittingInterestIds.has(m.id)}
+                          disabled={m.interested || m.has_interested || submittingInterestIds.has(m.id) || isApplyBlocked(m)}
                           className="btn btn-sm flex-1 justify-center disabled:opacity-50 bg-green-500 text-white hover:bg-green-600"
                         >
                           {(m.interested || m.has_interested)
                             ? t('oeilMissions.card.requestSent')
-                            : submittingInterestIds.has(m.id)
-                              ? t('oeilMissions.card.interestedSending')
-                              : t('oeilMissions.card.interested')}
+                            : isApplyBlocked(m)
+                              ? blockedApplyLabel(m, t)
+                              : submittingInterestIds.has(m.id)
+                                ? t('oeilMissions.card.interestedSending')
+                                : t('oeilMissions.card.interested')}
                         </button>
                         <button
                         onClick={() => refuse(m.id)}
@@ -821,6 +847,9 @@ try {
                       : <button onClick={() => setRatingClientMission(m)} className="btn btn-ghost btn-sm">{t('oeilMissions.card.rateClientButton')}</button>
                   )}
                 </div>
+                {tab === 'available' && (
+                  <ApplyBlockInfo mission={m} wallet={wallet} onRecharge={() => setRechargeOpen(true)} className="mt-2" />
+                )}
               </div>
             ))}
           </div>
@@ -829,6 +858,10 @@ try {
       </div>
       {historyMission && (
         <MissionHistoryModal mission={historyMission} onClose={() => setHistoryMission(null)} />
+      )}
+      {/* Même parcours que la page Gains (CashPlusRechargeModal), seulement si la recharge est active */}
+      {rechargeOpen && wallet?.cashplus_enabled && (
+        <CashPlusRechargeModal onClose={() => { setRechargeOpen(false); load(tab) }} />
       )}
 
       {assistanceMission && (

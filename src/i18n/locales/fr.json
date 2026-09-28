@@ -1107,6 +1107,16 @@
       "chat": "💬 Chat"
     }
   },
+  "oeilWallet": {
+    "giftBanner": "🎁 Votre première mission est offerte : aucune commission ne sera prélevée.",
+    "rechargeBanner": "Rechargez votre wallet pour pouvoir postuler.",
+    "rechargeLink": "Recharger mon wallet",
+    "insufficientButton": "Solde insuffisant pour postuler",
+    "insufficientDetail": "Commission de cette mission : {{commission}} MAD · Votre solde : {{balance}} MAD",
+    "freeUsedButton": "Mission offerte déjà utilisée",
+    "freeUsedDetail": "Vous avez déjà postulé avec votre mission offerte. Rechargez votre wallet pour postuler à d'autres missions.",
+    "freeOfferBadge": "🎁 Votre mission offerte : aucune commission ne sera prélevée sur celle-ci."
+  },
   "oeilMissions": {
     "title": "Missions",
     "tabs": {
@@ -2296,6 +2306,8 @@
     "candidatureAdminAlertBody": "\"{{missionTitle}}\" est prévue bientôt et le client n'a toujours pas choisi d'Œil parmi {{count}} candidature(s) reçues.",
     "commissionDebitedOeilTitle": "💸 Commission débitée",
     "commissionDebitedOeilBody": "{{amount}} MAD de commission débités de votre wallet (mission cash).",
+    "firstMissionFreeOeilTitle": "🎁 Première mission offerte",
+    "firstMissionFreeOeilBody": "\"{{missionTitle}}\" est validée. C'était votre mission offerte : aucune commission n'a été prélevée.",
     "cashplusRechargeCompletedTitle": "💰 Recharge effectuée",
     "cashplusRechargeCompletedBody": "Votre wallet a été crédité de {{amount}} MAD suite à votre recharge CashPlus.",
     "claimResolvedClientWinCashTitle": "✅ Réclamation résolue",
@@ -3032,6 +3044,10 @@
         "title": "Photos de suivi de mission active",
         "note": "Détection d'un abandon sans traçage GPS : pendant qu'une mission est en cours, le système attend une photo de l'Œil assigné à intervalle régulier. Chaque photo reçue relance le compte à rebours ; si l'échéance passe sans photo, le client et les admins reçoivent une alerte « absence de nouvelles ». Aucune pénalité ni changement de statut automatique — l'alerte seule."
       },
+      "firstMissionFree": {
+        "title": "Première mission offerte",
+        "note": "Un Œil qui n'a encore fait aucune mission peut postuler à UNE mission cash sans que son wallet couvre la commission ; s'il est retenu et que la mission est validée, aucune commission n'est prélevée. Une seule candidature offerte à la fois ; la gratuité est rendue si la mission n'a pas lieu sans faute de sa part, et perdue s'il abandonne la mission après avoir été retenu."
+      },
       "refund": {
         "title": "Remboursement à l'annulation",
         "note": "Si un client annule plus de {{refundThresholdH}}h avant l'heure prévue, il est remboursé de {{refundRatePct}} % ; en dessous, aucun remboursement. Ex : sur une mission à 300 MAD annulée à temps, {{refundExampleBack}} MAD lui sont rendus."
@@ -3138,6 +3154,7 @@
       "transfer_before_no_replacement_penalty_points": "Avant démarrage, sans remplaçant — pénalité (points)",
       "transfer_before_replacement_bonus_points": "Avant démarrage, avec remplaçant — bonus (points)",
       "late_cancel_penalty_tier1_enabled": "Palier 1 actif (préavis long)",
+      "first_mission_free_enabled": "Première mission offerte — active",
       "late_cancel_penalty_tier1_threshold_hours": "Seuil palier 1 (h avant la mission)",
       "late_cancel_penalty_tier1_points": "Pénalité palier 1 (points)",
       "late_cancel_penalty_tier2_threshold_hours": "Seuil palier 2 (h avant la mission)",
@@ -3216,6 +3233,7 @@
       "transfer_before_no_replacement_penalty_points": "Si aucun remplaçant n'est trouvé après un transfert avant le démarrage de la mission, l'Œil perd 10 points de fiabilité (s'ajoute au bonus déjà accordé à l'ouverture du transfert, voir le champ suivant — solde net -5 par défaut).",
       "transfer_before_replacement_bonus_points": "Accordé dès l'ouverture d'un transfert avant démarrage, avant même de savoir si un remplaçant sera trouvé. ⚠️ Actuellement inatteignable en production : la seule route encore active qui ouvre ce type de transfert (déclaration d'urgence) passe systématiquement par le chemin \"sans pénalité\".",
       "late_cancel_penalty_tier1_enabled": "Désactivé par défaut : une annulation par l'Œil (ou une déclaration d'urgence requalifiée non légitime par un admin) avec un préavis au moins égal au seuil du palier 1 ne retire alors aucun point. Activé, ce cas retire la « Pénalité palier 1 » ci-dessous. Sans effet sur les paliers 2 et 3, toujours appliqués.",
+      "first_mission_free_enabled": "Activé par défaut. Désactivé, aucune NOUVELLE mission offerte n'est accordée (un Œil au solde insuffisant ne peut plus postuler aux missions cash) ; une candidature ou une mission déjà offerte reste honorée jusqu'à sa validation.",
       "late_cancel_penalty_tier1_threshold_hours": "Au-delà de ce seuil (ou si la mission n'a pas d'heure programmée), c'est le palier 1 qui s'applique — sans retrait de points tant que « Palier 1 actif » reste désactivé.",
       "late_cancel_penalty_tier1_points": "Nombre de points retirés dans le cas du palier 1 (préavis long). N'est retiré que si « Palier 1 actif » est activé ; c'est la pénalité la plus légère du barème.",
       "late_cancel_penalty_tier2_threshold_hours": "En dessous de ce seuil, la pénalité du palier 3 (la plus sévère) s'applique à la place de celle du palier 2.",

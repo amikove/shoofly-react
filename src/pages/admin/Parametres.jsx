@@ -82,6 +82,8 @@ const ADVANCED_DEFAULTS = {
   late_cancel_penalty_tier1_threshold_hours: 24,
   late_cancel_penalty_tier2_threshold_hours: 2,
   late_cancel_penalty_tier1_enabled: false,
+  // Première mission offerte (chantier 2026-09-28) — backend utils/cashCommission.js
+  first_mission_free_enabled: true,
   presence_confirmation_deadline_minutes_h45: 15,
   password_reset_token_expiry_hours: 1,
   // Anti-fraude (backend routes/antiFraud.js) — défauts identiques aux valeurs précédemment
@@ -104,7 +106,7 @@ const ADVANCED_DEFAULTS = {
 // Réglages stockés en base comme fraction (0.20, 0.5) — affichés / saisis en pourcentage.
 const PERCENT_FIELDS = ['refund_partial_rate', 'commission']
 // Réglages stockés en 'true' / 'false' — affichés comme interrupteur.
-const BOOLEAN_FIELDS = ['five_star_bonus_active', 'late_cancel_penalty_tier1_enabled']
+const BOOLEAN_FIELDS = ['five_star_bonus_active', 'late_cancel_penalty_tier1_enabled', 'first_mission_free_enabled']
 
 // storage (base) → valeur affichée dans le champ
 const toDisplay = (key, stored) => {
@@ -163,6 +165,7 @@ const ADVANCED_GROUPS = [
   // 💰 Tarification
   { key: 'platformPricing', category: 'tarification', basic: true, fields: ['commission', 'min_price', 'five_star_bonus_active', 'five_star_bonus_percent'] },
   { key: 'refund',          category: 'tarification', fields: ['refund_partial_threshold_hours', 'refund_partial_rate'] },
+  { key: 'firstMissionFree', category: 'tarification', fields: ['first_mission_free_enabled'] },
   // ⏱️ Délais mission
   { key: 'candidateCascade',    category: 'delaisMission', fields: ['candidate_batch_size', 'candidate_confirmation_minutes', 'candidate_tiebreak_window_minutes', 'candidate_batch_max_waves'] },
   { key: 'missionEdit',         category: 'delaisMission', fields: ['mission_edit_approval_minutes', 'mission_edit_approval_minutes_urgent', 'mission_edit_urgent_threshold_hours'] },

@@ -11,6 +11,9 @@ import AssistanceModal from '../../components/missions/AssistanceModal'
 import { translateLocation } from '../../constants/villesTranslations'
 import { CASABLANCA_TZ } from '../../utils/casablancaTime'
 import MissionLocationPanel from '../../components/map/MissionLocationPanel'
+import CashPlusRechargeModal from '../../components/payments/CashPlusRechargeModal'
+import { OeilWalletBanners, ApplyBlockInfo } from '../../components/missions/OeilApplyGate'
+import { isApplyBlocked, blockedApplyLabel } from '../../utils/oeilApplyGate'
 
 export default function OeilDashboard() {
   const { t, i18n } = useTranslation()
@@ -24,6 +27,9 @@ export default function OeilDashboard() {
   const [assistanceMission, setAssistanceMission] = useState(null)
   const [advancing, setAdvancing] = useState(null)
   const [bonusCampaign, setBonusCampaign] = useState({ active: false, percent: 0 })
+  // Première mission offerte + solde insuffisant (2026-09-28) — voir components/missions/OeilApplyGate
+  const [wallet, setWallet] = useState(null)
+  const [rechargeOpen, setRechargeOpen] = useState(false)
   // Distingue un montant réellement à 0 d'un échec de chargement — même motif que
   // oeil/Gains.jsx (chantier FIN-FE-3) : la carte concernée affiche « Indisponible » au
   // lieu de « 0 MAD » quand la donnée n'a pas pu être récupérée. Deux sources de données
@@ -47,6 +53,7 @@ export default function OeilDashboard() {
     ])
       .then(([pRes, mRes, oRes]) => {
         setPending(pRes.data.missions || [])
+        setWallet(pRes.data.oeil_wallet || null)
         const all = mRes.data.missions || []
         setActive(all.filter(m => ['assigned','en_route','active'].includes(m.status)))
         const done     = all.filter(m => m.status === 'completed')
@@ -69,11 +76,13 @@ export default function OeilDashboard() {
 
   const interest = async (id) => {
   try {
-    await missionsAPI.interest(id)
+    const { data } = await missionsAPI.interest(id)
     setPending(prev => prev.map(m => m.id === id ? { ...m, interested: true } : m))
     toast(t('oeilDashboard.interestExpressedToast'), 'success')
+    if (data?.free_offer) load() // les autres missions passent en « Mission offerte déjà utilisée »
   } catch (err) {
     toast(err.response?.data?.error || t('oeilDashboard.genericError'), 'error')
+    if (['INSUFFICIENT_BALANCE_TO_APPLY', 'FREE_MISSION_ALREADY_USED'].includes(err.response?.data?.code)) load()
   }
 }
 
@@ -254,11 +263,12 @@ const refuse = async (id) => {
                 )}
                 <button
                   onClick={() => user?.is_verified ? interest(m.id) : navigate('/oeil/verification-identite')}
-                  disabled={m.interested || m.has_interested}
+                  disabled={m.interested || m.has_interested || isApplyBlocked(m)}
                   className="btn btn-sm w-full justify-center disabled:opacity-50 bg-red-500 text-white hover:bg-red-600"
                 >
-                  {(m.interested || m.has_interested) ? t('oeilDashboard.priority.requestSent') : t('oeilDashboard.priority.takeButton')}
+                  {(m.interested || m.has_interested) ? t('oeilDashboard.priority.requestSent') : isApplyBlocked(m) ? blockedApplyLabel(m, t) : t('oeilDashboard.priority.takeButton')}
                 </button>
+                <ApplyBlockInfo mission={m} wallet={wallet} onRecharge={() => setRechargeOpen(true)} className="mt-2" />
               </div>
             ))}
           </div>
@@ -277,6 +287,7 @@ const refuse = async (id) => {
               </h2>
             </div>
 
+            <OeilWalletBanners wallet={wallet} missions={pending} onRecharge={() => setRechargeOpen(true)} />
             {pending.length === 0 ? (
               <EmptyState icon="🎯" title={t('oeilDashboard.available.emptyTitle')} description={t('oeilDashboard.available.emptyDesc')} />
             ) : pending.map((m) => (
@@ -307,10 +318,10 @@ const refuse = async (id) => {
                   <div className="flex gap-2">
                   <button
                       onClick={() => user?.is_verified ? interest(m.id) : navigate('/oeil/verification-identite')}
-                      disabled={m.interested || m.has_interested}
+                      disabled={m.interested || m.has_interested || isApplyBlocked(m)}
                       className="btn btn-sm flex-1 justify-center disabled:opacity-50 bg-green-500 text-white hover:bg-green-600"
                     >
-                      {(m.interested || m.has_interested) ? t('oeilDashboard.available.requestSent') : user?.is_verified ? t('oeilDashboard.available.interested') : t('oeilDashboard.available.verificationRequired')}
+                      {(m.interested || m.has_interested) ? t('oeilDashboard.available.requestSent') : isApplyBlocked(m) ? blockedApplyLabel(m, t) : user?.is_verified ? t('oeilDashboard.available.interested') : t('oeilDashboard.available.verificationRequired')}
                     </button>
                     <button
                       onClick={() => refuse(m.id, true)}
@@ -319,6 +330,7 @@ const refuse = async (id) => {
                       {t('oeilDashboard.available.ignore')}
                     </button>
                   </div>
+                  <ApplyBlockInfo mission={m} wallet={wallet} onRecharge={() => setRechargeOpen(true)} className="mt-2" />
 
 
               </div>
@@ -393,6 +405,10 @@ const refuse = async (id) => {
       </div>
 
 {chatMission && <ChatModal mission={chatMission} onClose={() => setChatMission(null)} />}
+      {/* Même parcours que la page Gains, seulement si la recharge CashPlus est active */}
+      {rechargeOpen && wallet?.cashplus_enabled && (
+        <CashPlusRechargeModal onClose={() => { setRechargeOpen(false); load() }} />
+      )}
 
       {assistanceMission && (
         <AssistanceModal
