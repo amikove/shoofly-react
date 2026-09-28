@@ -422,6 +422,9 @@
       "allFieldsRequired": "Tous les champs sont requis.",
       "cityRequiredOeil": "La ville est obligatoire pour un Œil.",
       "quartierRequiredOeil": "Le quartier est obligatoire pour un Œil.",
+      "phoneRequiredOeil": "Le numéro de téléphone (mobile marocain) est obligatoire pour un Œil.",
+      "phoneInvalid": "Numéro de téléphone invalide : saisissez un numéro mobile marocain (06… / 07… ou +2126… / +2127…).",
+      "phoneTaken": "Ce numéro de téléphone est déjà utilisé par un autre compte.",
       "passwordMinLength": "Mot de passe : minimum 6 caractères.",
       "passwordMismatch": "Les mots de passe ne correspondent pas.",
       "accountCreationError": "Erreur lors de la création du compte."

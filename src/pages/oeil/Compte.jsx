@@ -80,7 +80,11 @@ const [dispo, setDispo] = useState(() => parseDispo(user?.disponibilites))
       const { data } = await authAPI.update(form)
       updateUser(data.user)
       toast(t('oeilCompte.profileUpdatedToast'), 'success')
-    } catch { toast(t('oeilCompte.genericError'), 'error') }
+    } catch (err) {
+      // Téléphone (D1) : numéro invalide ou déjà utilisé → message précis FR/AR
+      const phoneKey = { INVALID_PHONE: 'phoneInvalid', PHONE_TAKEN: 'phoneTaken' }[err.response?.data?.code]
+      toast(phoneKey ? t(`register.errors.${phoneKey}`) : t('oeilCompte.genericError'), 'error')
+    }
     finally { setSaving(false) }
   }
 

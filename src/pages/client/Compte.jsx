@@ -30,7 +30,11 @@ export default function ClientCompte() {
       const { data } = await authAPI.update(form)
       updateUser(data.user)
       toast(t('clientCompte.profileUpdatedToast'), 'success')
-    } catch { toast(t('clientCompte.genericError'), 'error') }
+    } catch (err) {
+      // Téléphone (D1) : numéro invalide ou déjà utilisé → message précis FR/AR
+      const phoneKey = { INVALID_PHONE: 'phoneInvalid', PHONE_TAKEN: 'phoneTaken' }[err.response?.data?.code]
+      toast(phoneKey ? t(`register.errors.${phoneKey}`) : t('clientCompte.genericError'), 'error')
+    }
     finally { setSaving(false) }
   }
 

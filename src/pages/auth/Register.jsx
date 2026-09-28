@@ -88,6 +88,9 @@ const [form, setForm] = useState({
       if (!form.first_name || !form.last_name || !form.email) { setError(t('register.errors.allFieldsRequired')); return }
       if (role === 'oeil' && !form.city) { setError(t('register.errors.cityRequiredOeil')); return }
       if (role === 'oeil' && !form.quartier) { setError(t('register.errors.quartierRequiredOeil')); return }
+      // Décision BOSS D1 (2026-09-28) : téléphone obligatoire pour un Œil (un numéro = un compte).
+      // Format et unicité vérifiés par le serveur (message affiché à la soumission).
+      if (role === 'oeil' && !form.phone.trim()) { setError(t('register.errors.phoneRequiredOeil')); return }
       if (form.password.length < 6) { setError(t('register.errors.passwordMinLength')); return }
       if (form.password !== form.confirm) { setError(t('register.errors.passwordMismatch')); return }
     }
@@ -103,7 +106,10 @@ const [form, setForm] = useState({
       toast(t('register.toastAccountCreated'), 'success')
       navigate('/login')
     } catch (err) {
-      setError(err.response?.data?.error || t('register.errors.accountCreationError'))
+      // Refus « téléphone » (D1) : message traduit FR/AR selon le code serveur
+      const PHONE_ERRORS = { INVALID_PHONE: 'phoneInvalid', PHONE_TAKEN: 'phoneTaken', PHONE_REQUIRED: 'phoneRequiredOeil' }
+      const phoneKey = PHONE_ERRORS[err.response?.data?.code]
+      setError(phoneKey ? t(`register.errors.${phoneKey}`) : (err.response?.data?.error || t('register.errors.accountCreationError')))
     } finally { setLoading(false) }
   }
 
