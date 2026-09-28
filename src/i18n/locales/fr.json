@@ -975,6 +975,8 @@
     "hiring": "...",
     "hire": "Embaucher",
     "hiredToast": "Œil embauché ! 🎉",
+    "unavailable": "Indisponible pour cette mission",
+    "unavailableForMission": "Cet Œil n'est pas disponible pour cette mission, choisissez-en un autre.",
     "genericError": "Erreur"
   },
   "rateModal": {
@@ -2282,6 +2284,8 @@
     "validationReminderH6Body": "Votre mission \"{{missionTitle}}\" est terminée et en attente de votre validation. Sans action de votre part, elle sera validée automatiquement dans environ {{hoursLeft}}h.",
     "autoValidatedClientTitle": "✅ Mission validée automatiquement",
     "autoValidatedClientBody": "\"{{missionTitle}}\" a été validée automatiquement après {{hours}}h sans réponse de votre part.",
+    "adminWalletCreditTitle": "💰 Wallet crédité",
+    "adminWalletCreditBody": "Votre wallet a été crédité de {{amount}} MAD par l'équipe Shoofly.",
     "autoValidatedOeilTitle": "💰 Paiement reçu (automatique)",
     "autoValidatedOeilBody": "Validation automatique après délai pour \"{{missionTitle}}\". {{amount}} MAD crédités.",
     "autoValidatedCashOeilTitle": "✅ Mission validée automatiquement",
@@ -2329,6 +2333,27 @@
     "missionEditedByAdminOeilBody": "Un administrateur a modifié les informations de la mission \"{{missionTitle}}\".",
     "editRequestWithdrawnOeilTitle": "Modification retirée",
     "editRequestWithdrawnOeilBody": "Le client a retiré sa demande de modification sur \"{{missionTitle}}\"."
+  },
+  "adminWalletCredit": {
+    "title": "💳 Crédit manuel du wallet",
+    "hint": "Réservé au super admin. Chaque crédit est tracé (auteur, montant, motif) et l'Œil est notifié.",
+    "superAdminOnly": "Crédit manuel réservé au super admin.",
+    "amountLabel": "Montant (MAD, max {{max}})",
+    "reasonLabel": "Motif (obligatoire)",
+    "reasonPlaceholder": "Motif (obligatoire) — ex. : espèces reçues au bureau",
+    "submit": "Créditer",
+    "confirm": "Créditer {{amount}} MAD sur le wallet de {{name}} ?",
+    "success": "Wallet crédité de {{amount}} MAD",
+    "alreadyApplied": "Ce crédit était déjà enregistré : aucun double crédit.",
+    "historyEmpty": "Aucun crédit manuel.",
+    "by": "par {{name}}",
+    "errors": {
+      "invalidAmount": "Montant invalide : supérieur à 0 et au plus {{max}} MAD, 2 décimales au plus.",
+      "reasonRequired": "Motif obligatoire (3 à 500 caractères).",
+      "keyReused": "Ce formulaire a déjà servi pour un autre crédit. Vérifiez l'historique puis recommencez.",
+      "forbidden": "Réservé au super admin.",
+      "generic": "Erreur lors du crédit."
+    }
   },
   "walletReconciliation": {
     "title": "⚖️ Réconciliation Wallet",

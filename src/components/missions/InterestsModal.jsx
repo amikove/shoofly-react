@@ -30,7 +30,14 @@ export default function InterestsModal({ mission, onClose, onHired }) {
       onClose()
       setTimeout(() => onHired(), 300)
     } catch (err) {
-      toast(err.response?.data?.error || t('interestsModal.genericError'), 'error')
+      // Œil devenu inaffectable (solde) entre l'affichage et le clic : message neutre traduit, et la
+      // carte passe « Indisponible » — jamais de motif ni de donnée financière (décision BOSS 2026-09-27).
+      if (err.response?.data?.code === 'OEIL_UNAVAILABLE_FOR_MISSION') {
+        toast(t('interestsModal.unavailableForMission'), 'error')
+        setInterests((list) => list.map((o) => (o.id === oeilId ? { ...o, unavailable: true } : o)))
+      } else {
+        toast(err.response?.data?.error || t('interestsModal.genericError'), 'error')
+      }
     } finally { setHiring(null) }
   }
 
@@ -72,6 +79,9 @@ export default function InterestsModal({ mission, onClose, onHired }) {
                     }
                     <span>{t('interestsModal.missionsCount', { count: o.total_missions || 0 })}</span>
                   </div>
+                  {o.unavailable && (
+                    <p className="text-xs text-[#AAA] mt-1">{t('interestsModal.unavailable')}</p>
+                  )}
                   {o.bio && <p className="text-xs text-[#777] mt-1 line-clamp-2">{o.bio}</p>}
                   {o.message && (
                     <div className="mt-2 bg-[#2A2A2A] rounded-lg px-3 py-2 text-xs text-[#AAA] italic">
@@ -81,7 +91,7 @@ export default function InterestsModal({ mission, onClose, onHired }) {
                 </div>
                 <button
                     onClick={(e) => { e.stopPropagation(); hire(o.id) }}
-                    disabled={hiring === o.id || hired}
+                    disabled={hiring === o.id || hired || o.unavailable}
                     className="btn btn-primary btn-sm flex-shrink-0 disabled:opacity-50"
                   >
                   {hiring === o.id ? t('interestsModal.hiring') : hired ? '✓' : t('interestsModal.hire')}

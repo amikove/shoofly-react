@@ -21,12 +21,16 @@ export default function OeilGains() {
   const [loading, setLoading] = useState(true)
   const [summaryError, setSummaryError] = useState(false)
   const [rechargeOpen, setRechargeOpen] = useState(false)
+  // Bouton « Recharger » affiché seulement si la recharge CashPlus est active côté serveur
+  // (CASHPLUS_ENABLED, renvoyé par GET /users/oeil/earnings). Masqué par défaut (chargement, erreur).
+  const [cashplusEnabled, setCashplusEnabled] = useState(false)
 
   const loadEarnings = () => {
     usersAPI.oeilEarnings()
       .then(({ data }) => {
         setLines(data.lines || [])
         setBalance(data.balance || 0)
+        setCashplusEnabled(data.cashplus_enabled === true)
           setTotalEarnings(data.total_earnings || 0)
           setSummaryError(false)
         })
@@ -64,11 +68,13 @@ export default function OeilGains() {
           </div>
         </div>
 
-        <button onClick={() => setRechargeOpen(true)} className="btn btn-primary w-full justify-center mb-5">
-          {t('oeilGains.recharge.openButton')}
-        </button>
+        {cashplusEnabled && (
+          <button onClick={() => setRechargeOpen(true)} className="btn btn-primary w-full justify-center mb-5">
+            {t('oeilGains.recharge.openButton')}
+          </button>
+        )}
 
-        {rechargeOpen && (
+        {cashplusEnabled && rechargeOpen && (
           <CashPlusRechargeModal
             onClose={() => { setRechargeOpen(false); loadEarnings() }}
           />

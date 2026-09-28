@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { useParams, useNavigate, useLocation } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import AppLayout from '../../components/layout/AppLayout'
 import Topbar from '../../components/layout/Topbar'
 import { useAuth } from '../../context/AuthContext'
@@ -173,6 +174,8 @@ export default function UserProfile() {
             onApply={applyDateFilter}
             onClear={clearDateFilter}
             loading={loading}
+            oeil={isOeil ? user : null}
+            onReload={() => load()}
           />
         )}
         {tab === 'problemes' && <ProblemesTab problems={problems} />}
@@ -254,7 +257,7 @@ function ProductionTab({ production, isOeil, page, setPage }) {
 }
 
 // ═══ Onglet Financier ═══
-function FinancierTab({ financial, isOeil, navigate, focusDate, dateFrom, dateTo, setDateFrom, setDateTo, onApply, onClear, loading }) {
+function FinancierTab({ financial, isOeil, navigate, focusDate, dateFrom, dateTo, setDateFrom, setDateTo, onApply, onClear, loading, oeil, onReload }) {
   const transactions = financial?.wallet_transactions || []
   const hasFilter = !!(dateFrom || dateTo)
   const [highlightId, setHighlightId] = useState(null)
@@ -301,6 +304,8 @@ function FinancierTab({ financial, isOeil, navigate, focusDate, dateFrom, dateTo
           </div>
         )}
       </div>
+
+      {oeil && <AdminWalletCredit oeil={oeil} credits={financial.admin_wallet_credits || []} onDone={onReload} />}
 
       <div>
         <div className="flex items-center justify-between mb-2 flex-wrap gap-2">
@@ -353,6 +358,97 @@ function FinancierTab({ financial, isOeil, navigate, focusDate, dateFrom, dateTo
           </div>
         )}
       </div>
+    </div>
+  )
+}
+
+// ═══ Crédit manuel du wallet d'un Œil (super admin) ═══
+// POST /users/admin/oeils/:oeilId/wallet-credit (chantier CashPlus 2026-09-27). Formulaire réservé au
+// super admin (même règle que le serveur) ; l'historique des crédits manuels est visible par tout
+// admin qui voit la fiche. Clé d'idempotence tirée à l'ouverture et conservée jusqu'à une réponse
+// définitive : un double clic, ou un renvoi après une coupure réseau, ne crédite jamais deux fois.
+const newIdempotencyKey = () => (globalThis.crypto?.randomUUID
+  ? globalThis.crypto.randomUUID()
+  : `${Date.now()}-${Math.random().toString(36).slice(2)}-${Math.random().toString(36).slice(2)}`)
+const ADMIN_WALLET_CREDIT_MAX = 1000 // miroir du plafond serveur (routes/users.js)
+
+function AdminWalletCredit({ oeil, credits, onDone }) {
+  const { t } = useTranslation()
+  const { isSuperAdmin } = useAuth()
+  const [amount, setAmount] = useState('')
+  const [reason, setReason] = useState('')
+  const [sending, setSending] = useState(false)
+  const [key, setKey] = useState(newIdempotencyKey)
+  const inFlight = useRef(false) // double clic plus rapide que le rendu de `sending`
+
+  const submit = async (e) => {
+    e.preventDefault()
+    if (inFlight.current) return
+    const value = Number(amount)
+    if (!(value > 0) || value > ADMIN_WALLET_CREDIT_MAX || Math.round(value * 100) !== value * 100) {
+      return toast(t('adminWalletCredit.errors.invalidAmount', { max: ADMIN_WALLET_CREDIT_MAX }), 'error')
+    }
+    if (reason.trim().length < 3) return toast(t('adminWalletCredit.errors.reasonRequired'), 'error')
+    if (!window.confirm(t('adminWalletCredit.confirm', { amount: value, name: `${oeil.first_name} ${oeil.last_name}` }))) return
+    inFlight.current = true
+    setSending(true)
+    try {
+      const { data } = await adminAPI.oeilWalletCredit(oeil.id, { amount: value, reason: reason.trim(), idempotency_key: key })
+      toast(data.already_applied ? t('adminWalletCredit.alreadyApplied') : t('adminWalletCredit.success', { amount: value }), 'success')
+      setAmount(''); setReason(''); setKey(newIdempotencyKey())
+      onDone()
+    } catch (err) {
+      const code = err.response?.data?.code
+      if (code === 'IDEMPOTENCY_KEY_REUSED') setKey(newIdempotencyKey())
+      const msg = {
+        INVALID_AMOUNT: t('adminWalletCredit.errors.invalidAmount', { max: ADMIN_WALLET_CREDIT_MAX }),
+        REASON_REQUIRED: t('adminWalletCredit.errors.reasonRequired'),
+        IDEMPOTENCY_KEY_REUSED: t('adminWalletCredit.errors.keyReused'),
+      }[code] || (err.response?.status === 403 ? t('adminWalletCredit.errors.forbidden') : t('adminWalletCredit.errors.generic'))
+      toast(msg, 'error')
+    } finally { inFlight.current = false; setSending(false) }
+  }
+
+  return (
+    <div className="card space-y-3">
+      <h3 className="text-sm font-semibold">{t('adminWalletCredit.title')}</h3>
+      {isSuperAdmin ? (
+        <form onSubmit={submit} className="space-y-2">
+          <p className="text-xs text-[#AAA]">{t('adminWalletCredit.hint')}</p>
+          <div className="flex flex-col sm:flex-row gap-2">
+            <input
+              type="number" inputMode="decimal" min="0.01" step="0.01" max={ADMIN_WALLET_CREDIT_MAX}
+              className="input sm:max-w-[160px]" value={amount} onChange={(e) => setAmount(e.target.value)}
+              placeholder={t('adminWalletCredit.amountLabel', { max: ADMIN_WALLET_CREDIT_MAX })}
+              aria-label={t('adminWalletCredit.amountLabel', { max: ADMIN_WALLET_CREDIT_MAX })}
+            />
+            <input
+              type="text" maxLength={500} className="input flex-1 min-w-0" value={reason} onChange={(e) => setReason(e.target.value)}
+              placeholder={t('adminWalletCredit.reasonPlaceholder')} aria-label={t('adminWalletCredit.reasonLabel')}
+            />
+            <button type="submit" disabled={sending} className="btn btn-primary btn-sm justify-center disabled:opacity-50">
+              {sending ? '...' : t('adminWalletCredit.submit')}
+            </button>
+          </div>
+        </form>
+      ) : (
+        <p className="text-xs text-[#AAA]">{t('adminWalletCredit.superAdminOnly')}</p>
+      )}
+      {credits.length === 0 ? (
+        <p className="text-xs text-[#555]">{t('adminWalletCredit.historyEmpty')}</p>
+      ) : (
+        <ul className="space-y-1">
+          {credits.map((c) => (
+            <li key={c.id} className="text-xs flex flex-wrap gap-x-2 gap-y-0.5 break-words">
+              <span className="text-green-400 font-semibold">+{parseFloat(c.amount).toFixed(2)} MAD</span>
+              <span className="text-[#AAA] min-w-0 break-words">{c.reason}</span>
+              <span className="text-[#555]">
+                {t('adminWalletCredit.by', { name: [c.admin_first_name, c.admin_last_name].filter(Boolean).join(' ') || '—' })} · {fmtDateTime(c.created_at)}
+              </span>
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   )
 }

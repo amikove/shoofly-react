@@ -976,6 +976,8 @@
     "hiring": "...",
     "hire": "توظيف",
     "hiredToast": "تم توظيف العين الميدانية! 🎉",
+    "unavailable": "غير متاح لهذه المهمة",
+    "unavailableForMission": "هذه العين الميدانية غير متاحة لهذه المهمة، اختر عيناً أخرى.",
     "genericError": "خطأ"
   },
   "rateModal": {
@@ -2281,6 +2283,8 @@
     "validationReminderH6Body": "انتهت مهمتك \"{{missionTitle}}\" وهي بانتظار تصديقك. بدون إجراء من طرفك، سيتم التصديق عليها تلقائياً خلال حوالي {{hoursLeft}} ساعة.",
     "autoValidatedClientTitle": "✅ تم التصديق على المهمة تلقائياً",
     "autoValidatedClientBody": "تم التصديق تلقائياً على \"{{missionTitle}}\" بعد {{hours}} ساعة دون رد من طرفك.",
+    "adminWalletCreditTitle": "💰 تم شحن محفظتك",
+    "adminWalletCreditBody": "تمت إضافة {{amount}} درهم إلى محفظتك من طرف فريق Shoofly.",
     "autoValidatedOeilTitle": "💰 تم استلام الدفع (تلقائياً)",
     "autoValidatedOeilBody": "تصديق تلقائي بعد انتهاء المهلة لمهمة \"{{missionTitle}}\". تم إيداع {{amount}} درهم.",
     "autoValidatedCashOeilTitle": "✅ تم التصديق على المهمة تلقائياً",
@@ -2328,6 +2332,27 @@
     "missionEditedByAdminOeilBody": "قام مسؤول بتعديل معلومات المهمة \"{{missionTitle}}\".",
     "editRequestWithdrawnOeilTitle": "تم سحب طلب التعديل",
     "editRequestWithdrawnOeilBody": "سحب العميل طلب التعديل الخاص بمهمة \"{{missionTitle}}\"."
+  },
+  "adminWalletCredit": {
+    "title": "💳 شحن المحفظة يدوياً",
+    "hint": "خاص بالمشرف العام. كل عملية شحن مسجلة (المنفذ، المبلغ، السبب) ويتم إشعار العين الميدانية.",
+    "superAdminOnly": "الشحن اليدوي خاص بالمشرف العام.",
+    "amountLabel": "المبلغ (درهم، الحد الأقصى {{max}})",
+    "reasonLabel": "السبب (إلزامي)",
+    "reasonPlaceholder": "السبب (إلزامي) — مثال: مبلغ نقدي تم استلامه في المكتب",
+    "submit": "شحن",
+    "confirm": "شحن {{amount}} درهم في محفظة {{name}}؟",
+    "success": "تم شحن المحفظة بمبلغ {{amount}} درهم",
+    "alreadyApplied": "تم تسجيل هذا الشحن مسبقاً: لا يوجد شحن مزدوج.",
+    "historyEmpty": "لا توجد عمليات شحن يدوية.",
+    "by": "بواسطة {{name}}",
+    "errors": {
+      "invalidAmount": "مبلغ غير صالح: أكبر من 0 وبحد أقصى {{max}} درهم، ورقمان عشريان على الأكثر.",
+      "reasonRequired": "السبب إلزامي (من 3 إلى 500 حرف).",
+      "keyReused": "تم استعمال هذا النموذج لعملية شحن أخرى. تحقق من السجل ثم أعد المحاولة.",
+      "forbidden": "خاص بالمشرف العام.",
+      "generic": "خطأ أثناء الشحن."
+    }
   },
   "walletReconciliation": {
     "title": "⚖️ تسوية المحفظة",

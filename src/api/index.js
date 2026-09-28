@@ -130,6 +130,7 @@ export const adminAPI = {
     deleteExpense: (id) => api.delete(`/api/users/admin/expenses/${id}`),
   users:          (params) => api.get('/api/users/admin/all', { params }),
   userProfile:    (userId, params) => api.get(`/api/users/admin/profile/${userId}`, { params }),
+  oeilWalletCredit: (oeilId, data) => api.post(`/api/users/admin/oeils/${oeilId}/wallet-credit`, data),
   verifyOeil:     (id)     => api.put(`/api/users/admin/${id}/verify-oeil`),
   toggleActive:   (id, data) => api.put(`/api/users/admin/${id}/toggle-active`, data),
   withdrawals:    ()       => api.get('/api/users/admin/withdrawals'),
