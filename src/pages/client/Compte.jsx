@@ -8,6 +8,7 @@ import { toast, Avatar } from '../../components/ui'
 import AccountShortcutCard from '../../components/ui/AccountShortcutCard'
 import AccountFooterLinks from '../../components/ui/AccountFooterLinks'
 import { translateLocation } from '../../constants/villesTranslations'
+import { phoneErrorKey, phonePlaceholder } from '../../utils/phoneErrors'
 
 export default function ClientCompte() {
   const { t, i18n } = useTranslation()
@@ -31,9 +32,9 @@ export default function ClientCompte() {
       updateUser(data.user)
       toast(t('clientCompte.profileUpdatedToast'), 'success')
     } catch (err) {
-      // Téléphone (D1) : numéro invalide ou déjà utilisé → message précis FR/AR
-      const phoneKey = { INVALID_PHONE: 'phoneInvalid', PHONE_TAKEN: 'phoneTaken' }[err.response?.data?.code]
-      toast(phoneKey ? t(`register.errors.${phoneKey}`) : t('clientCompte.genericError'), 'error')
+      // Téléphone (D1) : numéro invalide, déjà utilisé ou vidé → message précis FR/AR
+      const phoneKey = phoneErrorKey(err.response?.data?.code, 'client')
+      toast(phoneKey ? t(phoneKey) : t('clientCompte.genericError'), 'error')
     }
     finally { setSaving(false) }
   }
@@ -71,7 +72,7 @@ export default function ClientCompte() {
               <div><label className="label">{t('clientCompte.lastName')}</label><input className="input" value={form.last_name} onChange={set('last_name')} /></div>
             </div>
             <div className="mt-3"><label className="label">{t('clientCompte.email')}</label><input className="input" value={user?.email || ''} disabled /></div>
-            <div className="mt-3"><label className="label">{t('clientCompte.phone')}</label><input className="input" value={form.phone} onChange={set('phone')} placeholder="+212 6xx xxx xxx" /></div>
+            <div className="mt-3"><label className="label">{t('clientCompte.phone')}</label><input className="input" type="tel" autoComplete="tel" dir="ltr" value={form.phone} onChange={set('phone')} placeholder={phonePlaceholder('client')} /><p className="text-[11px] text-[#AAA] mt-1.5 break-words">{t('phone.help')}</p></div>
             <div className="mt-3">
               <label className="label">{t('clientCompte.city')}</label>
               <select className="input" value={form.city} onChange={set('city')}>

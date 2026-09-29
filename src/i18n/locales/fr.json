@@ -422,9 +422,6 @@
       "allFieldsRequired": "Tous les champs sont requis.",
       "cityRequiredOeil": "La ville est obligatoire pour un Œil.",
       "quartierRequiredOeil": "Le quartier est obligatoire pour un Œil.",
-      "phoneRequiredOeil": "Le numéro de téléphone (mobile marocain) est obligatoire pour un Œil.",
-      "phoneInvalid": "Numéro de téléphone invalide : saisissez un numéro mobile marocain (06… / 07… ou +2126… / +2127…).",
-      "phoneTaken": "Ce numéro de téléphone est déjà utilisé par un autre compte.",
       "passwordMinLength": "Mot de passe : minimum 6 caractères.",
       "passwordMismatch": "Les mots de passe ne correspondent pas.",
       "accountCreationError": "Erreur lors de la création du compte."
@@ -432,6 +429,25 @@
     "toastAccountCreated": "Compte créé ! Connectez-vous.",
     "alreadyAccount": "Déjà un compte ?",
     "loginLink": "Se connecter"
+  },
+  "phone": {
+    "help": "De préférence votre numéro WhatsApp : c'est là que Shoofly vous contactera.",
+    "errors": {
+      "required": "Le numéro de téléphone est obligatoire.",
+      "invalidOeil": "Numéro de téléphone invalide : un Œil doit saisir un numéro mobile marocain (06… / 07… ou +2126… / +2127…).",
+      "invalidClient": "Numéro de téléphone invalide : saisissez un numéro mobile marocain (06… / 07…) ou un numéro étranger complet avec l'indicatif du pays (ex. +33 6 12 34 56 78). Un fixe marocain (05…) n'est pas accepté.",
+      "taken": "Ce numéro de téléphone est déjà utilisé par un autre compte."
+    },
+    "gate": {
+      "title": "📱 Ajoutez votre numéro",
+      "introOeil": "Un numéro de mobile marocain est obligatoire pour continuer — c'est ainsi que les clients et Shoofly vous contactent.",
+      "introClient": "Un numéro de téléphone est obligatoire pour continuer.",
+      "label": "Numéro de téléphone",
+      "saving": "Enregistrement...",
+      "submit": "Continuer",
+      "logout": "Se déconnecter",
+      "genericError": "Erreur, veuillez réessayer."
+    }
   },
   "forgotPassword": {
     "subtitle": "Réinitialisez votre mot de passe",

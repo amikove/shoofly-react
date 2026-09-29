@@ -11,6 +11,7 @@ import Login    from './pages/auth/Login'
 import Register from './pages/auth/Register'
 import ForgotPassword from './pages/auth/ForgotPassword'
 import ResetPassword  from './pages/auth/ResetPassword'
+import AddPhoneScreen from './components/auth/AddPhoneScreen'
 import Landing from './pages/Landing'
 
 // Pages légales, client, Œil et partagées — lazy-loaded (audit perf 2026-09-07, F3) : même
@@ -99,6 +100,13 @@ function RequireAuth({ children, allowedRoles, requiredPermission }) {
   if (roleDenied || permissionDenied) {
     const routes = { client: '/client', oeil: '/oeil', admin: '/admin' }
     return <Navigate to={routes[user.role] || '/login'} replace />
+  }
+  // Décision BOSS Q6 (2026-09-28) : client ou Œil sans numéro de téléphone → écran obligatoire
+  // « Ajoutez votre numéro de mobile » avant tout accès. Admins non concernés. Œil suspendu exclu :
+  // son compte n'a pas accès à PUT /auth/me (écran de suspension d'abord) — il verra cet écran à
+  // sa réactivation. Compte bloqué : déjà renvoyé vers /compte-bloque plus haut.
+  if (['client', 'oeil'].includes(user.role) && !user.is_suspended && !String(user.phone || '').trim()) {
+    return <AddPhoneScreen />
   }
   return children
 }

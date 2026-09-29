@@ -9,6 +9,7 @@ import { toast } from '../../components/ui'
 import LanguageToggle from '../../components/ui/LanguageToggle'
 import PasswordInput from '../../components/ui/PasswordInput'
 import Autocomplete from '../../components/missions/Autocomplete'
+import { phoneErrorKey, phonePlaceholder } from '../../utils/phoneErrors'
 
 import { useEffect } from 'react'
 
@@ -88,9 +89,10 @@ const [form, setForm] = useState({
       if (!form.first_name || !form.last_name || !form.email) { setError(t('register.errors.allFieldsRequired')); return }
       if (role === 'oeil' && !form.city) { setError(t('register.errors.cityRequiredOeil')); return }
       if (role === 'oeil' && !form.quartier) { setError(t('register.errors.quartierRequiredOeil')); return }
-      // Décision BOSS D1 (2026-09-28) : téléphone obligatoire pour un Œil (un numéro = un compte).
-      // Format et unicité vérifiés par le serveur (message affiché à la soumission).
-      if (role === 'oeil' && !form.phone.trim()) { setError(t('register.errors.phoneRequiredOeil')); return }
+      // Décisions BOSS D1 (2026-09-28) : téléphone obligatoire pour TOUS (un numéro = un compte).
+      // Format (Œil : mobile marocain ; client : marocain ou étranger) et unicité vérifiés par le
+      // serveur (message traduit affiché à la soumission).
+      if (!form.phone.trim()) { setError(t('phone.errors.required')); return }
       if (form.password.length < 6) { setError(t('register.errors.passwordMinLength')); return }
       if (form.password !== form.confirm) { setError(t('register.errors.passwordMismatch')); return }
     }
@@ -106,10 +108,9 @@ const [form, setForm] = useState({
       toast(t('register.toastAccountCreated'), 'success')
       navigate('/login')
     } catch (err) {
-      // Refus « téléphone » (D1) : message traduit FR/AR selon le code serveur
-      const PHONE_ERRORS = { INVALID_PHONE: 'phoneInvalid', PHONE_TAKEN: 'phoneTaken', PHONE_REQUIRED: 'phoneRequiredOeil' }
-      const phoneKey = PHONE_ERRORS[err.response?.data?.code]
-      setError(phoneKey ? t(`register.errors.${phoneKey}`) : (err.response?.data?.error || t('register.errors.accountCreationError')))
+      // Refus « téléphone » (D1) : message traduit FR/AR selon le code serveur et le rôle
+      const phoneKey = phoneErrorKey(err.response?.data?.code, role)
+      setError(phoneKey ? t(phoneKey) : (err.response?.data?.error || t('register.errors.accountCreationError')))
     } finally { setLoading(false) }
   }
 
@@ -165,7 +166,11 @@ const [form, setForm] = useState({
                 <div><label className="label">{t('register.step2.lastName')}</label><input className="input" value={form.last_name} onChange={set('last_name')} placeholder={t('register.step2.lastNamePlaceholder')} /></div>
               </div>
               <div className="mt-3"><label className="label">{t('register.step2.email')}</label><input className="input" type="email" value={form.email} onChange={set('email')} placeholder={t('register.step2.emailPlaceholder')} /></div>
-              <div className="mt-3"><label className="label">{t('register.step2.phone')}</label><input className="input" value={form.phone} onChange={set('phone')} placeholder={t('register.step2.phonePlaceholder')} /></div>
+              <div className="mt-3">
+                <label className="label">{t('register.step2.phone')}</label>
+                <input className="input" type="tel" autoComplete="tel" dir="ltr" value={form.phone} onChange={set('phone')} placeholder={phonePlaceholder(role)} />
+                <p className="text-[11px] text-[#AAA] mt-1.5 break-words">{t('phone.help')}</p>
+              </div>
 
               <div className="mt-3">
                 <Autocomplete

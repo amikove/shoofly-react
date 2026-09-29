@@ -9,6 +9,7 @@ import AccountShortcutCard from '../../components/ui/AccountShortcutCard'
 import AccountFooterLinks from '../../components/ui/AccountFooterLinks'
 import { authAPI, usersAPI } from '../../api'
 import { translateLocation } from '../../constants/villesTranslations'
+import { phoneErrorKey, phonePlaceholder } from '../../utils/phoneErrors'
 
 const JOURS = ['Lun','Mar','Mer','Jeu','Ven','Sam','Dim']
 
@@ -81,9 +82,9 @@ const [dispo, setDispo] = useState(() => parseDispo(user?.disponibilites))
       updateUser(data.user)
       toast(t('oeilCompte.profileUpdatedToast'), 'success')
     } catch (err) {
-      // Téléphone (D1) : numéro invalide ou déjà utilisé → message précis FR/AR
-      const phoneKey = { INVALID_PHONE: 'phoneInvalid', PHONE_TAKEN: 'phoneTaken' }[err.response?.data?.code]
-      toast(phoneKey ? t(`register.errors.${phoneKey}`) : t('oeilCompte.genericError'), 'error')
+      // Téléphone (D1) : numéro invalide, déjà utilisé ou vidé → message précis FR/AR
+      const phoneKey = phoneErrorKey(err.response?.data?.code, 'oeil')
+      toast(phoneKey ? t(phoneKey) : t('oeilCompte.genericError'), 'error')
     }
     finally { setSaving(false) }
   }
@@ -162,7 +163,7 @@ const [dispo, setDispo] = useState(() => parseDispo(user?.disponibilites))
               <div><label className="label">{t('oeilCompte.lastNameLabel')}</label><input className="input" value={form.last_name} onChange={set('last_name')} /></div>
             </div>
             <div className="mt-3"><label className="label">{t('oeilCompte.emailLabel')}</label><input className="input" value={user?.email || ''} disabled /></div>
-            <div className="mt-3"><label className="label">{t('oeilCompte.phoneLabel')}</label><input className="input" value={form.phone} onChange={set('phone')} /></div>
+            <div className="mt-3"><label className="label">{t('oeilCompte.phoneLabel')}</label><input className="input" type="tel" autoComplete="tel" dir="ltr" value={form.phone} onChange={set('phone')} placeholder={phonePlaceholder('oeil')} /><p className="text-[11px] text-[#AAA] mt-1.5 break-words">{t('phone.help')}</p></div>
             <div className="mt-3">
               <label className="label">{t('oeilCompte.cityLabel')}</label>
               <select className="input" value={form.city} onChange={set('city')}>
