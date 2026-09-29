@@ -388,6 +388,29 @@ const load = useCallback((tab) => {
     }
   }
 
+  // Retrait de candidature (décision BOSS Q5, 2026-09-28) : uniquement avant d'être retenu — le
+  // serveur répond 409 ALREADY_SELECTED sinon (l'Œil doit alors passer par « Demander
+  // assistance »). Idempotent côté serveur : un double clic n'a qu'un seul effet.
+  const [withdrawingIds, setWithdrawingIds] = useState(() => new Set())
+  const withdraw = async (id) => {
+    if (withdrawingIds.has(id)) return
+    setWithdrawingIds((prev) => new Set(prev).add(id))
+    try {
+      await missionsAPI.withdrawInterest(id)
+      setMissions((prev) => prev.map((m) => m.id === id ? { ...m, interested: false, has_interested: false } : m))
+      toast(t('oeilMissions.toasts.interestWithdrawn'), 'success')
+    } catch (err) {
+      if (err.response?.data?.code === 'ALREADY_SELECTED') {
+        toast(err.response.data.error, 'error')
+        reconcileMission(id)
+      } else {
+        toast(err.response?.data?.error || t('oeilMissions.toasts.genericError'), 'error')
+      }
+    } finally {
+      setWithdrawingIds((prev) => { const n = new Set(prev); n.delete(id); return n })
+    }
+  }
+
   // Équivalent de interest() pour l'onglet "priorité" (transferts) : pas de ComplianceModal
   // sur ce flux (déjà acceptée une première fois par l'Œil précédent), appel réseau direct.
   const interestPriority = async (id) => {
@@ -628,15 +651,25 @@ try {
               {t('oeilDashboard.fiveStarBonusHint', { bonus: (parseFloat(m.oeil_earning || m.price) * bonusCampaign.percent / 100).toFixed(0) })}
             </div>
           )}
-          <button
-            onClick={() => user?.is_verified ? interestPriority(m.id) : navigate('/oeil/verification-identite')}
-            disabled={submittingInterestIds.has(m.id) || isApplyBlocked(m)}
-            className="btn btn-sm w-full justify-center bg-red-500 text-white hover:bg-red-600 disabled:opacity-50"
-          >
-            {isApplyBlocked(m)
-              ? blockedApplyLabel(m, t)
-              : submittingInterestIds.has(m.id) ? t('oeilMissions.priorityBanner.interestButtonSending') : t('oeilMissions.priorityBanner.interestButton')}
-          </button>
+          {(m.interested || m.has_interested) ? (
+            <button
+              onClick={() => withdraw(m.id)}
+              disabled={withdrawingIds.has(m.id)}
+              className="btn btn-sm w-full justify-center bg-white/10 text-white hover:bg-white/20 disabled:opacity-50"
+            >
+              {withdrawingIds.has(m.id) ? t('oeilMissions.card.withdrawingInterest') : t('oeilMissions.card.withdrawInterest')}
+            </button>
+          ) : (
+            <button
+              onClick={() => user?.is_verified ? interestPriority(m.id) : navigate('/oeil/verification-identite')}
+              disabled={submittingInterestIds.has(m.id) || isApplyBlocked(m)}
+              className="btn btn-sm w-full justify-center bg-red-500 text-white hover:bg-red-600 disabled:opacity-50"
+            >
+              {isApplyBlocked(m)
+                ? blockedApplyLabel(m, t)
+                : submittingInterestIds.has(m.id) ? t('oeilMissions.priorityBanner.interestButtonSending') : t('oeilMissions.priorityBanner.interestButton')}
+            </button>
+          )}
           <ApplyBlockInfo mission={m} wallet={wallet} onRecharge={() => setRechargeOpen(true)} className="mt-2" />
         </div>
       ))}
@@ -786,13 +819,22 @@ try {
                                 ? t('oeilMissions.card.interestedSending')
                                 : t('oeilMissions.card.interested')}
                         </button>
-                        <button
-                        onClick={() => refuse(m.id)}
-                        className="btn btn-sm flex-1 justify-center bg-red-500 text-white hover:bg-red-600"
-                      >
-                        {t('oeilMissions.card.ignore')}
-                      </button>
-
+                        {(m.interested || m.has_interested) ? (
+                          <button
+                            onClick={() => withdraw(m.id)}
+                            disabled={withdrawingIds.has(m.id)}
+                            className="btn btn-sm flex-1 justify-center disabled:opacity-50 bg-white/10 text-white hover:bg-white/20"
+                          >
+                            {withdrawingIds.has(m.id) ? t('oeilMissions.card.withdrawingInterest') : t('oeilMissions.card.withdrawInterest')}
+                          </button>
+                        ) : (
+                          <button
+                            onClick={() => refuse(m.id)}
+                            className="btn btn-sm flex-1 justify-center bg-red-500 text-white hover:bg-red-600"
+                          >
+                            {t('oeilMissions.card.ignore')}
+                          </button>
+                        )}
 
                       </>
                     )}

@@ -1073,6 +1073,7 @@
     "genericError": "Erreur",
     "loadingError": "Erreur de chargement",
     "interestExpressedToast": "Intérêt exprimé 👁️ Le client va vous contacter.",
+    "interestWithdrawnToast": "Candidature retirée",
     "missionIgnoredToast": "Mission ignorée",
     "missionCompletedToast": "Mission terminée ! 🎉",
     "statusUpdatedToast": "Statut mis à jour ✓",
@@ -1168,7 +1169,8 @@
       "chatClosed": "Cette mission est clôturée, le chat n'est plus disponible.",
       "candidateConfirmed": "Disponibilité confirmée ✓",
       "candidateAlreadyConfirmed": "Vous aviez déjà confirmé pour cette mission ✓",
-      "candidateDeclined": "Mission déclinée"
+      "candidateDeclined": "Mission déclinée",
+      "interestWithdrawn": "Candidature retirée"
     },
     "advanceStatusLabels": {
       "enRoute": "En route vers la mission ✓",
@@ -1215,6 +1217,8 @@
       "interested": "👁️ Je suis intéressé",
       "interestedSending": "...",
       "ignore": "✕ Ignorer",
+      "withdrawInterest": "Retirer ma candidature",
+      "withdrawingInterest": "...",
       "chat": "💬 Chat",
       "reportButton": "📋 Rapport",
       "auditButton": "📋 Audit",
@@ -2119,6 +2123,7 @@
     "presenceConfirmationRequestH45Body": "Confirmez votre présence pour \"{{missionTitle}}\" prévue dans environ {{lateMinutes}} minutes. Vous avez jusqu'à {{deadlineTime}} pour confirmer, sinon nous chercherons un remplaçant en urgence.",
     "presenceNotConfirmedReassignedTitle": "⏰ Présence non confirmée",
     "presenceNotConfirmedReassignedBody": "Vous n'avez pas confirmé votre présence à temps pour \"{{missionTitle}}\". La mission a été réattribuée. Aucune pénalité ni retenue financière ne vous est appliquée.",
+    "presenceNotConfirmedReassignedFreeLostBody": "Vous n'avez pas confirmé votre présence à temps pour \"{{missionTitle}}\". La mission a été réattribuée. Aucune pénalité ni retenue financière ne vous est appliquée. Votre mission offerte n'est plus disponible.",
     "presenceNotConfirmedAdminTitle": "🔄 Réattribution automatique — présence non confirmée",
     "presenceNotConfirmedAdminBody": "L'Œil {{oeilName}} n'a pas confirmé sa présence à temps pour \"{{missionTitle}}\". Réattribution automatique lancée, aucune pénalité appliquée.",
     "missionNotConfirmedAdminTitle": "⚠️ Mission bientôt — présence non confirmée",
@@ -2260,6 +2265,7 @@
     "accountUnsuspendedAdminBody": "Votre compte a été réactivé par un administrateur. Vous pouvez de nouveau accepter de nouvelles missions.",
     "missionReassignedNoPenaltyTitle": "📋 Mission réattribuée",
     "missionReassignedNoPenaltyBody": "Votre mission \"{{missionTitle}}\" a été réattribuée à un autre Œil suite à la suspension de votre compte. Aucune pénalité ni retenue financière ne vous est appliquée pour cette mission.",
+    "missionReassignedNoPenaltyFreeLostBody": "Votre mission \"{{missionTitle}}\" a été réattribuée à un autre Œil suite à la suspension de votre compte. Aucune pénalité ni retenue financière ne vous est appliquée pour cette mission. Votre mission offerte n'est plus disponible.",
     "staleMissionAdminTitle": "⏳ Mission sans Œil depuis 12h",
     "staleMissionAdminBody": "Aucun Œil n'a encore été trouvé pour \"{{missionTitle}}\", en attente depuis plus de 12h.",
     "staleMissionClientTitle": "💡 Toujours aucun Œil pour votre mission",

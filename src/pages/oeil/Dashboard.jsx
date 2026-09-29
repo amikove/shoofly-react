@@ -86,6 +86,28 @@ export default function OeilDashboard() {
   }
 }
 
+  // Retrait de candidature (décision BOSS Q5, 2026-09-28) : uniquement avant d'être retenu — le
+  // serveur répond 409 ALREADY_SELECTED sinon.
+  const [withdrawingIds, setWithdrawingIds] = useState(() => new Set())
+  const withdraw = async (id) => {
+    if (withdrawingIds.has(id)) return
+    setWithdrawingIds((prev) => new Set(prev).add(id))
+    try {
+      await missionsAPI.withdrawInterest(id)
+      setPending(prev => prev.map(m => m.id === id ? { ...m, interested: false, has_interested: false } : m))
+      toast(t('oeilDashboard.interestWithdrawnToast'), 'success')
+    } catch (err) {
+      if (err.response?.data?.code === 'ALREADY_SELECTED') {
+        toast(err.response.data.error, 'error')
+        load()
+      } else {
+        toast(err.response?.data?.error || t('oeilDashboard.genericError'), 'error')
+      }
+    } finally {
+      setWithdrawingIds((prev) => { const n = new Set(prev); n.delete(id); return n })
+    }
+  }
+
 const refuse = async (id) => {
   try {
     await missionsAPI.refuse(id, true)
@@ -261,13 +283,23 @@ const refuse = async (id) => {
                     {t('oeilDashboard.fiveStarBonusHint', { bonus: (parseFloat(m.oeil_earning || m.price) * bonusCampaign.percent / 100).toFixed(0) })}
                   </div>
                 )}
-                <button
-                  onClick={() => user?.is_verified ? interest(m.id) : navigate('/oeil/verification-identite')}
-                  disabled={m.interested || m.has_interested || isApplyBlocked(m)}
-                  className="btn btn-sm w-full justify-center disabled:opacity-50 bg-red-500 text-white hover:bg-red-600"
-                >
-                  {(m.interested || m.has_interested) ? t('oeilDashboard.priority.requestSent') : isApplyBlocked(m) ? blockedApplyLabel(m, t) : t('oeilDashboard.priority.takeButton')}
-                </button>
+                {(m.interested || m.has_interested) ? (
+                  <button
+                    onClick={() => withdraw(m.id)}
+                    disabled={withdrawingIds.has(m.id)}
+                    className="btn btn-sm w-full justify-center disabled:opacity-50 bg-white/10 text-white hover:bg-white/20"
+                  >
+                    {withdrawingIds.has(m.id) ? t('oeilMissions.card.withdrawingInterest') : t('oeilMissions.card.withdrawInterest')}
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => user?.is_verified ? interest(m.id) : navigate('/oeil/verification-identite')}
+                    disabled={isApplyBlocked(m)}
+                    className="btn btn-sm w-full justify-center disabled:opacity-50 bg-red-500 text-white hover:bg-red-600"
+                  >
+                    {isApplyBlocked(m) ? blockedApplyLabel(m, t) : t('oeilDashboard.priority.takeButton')}
+                  </button>
+                )}
                 <ApplyBlockInfo mission={m} wallet={wallet} onRecharge={() => setRechargeOpen(true)} className="mt-2" />
               </div>
             ))}
@@ -316,19 +348,31 @@ const refuse = async (id) => {
                 )}
 
                   <div className="flex gap-2">
-                  <button
-                      onClick={() => user?.is_verified ? interest(m.id) : navigate('/oeil/verification-identite')}
-                      disabled={m.interested || m.has_interested || isApplyBlocked(m)}
-                      className="btn btn-sm flex-1 justify-center disabled:opacity-50 bg-green-500 text-white hover:bg-green-600"
-                    >
-                      {(m.interested || m.has_interested) ? t('oeilDashboard.available.requestSent') : isApplyBlocked(m) ? blockedApplyLabel(m, t) : user?.is_verified ? t('oeilDashboard.available.interested') : t('oeilDashboard.available.verificationRequired')}
-                    </button>
+                  {(m.interested || m.has_interested) ? (
                     <button
-                      onClick={() => refuse(m.id, true)}
-                      className="btn btn-sm flex-1 justify-center bg-red-500 text-white hover:bg-red-600"
+                      onClick={() => withdraw(m.id)}
+                      disabled={withdrawingIds.has(m.id)}
+                      className="btn btn-sm flex-1 justify-center disabled:opacity-50 bg-white/10 text-white hover:bg-white/20"
                     >
-                      {t('oeilDashboard.available.ignore')}
+                      {withdrawingIds.has(m.id) ? t('oeilMissions.card.withdrawingInterest') : t('oeilMissions.card.withdrawInterest')}
                     </button>
+                  ) : (
+                    <>
+                      <button
+                        onClick={() => user?.is_verified ? interest(m.id) : navigate('/oeil/verification-identite')}
+                        disabled={isApplyBlocked(m)}
+                        className="btn btn-sm flex-1 justify-center disabled:opacity-50 bg-green-500 text-white hover:bg-green-600"
+                      >
+                        {isApplyBlocked(m) ? blockedApplyLabel(m, t) : user?.is_verified ? t('oeilDashboard.available.interested') : t('oeilDashboard.available.verificationRequired')}
+                      </button>
+                      <button
+                        onClick={() => refuse(m.id, true)}
+                        className="btn btn-sm flex-1 justify-center bg-red-500 text-white hover:bg-red-600"
+                      >
+                        {t('oeilDashboard.available.ignore')}
+                      </button>
+                    </>
+                  )}
                   </div>
                   <ApplyBlockInfo mission={m} wallet={wallet} onRecharge={() => setRechargeOpen(true)} className="mt-2" />
 

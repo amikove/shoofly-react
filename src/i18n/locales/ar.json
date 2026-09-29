@@ -1074,6 +1074,7 @@
     "genericError": "خطأ",
     "loadingError": "خطأ في التحميل",
     "interestExpressedToast": "تم إبداء الاهتمام 👁️ سيتواصل معك العميل.",
+    "interestWithdrawnToast": "تم سحب الترشح",
     "missionIgnoredToast": "تم تجاهل المهمة",
     "missionCompletedToast": "اكتملت المهمة! 🎉",
     "statusUpdatedToast": "تم تحديث الحالة ✓",
@@ -1169,7 +1170,8 @@
       "chatClosed": "هذه المهمة مغلقة، المحادثة لم تعد متاحة.",
       "candidateConfirmed": "تم تأكيد التوفر ✓",
       "candidateAlreadyConfirmed": "لقد أكدت توفرك بالفعل لهذه المهمة ✓",
-      "candidateDeclined": "تم رفض المهمة"
+      "candidateDeclined": "تم رفض المهمة",
+      "interestWithdrawn": "تم سحب الترشح"
     },
     "advanceStatusLabels": {
       "enRoute": "في الطريق إلى المهمة ✓",
@@ -1216,6 +1218,8 @@
       "interested": "👁️ أنا مهتم",
       "interestedSending": "...",
       "ignore": "✕ تجاهل",
+      "withdrawInterest": "سحب ترشحي",
+      "withdrawingInterest": "...",
       "chat": "💬 محادثة",
       "reportButton": "📋 تقرير",
       "auditButton": "📋 تدقيق",
@@ -2118,6 +2122,7 @@
     "presenceConfirmationRequestH45Body": "أكّد حضورك لمهمة \"{{missionTitle}}\" المقررة خلال حوالي {{lateMinutes}} دقيقة. أمامك حتى {{deadlineTime}} للتأكيد، وإلا سنبحث عن بديل بشكل عاجل.",
     "presenceNotConfirmedReassignedTitle": "⏰ لم يتم تأكيد الحضور",
     "presenceNotConfirmedReassignedBody": "لم تؤكد حضورك في الوقت المحدد لمهمة \"{{missionTitle}}\". تمت إعادة إسناد المهمة. لا يتم تطبيق أي عقوبة أو اقتطاع مالي عليك.",
+    "presenceNotConfirmedReassignedFreeLostBody": "لم تؤكد حضورك في الوقت المحدد لمهمة \"{{missionTitle}}\". تمت إعادة إسناد المهمة. لا يتم تطبيق أي عقوبة أو اقتطاع مالي عليك. مهمتك المجانية لم تعد متاحة.",
     "presenceNotConfirmedAdminTitle": "🔄 إعادة إسناد تلقائية — لم يتم تأكيد الحضور",
     "presenceNotConfirmedAdminBody": "العين الميدانية {{oeilName}} لم تؤكد حضورها في الوقت المحدد لمهمة \"{{missionTitle}}\". تم إطلاق إعادة الإسناد التلقائية دون أي عقوبة.",
     "missionNotConfirmedAdminTitle": "⚠️ مهمة قريبًا — الحضور غير مؤكد",
@@ -2259,6 +2264,7 @@
     "accountUnsuspendedAdminBody": "تم إعادة تفعيل حسابك من طرف الإدارة. يمكنك من جديد قبول مهام جديدة.",
     "missionReassignedNoPenaltyTitle": "📋 تمت إعادة إسناد المهمة",
     "missionReassignedNoPenaltyBody": "تمت إعادة إسناد مهمتك \"{{missionTitle}}\" إلى عين ميدانية أخرى عقب تعليق حسابك. لا يتم تطبيق أي عقوبة أو اقتطاع مالي على هذه المهمة.",
+    "missionReassignedNoPenaltyFreeLostBody": "تمت إعادة إسناد مهمتك \"{{missionTitle}}\" إلى عين ميدانية أخرى عقب تعليق حسابك. لا يتم تطبيق أي عقوبة أو اقتطاع مالي على هذه المهمة. مهمتك المجانية لم تعد متاحة.",
     "staleMissionAdminTitle": "⏳ مهمة بدون عين منذ 12 ساعة",
     "staleMissionAdminBody": "لم يُعثر بعد على عين لمهمة \"{{missionTitle}}\"، وهي في الانتظار منذ أكثر من 12 ساعة.",
     "staleMissionClientTitle": "💡 لا تزال مهمتك بدون عين",

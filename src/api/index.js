@@ -29,6 +29,9 @@ export const missionsAPI = {
   // ~2026-06-23, route fermée en 403 côté backend. Le flux de prise de mission par l'Œil passe
   // par `interest` (candidature) puis affectation client/admin.
   interest:  (id)    => api.post(`/api/missions/${id}/interest`),
+  // Retrait de candidature (décision BOSS Q5, 2026-09-28) : uniquement avant d'être retenu — voir
+  // POST /missions/:id/withdraw-interest (409 ALREADY_SELECTED sinon).
+  withdrawInterest: (id) => api.post(`/api/missions/${id}/withdraw-interest`),
   interests: (id)    => api.get(`/api/missions/${id}/interests`),
   candidateConfirm: (id) => api.post(`/api/missions/${id}/candidate-confirm`),
   candidateDecline: (id) => api.post(`/api/missions/${id}/candidate-decline`),
