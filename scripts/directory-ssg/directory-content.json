@@ -1,0 +1,265 @@
+{
+  "_readme": "Chantier SEO annuaire, Phase 3 (2026-09-30). Contenu éditorial SÉPARÉ du code, modifiable par BOSS sans toucher au générateur (scripts/directory-ssg/generate.js). 'attente_*'/'phrase_*' sont copiés MOT POUR MOT depuis seo-study/MODELES_TEXTES_SEO.md §8 (source unique validée par BOSS) — ne pas reformuler ici, éditer le .md source puis recopier. 'singulier_*'/'genre' sont des dérivations GRAMMATICALES (pas du texte de marque) faites par le générateur en l'absence d'un tableau équivalent dans MODELES_TEXTES_SEO.md — à relire par BOSS (voir RAPPORT_PHASE3.md, point ouvert #1). has_attente=false => la FAQ catégorie Q1 (§7.2) n'est pas affichée (catégories marquées '—' dans le §8 du .md).",
+  "categories": {
+    "laboratoires": {
+      "singulier_fr": "laboratoire d'analyses",
+      "genre": "m",
+      "singulier_ar": "مختبر تحاليل",
+      "has_attente": true,
+      "attente_fr": "30 min à 1 h 30",
+      "attente_ar": "من 30 دقيقة إلى ساعة ونصف",
+      "phrase_fr": "Prise de sang à jeun, file dès l'ouverture : souvent 30 min à 1 h 30 debout, le ventre vide. Cette matinée, un Œil peut la vivre à votre place.",
+      "phrase_ar": "تحليل على الريق وطابور منذ الافتتاح: غالباً من 30 دقيقة إلى ساعة ونصف واقفاً ومعدتك فارغة. هذا الصباح، يمكن لعين شووفلي أن تعيشه بدلاً منك."
+    },
+    "medecine_generale": {
+      "singulier_fr": "médecin généraliste",
+      "genre": "m",
+      "singulier_ar": "طبيب عام",
+      "has_attente": true,
+      "attente_fr": "1 à 2 h",
+      "attente_ar": "من ساعة إلى ساعتين",
+      "phrase_fr": "Sans rendez-vous, par ordre d'arrivée : compter souvent 1 à 2 heures en salle d'attente. Un Œil prend votre place, vous arrivez quand c'est presque votre tour.",
+      "phrase_ar": "دون موعد وحسب ترتيب الوصول: غالباً من ساعة إلى ساعتين في قاعة الانتظار. عين شووفلي تأخذ مكانك، وتصل أنت عندما يقترب دورك."
+    },
+    "pediatrie": {
+      "singulier_fr": "pédiatre",
+      "genre": "m",
+      "singulier_ar": "طبيب أطفال",
+      "has_attente": true,
+      "attente_fr": "1 à 2 h",
+      "attente_ar": "من ساعة إلى ساعتين",
+      "phrase_fr": "Jusqu'à 2 heures de salle d'attente avec un enfant malade. L'Œil attend, votre enfant reste au calme à la maison jusqu'au bon moment.",
+      "phrase_ar": "قد تصل إلى ساعتين في قاعة الانتظار مع طفل مريض. عين شووفلي تنتظر، وطفلك يبقى مرتاحاً في البيت حتى الوقت المناسب."
+    },
+    "dentistes": {
+      "singulier_fr": "dentiste",
+      "genre": "m",
+      "singulier_ar": "طبيب أسنان",
+      "has_attente": true,
+      "attente_fr": "30 min à 1 h",
+      "attente_ar": "من 30 دقيقة إلى ساعة",
+      "phrase_fr": "Même avec rendez-vous, les retards s'accumulent : souvent 30 min à 1 h de plus que prévu.",
+      "phrase_ar": "حتى مع موعد مسبق تتراكم التأخيرات: غالباً من 30 دقيقة إلى ساعة إضافية."
+    },
+    "specialites_medicales": {
+      "singulier_fr": "spécialiste",
+      "genre": "m",
+      "singulier_ar": "طبيب مختص",
+      "has_attente": true,
+      "attente_fr": "1 à 3 h",
+      "attente_ar": "من ساعة إلى 3 ساعات",
+      "phrase_fr": "Cardiologue, dermatologue, ORL… salles pleines : l'attente peut dépasser 2 heures. Autant de temps qu'on peut vous rendre.",
+      "phrase_ar": "طبيب القلب، الجلد، الأنف والأذن… قاعات ممتلئة، وقد يتجاوز الانتظار ساعتين. وقت يمكن أن نعيده إليك."
+    },
+    "ophtalmologie": {
+      "singulier_fr": "ophtalmologue",
+      "genre": "m",
+      "singulier_ar": "طبيب عيون",
+      "has_attente": true,
+      "attente_fr": "1 à 2 h",
+      "attente_ar": "من ساعة إلى ساعتين",
+      "phrase_fr": "Examens, dilatation, consultation : compter souvent 1 à 2 heures sur place.",
+      "phrase_ar": "فحوصات، توسيع الحدقة، استشارة: غالباً من ساعة إلى ساعتين في العيادة."
+    },
+    "gynecologie": {
+      "singulier_fr": "gynécologue",
+      "genre": "m",
+      "singulier_ar": "طبيب أمراض النساء",
+      "has_attente": true,
+      "attente_fr": "1 à 2 h",
+      "attente_ar": "من ساعة إلى ساعتين",
+      "phrase_fr": "Consultations de suivi et échographies : souvent 1 à 2 heures d'attente.",
+      "phrase_ar": "استشارات المتابعة والفحص بالصدى: غالباً من ساعة إلى ساعتين من الانتظار."
+    },
+    "kinesitherapie": {
+      "singulier_fr": "kinésithérapeute",
+      "genre": "m",
+      "singulier_ar": "أخصائي الترويض الطبي",
+      "has_attente": true,
+      "attente_fr": "15 à 45 min",
+      "attente_ar": "من 15 إلى 45 دقيقة",
+      "phrase_fr": "Les séances s'enchaînent, les retards se cumulent : souvent 15 à 45 min à chaque séance, répétées sur des semaines.",
+      "phrase_ar": "تتوالى الحصص وتتراكم التأخيرات: غالباً من 15 إلى 45 دقيقة في كل حصة، على مدى أسابيع."
+    },
+    "radiologie": {
+      "singulier_fr": "centre de radiologie",
+      "genre": "m",
+      "singulier_ar": "مركز أشعة",
+      "has_attente": true,
+      "attente_fr": "1 à 2 h",
+      "attente_ar": "من ساعة إلى ساعتين",
+      "phrase_fr": "Accueil, préparation, examen : une radio ou un scanner peut prendre 1 à 2 heures sur place.",
+      "phrase_ar": "الاستقبال، التحضير، الفحص: قد تستغرق الأشعة أو السكانير من ساعة إلى ساعتين."
+    },
+    "hopitaux": {
+      "singulier_fr": "hôpital",
+      "genre": "m",
+      "singulier_ar": "مستشفى",
+      "has_attente": true,
+      "attente_fr": "2 à 4 h, parfois plus",
+      "attente_ar": "من ساعتين إلى 4 ساعات وأحياناً أكثر",
+      "phrase_fr": "Accueil, consultations externes, admissions : à l'hôpital, une demi-journée d'attente n'est pas rare. Cette demi-journée, gardez-la.",
+      "phrase_ar": "الاستقبال، الاستشارات الخارجية، الدخول: في المستشفى، ليس نادراً أن تضيع نصف يوم في الانتظار. احتفظ بنصف يومك."
+    },
+    "cliniques": {
+      "singulier_fr": "clinique",
+      "genre": "f",
+      "singulier_ar": "مصحة",
+      "has_attente": true,
+      "attente_fr": "1 à 2 h",
+      "attente_ar": "من ساعة إلى ساعتين",
+      "phrase_fr": "Admissions et consultations : souvent 1 à 2 heures à l'accueil.",
+      "phrase_ar": "الدخول والاستشارات: غالباً من ساعة إلى ساعتين عند الاستقبال."
+    },
+    "centres_sante_publics": {
+      "singulier_fr": "centre de santé public",
+      "genre": "m",
+      "singulier_ar": "مركز صحي عمومي",
+      "has_attente": true,
+      "attente_fr": "2 à 4 h",
+      "attente_ar": "من ساعتين إلى 4 ساعات",
+      "phrase_fr": "Beaucoup arrivent avant l'ouverture pour obtenir un ticket : l'attente peut dépasser 3 heures. Un Œil peut y être à l'aube, pas vous.",
+      "phrase_ar": "يصل كثيرون قبل الافتتاح للحصول على رقم، وقد يتجاوز الانتظار 3 ساعات. عين شووفلي تكون هناك منذ الفجر، وليس أنت."
+    },
+    "sante_mentale": {
+      "singulier_fr": "professionnel de santé mentale",
+      "genre": "m",
+      "singulier_ar": "أخصائي نفسي",
+      "has_attente": false,
+      "attente_fr": null,
+      "attente_ar": null,
+      "phrase_fr": "Consultations sur rendez-vous le plus souvent.",
+      "phrase_ar": "الاستشارات غالباً بموعد مسبق."
+    },
+    "medecines_douces": {
+      "singulier_fr": "praticien de médecines douces",
+      "genre": "m",
+      "singulier_ar": "ممارس طب بديل",
+      "has_attente": false,
+      "attente_fr": null,
+      "attente_ar": null,
+      "phrase_fr": "Consultations sur rendez-vous le plus souvent.",
+      "phrase_ar": "الاستشارات غالباً بموعد مسبق."
+    },
+    "autres_sante": {
+      "singulier_fr": "établissement de santé",
+      "genre": "m",
+      "singulier_ar": "مؤسسة صحية",
+      "has_attente": false,
+      "attente_fr": null,
+      "attente_ar": null,
+      "phrase_fr": "Établissements de santé divers de la ville.",
+      "phrase_ar": "مؤسسات صحية متنوعة في المدينة."
+    },
+    "cnss": {
+      "singulier_fr": "agence CNSS",
+      "genre": "f",
+      "singulier_ar": "وكالة الضمان الاجتماعي",
+      "has_attente": true,
+      "attente_fr": "1 à 3 h",
+      "attente_ar": "من ساعة إلى 3 ساعات",
+      "phrase_fr": "Dossiers, remboursements, attestations : souvent 1 à 3 heures au guichet. Une matinée de travail perdue — ou pas.",
+      "phrase_ar": "الملفات، التعويضات، الشواهد: غالباً من ساعة إلى 3 ساعات عند الشباك. صباح عمل ضائع… أو لا."
+    },
+    "barid": {
+      "singulier_fr": "agence Barid Al-Maghrib",
+      "genre": "f",
+      "singulier_ar": "وكالة بريد المغرب",
+      "has_attente": true,
+      "attente_fr": "30 min à 1 h 30",
+      "attente_ar": "من 30 دقيقة إلى ساعة ونصف",
+      "phrase_fr": "Retraits, envois, paiements, pensions : en début de mois, la file peut dépasser 1 heure.",
+      "phrase_ar": "السحب، الإرسال، الأداء، المعاشات: في بداية الشهر قد يتجاوز الطابور ساعة."
+    },
+    "arrondissement_etat_civil": {
+      "singulier_fr": "arrondissement",
+      "genre": "m",
+      "singulier_ar": "مقاطعة",
+      "has_attente": true,
+      "attente_fr": "1 à 2 h",
+      "attente_ar": "من ساعة إلى ساعتين",
+      "phrase_fr": "Légalisations, actes de naissance, certificats : souvent 1 à 2 heures pour un simple tampon.",
+      "phrase_ar": "المصادقة، عقود الازدياد، الشواهد: غالباً من ساعة إلى ساعتين من أجل ختم بسيط."
+    },
+    "conservation_fonciere": {
+      "singulier_fr": "conservation foncière",
+      "genre": "f",
+      "singulier_ar": "محافظة عقارية",
+      "has_attente": true,
+      "attente_fr": "1 à 3 h",
+      "attente_ar": "من ساعة إلى 3 ساعات",
+      "phrase_fr": "Certificats et démarches foncières : souvent 1 à 3 heures d'attente au guichet.",
+      "phrase_ar": "الشواهد والإجراءات العقارية: غالباً من ساعة إلى 3 ساعات عند الشباك."
+    },
+    "impots": {
+      "singulier_fr": "centre des impôts",
+      "genre": "m",
+      "singulier_ar": "مركز الضرائب",
+      "has_attente": true,
+      "attente_fr": "1 à 2 h",
+      "attente_ar": "من ساعة إلى ساعتين",
+      "phrase_fr": "En période de déclaration ou de paiement, compter souvent 1 à 2 heures.",
+      "phrase_ar": "في فترات التصريح أو الأداء، غالباً من ساعة إلى ساعتين."
+    },
+    "eau_electricite": {
+      "singulier_fr": "agence eau/électricité",
+      "genre": "f",
+      "singulier_ar": "وكالة الماء والكهرباء",
+      "has_attente": true,
+      "attente_fr": "30 min à 1 h 30",
+      "attente_ar": "من 30 دقيقة إلى ساعة ونصف",
+      "phrase_fr": "Réclamation, abonnement, facture contestée : souvent 30 min à 1 h 30 au guichet.",
+      "phrase_ar": "شكاية، اشتراك، فاتورة متنازع عليها: غالباً من 30 دقيقة إلى ساعة ونصف عند الشباك."
+    },
+    "prefecture": {
+      "singulier_fr": "préfecture",
+      "genre": "f",
+      "singulier_ar": "عمالة",
+      "has_attente": true,
+      "attente_fr": "1 à 3 h",
+      "attente_ar": "من ساعة إلى 3 ساعات",
+      "phrase_fr": "Nombreuses démarches traitées au guichet : l'attente peut dépasser 2 heures.",
+      "phrase_ar": "إجراءات عديدة تُعالج عند الشباك، وقد يتجاوز الانتظار ساعتين."
+    },
+    "commissariat": {
+      "singulier_fr": "commissariat",
+      "genre": "m",
+      "singulier_ar": "مفوضية الشرطة",
+      "has_attente": true,
+      "attente_fr": "1 à 3 h",
+      "attente_ar": "من ساعة إلى 3 ساعات",
+      "phrase_fr": "CNIE, passeport, attestations : l'attente peut prendre une matinée entière.",
+      "phrase_ar": "البطاقة الوطنية، جواز السفر، الشواهد: قد يستغرق الانتظار صباحاً كاملاً."
+    },
+    "tribunal": {
+      "singulier_fr": "tribunal",
+      "genre": "m",
+      "singulier_ar": "محكمة",
+      "has_attente": true,
+      "attente_fr": "1 à 3 h",
+      "attente_ar": "من ساعة إلى 3 ساعات",
+      "phrase_fr": "Greffes et accueil : forte affluence, souvent 1 à 3 heures pour obtenir un document.",
+      "phrase_ar": "كتابات الضبط والاستقبال: إقبال كبير، غالباً من ساعة إلى 3 ساعات للحصول على وثيقة."
+    },
+    "banque": {
+      "singulier_fr": "banque",
+      "genre": "f",
+      "singulier_ar": "بنك",
+      "has_attente": true,
+      "attente_fr": "30 min à 1 h",
+      "attente_ar": "من 30 دقيقة إلى ساعة",
+      "phrase_fr": "Certaines opérations exigent le guichet : souvent 30 min à 1 h de file, plus en fin de mois.",
+      "phrase_ar": "بعض العمليات تتطلب الشباك: غالباً من 30 دقيقة إلى ساعة، وأكثر في نهاية الشهر."
+    },
+    "visite_technique": {
+      "singulier_fr": "centre de visite technique",
+      "genre": "m",
+      "singulier_ar": "مركز فحص تقني",
+      "has_attente": true,
+      "attente_fr": "1 à 2 h",
+      "attente_ar": "من ساعة إلى ساعتين",
+      "phrase_fr": "Aux pics d'affluence, compter 1 à 2 heures avant le passage du véhicule.",
+      "phrase_ar": "في فترات الازدحام، احتسب من ساعة إلى ساعتين قبل مرور السيارة."
+    }
+  }
+}
