@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import { missionsAPI, usersAPI } from '../../api'
 import { VILLES, VILLES_LIST } from '../../constants/villes'
@@ -142,7 +142,27 @@ const PRISTINE_DRAFT_JSON = JSON.stringify({ type: 'immobilier', subcategory: ''
 // toute façon un déploiement, jamais une simple modification de réglage.
 const SCHEDULED_AT_PAST_TOLERANCE_MS = 5 * 60 * 1000
 
-export default function NewMissionModal({ open, onClose, onCreated }) {
+// Chantier annuaire SEO, Phase 4 (2026-09-30) — décision #4 : "Créer une mission" pré-rempli depuis
+// une fiche de l'annuaire. { title, address, city, quartier, location_lat, location_lng } — tous
+// optionnels, un champ absent n'écrase pas la valeur vierge correspondante. `quartier` : la
+// validation à l'envoi exige seulement une valeur NON VIDE (voir `if (!form.quartier)` plus bas),
+// pas une valeur listée dans constants/villes.js — un quartier annuaire hors de cette liste fixe
+// (fréquent : la liste de l'annuaire vient d'OSM/MTNRA, pas de la même source) reste donc accepté
+// tel quel, affiché dans l'Autocomplete comme n'importe quelle valeur déjà choisie.
+function buildPrefillForm(prefill) {
+  if (!prefill) return null
+  return {
+    ...EMPTY_FORM,
+    title: prefill.title || '',
+    address: prefill.address || '',
+    city: prefill.city || '',
+    quartier: prefill.quartier || '',
+    location_lat: prefill.location_lat != null ? Number(prefill.location_lat) : null,
+    location_lng: prefill.location_lng != null ? Number(prefill.location_lng) : null,
+  }
+}
+
+export default function NewMissionModal({ open, onClose, onCreated, prefill }) {
   const { t, i18n }       = useTranslation()
   const { user }          = useAuth()
   const [type, setType]   = useState('immobilier')
@@ -194,6 +214,23 @@ export default function NewMissionModal({ open, onClose, onCreated }) {
       return parsedJSON === PRISTINE_DRAFT_JSON ? null : parsed
     } catch { return null }
   })
+
+  // Applique `prefill` UNE SEULE FOIS, au moment précis où la modale passe fermée→ouverte — pas à
+  // chaque re-rendu (le parent peut recréer l'objet `prefill` à chaque render ; le déclencheur est
+  // la transition de `open`, jamais l'identité de `prefill`, sinon une saisie déjà commencée par le
+  // client serait écrasée en boucle). N'écrase pas un `localDraft` détecté : le bandeau de
+  // restauration reste proposé, le client choisit lui-même lequel garder.
+  const wasOpen = useRef(false)
+  useEffect(() => {
+    if (open && !wasOpen.current && prefill) {
+      const prefilled = buildPrefillForm(prefill)
+      if (prefilled) {
+        setForm(prefilled)
+        setType('file_attente')
+      }
+    }
+    wasOpen.current = open
+  }, [open])
 
   const set = (k) => (e) => setForm((f) => ({ ...f, [k]: e.target.value }))
   const setVal = (k) => (v) => setForm((f) => ({ ...f, [k]: v }))

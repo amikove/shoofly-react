@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import AppLayout from '../../components/layout/AppLayout'
 import Topbar from '../../components/layout/Topbar'
 import { adminAPI } from '../../api'
@@ -50,6 +50,29 @@ const TYPE_LABELS = {
 export default function AdminDashboard() {
   const { t: tr } = useTranslation()
   const [tab, setTab] = useState('executif')
+
+  // Chantier annuaire SEO, Phase 4 bis (2026-09-30) — décision #4 : un admin connecté qui clique
+  // "Créer une mission" depuis une fiche annuaire atterrit ici via RequireAuth (App.jsx), qui
+  // ajoute ?missionDenied=1 à la redirection. Même pattern StrictMode-safe que oeil/Dashboard.jsx
+  // (voir son commentaire dédié pour le détail des deux garde-fous : initialiseur paresseux pour
+  // lire/nettoyer l'URL, ref pour n'afficher le toast qu'une seule fois).
+  const [missionDenied] = useState(() => {
+    const params = new URLSearchParams(window.location.search)
+    const denied = params.get('missionDenied') === '1'
+    if (denied) {
+      const url = new URL(window.location.href)
+      url.search = ''
+      window.history.replaceState(window.history.state, '', url)
+    }
+    return denied
+  })
+  const missionDeniedShown = useRef(false)
+  useEffect(() => {
+    if (missionDenied && !missionDeniedShown.current) {
+      missionDeniedShown.current = true
+      toast(tr('directoryMissionRestriction.toast'), 'info')
+    }
+  }, [missionDenied, tr])
 
   // ── État période (partagé, visible dans tous les onglets) ──
   const [range, setRange] = useState({ preset: 'month', ...getPresetRange('month') })

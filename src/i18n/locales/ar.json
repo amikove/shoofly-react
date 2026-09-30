@@ -1,4 +1,7 @@
 {
+  "directoryMissionRestriction": {
+    "toast": "إنشاء المهام متاح للعملاء فقط."
+  },
   "missionLocation": {
     "sectionTitle": "مكان المهمة",
     "pickerHint": "حرّك الخريطة: الدبوس في الوسط يحدد المكان بالضبط. يمكنك أيضاً استخدام «موقعي» أو لصق رابط خرائط Google.",

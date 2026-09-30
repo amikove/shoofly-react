@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import AppLayout from '../../components/layout/AppLayout'
 import Topbar from '../../components/layout/Topbar'
@@ -41,6 +41,32 @@ export default function OeilDashboard() {
   //                     les gains (somme des missions terminées) sont inconnus.
   const [balanceError, setBalanceError] = useState(false)
   const [earningsError, setEarningsError] = useState(false)
+  // Chantier annuaire SEO, Phase 4 bis (2026-09-30) — décision #4 : un Œil connecté qui clique
+  // "Créer une mission" depuis une fiche annuaire atterrit ici via RequireAuth (App.jsx), qui
+  // ajoute ?missionDenied=1 à la redirection. Lecture + nettoyage de l'URL en initialiseur
+  // paresseux (même pattern StrictMode-safe que client/Dashboard.jsx : lire window.location.search
+  // directement plutôt que via useSearchParams+useEffect, qui perd la donnée au double-montage
+  // simulé). Le toast, lui, est un effet de bord imprévisible pour React s'il se déclenche pendant
+  // le rendu (avertissement "setState pendant le rendu d'un autre composant") — d'où la garde par
+  // ref (même convention que `wasOpen` dans NewMissionModal.jsx) pour ne l'afficher qu'une fois
+  // même si l'effet est réellement rejoué (montage → nettoyage → remontage simulé StrictMode).
+  const [missionDenied] = useState(() => {
+    const params = new URLSearchParams(window.location.search)
+    const denied = params.get('missionDenied') === '1'
+    if (denied) {
+      const url = new URL(window.location.href)
+      url.search = ''
+      window.history.replaceState(window.history.state, '', url)
+    }
+    return denied
+  })
+  const missionDeniedShown = useRef(false)
+  useEffect(() => {
+    if (missionDenied && !missionDeniedShown.current) {
+      missionDeniedShown.current = true
+      toast(t('directoryMissionRestriction.toast'), 'info')
+    }
+  }, [missionDenied, t])
 
   const load = () => {
     setLoading(true)

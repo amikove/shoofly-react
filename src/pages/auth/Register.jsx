@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useNavigate, Link } from 'react-router-dom'
+import { useNavigate, useSearchParams, Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { authAPI } from '../../api'
 import { VILLES, VILLES_LIST } from '../../constants/villes'
@@ -66,9 +66,18 @@ const CLIENT_USAGE_FREQ_OPTIONS = [
   { value: 'Chaque semaine', key: 'chaqueSemaine' },
 ]
 
+// Voir le même garde dans Login.jsx (chantier annuaire SEO, Phase 4, décision #4).
+function safeRedirectPath(raw) {
+  if (!raw || typeof raw !== 'string') return null
+  if (!raw.startsWith('/') || raw.startsWith('//')) return null
+  return raw
+}
+
 export default function Register() {
   const { t, i18n } = useTranslation()
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
+  const redirectTo = safeRedirectPath(searchParams.get('redirect'))
   useEffect(() => { captureAcquisitionParams() }, [])
   const [step, setStep]     = useState(1)
   const [role, setRole]     = useState('client')
@@ -106,7 +115,7 @@ const [form, setForm] = useState({
       await authAPI.register({ ...form, role, ...acquisition })
       clearAcquisitionParams()
       toast(t('register.toastAccountCreated'), 'success')
-      navigate('/login')
+      navigate(redirectTo ? `/login?redirect=${encodeURIComponent(redirectTo)}` : '/login')
     } catch (err) {
       // Refus « téléphone » (D1) : message traduit FR/AR selon le code serveur et le rôle
       const phoneKey = phoneErrorKey(err.response?.data?.code, role)

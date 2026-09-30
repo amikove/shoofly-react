@@ -1,4 +1,7 @@
 {
+  "directoryMissionRestriction": {
+    "toast": "La création de mission est réservée aux clients."
+  },
   "missionLocation": {
     "sectionTitle": "Lieu de la mission",
     "pickerHint": "Déplacez la carte : l'épingle au centre marque le lieu exact. Vous pouvez aussi utiliser « Ma position » ou coller un lien Google Maps.",
