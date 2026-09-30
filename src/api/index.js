@@ -218,6 +218,12 @@ export const ticketsAPI = {
   adminSetStatus: (id, status)    => api.put(`/api/tickets/admin/${id}/status`, { status }),
 }
 
+// ANNUAIRE SEO — signalements "retrait" / "erreur" sur une fiche (chantier SEO annuaire, Phase 2, 2026-09-30)
+export const directoryAPI = {
+  adminReports:   (status = 'pending') => api.get('/api/directory/admin/reports', { params: { status } }),
+  adminSetReport: (id, action)         => api.put(`/api/directory/admin/reports/${id}`, { action }),
+}
+
 // PUSH (Web Push / VAPID) — chantier notifications push, Phase 2
 export const pushAPI = {
   vapidKey:    ()     => api.get('/api/push/vapid-public-key'),
