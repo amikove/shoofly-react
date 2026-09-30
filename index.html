@@ -8,6 +8,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Shoofly: nous attendons, vous vivez !</title>
 
+    <!-- Polices auto-hébergées (chantier SEO Phase 4, décision #5) : préchargement des 2 fichiers
+         variables (couvrent les poids 300-700 en un seul .woff2 par famille) -->
+    <link rel="preload" href="/fonts/inter-variable-latin.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="/fonts/space-grotesk-variable-latin.woff2" as="font" type="font/woff2" crossorigin>
+
     <!-- PWA / Web Push (chantier notifications push, Phase 2) -->
     <link rel="manifest" href="/manifest.webmanifest" />
     <meta name="theme-color" content="#0F0F0F" />
