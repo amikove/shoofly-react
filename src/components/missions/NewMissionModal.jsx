@@ -227,6 +227,10 @@ export default function NewMissionModal({ open, onClose, onCreated, prefill }) {
       if (prefilled) {
         setForm(prefilled)
         setType('file_attente')
+        // Chantier sous-catégorie annuaire (2026-10-02) : absente pour les catégories annuaire sans
+        // correspondance évidente (ex. "Autres établissements de santé") — setSub('') dans ce cas,
+        // comportement inchangé par rapport à avant ce chantier (le client choisit lui-même).
+        setSub(prefill.subcategory || '')
       }
     }
     wasOpen.current = open

@@ -29,7 +29,8 @@ export default function ClientDashboard() {
   const [loading, setLoading]   = useState(true)
   // Chantier annuaire SEO, Phase 4 (2026-09-30) — décision #4 : arrivée depuis une fiche statique
   // via /client?newMission=1&prefill_title=...&prefill_address=...&prefill_lat=...&prefill_lng=...
-  // &prefill_city=...&prefill_quartier=.... Lu UNE FOIS via l'initialiseur paresseux de useState
+  // &prefill_city=...&prefill_quartier=...&prefill_subcategory=... (ce dernier ajouté 2026-10-02).
+  // Lu UNE FOIS via l'initialiseur paresseux de useState
   // (pas un useEffect) : StrictMode (dev) démonte/remonte le composant pour tester les effets, ce
   // qui a fait perdre les paramètres à la 1re tentative (effet + setSearchParams({}) au 1er montage
   // → au remontage simulé, l'URL était déjà nettoyée → modale jamais ouverte, bug trouvé en testant
@@ -47,6 +48,10 @@ export default function ClientDashboard() {
       quartier: params.get('prefill_quartier') || '',
       location_lat: params.get('prefill_lat') || null,
       location_lng: params.get('prefill_lng') || null,
+      // Sous-catégorie (chantier 2026-10-02) : absente pour la plupart des catégories annuaire sans
+      // correspondance évidente (ex. "Autres établissements de santé") — le client choisit alors
+      // lui-même, le champ reste vide comme avant ce chantier.
+      subcategory: params.get('prefill_subcategory') || '',
     }
     const url = new URL(window.location.href)
     url.search = ''
