@@ -52,6 +52,12 @@ function writeFile(relPath, content) {
   fs.mkdirSync(path.dirname(full), { recursive: true });
   fs.writeFileSync(full, content);
 }
+// directory-data/ est gitignoré (Phase 4, décision #2) : absent sur un checkout propre (Vercel) —
+// mkdir recursive avant d'écrire, comme writeFile ci-dessus.
+function writeDataFile(fileName, content) {
+  fs.mkdirSync(DATA_DIR, { recursive: true });
+  fs.writeFileSync(path.join(DATA_DIR, fileName), content);
+}
 
 // ── Chargement des données ───────────────────────────────────────────────
 // Phase 4, décision #2 : les données ne sont plus lues depuis des fichiers JSON locaux commis au
@@ -302,4 +308,5 @@ module.exports = {
   esc, normalizeCore, slugify, categorySlug, haversineMeters, writeFile, loadData, htmlShell,
   blocShoofly, oeilPeut, nonAffiliationBlock, signalementLinks, faqBlock, jsonLdFaq, jsonLdBreadcrumb,
   jsonLdShooflyService, missionHref, CITY_SLUGS, CITY_BY_SLUG, MIN_FOR_PAGE, SITE_URL, CONTENT, PUBLIC_DIR,
+  DATA_DIR, writeDataFile,
 };

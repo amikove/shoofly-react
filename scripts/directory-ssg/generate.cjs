@@ -4,7 +4,6 @@
 // seo-study/MODELES_TEXTES_SEO.md). Lancé par "npm run build" (package.json), AVANT vite build.
 const fs = require('fs');
 const path = require('path');
-const crypto = require('crypto');
 const L = require('./lib.cjs');
 const T = require('./text-templates.cjs');
 
@@ -99,7 +98,7 @@ async function main() {
   checkNoSpaCollision();
 
   // ── Résumé machine pour le rapport de tests ─────────────────────────────
-  fs.writeFileSync(path.join(L.PUBLIC_DIR, '..', 'directory-data', 'build-stats.json'), JSON.stringify({ ...stats, total: stats.hub + stats.cat + stats.quartier + stats.fiche, generated_at: new Date().toISOString() }, null, 2));
+  L.writeDataFile('build-stats.json', JSON.stringify({ ...stats, total: stats.hub + stats.cat + stats.quartier + stats.fiche, generated_at: new Date().toISOString() }, null, 2));
 }
 
 // ── Générateurs de page ───────────────────────────────────────────────────
@@ -440,13 +439,31 @@ Sitemap: ${L.SITE_URL}/sitemap-index.xml
 function writeIndexNowKey() {
   // Clé PRÉPARÉE, jamais envoyée (décision Étape 3) — le fichier de vérification doit être servi à
   // la racine (protocole IndexNow) ; aucun appel réseau n'est fait par ce script.
-  // Nettoie une éventuelle clé d'un run précédent (utile en local, sur un vrai build Vercel le
-  // dossier public/ part toujours d'un checkout propre donc ce cas ne se présente pas).
-  for (const f of fs.readdirSync(L.PUBLIC_DIR)) if (/^[a-f0-9]{32}\.txt$/.test(f)) fs.unlinkSync(path.join(L.PUBLIC_DIR, f));
-  const key = crypto.randomBytes(16).toString('hex');
+  //
+  // Phase 4 ter, correctif #2 (2026-10-02) : IndexNow EXIGE que cette clé reste STABLE entre
+  // soumissions (le fichier <clé>.txt à la racine fait foi de la propriété du site) — elle ne peut
+  // donc plus être générée aléatoirement à chaque build comme avant. Lue depuis la variable
+  // d'environnement INDEXNOW_KEY (à définir sur Vercel, Production ET Preview, avec la MÊME
+  // valeur) ; absente ou invalide => avertissement, AUCUN fichier écrit, le build CONTINUE (ce
+  // n'est pas une donnée bloquante comme DIRECTORY_EXPORT_TOKEN — IndexNow n'est qu'une
+  // accélération de l'indexation, pas une dépendance du site).
+  for (const f of fs.readdirSync(L.PUBLIC_DIR)) {
+    if (/^[A-Za-z0-9_-]{8,128}\.txt$/.test(f)) fs.unlinkSync(path.join(L.PUBLIC_DIR, f)); // clé d'un run précédent
+  }
+  const key = process.env.INDEXNOW_KEY;
+  if (!key) {
+    console.warn('(avertissement) INDEXNOW_KEY absente — fichier de vérification IndexNow NON écrit (build non bloqué).');
+    console.warn('Pour générer une clé stable : node -e "console.log(require(\'crypto\').randomBytes(16).toString(\'hex\'))" (32 caractères hex, ou tout texte de 8 à 128 caractères parmi a-z A-Z 0-9 - _).');
+    console.warn('Puis la définir sur Vercel : Project Settings → Environment Variables → INDEXNOW_KEY, avec la MÊME valeur pour les environnements Production ET Preview (clé stable = même fichier à chaque build).');
+    return;
+  }
+  if (!/^[A-Za-z0-9_-]{8,128}$/.test(key)) {
+    console.warn(`(avertissement) INDEXNOW_KEY invalide (reçu ${key.length} caractère(s) — attendu 8 à 128 parmi a-z A-Z 0-9 - _) — fichier de vérification IndexNow NON écrit.`);
+    return;
+  }
   L.writeFile(`/${key}.txt`, key);
-  fs.writeFileSync(path.join(L.PUBLIC_DIR, '..', 'directory-data', 'indexnow-key.json'), JSON.stringify({ key, keyLocation: `${L.SITE_URL}/${key}.txt`, note: 'Préparé, jamais envoyé à l\'API IndexNow — voir RAPPORT_PHASE3.md.' }, null, 2));
-  console.log('Clé IndexNow préparée (non envoyée) :', key);
+  L.writeDataFile('indexnow-key.json', JSON.stringify({ key, keyLocation: `${L.SITE_URL}/${key}.txt`, note: 'Préparée depuis INDEXNOW_KEY, jamais envoyée automatiquement à l\'API IndexNow — voir RAPPORT_PHASE3.md.' }, null, 2));
+  console.log('Clé IndexNow écrite (stable, depuis INDEXNOW_KEY) :', key);
 }
 
 function checkNoSpaCollision() {
