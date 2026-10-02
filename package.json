@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "node scripts/directory-ssg/generate.cjs && vite build",
+    "build:app-only": "vite build",
     "lint": "eslint .",
     "preview": "vite preview"
   },

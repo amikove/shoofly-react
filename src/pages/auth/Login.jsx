@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { useNavigate, Link } from 'react-router-dom'
+import { useNavigate, useSearchParams, Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { useAuth } from '../../context/AuthContext'
 import { captureAcquisitionParams } from '../../utils/acquisitionTracking'
@@ -34,11 +34,24 @@ function takeSessionExpiredFlag() {
   return v
 }
 
+// Chantier annuaire SEO, Phase 4 (2026-09-30) — décision #4 : accepte UNIQUEMENT un chemin relatif
+// du même site ("/xxx"), jamais "//xxx" (protocole-relatif, contourne l'origine) ni une URL absolue
+// ("https://...", "javascript:..."). Même si RequireAuth (App.jsx) ne construit ce paramètre que
+// depuis window.location.pathname+search, on revalide ici : ce paramètre reste une entrée
+// utilisateur ordinaire une fois dans l'URL (peut être partagée, modifiée à la main).
+function safeRedirectPath(raw) {
+  if (!raw || typeof raw !== 'string') return null
+  if (!raw.startsWith('/') || raw.startsWith('//')) return null
+  return raw
+}
+
 export default function Login() {
   const { t } = useTranslation()
   useEffect(() => { captureAcquisitionParams() }, [])
   const { login } = useAuth()
   const navigate   = useNavigate()
+  const [searchParams] = useSearchParams()
+  const redirectTo = safeRedirectPath(searchParams.get('redirect'))
   const [sessionExpired] = useState(takeSessionExpiredFlag)
   const [role, setRole]     = useState('client')
   const [email, setEmail]   = useState(import.meta.env.DEV ? DEMO.client.email : '')
@@ -66,6 +79,7 @@ export default function Login() {
       // contestation. RequireAuth y renverrait de toute façon ; redirection explicite = pas de
       // flash sur l'espace normal.
       if (user.is_active === false) { navigate('/compte-bloque'); return }
+      if (redirectTo) { navigate(redirectTo); return }
       const routes = { client: '/client', oeil: '/oeil', admin: '/admin' }
       navigate(routes[user.role] || '/client')
     } catch (err) {
@@ -159,7 +173,7 @@ export default function Login() {
           </form>
 
           <div className="border-t border-white/10 mt-6 pt-4 flex flex-col gap-2">
-            <Link to="/register" className="text-xs text-center text-[#AAA]">
+            <Link to={redirectTo ? `/register?redirect=${encodeURIComponent(redirectTo)}` : '/register'} className="text-xs text-center text-[#AAA]">
               {t('login.noAccount')} <span className="text-[#FF4D00]">{t('login.registerLink')}</span>
             </Link>
             <Link to="/" className="text-xs text-center text-[#555] hover:text-[#AAA]">

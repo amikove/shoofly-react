@@ -28,3 +28,15 @@ dist-ssr
 # Rapports/scripts d'audit ad-hoc (même convention que backend/_audit/)
 _audit
 .claude/
+
+# Chantier SEO annuaire (Phase 4, décision #2) — artefacts régénérés à chaque build par
+# scripts/directory-ssg/generate.cjs, jamais du code source, JAMAIS commités (dépôt PUBLIC, aucune
+# donnée d'établissement ne doit y apparaître) :
+directory-data/
+public/etablissements/
+public/ar/etablissements/
+public/sitemap-*.xml
+public/sitemap-index.xml
+public/robots.txt
+# Clé IndexNow (fichier de vérification à 32 caractères hex à la racine, ex. 8970946106bbc....txt)
+/public/[0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f]*.txt

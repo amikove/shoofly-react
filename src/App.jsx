@@ -74,6 +74,7 @@ const AdminClientsSuspendus = lazy(() => import('./pages/admin/ClientsSuspendus'
 const AdminMissionsProchesValidation = lazy(() => import('./pages/admin/MissionsProchesValidation'))
 const UserProfile = lazy(() => import('./pages/admin/UserProfile'))
 const AdminBlockAppeals = lazy(() => import('./pages/admin/AdminBlockAppeals'))
+const AdminDirectoryReports = lazy(() => import('./pages/admin/AdminDirectoryReports')) // Chantier SEO annuaire, Phase 2 (2026-09-30)
 
 
 // Route guard
@@ -84,7 +85,16 @@ function RequireAuth({ children, allowedRoles, requiredPermission }) {
       <Spinner size="lg" />
     </div>
   )
-  if (!user) return <Navigate to="/login" replace />
+  // Chantier annuaire SEO, Phase 4 (2026-09-30) — décision #4 : un visiteur non connecté qui
+  // clique "Créer une mission" depuis une fiche statique arrive ici via /client?newMission=1&....
+  // Sans ceci, ces paramètres étaient perdus (Navigate ne les reporte jamais) et le lieu à
+  // pré-remplir disparaissait. `dest` = uniquement pathname+search de CETTE origine (jamais une
+  // valeur venue d'ailleurs) → pas d'open-redirect possible même sans validation supplémentaire
+  // côté Login.jsx (qui revalide quand même, voir son commentaire).
+  if (!user) {
+    const dest = window.location.pathname + window.location.search
+    return <Navigate to={`/login?redirect=${encodeURIComponent(dest)}`} replace />
+  }
   // Compte bloqué (is_active=false) — chantier L4. Aucune route de l'espace normal ne lui est
   // accessible (backend : 403 hors whitelist de recours) : on le renvoie systématiquement vers
   // l'écran de contestation, quel que soit son rôle. Même principe que la redirection
@@ -99,7 +109,14 @@ function RequireAuth({ children, allowedRoles, requiredPermission }) {
   const permissionDenied = requiredPermission && !(isSuperAdmin || hasPermission(requiredPermission))
   if (roleDenied || permissionDenied) {
     const routes = { client: '/client', oeil: '/oeil', admin: '/admin' }
-    return <Navigate to={routes[user.role] || '/login'} replace />
+    // Chantier annuaire SEO, Phase 4 bis (2026-09-30) — décision #4 : un Œil ou un admin connecté
+    // qui clique "Créer une mission" depuis une fiche statique (lien vers /client?newMission=1&...)
+    // atterrit ici via le rôle refusé ci-dessus. On le renvoie vers son propre espace, avec un
+    // marqueur ?missionDenied=1 pour qu'il y affiche un message explicatif plutôt qu'une
+    // redirection silencieuse (lu par OeilDashboard/AdminDashboard, cf. leur commentaire dédié).
+    const cameFromMissionLink = allowedRoles?.includes('client') && new URLSearchParams(window.location.search).get('newMission') === '1'
+    const target = routes[user.role] || '/login'
+    return <Navigate to={cameFromMissionLink ? `${target}?missionDenied=1` : target} replace />
   }
   // Décision BOSS Q6 (2026-09-28) : client ou Œil sans numéro de téléphone → écran obligatoire
   // « Ajoutez votre numéro de mobile » avant tout accès. Admins non concernés. Œil suspendu exclu :
@@ -233,6 +250,7 @@ export default function App() {
       <Route path="/admin/missions-proches-validation" element={<RequireAuth allowedRoles={['admin']} requiredPermission="missions"><AdminMissionsProchesValidation /></RequireAuth>} />
       <Route path="/admin/users/:userId" element={<RequireAuth allowedRoles={['admin']} requiredPermission="users"><UserProfile /></RequireAuth>} />
       <Route path="/admin/block-appeals" element={<RequireAuth allowedRoles={['admin']} requiredPermission="moderation"><AdminBlockAppeals /></RequireAuth>} />
+      <Route path="/admin/annuaire-signalements" element={<RequireAuth allowedRoles={['admin']} requiredPermission="moderation"><AdminDirectoryReports /></RequireAuth>} />
 
 
       <Route path="*" element={<Navigate to="/" replace />} />

@@ -27,7 +27,33 @@ export default function ClientDashboard() {
   const [stats, setStats]       = useState({ total:0, active:0, completed:0, budget:0, timeSavedMinutes:0 })
   const [actionsRequired, setActionsRequired] = useState({ to_validate: [], to_rate: [], to_choose_replacement: [] })
   const [loading, setLoading]   = useState(true)
-  const [showNew, setShowNew]   = useState(false)
+  // Chantier annuaire SEO, Phase 4 (2026-09-30) — décision #4 : arrivée depuis une fiche statique
+  // via /client?newMission=1&prefill_title=...&prefill_address=...&prefill_lat=...&prefill_lng=...
+  // &prefill_city=...&prefill_quartier=.... Lu UNE FOIS via l'initialiseur paresseux de useState
+  // (pas un useEffect) : StrictMode (dev) démonte/remonte le composant pour tester les effets, ce
+  // qui a fait perdre les paramètres à la 1re tentative (effet + setSearchParams({}) au 1er montage
+  // → au remontage simulé, l'URL était déjà nettoyée → modale jamais ouverte, bug trouvé en testant
+  // dans un vrai navigateur). L'initialiseur lit window.location.search directement et nettoie
+  // l'URL via history.replaceState AVANT le premier rendu : aucune fenêtre où StrictMode peut
+  // remonter le composant entre lecture et nettoyage. `showNew` dérive de la même lecture, dans son
+  // propre initialiseur paresseux — pas un effet séparé (évite tout aller-retour de rendu).
+  const [missionPrefill] = useState(() => {
+    const params = new URLSearchParams(window.location.search)
+    if (params.get('newMission') !== '1') return null
+    const prefill = {
+      title: params.get('prefill_title') || '',
+      address: params.get('prefill_address') || '',
+      city: params.get('prefill_city') || '',
+      quartier: params.get('prefill_quartier') || '',
+      location_lat: params.get('prefill_lat') || null,
+      location_lng: params.get('prefill_lng') || null,
+    }
+    const url = new URL(window.location.href)
+    url.search = ''
+    window.history.replaceState(window.history.state, '', url)
+    return prefill
+  })
+  const [showNew, setShowNew]   = useState(() => !!missionPrefill)
   const [interestsMission, setInterestsMission] = useState(null)
   const [profileOeil, setProfileOeil] = useState(null)
   const [ratingMission, setRatingMission] = useState(null)
@@ -271,7 +297,7 @@ export default function ClientDashboard() {
         </div>
         </div>
 
-      <NewMissionModal open={showNew} onClose={() => setShowNew(false)} onCreated={(m) => {
+      <NewMissionModal open={showNew} onClose={() => setShowNew(false)} prefill={missionPrefill} onCreated={(m) => {
           setMissions((ms) => [m, ...ms])
           setStats((s) => ({ ...s, total: s.total + 1 }))
         }} />
