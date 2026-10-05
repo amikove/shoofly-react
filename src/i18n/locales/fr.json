@@ -1,4 +1,8 @@
 {
+  "adminDirectoryReports": {
+    "retraitConfirme": "Retrait confirmé. La fiche disparaîtra du site d'ici quelques minutes.",
+    "retraitSansRebuild": "Retrait confirmé. Republication automatique non configurée : la fiche disparaîtra au prochain build."
+  },
   "annuaire": {
     "homeTitle": "Où voulez-vous qu'on attende pour vous ?",
     "homeCities": "Annuaire par ville",
