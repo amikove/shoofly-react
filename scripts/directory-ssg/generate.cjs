@@ -18,7 +18,7 @@ function article(genre) { return genre === 'f' ? 'une' : 'un'; }
 function cityLabel(city, lang) { return lang === 'ar' ? CITY_AR[city] : city; }
 
 async function main() {
-  const { categories, establishments } = await L.loadData();
+  const { categories, establishments, removed } = await L.loadData();
   const publishedCategories = categories; // déjà filtré is_published=true par l'export backend
 
   // ── Index ──────────────────────────────────────────────────────────────
@@ -92,6 +92,12 @@ async function main() {
   addSitemap('_hubs', '/etablissements');
   L.writeDataFile('annuaire-liens.json', JSON.stringify({ ...annuaireLinks, generated_at: new Date().toISOString() }, null, 2));
   L.writeDataFile('annuaire-noscript.html', annuaireNoscriptHtml(annuaireLinks));
+
+  // ── Fiches retirées : pages de redirection (jamais dans les sitemaps) ────────────────
+  const liveSlugs = new Set(establishments.map((e) => e.slug));
+  const retiredStubs = generateRetiredStubs(removed, byCityCat, liveSlugs);
+  L.writeDataFile('retired-stubs.json', JSON.stringify(retiredStubs.map((s) => ({ slug: s.slug, city: s.city, target: s.target }))));
+  console.log('Pages de redirection (fiches retirées, FR+AR) :', retiredStubs.length * 2);
 
   writeRobotsAndSitemaps(publishedCategories, sitemapUrls);
   writeIndexNowKey();
@@ -398,19 +404,75 @@ function generateEntree(links, lang) {
 // Bloc inséré dans index.html (vite.config.js, plugin annuaire-noscript) : liens lisibles SANS JS.
 // Visible uniquement sans JavaScript — la section React ne se rend qu'avec JS, donc pas de doublon.
 function annuaireNoscriptHtml(links) {
-  const N = T.ACCUEIL_NOSCRIPT;
   const home = links.cities.find((c) => c.slug === 'rabat');
-  const cityLinks = links.cities.map((c) => `<a href="/etablissements/${c.slug}">${L.esc(c.fr)}</a>`).join(' · ');
-  const phareLinks = home && home.phares.length
-    ? `<p>${L.esc(N.phares)} ${L.esc(home.fr)} : ${home.phares.map((p) => `<a href="/etablissements/${home.slug}/${p.slug}">${L.esc(p.fr)}</a>`).join(' · ')}</p>`
-    : '';
-  return `<noscript><section class="annuaire-liens">
+  const section = (lang) => {
+    const N = T.ACCUEIL_NOSCRIPT[lang];
+    const base = lang === 'ar' ? '/ar' : '';
+    const cityName = (c) => (lang === 'ar' ? c.ar : c.fr);
+    const phareName = (p) => (lang === 'ar' ? p.ar : p.fr);
+    const cityLinks = links.cities.map((c) => `<a href="${base}/etablissements/${c.slug}">${L.esc(cityName(c))}</a>`).join(' · ');
+    const phareLinks = home && home.phares.length
+      ? `<p>${L.esc(N.phares)} ${L.esc(cityName(home))} : ${home.phares.map((p) => `<a href="${base}/etablissements/${home.slug}/${p.slug}">${L.esc(phareName(p))}</a>`).join(' · ')}</p>`
+      : '';
+    return `<section class="annuaire-liens" lang="${lang}"${lang === 'ar' ? ' dir="rtl"' : ''}>
 <h2>${L.esc(N.titre)}</h2>
 <p>${L.esc(N.villes)} : ${cityLinks}</p>
 ${phareLinks}
-<p><a href="/etablissements">${L.esc(N.pied)}</a></p>
-</section></noscript>
+<p><a href="${base}/etablissements">${L.esc(N.pied)}</a></p>
+</section>`;
+  };
+  return `<noscript>${section('fr')}
+${section('ar')}</noscript>
 `;
+}
+
+// Fiches retirées / non publiées (export `removed`, slug + ville + catégorie UNIQUEMENT) : une page
+// minimale par URL ancienne, FR et AR. Décision BOSS (option c améliorée) : noindex, canonical vers la
+// cible, redirection meta refresh + location.replace, lien visible de secours. Cible = ville×catégorie
+// si la page existe (même seuil que la génération), sinon le hub de la ville. AUCUNE donnée de la
+// fiche n'est écrite dans la page. Ces pages ne sont JAMAIS ajoutées aux sitemaps.
+function generateRetiredStubs(removed, byCityCat, liveSlugs) {
+  const stubs = [];
+  let skipped = 0;
+  for (const r of removed) {
+    const citySlug = L.CITY_SLUGS[r.city];
+    const validSlug = typeof r.slug === 'string' && /^[a-z0-9-]+$/.test(r.slug);
+    if (!citySlug || !validSlug || !r.category_id) { skipped++; continue; }
+    // Garde-fou : une URL retirée ne doit JAMAIS écraser une fiche encore publiée (slug unique en base,
+    // mais l'export pourrait diverger) — on la signale et on la laisse de côté.
+    if (liveSlugs.has(r.slug)) { console.warn(`(avertissement) fiche retirée "${r.slug}" a un slug encore publié — page de redirection NON générée.`); skipped++; continue; }
+    const catPageExists = (byCityCat[`${r.city}|${r.category_id}`] || []).length >= L.MIN_FOR_PAGE;
+    const catPath = r.category_id === 'urgences' ? 'urgences' : L.categorySlug(r.category_id);
+    const hubPath = `/etablissements/${citySlug}`;
+    const targetFr = catPageExists ? `${hubPath}/${catPath}` : hubPath;
+    const oldFrPath = `${hubPath}/${r.slug}`;
+    for (const lang of ['fr', 'ar']) {
+      const base = lang === 'ar' ? '/ar' : '';
+      const target = `${base}${targetFr}`;
+      const canonical = `${L.SITE_URL}${target}`;
+      const txt = T.REDIRECTION_RETIREE[lang];
+      const html = `<!doctype html>
+<html lang="${lang}" dir="${lang === 'ar' ? 'rtl' : 'ltr'}">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>${L.esc(txt.titre)}</title>
+<link rel="canonical" href="${canonical}">
+<meta http-equiv="refresh" content="0; url=${L.esc(target)}">
+</head>
+<body>
+<p><a href="${L.esc(target)}">${L.esc(txt.lien)}</a></p>
+<script>location.replace(${JSON.stringify(target)});</script>
+</body>
+</html>
+`;
+      L.writeFile(`${base}${oldFrPath}.html`, html);
+    }
+    stubs.push({ slug: r.slug, city: r.city, target: targetFr });
+  }
+  if (skipped) console.log(`Fiches retirées : ${skipped} ignorée(s) (ville/slug/catégorie invalide ou slug publié).`);
+  return stubs;
 }
 
 function renderList(list, city, lang) {

@@ -96,13 +96,29 @@ const ENTREE_ANNUAIRE = {
 // JS). Même contenu que la section React « Où voulez-vous qu'on attende pour vous ? » — FR uniquement :
 // la page d'accueil est une SPA dont la langue se choisit côté client.
 const ACCUEIL_NOSCRIPT = {
-  titre: "Où voulez-vous qu'on attende pour vous ?",
-  villes: 'Annuaire par ville',
-  phares: 'Catégories phares à',
-  pied: 'Annuaire des établissements',
+  fr: {
+    titre: "Où voulez-vous qu'on attende pour vous ?",
+    villes: 'Annuaire par ville',
+    phares: 'Catégories phares à',
+    pied: 'Annuaire des établissements',
+  },
+  ar: {
+    titre: 'أين تريد أن ننتظر بدلاً منك؟',
+    villes: 'الدليل حسب المدينة',
+    phares: 'فئات رئيسية في',
+    pied: 'دليل المؤسسات',
+  },
+};
+
+// Page de redirection d'une fiche retirée / non publiée. AUCUNE donnée de la fiche (ni nom, ni adresse) :
+// le texte est générique et le seul rôle de la page est la redirection vers la cible (voir generate.cjs).
+const REDIRECTION_RETIREE = {
+  fr: { titre: 'Redirection — Shoofly', lien: 'Cette fiche n’est plus disponible. Voir les établissements similaires.' },
+  ar: { titre: 'تحويل — شووفلي', lien: 'لم تعد هذه البطاقة متاحة. اطلع على المؤسسات المشابهة.' },
 };
 
 module.exports = {
   BLOC_SHOOFLY, OEIL_PEUT_SANTE, OEIL_PEUT_ADMIN, nonAffiliation, NON_AFFILIATION_LISTE,
   LIENS_SIGNALEMENT, FOOTER_ATTRIBUTION, URGENCES_BANDEAU, FAQ_GENERALE, ENTREE_ANNUAIRE, ACCUEIL_NOSCRIPT,
+  REDIRECTION_RETIREE,
 };

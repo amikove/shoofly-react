@@ -127,16 +127,58 @@ function main() {
   const distIndex = path.join(__dirname, '..', '..', 'dist', 'index.html');
   if (fs.existsSync(distIndex)) {
     const indexHtml = fs.readFileSync(distIndex, 'utf8');
-    const ns = indexHtml.match(/<noscript><section class="annuaire-liens">([\s\S]*?)<\/section><\/noscript>/);
-    if (!ns) { noscriptBroken++; console.log('Bloc noscript annuaire absent de dist/index.html'); }
-    else {
-      for (const h of [...ns[1].matchAll(/href="(\/[^"]+)"/g)].map((m) => m[1])) {
+    const ns = indexHtml.match(/<noscript>([\s\S]*?)<\/noscript>/);
+    const sections = ns ? [...ns[1].matchAll(/<section class="annuaire-liens"[^>]*>([\s\S]*?)<\/section>/g)] : [];
+    // FR et AR : une section chacune, et la section AR doit pointer vers /ar/…
+    const langs = sections.map((s) => (s[0].match(/lang="(\w+)"/) || [])[1]);
+    if (!ns || sections.length !== 2 || !langs.includes('fr') || !langs.includes('ar')) { noscriptBroken++; console.log('Bloc noscript annuaire absent ou incomplet (FR+AR attendus) dans dist/index.html'); }
+    for (const s of sections) {
+      const lang = (s[0].match(/lang="(\w+)"/) || [])[1];
+      for (const h of [...s[1].matchAll(/href="(\/[^"]+)"/g)].map((m) => m[1])) {
         noscriptChecked++;
+        if (lang === 'ar' && !h.startsWith('/ar/')) { noscriptBroken++; console.log('Lien noscript AR sans préfixe /ar :', h); }
         if (!existingPaths.has(h)) { noscriptBroken++; console.log('Lien noscript vers page absente:', h); }
       }
     }
   } else {
     console.log('dist/index.html absent : vérification du bloc noscript ignorée (lancer le build).');
+  }
+
+  // Fiches retirées : pages de redirection FR+AR (noindex, canonical, refresh vers une cible existante),
+  // jamais présentes dans une sitemap, et aucune donnée de fiche dans la page.
+  let stubsChecked = 0, stubsBroken = 0;
+  const stubsFile = path.join(__dirname, '..', '..', 'directory-data', 'retired-stubs.json');
+  const sitemapAll = fs.readdirSync(PUBLIC_DIR).filter((f) => /^sitemap-.*\.xml$/.test(f))
+    .map((f) => fs.readFileSync(path.join(PUBLIC_DIR, f), 'utf8')).join('\n');
+  if (fs.existsSync(stubsFile)) {
+    const stubs = JSON.parse(fs.readFileSync(stubsFile, 'utf8'));
+    for (const s of stubs) {
+      const oldPath = `/etablissements/${L.CITY_SLUGS[s.city]}/${s.slug}`;
+      if (sitemapAll.includes(`${oldPath}</loc>`) || sitemapAll.includes(`/ar${oldPath}</loc>`)) { stubsBroken++; console.log('Fiche retirée présente dans une sitemap:', oldPath); }
+      for (const lang of ['fr', 'ar']) {
+        const base = lang === 'ar' ? '/ar' : '';
+        const file = path.join(PUBLIC_DIR, `${base}${oldPath}.html`);
+        stubsChecked++;
+        if (!fs.existsSync(file)) { stubsBroken++; console.log('Page de redirection absente:', `${base}${oldPath}`); continue; }
+        const html = fs.readFileSync(file, 'utf8');
+        const target = `${base}${s.target}`;
+        const okRobots = /<meta name="robots" content="noindex">/.test(html);
+        const okCanon = html.includes(`<link rel="canonical" href="${L.SITE_URL}${target}">`);
+        const okRefresh = html.includes(`<meta http-equiv="refresh" content="0; url=${target}">`);
+        const okJs = html.includes(`location.replace(${JSON.stringify(target)})`);
+        const okLink = html.includes(`<a href="${target}">`);
+        const okTarget = existingPaths.has(target);
+        if (!(okRobots && okCanon && okRefresh && okJs && okLink && okTarget)) {
+          stubsBroken++;
+          console.log('Redirection incorrecte:', `${base}${oldPath}`, { okRobots, okCanon, okRefresh, okJs, okLink, okTarget });
+        }
+        // Aucune donnée de fiche : pas de nom ni d'adresse dans la page (seul le slug de cible est présent)
+        if (/<h1|<dl|application\/ld\+json/.test(html)) { stubsBroken++; console.log('Page de redirection contient du contenu de fiche:', `${base}${oldPath}`); }
+      }
+    }
+    console.log(`Fiches retirées : ${stubs.length} (pages FR+AR vérifiées : ${stubsChecked})`);
+  } else {
+    console.log('directory-data/retired-stubs.json absent : vérification des fiches retirées ignorée.');
   }
 
   // Routage Vercel : cleanUrls + destination "/index" (une destination "/index.html" casse le SPA).
@@ -186,7 +228,8 @@ function main() {
   console.log('Sitemaps référencés dans l\'index :', sitemapCount, '| URLs totales (FR+AR) dans tous les sitemaps :', totalSitemapUrls);
 
   const ok = jsonLdErrors === 0 && hreflangMismatch === 0 && brokenLinks === 0 && missingBots.length === 0 && subcategoryInvalid === 0
-    && websiteInvalid === 0 && externalInvalid === 0 && liensBroken === 0 && noscriptBroken === 0 && routingOk && entryInSitemap;
+    && websiteInvalid === 0 && externalInvalid === 0 && liensBroken === 0 && noscriptBroken === 0 && routingOk && entryInSitemap
+    && stubsBroken === 0;
   console.log('\n=== RÉSULTAT ===', ok ? 'PASS' : 'FAIL');
   process.exit(ok ? 0 : 1);
 }

@@ -46,18 +46,19 @@ export default function Landing() {
 
 
       {/* NAV */}
-      <nav className="flex items-center justify-between px-6 md:px-16 py-5 border-b border-white/10">
+      {/* Mobile : la rangée des boutons passe à la ligne au lieu de déborder (320-375 px) ; desktop inchangé */}
+      <nav className="flex flex-wrap items-center justify-between gap-y-3 px-4 md:px-16 py-5 border-b border-white/10">
         <div className="font-display font-bold text-xl tracking-tight">
           SHOOF<span className="text-[#FF4D00]">LY</span>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 md:gap-3">
           <LanguageToggle />
           <button onClick={() => navigate('/login')}
-            className="text-sm text-[#AAA] hover:text-white transition-colors">
+            className="text-sm text-[#AAA] hover:text-white transition-colors px-2 md:px-0">
             {t('landing.nav.login')}
           </button>
           <button onClick={() => navigate('/register')}
-            className="bg-[#FF4D00] hover:bg-[#e04400] text-white text-sm font-semibold px-4 py-2 rounded-xl transition-colors">
+            className="bg-[#FF4D00] hover:bg-[#e04400] text-white text-sm font-semibold px-3 md:px-4 py-2 rounded-xl transition-colors whitespace-nowrap">
             {t('landing.nav.register')}
           </button>
         </div>
