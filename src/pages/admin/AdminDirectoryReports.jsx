@@ -2,6 +2,7 @@
 // ("Demander le retrait" / "Signaler une erreur") reçus sur les fiches de l'annuaire. Page
 // volontairement minimale (chantier "couche données") — voir RAPPORT_PHASE2_DONNEES.md.
 import { useState, useEffect, useCallback } from 'react'
+import { useTranslation } from 'react-i18next'
 import AppLayout from '../../components/layout/AppLayout'
 import Topbar from '../../components/layout/Topbar'
 import { directoryAPI } from '../../api'
@@ -21,6 +22,7 @@ export default function AdminDirectoryReports() {
   const [loading, setLoading] = useState(true)
   const [tab, setTab] = useState('pending')
   const [acting, setActing] = useState({})
+  const { t } = useTranslation()
 
   const load = useCallback(() => {
     setLoading(true)
@@ -32,16 +34,25 @@ export default function AdminDirectoryReports() {
 
   useEffect(() => { load() }, [load])
 
-  const act = async (id, action) => {
-    setActing((a) => ({ ...a, [id]: true }))
+  const act = async (report, action) => {
+    setActing((a) => ({ ...a, [report.id]: true }))
     try {
-      await directoryAPI.adminSetReport(id, action)
-      toast(action === 'actioned' ? 'Signalement traité ✓' : 'Signalement ignoré', 'success')
+      const { data } = await directoryAPI.adminSetReport(report.id, action)
+      if (action === 'actioned' && report.type === 'retrait') {
+        // Rebuild planifié (anti-rafale, ~5 min) : message de succès. Sinon, retrait effectif mais
+        // republication manuelle/prochain build : on le dit à l'admin.
+        toast(
+          t(data.rebuild_scheduled ? 'adminDirectoryReports.retraitConfirme' : 'adminDirectoryReports.retraitSansRebuild'),
+          data.rebuild_scheduled ? 'success' : 'info',
+        )
+      } else {
+        toast(action === 'actioned' ? 'Signalement traité ✓' : 'Signalement ignoré', 'success')
+      }
       load()
     } catch (err) {
       toast(err.response?.data?.error || 'Erreur', 'error')
     } finally {
-      setActing((a) => ({ ...a, [id]: false }))
+      setActing((a) => ({ ...a, [report.id]: false }))
     }
   }
 
@@ -88,11 +99,11 @@ export default function AdminDirectoryReports() {
                     </td>
                     {tab === 'pending' && (
                       <td className="p-3 whitespace-nowrap space-x-2">
-                        <button disabled={acting[r.id]} onClick={() => act(r.id, 'actioned')}
+                        <button disabled={acting[r.id]} onClick={() => act(r, 'actioned')}
                           className="px-3 py-1 rounded-lg bg-green-600/20 text-green-400 text-xs font-medium hover:bg-green-600/30 disabled:opacity-50">
                           {r.type === 'retrait' ? 'Confirmer le retrait' : 'Marquer traité'}
                         </button>
-                        <button disabled={acting[r.id]} onClick={() => act(r.id, 'dismissed')}
+                        <button disabled={acting[r.id]} onClick={() => act(r, 'dismissed')}
                           className="px-3 py-1 rounded-lg bg-[#2A2A2A] text-[#AAA] text-xs font-medium hover:text-white disabled:opacity-50">
                           Ignorer
                         </button>
