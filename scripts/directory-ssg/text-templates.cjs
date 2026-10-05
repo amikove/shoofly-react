@@ -69,7 +69,40 @@ const FAQ_GENERALE = [
     ar: { q: 'هل شووفلي شريك لهذه المؤسسات؟', r: 'لا. شووفلي خدمة انتظار مستقلة وغير مرتبطة بأي مؤسسة مذكورة.' } },
 ];
 
+// Page d'entrée /etablissements (+ /ar/etablissements). H1 et intro : textes validés, recopiés tels
+// quels. Le titre et la meta description ne sont pas dans le .md : ils reprennent le H1 et l'intro.
+const ENTREE_ANNUAIRE = {
+  fr: {
+    title: "Annuaire des lieux où l'on attend | Shoofly",
+    h1: "Annuaire des lieux où l'on attend",
+    intro: "Laboratoires, hôpitaux, CNSS, arrondissements… Trouvez l'établissement, et confiez l'attente à un Œil Shoofly.",
+    villes: 'Villes',
+    phares: 'Catégories phares',
+    accueil: 'Accueil',
+    annuaire: 'Annuaire',
+  },
+  ar: {
+    title: 'دليل أماكن الانتظار | شووفلي',
+    h1: 'دليل أماكن الانتظار',
+    intro: 'مختبرات، مستشفيات، الضمان الاجتماعي، المقاطعات… اعثر على المؤسسة، ودع عين شووفلي تنتظر بدلاً منك.',
+    villes: 'المدن',
+    phares: 'فئات رئيسية',
+    accueil: 'الرئيسية',
+    annuaire: 'الدليل',
+  },
+};
+
+// Bloc noscript de index.html (accueil SANS JavaScript, pour les robots d'IA et les navigateurs sans
+// JS). Même contenu que la section React « Où voulez-vous qu'on attende pour vous ? » — FR uniquement :
+// la page d'accueil est une SPA dont la langue se choisit côté client.
+const ACCUEIL_NOSCRIPT = {
+  titre: "Où voulez-vous qu'on attende pour vous ?",
+  villes: 'Annuaire par ville',
+  phares: 'Catégories phares à',
+  pied: 'Annuaire des établissements',
+};
+
 module.exports = {
   BLOC_SHOOFLY, OEIL_PEUT_SANTE, OEIL_PEUT_ADMIN, nonAffiliation, NON_AFFILIATION_LISTE,
-  LIENS_SIGNALEMENT, FOOTER_ATTRIBUTION, URGENCES_BANDEAU, FAQ_GENERALE,
+  LIENS_SIGNALEMENT, FOOTER_ATTRIBUTION, URGENCES_BANDEAU, FAQ_GENERALE, ENTREE_ANNUAIRE, ACCUEIL_NOSCRIPT,
 };

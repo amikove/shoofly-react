@@ -84,6 +84,15 @@ async function main() {
     addSitemap('_hubs', `/etablissements/${L.CITY_SLUGS[city]}`);
   }
 
+  // ── Page d'entrée + liens vers l'annuaire (accueil, pied de page, espace client) ────────
+  // Liste construite à partir des pages RÉELLEMENT générées ci-dessus (même seuil MIN_FOR_PAGE) :
+  // aucun lien vers une catégorie qui n'a pas de page.
+  const annuaireLinks = buildAnnuaireLinks(cities, byCityCat, publishedCategories);
+  for (const lang of ['fr', 'ar']) generateEntree(annuaireLinks, lang);
+  addSitemap('_hubs', '/etablissements');
+  L.writeDataFile('annuaire-liens.json', JSON.stringify({ ...annuaireLinks, generated_at: new Date().toISOString() }, null, 2));
+  L.writeDataFile('annuaire-noscript.html', annuaireNoscriptHtml(annuaireLinks));
+
   writeRobotsAndSitemaps(publishedCategories, sitemapUrls);
   writeIndexNowKey();
 
@@ -135,7 +144,9 @@ function generateFiche(e, lang, byCity) {
   let infoHtml = '<div class="fiche-info">';
   infoHtml += fieldLine(lang, infoLabels.adresse, e.address);
   infoHtml += fieldLine(lang, infoLabels.tel, e.phone);
-  if (e.website) infoHtml += `<div><strong>${L.esc(infoLabels.site)}</strong> <a href="${L.esc(e.website)}" rel="nofollow noopener" target="_blank">${L.esc(e.website)}</a></div>`;
+  // Site normalisé une fois (protocole ajouté si absent) : même URL dans le lien visible et le JSON-LD.
+  const website = L.normalizeWebsite(e.website);
+  if (website) infoHtml += `<div><strong>${L.esc(infoLabels.site)}</strong> <a href="${L.esc(website)}" rel="nofollow noopener" target="_blank">${L.esc(website)}</a></div>`;
   if (e.lat && e.lng) infoHtml += `<div><a href="https://www.openstreetmap.org/?mlat=${e.lat}&mlon=${e.lng}#map=17/${e.lat}/${e.lng}" rel="nofollow noopener" target="_blank">${L.esc(infoLabels.carte)}</a></div>`;
   infoHtml += '</div>';
 
@@ -186,7 +197,7 @@ function generateFiche(e, lang, byCity) {
   const jsonLd = [
     { '@context': 'https://schema.org', '@type': cat.schema_org_type, name: e.name,
       address: e.address ? { '@type': 'PostalAddress', streetAddress: e.address, addressLocality: e.city, addressCountry: 'MA' } : undefined,
-      telephone: e.phone || undefined, url: e.website || undefined,
+      telephone: e.phone || undefined, url: website || undefined,
       geo: (e.lat && e.lng) ? { '@type': 'GeoCoordinates', latitude: e.lat, longitude: e.lng } : undefined },
     L.jsonLdBreadcrumb(breadcrumbItems),
     L.jsonLdFaq(faqItems.map((it) => ({ q: it.q, rPlain: it.r }))),
@@ -341,6 +352,65 @@ function generateHub(city, list, allCategories, lang) {
   const urlPath = `/etablissements/${L.CITY_SLUGS[city]}`;
   const html = L.htmlShell({ lang, title, meta, canonicalPath: lang === 'ar' ? `/ar${urlPath}` : urlPath, alternatePath: urlPath, jsonLd, bodyHtml: body, breadcrumbHtml });
   L.writeFile(`${lang === 'ar' ? '/ar' : ''}${urlPath}.html`, html);
+}
+
+// Catégories « phares » proposées sur l'accueil et la page d'entrée (liste validée par BOSS). Seules
+// celles qui ont réellement une page ville×catégorie sont retenues (voir buildAnnuaireLinks).
+const PHARE_CATEGORY_IDS = ['laboratoires', 'hopitaux', 'cnss', 'arrondissement_etat_civil', 'banque', 'visite_technique'];
+
+function buildAnnuaireLinks(cities, byCityCat, categories) {
+  const catById = Object.fromEntries(categories.map((c) => [c.id, c]));
+  return {
+    cities: cities.map((city) => ({
+      slug: L.CITY_SLUGS[city],
+      fr: city,
+      ar: CITY_AR[city],
+      phares: PHARE_CATEGORY_IDS
+        .filter((id) => catById[id] && (byCityCat[`${city}|${id}`] || []).length >= L.MIN_FOR_PAGE)
+        .map((id) => ({ slug: L.categorySlug(id), fr: catById[id].label_fr, ar: catById[id].label_ar })),
+    })),
+  };
+}
+
+// Page d'entrée /etablissements (FR à la racine, AR sous /ar). Fichier à la racine de public/ :
+// Vercel (cleanUrls) le sert sous /etablissements sans extension.
+function generateEntree(links, lang) {
+  const t = T.ENTREE_ANNUAIRE[lang];
+  const base = lang === 'ar' ? '/ar' : '';
+  const urlPath = '/etablissements';
+  const cityBlocks = links.cities.map((c) => {
+    const chips = c.phares.map((p) => `<a class="chip" href="${base}/etablissements/${c.slug}/${p.slug}">${L.esc(lang === 'ar' ? p.ar : p.fr)}</a>`).join('');
+    return `<h3><a href="${base}/etablissements/${c.slug}">${L.esc(lang === 'ar' ? c.ar : c.fr)}</a></h3>${chips ? `<p class="card-meta">${L.esc(t.phares)}</p><div class="cats">${chips}</div>` : ''}`;
+  }).join('');
+
+  const body = `<h1>${L.esc(t.h1)}</h1><p class="intro">${L.esc(t.intro)}</p><h2>${L.esc(t.villes)}</h2>${cityBlocks}`;
+
+  const breadcrumbItems = lang === 'ar'
+    ? [{ name: t.accueil, path: '/ar' }, { name: t.annuaire, path: `/ar${urlPath}` }]
+    : [{ name: t.accueil, path: '/' }, { name: t.annuaire, path: urlPath }];
+  const breadcrumbHtml = `<p class="crumbs">${breadcrumbItems.map((b) => `<a href="${b.path}">${L.esc(b.name)}</a>`).join(' › ')}</p>`;
+  const jsonLd = [L.jsonLdBreadcrumb(breadcrumbItems)];
+
+  const html = L.htmlShell({ lang, title: t.title, meta: t.intro, canonicalPath: `${base}${urlPath}`, alternatePath: urlPath, jsonLd, bodyHtml: body, breadcrumbHtml });
+  L.writeFile(`${base}${urlPath}.html`, html);
+}
+
+// Bloc inséré dans index.html (vite.config.js, plugin annuaire-noscript) : liens lisibles SANS JS.
+// Visible uniquement sans JavaScript — la section React ne se rend qu'avec JS, donc pas de doublon.
+function annuaireNoscriptHtml(links) {
+  const N = T.ACCUEIL_NOSCRIPT;
+  const home = links.cities.find((c) => c.slug === 'rabat');
+  const cityLinks = links.cities.map((c) => `<a href="/etablissements/${c.slug}">${L.esc(c.fr)}</a>`).join(' · ');
+  const phareLinks = home && home.phares.length
+    ? `<p>${L.esc(N.phares)} ${L.esc(home.fr)} : ${home.phares.map((p) => `<a href="/etablissements/${home.slug}/${p.slug}">${L.esc(p.fr)}</a>`).join(' · ')}</p>`
+    : '';
+  return `<noscript><section class="annuaire-liens">
+<h2>${L.esc(N.titre)}</h2>
+<p>${L.esc(N.villes)} : ${cityLinks}</p>
+${phareLinks}
+<p><a href="/etablissements">${L.esc(N.pied)}</a></p>
+</section></noscript>
+`;
 }
 
 function renderList(list, city, lang) {

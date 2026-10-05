@@ -17,6 +17,10 @@ function main() {
   const etabDirs = [path.join(PUBLIC_DIR, 'etablissements'), path.join(PUBLIC_DIR, 'ar', 'etablissements')];
   const files = [];
   for (const d of etabDirs) if (fs.existsSync(d)) walk(d, files);
+  // Page d'entrée /etablissements (FR à la racine de public/, AR sous public/ar/).
+  for (const f of [path.join(PUBLIC_DIR, 'etablissements.html'), path.join(PUBLIC_DIR, 'ar', 'etablissements.html')]) {
+    if (fs.existsSync(f)) files.push(f); else { console.log('Page d\'entrée absente :', f); process.exitCode = 1; }
+  }
   console.log('Fichiers HTML annuaire trouvés :', files.length);
 
   let jsonLdErrors = 0, jsonLdBlocks = 0;
@@ -36,6 +40,7 @@ function main() {
   // lib.cjs (déjà garantie à la construction de DIRECTORY_CATEGORY_TO_SUBCATEGORY par sub()) :
   // caractère pour caractère contre la même liste que CATEGORIES.file_attente (NewMissionModal.jsx).
   let subcategoryChecked = 0, subcategoryInvalid = 0;
+  let websiteChecked = 0, websiteInvalid = 0, externalChecked = 0, externalInvalid = 0;
   for (const f of files) {
     const html = fs.readFileSync(f, 'utf8');
 
@@ -54,7 +59,25 @@ function main() {
     const ldMatches = [...html.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)];
     for (const m of ldMatches) {
       jsonLdBlocks++;
-      try { JSON.parse(m[1]); } catch (e) { jsonLdErrors++; console.log('JSON-LD invalide:', f, e.message); }
+      let block;
+      try { block = JSON.parse(m[1]); } catch (e) { jsonLdErrors++; console.log('JSON-LD invalide:', f, e.message); continue; }
+      // Site web (chantier liens annuaire) : toute URL JSON-LD doit être absolue http(s), sans protocole = invalide.
+      const urlField = block.url;
+      if (urlField !== undefined) {
+        websiteChecked++;
+        if (!/^https?:\/\/[^\s]+\.[a-z]{2,}/i.test(urlField)) { websiteInvalid++; console.log('URL JSON-LD sans protocole ou invalide:', urlField, 'dans', f); }
+      }
+    }
+
+    // Liens externes : nouvel onglet + rel="nofollow noopener" (les liens internes ne sont pas concernés)
+    for (const a of html.matchAll(/<a\b([^>]*)href="(https?:\/\/[^"]+)"([^>]*)>/g)) {
+      const attrs = a[1] + ' ' + a[3];
+      externalChecked++;
+      const rel = (attrs.match(/rel="([^"]*)"/) || [])[1] || '';
+      if (!/target="_blank"/.test(attrs) || !/\bnofollow\b/.test(rel) || !/\bnoopener\b/.test(rel)) {
+        externalInvalid++;
+        if (externalInvalid <= 10) console.log('Lien externe sans rel/target conformes:', a[2], 'dans', f);
+      }
     }
 
     // hreflang réciprocité : fr->ar doit exister et vice versa
@@ -77,8 +100,65 @@ function main() {
     }
   }
 
+  // ── Liens de l'annuaire (accueil, pied de page, espace client) ───────────
+  // Chaque lien généré doit pointer vers une page qui existe réellement dans public/.
+  let liensChecked = 0, liensBroken = 0;
+  const liensFile = path.join(__dirname, '..', '..', 'directory-data', 'annuaire-liens.json');
+  let liensJson = null;
+  if (fs.existsSync(liensFile)) {
+    liensJson = JSON.parse(fs.readFileSync(liensFile, 'utf8'));
+    const expected = ['/etablissements'];
+    for (const c of liensJson.cities) {
+      expected.push(`/etablissements/${c.slug}`);
+      for (const p of c.phares) expected.push(`/etablissements/${c.slug}/${p.slug}`);
+    }
+    for (const p of expected) {
+      liensChecked++;
+      if (!existingPaths.has(p)) { liensBroken++; console.log('Lien annuaire vers page absente:', p); }
+    }
+    // Pages entrée : version AR sous /ar (hreflang réciproque, déjà couvert par la boucle hreflang).
+    for (const p of ['/ar/etablissements']) if (!existingPaths.has(p)) { liensBroken++; console.log('Page d\'entrée AR absente:', p); }
+  } else {
+    console.log('directory-data/annuaire-liens.json absent : vérification des liens annuaire ignorée (build non exécuté).');
+  }
+
+  // Bloc noscript de index.html (dist/, après vite build) : mêmes règles que ci-dessus.
+  let noscriptChecked = 0, noscriptBroken = 0;
+  const distIndex = path.join(__dirname, '..', '..', 'dist', 'index.html');
+  if (fs.existsSync(distIndex)) {
+    const indexHtml = fs.readFileSync(distIndex, 'utf8');
+    const ns = indexHtml.match(/<noscript><section class="annuaire-liens">([\s\S]*?)<\/section><\/noscript>/);
+    if (!ns) { noscriptBroken++; console.log('Bloc noscript annuaire absent de dist/index.html'); }
+    else {
+      for (const h of [...ns[1].matchAll(/href="(\/[^"]+)"/g)].map((m) => m[1])) {
+        noscriptChecked++;
+        if (!existingPaths.has(h)) { noscriptBroken++; console.log('Lien noscript vers page absente:', h); }
+      }
+    }
+  } else {
+    console.log('dist/index.html absent : vérification du bloc noscript ignorée (lancer le build).');
+  }
+
+  // Routage Vercel : cleanUrls + destination "/index" (une destination "/index.html" casse le SPA).
+  const vercel = JSON.parse(fs.readFileSync(path.join(__dirname, '..', '..', 'vercel.json'), 'utf8'));
+  const routingOk = vercel.cleanUrls === true && vercel.rewrites?.some((r) => r.source === '/(.*)' && r.destination === '/index');
+
+  // Sitemap : pages d'entrée référencées dans les hubs
+  const hubsXml = fs.existsSync(path.join(PUBLIC_DIR, 'sitemap-hubs.xml')) ? fs.readFileSync(path.join(PUBLIC_DIR, 'sitemap-hubs.xml'), 'utf8') : '';
+  const entryInSitemap = hubsXml.includes('https://shoofly.ma/etablissements</loc>') && hubsXml.includes('https://shoofly.ma/ar/etablissements</loc>');
+
   console.log('\n=== JSON-LD ===');
   console.log('Blocs vérifiés :', jsonLdBlocks, '| invalides :', jsonLdErrors);
+  console.log('=== Sites web (JSON-LD url) ===');
+  console.log('URL vérifiées :', websiteChecked, '| invalides :', websiteInvalid);
+  console.log('=== Liens externes (target/rel) ===');
+  console.log('Liens externes vérifiés :', externalChecked, '| non conformes :', externalInvalid);
+  console.log('=== Liens annuaire (accueil / pied / espace client) ===');
+  console.log('Pages liées vérifiées :', liensChecked, '| cassées :', liensBroken);
+  console.log('Bloc noscript index.html — liens vérifiés :', noscriptChecked, '| cassés :', noscriptBroken);
+  console.log('=== Page d\'entrée et routage ===');
+  console.log('Entrée présente dans sitemap-hubs :', entryInSitemap ? 'oui' : 'NON');
+  console.log('Routage vercel.json (cleanUrls + /index) :', routingOk ? 'OK' : 'NON CONFORME');
   console.log('=== hreflang ===');
   console.log('Pages vérifiées :', hreflangChecked, '| non réciproques :', hreflangMismatch);
   console.log('=== Liens internes ===');
@@ -105,7 +185,8 @@ function main() {
   console.log('=== sitemaps ===');
   console.log('Sitemaps référencés dans l\'index :', sitemapCount, '| URLs totales (FR+AR) dans tous les sitemaps :', totalSitemapUrls);
 
-  const ok = jsonLdErrors === 0 && hreflangMismatch === 0 && brokenLinks === 0 && missingBots.length === 0 && subcategoryInvalid === 0;
+  const ok = jsonLdErrors === 0 && hreflangMismatch === 0 && brokenLinks === 0 && missingBots.length === 0 && subcategoryInvalid === 0
+    && websiteInvalid === 0 && externalInvalid === 0 && liensBroken === 0 && noscriptBroken === 0 && routingOk && entryInSitemap;
   console.log('\n=== RÉSULTAT ===', ok ? 'PASS' : 'FAIL');
   process.exit(ok ? 0 : 1);
 }

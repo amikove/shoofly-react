@@ -1,4 +1,10 @@
 {
+  "annuaire": {
+    "homeTitle": "أين تريد أن ننتظر بدلاً منك؟",
+    "homeCities": "الدليل حسب المدينة",
+    "homePhares": "فئات رئيسية في {{city}}",
+    "footerLink": "دليل المؤسسات"
+  },
   "directoryMissionRestriction": {
     "toast": "إنشاء المهام متاح للعملاء فقط."
   },
@@ -272,7 +278,8 @@
       "cgv": "الشروط العامة للبيع",
       "mentionsLegales": "الإشعارات القانونية",
       "confidentiality": "الخصوصية",
-      "verification": "التحقق"
+      "verification": "التحقق",
+      "annuaire": "دليل المؤسسات"
     }
   },
   "login": {
@@ -485,6 +492,7 @@
     "title": "الرئيسية",
     "newMissionButton": "+ مهمة جديدة",
     "newMissionButtonShort": "+",
+    "findEstablishment": "ابحث عن مؤسسة",
     "errorLoading": "خطأ في التحميل",
     "whatsappOptIn": {
       "toastText": "تم إنشاء المهمة ✓ — اضغط هنا لتصلكم تحديثات هاته المهمة عبر واتساب",

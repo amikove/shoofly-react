@@ -4,6 +4,7 @@ import { Trans, useTranslation } from 'react-i18next'
 import { captureAcquisitionParams } from '../utils/acquisitionTracking'
 import LanguageToggle from '../components/ui/LanguageToggle'
 import useScrollReveal from '../hooks/useScrollReveal'
+import { AnnuaireAccueil, AnnuaireLiensFooter } from '../components/AnnuaireLinks'
 
 const MISSIONS = [
   { icon: '🏠', key: 'immobilier' },
@@ -202,6 +203,9 @@ export default function Landing() {
         </div>
       </section>
 
+        {/* ANNUAIRE — liens vers les pages statiques générées (aucun si le build n'a pas de données) */}
+        <AnnuaireAccueil />
+
         {/* AVIS CLIENTS (exemples illustratifs) */}
         <TestimonialsSection t={t} i18n={i18n} />
 
@@ -214,13 +218,14 @@ export default function Landing() {
           SHOOF<span className="text-[#FF4D00]">LY</span>
         </div>
         <div className="text-xs text-[#555]">{t('landing.footer.copyright')}</div>
-        <div className="flex gap-4 text-xs text-[#555]">
+        <div className="flex flex-wrap gap-x-4 gap-y-2 text-xs text-[#555]">
           <button onClick={() => navigate('/login')} className="hover:text-white transition-colors">{t('landing.footer.login')}</button>
           <button onClick={() => navigate('/register')} className="hover:text-white transition-colors">{t('landing.footer.register')}</button>
            <button onClick={() => navigate('/cgv')} className="hover:text-white transition-colors">{t('landing.footer.cgv')}</button>
            <button onClick={() => navigate('/confidentialite')} className="hover:text-white transition-colors">{t('landing.footer.confidentiality')}</button>
            <button onClick={() => navigate('/mentions-legales')} className="hover:text-white transition-colors">{t('landing.footer.mentionsLegales')}</button>
            <button onClick={() => navigate('/verification')} className="hover:text-white transition-colors">{t('landing.footer.verification')}</button>
+           <AnnuaireLiensFooter className="hover:text-white transition-colors" />
         </div>
       </footer>
     </div>

@@ -47,6 +47,24 @@ function haversineMeters(lat1, lng1, lat2, lng2) {
   const a = Math.sin(dLat / 2) ** 2 + Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLng / 2) ** 2;
   return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 }
+// Site web saisi sans protocole dans la source (ex. "www.poste.ma") : on ajoute https:// au build,
+// pour le lien visible ET le JSON-LD. Valeur invalide => null (le lien n'est alors pas affiché).
+// Garde-fous : pas d'espace, schéma http(s) seulement après normalisation, hôte à au moins un point
+// et un TLD alphabétique (écarte "javascript:…", "localhost", "1.2.3.4" et les chaînes parasites).
+function normalizeWebsite(raw) {
+  if (raw == null) return null;
+  let s = String(raw).trim();
+  if (!s || /\s/.test(s)) return null;
+  if (!/^https?:\/\//i.test(s)) s = `https://${s}`;
+  let u;
+  try { u = new URL(s); } catch { return null; }
+  if (u.protocol !== 'https:' && u.protocol !== 'http:') return null;
+  if (u.username || u.password) return null; // "mailto:a@b.ma" => https://mailto:a@b.ma/ : identifiants, rejeté
+  if (!/^([a-z0-9-]+\.)+[a-z]{2,}$/i.test(u.hostname)) return null;
+  // Racine seule : pas de barre finale ajoutée par URL ("https://www.poste.ma", pas "…ma/").
+  const out = u.toString();
+  return u.pathname === '/' && !u.search && !u.hash ? out.replace(/\/$/, '') : out;
+}
 function writeFile(relPath, content) {
   const full = path.join(PUBLIC_DIR, relPath);
   fs.mkdirSync(path.dirname(full), { recursive: true });
@@ -391,7 +409,7 @@ function missionHref(est) {
 }
 
 module.exports = {
-  esc, normalizeCore, slugify, categorySlug, haversineMeters, writeFile, loadData, htmlShell,
+  esc, normalizeCore, slugify, categorySlug, haversineMeters, normalizeWebsite, writeFile, loadData, htmlShell,
   blocShoofly, oeilPeut, nonAffiliationBlock, signalementLinks, faqBlock, jsonLdFaq, jsonLdBreadcrumb,
   jsonLdShooflyService, missionHref, CITY_SLUGS, CITY_BY_SLUG, MIN_FOR_PAGE, SITE_URL, CONTENT, PUBLIC_DIR,
   DATA_DIR, writeDataFile, FILE_ATTENTE_SUBCATEGORIES, DIRECTORY_CATEGORY_TO_SUBCATEGORY,
