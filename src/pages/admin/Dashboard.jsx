@@ -240,7 +240,7 @@ export default function AdminDashboard() {
       toast('Remplissez source, medium et campagne', 'error')
       return
     }
-    const base = 'https://shoofly.ma'
+    const base = 'https://www.shoofly.ma' // domaine principal (apex → www)
     const params = new URLSearchParams({
       utm_source: urlGen.source,
       utm_medium: urlGen.medium,

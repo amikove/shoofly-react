@@ -16,7 +16,9 @@ const CONTENT = require('./directory-content.json').categories;
 const ROOT = path.join(__dirname, '..', '..');
 const DATA_DIR = path.join(ROOT, 'directory-data');
 const PUBLIC_DIR = path.join(ROOT, 'public');
-const SITE_URL = 'https://shoofly.ma';
+// Domaine PRINCIPAL : https://shoofly.ma redirige vers https://www.shoofly.ma (vérifié en production). Toute URL
+// absolue générée (canonical, hreflang, sitemaps, robots.txt, JSON-LD, IndexNow, stubs) doit pointer ici.
+const SITE_URL = 'https://www.shoofly.ma';
 // URL de l'API backend pour le formulaire de signalement (§C, routes/directory.js) — PAS de valeur
 // devinée : configurable via une variable d'environnement de build, comme VITE_API_URL ailleurs
 // dans ce dépôt (src/api/client.js). Défaut = backend local, pour que les previews non configurées
@@ -170,7 +172,8 @@ function htmlShell({ lang, title, meta, canonicalPath, alternatePath, jsonLd, bo
 <link rel="icon" href="/favicon.ico">
 <link rel="preload" href="/fonts/inter-variable-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/fonts/space-grotesk-variable-latin.woff2" as="font" type="font/woff2" crossorigin>
-${lang === 'ar' ? `<link rel="preload" href="/fonts/tajawal-400-arabic.woff2" as="font" type="font/woff2" crossorigin>\n` : ''}<style>
+${lang === 'ar' ? `<link rel="preload" href="/fonts/tajawal-400-arabic.woff2" as="font" type="font/woff2" crossorigin>\n` : ''}<script>document.documentElement.classList.add('js')</script>
+<style>
 /* Polices auto-hébergées (Phase 4, décision #5) — mêmes fichiers que l'app React, sous-jeu latin */
 @font-face{font-family:'Inter';font-style:normal;font-weight:300 700;font-display:swap;src:url('/fonts/inter-variable-latin.woff2') format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
 @font-face{font-family:'Space Grotesk';font-style:normal;font-weight:400 700;font-display:swap;src:url('/fonts/space-grotesk-variable-latin.woff2') format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
@@ -215,8 +218,11 @@ ul.list li:last-child{border-bottom:none}
 .signalement{font-size:13px;margin-top:10px}
 .signalement a{margin-inline-end:14px}
 footer.site{border-top:1px solid var(--border);padding:20px 0;color:var(--muted);font-size:12px}
-form.report-form{display:none;margin-top:10px;gap:8px;flex-direction:column;max-width:420px}
-form.report-form.open{display:flex}
+/* Formulaires de signalement : visibles SANS JavaScript (repli mailto), masqués seulement si le JS est
+   actif (classe "js" posée tout en haut du <head>). */
+form.report-form{display:flex;margin-top:10px;gap:8px;flex-direction:column;max-width:420px}
+.js form.report-form{display:none}
+.js form.report-form.open{display:flex}
 form.report-form textarea,form.report-form input{background:var(--bg);border:1px solid var(--border);color:var(--text);border-radius:8px;padding:8px}
 form.report-form button{background:var(--accent);color:#fff;border:0;border-radius:8px;padding:8px;font-weight:600;cursor:pointer}
 .report-ok{color:#5FD068;font-size:13px}
@@ -235,7 +241,11 @@ ${bodyHtml}
 <script>
 document.addEventListener('click', function(e){
   var t = e.target.closest('[data-report-toggle]');
-  if (t) { var f = document.getElementById(t.getAttribute('data-report-toggle')); if (f) f.classList.toggle('open'); }
+  if (t) {
+    // Sans preventDefault, href="#…" fait défiler la page tout en haut : c'était le « rechargement » signalé.
+    e.preventDefault();
+    var f = document.getElementById(t.getAttribute('data-report-toggle')); if (f) f.classList.toggle('open');
+  }
 });
 document.addEventListener('submit', function(e){
   var f = e.target.closest('form.report-form');
@@ -273,8 +283,8 @@ function nonAffiliationBlock(lang, nom) {
 function signalementLinks(lang, establishmentId) {
   const l = T.LIENS_SIGNALEMENT[lang];
   return `<div class="signalement">
-<a href="#" data-report-toggle="report-erreur">${esc(l.erreur)}</a>
-<a href="#" data-report-toggle="report-retrait">${esc(l.retrait)}</a>
+<a href="#report-erreur" data-report-toggle="report-erreur">${esc(l.erreur)}</a>
+<a href="#report-retrait" data-report-toggle="report-retrait">${esc(l.retrait)}</a>
 ${reportForm(lang, establishmentId, 'erreur', 'report-erreur')}
 ${reportForm(lang, establishmentId, 'retrait', 'report-retrait')}
 </div>`;
@@ -283,7 +293,14 @@ function reportForm(lang, establishmentId, type, id) {
   const placeholders = lang === 'ar'
     ? { msg: 'اكتب رسالتك هنا', email: 'بريدك الإلكتروني (اختياري)', send: 'إرسال' }
     : { msg: 'Votre message', email: 'Votre email (optionnel)', send: 'Envoyer' };
-  return `<form class="report-form" id="${id}" data-establishment-id="${esc(establishmentId)}" data-type="${type}" data-lang="${lang}">
+  // Repli SANS JavaScript : envoi par mailto (text/plain) à l'adresse de contact publiée par Shoofly.
+  // Avec JS, le submit est intercepté (voir script de htmlShell) et part vers l'API.
+  const subject = lang === 'ar'
+    ? (type === 'retrait' ? 'طلب حذف بطاقة من الدليل' : 'الإبلاغ عن خطأ في بطاقة الدليل')
+    : (type === 'retrait' ? 'Demande de retrait — annuaire' : 'Signalement d\'erreur — annuaire');
+  return `<form class="report-form" id="${id}" data-establishment-id="${esc(establishmentId)}" data-type="${type}" data-lang="${lang}" method="post" enctype="text/plain" action="mailto:contact@shoofly.ma?subject=${encodeURIComponent(subject)}">
+<input type="hidden" name="establishment_id" value="${esc(establishmentId)}">
+<input type="hidden" name="type" value="${type}">
 <textarea name="message" placeholder="${esc(placeholders.msg)}" required></textarea>
 <input type="email" name="contact_email" placeholder="${esc(placeholders.email)}">
 <button type="submit">${esc(placeholders.send)}</button>
