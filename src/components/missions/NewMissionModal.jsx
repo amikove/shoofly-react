@@ -167,6 +167,9 @@ export default function NewMissionModal({ open, onClose, onCreated, prefill }) {
   const { user }          = useAuth()
   const [type, setType]   = useState('immobilier')
   const [subcategory, setSub] = useState('')
+  // Fiche annuaire d'origine (pré-remplissage « Un Œil attend pour moi ») : envoyée avec la mission pour
+  // les statistiques annuaire. Vient du prefill seul : le bouton « Nouvelle mission » l'efface (Dashboard).
+  const directoryId = prefill?.directory_establishment_id || null
   const [loading, setLoading] = useState(false)
   // Popup opt-in WhatsApp après création réussie : factorisé ici (plutôt que dupliqué dans
   // chaque page appelante) pour uniformiser les 2 points d'entrée (Dashboard, "Mes missions")
@@ -374,6 +377,7 @@ if (minPrice != null && parseFloat(form.price) < minPrice) {
         location_lat: pickedLocation.lat,
         location_lng: pickedLocation.lng,
         is_private_residence: isPrivate,
+        ...(directoryId ? { directory_establishment_id: directoryId } : {}),
       }
       if (promoResult) {
         payload.promo_code      = promoResult.code

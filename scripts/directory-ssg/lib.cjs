@@ -152,7 +152,7 @@ async function loadData() {
 }
 
 // ── Gabarit HTML commun ──────────────────────────────────────────────────
-function htmlShell({ lang, title, meta, canonicalPath, alternatePath, jsonLd, bodyHtml, breadcrumbHtml, mainClass }) {
+function htmlShell({ lang, title, meta, canonicalPath, alternatePath, jsonLd, bodyHtml, breadcrumbHtml, mainClass, ficheId }) {
   const dir = lang === 'ar' ? 'rtl' : 'ltr';
   const canonical = `${SITE_URL}${canonicalPath}`;
   const altFr = lang === 'ar' ? `${SITE_URL}${alternatePath}` : canonical;
@@ -234,20 +234,21 @@ main.fiche{padding-bottom:28px}
 .fiche-attente{display:inline-block;font-size:13px;font-weight:600;color:var(--text);border:1px solid var(--accent);border-radius:999px;padding:4px 12px;margin:0 0 22px}
 .fiche-cta{margin:0 0 24px}
 .btn-cta{display:flex;align-items:center;justify-content:center;min-height:52px;background:var(--accent);color:#fff;font-weight:700;font-size:18px;text-decoration:none;border-radius:12px;padding:12px 20px}
-.fiche-card{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:0 16px;margin:0 0 24px}
+.fiche-card{background:#1C1C1C;border:1px solid #2E2E2E;border-radius:14px;padding:0 16px 8px;margin:0 0 24px}
 .fiche-row{display:flex;gap:12px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--border)}
 .fiche-row:last-child{border-bottom:none}
 .fiche-row svg{flex:0 0 20px;width:20px;height:20px;margin-top:10px;fill:none;stroke:var(--muted);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .fiche-row .lbl{display:block;font-size:12px;color:var(--muted)}
 .fiche-row a{display:inline-flex;align-items:center;min-height:44px;margin-inline-end:14px;word-break:break-word}
-.fiche-how,.faq-item{border-top:1px solid var(--border);margin-top:0}
-.fiche-how>summary,.faq-item>summary{display:flex;align-items:center;min-height:44px;padding:8px 0;font-weight:600;cursor:pointer;list-style:none}
-.fiche-how>summary::-webkit-details-marker,.faq-item>summary::-webkit-details-marker{display:none}
-.fiche-how>summary::after,.faq-item>summary::after{content:'+';margin-inline-start:auto;font-size:20px;color:var(--muted);padding-inline-start:12px}
-.fiche-how[open]>summary::after,.faq-item[open]>summary::after{content:'−'}
-.fiche-how-body{padding:0 0 12px}
-.fiche-how-body h3{font-size:18px;margin:4px 0 8px}
-.fiche-how-body p{margin:6px 0;color:#D8D8D8}
+.fiche-how{padding:14px 0 8px}
+.fiche-how h2{font-size:18px;margin:0 0 8px}
+.fiche-how h3{font-size:16px;margin:0 0 6px}
+.fiche-how p{margin:6px 0;color:#D8D8D8}
+.faq-item{border-top:1px solid var(--border);margin-top:0}
+.faq-item>summary{display:flex;align-items:center;min-height:44px;padding:8px 0;font-weight:600;cursor:pointer;list-style:none}
+.faq-item>summary::-webkit-details-marker{display:none}
+.faq-item>summary::after{content:'+';margin-inline-start:auto;font-size:20px;color:var(--muted);padding-inline-start:12px}
+.faq-item[open]>summary::after{content:'−'}
 .faq-item p{margin:0 0 12px;color:#D8D8D8}
 .fiche-foot{margin-top:28px;border-top:1px solid var(--border);padding-top:14px}
 .fiche-foot .non-affil{margin-top:0}
@@ -265,7 +266,7 @@ ${jsonLd.map((block) => `<script type="application/ld+json">${JSON.stringify(blo
 <header class="site"><div class="wrap">
 <a class="logo" href="${lang === 'ar' ? '/ar' : '/'}">SHOOF<b>LY</b></a>
 </div></header>
-<main class="${mainClass || 'wrap'}">
+<main class="${mainClass || 'wrap'}"${ficheId ? ` data-fiche-id="${esc(ficheId)}"` : ''}>
 ${breadcrumbHtml || ''}
 ${bodyHtml}
 </main>
@@ -290,6 +291,7 @@ document.addEventListener('submit', function(e){
     .catch(function(){ f.innerHTML = '<p>' + (f.dataset.lang==='ar' ? 'خطأ، حاول لاحقاً.' : 'Erreur, réessayez plus tard.') + '</p>'; });
 });
 </script>
+${ficheId ? FICHE_TRACKING_SCRIPT : ''}
 </body>
 </html>`;
 }
@@ -348,14 +350,34 @@ function faqDetails(items) {
 }
 // Bouton principal unique de la fiche (sticky en bas sur mobile, voir CSS main.fiche).
 function ficheCta(lang, missionHref) {
-  return `<div class="fiche-cta"><a class="btn-cta" href="${esc(missionHref)}">${esc(T.FICHE[lang].cta)}</a></div>`;
+  return `<div class="fiche-cta"><a class="btn-cta" href="${esc(missionHref)}" data-track="un_oeil">${esc(T.FICHE[lang].cta)}</a></div>`;
 }
-// Bloc « Comment ça marche ? » replié : texte Shoofly sans bouton (le CTA unique est en haut de page).
+// Bloc « Comment ça marche ? » — toujours visible, dans la même carte que les infos (décision BOSS,
+// suite de la refonte) : texte Shoofly sans bouton (le CTA unique est en haut de page).
 function ficheHow(lang, domain) {
   const b = T.BLOC_SHOOFLY[lang];
   const t = domain === 'sante' ? T.OEIL_PEUT_SANTE : T.OEIL_PEUT_ADMIN;
-  return `<details class="fiche-how"><summary>${esc(T.FICHE[lang].how)}</summary><div class="fiche-how-body"><h3>${esc(b.titre)}</h3><p>${esc(b.corps)}</p><p class="tagline">${esc(b.tagline)}</p><p>${esc(t[lang])}</p></div></details>`;
+  return `<div class="fiche-how"><h2>${esc(T.FICHE[lang].how)}</h2><h3>${esc(b.titre)}</h3><p>${esc(b.corps)}</p><p class="tagline">${esc(b.tagline)}</p><p>${esc(t[lang])}</p></div>`;
 }
+// Statistiques annuaire (feat/annuaire-stats) : une vue au chargement, un événement au clic sur un
+// lien marqué data-track. sendBeacon (text/plain, sans preflight) ; échec silencieux ; la page ne
+// dépend pas du script. Aucune donnée personnelle : seul l'identifiant de la fiche et le type partent.
+const FICHE_TRACKING_SCRIPT = `<script>
+(function(){
+  var main = document.querySelector('main[data-fiche-id]');
+  if (!main || !navigator.sendBeacon) return;
+  var id = main.getAttribute('data-fiche-id');
+  var url = '${API_URL}/api/directory/events';
+  function send(type){
+    try { navigator.sendBeacon(url, new Blob([JSON.stringify({ establishment_id: id, type: type })], { type: 'text/plain' })); } catch (e) {}
+  }
+  send('view');
+  document.addEventListener('click', function(e){
+    var a = e.target.closest('[data-track]');
+    if (a) send(a.getAttribute('data-track'));
+  }, true);
+})();
+</script>`;
 // Icônes SVG inline (aucune bibliothèque), décoratives : aria-hidden.
 const ICONS = {
   pin: '<path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/>',
@@ -472,6 +494,8 @@ function missionHref(est) {
   // pas de code spécifique ajouté pour ce cas (voir RAPPORT_PHASE4.md).
   const params = new URLSearchParams({ newMission: '1' });
   if (est) {
+    // Identifiant de la fiche : relié à la mission créée (statistiques annuaire, feat/annuaire-stats).
+    if (est.id) params.set('prefill_establishment_id', est.id);
     if (est.name) params.set('prefill_title', est.name);
     if (est.address) params.set('prefill_address', est.address);
     if (est.lat) params.set('prefill_lat', est.lat);

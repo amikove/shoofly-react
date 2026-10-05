@@ -75,6 +75,7 @@ const AdminMissionsProchesValidation = lazy(() => import('./pages/admin/Missions
 const UserProfile = lazy(() => import('./pages/admin/UserProfile'))
 const AdminBlockAppeals = lazy(() => import('./pages/admin/AdminBlockAppeals'))
 const AdminDirectoryReports = lazy(() => import('./pages/admin/AdminDirectoryReports')) // Chantier SEO annuaire, Phase 2 (2026-09-30)
+const AdminDirectoryStats = lazy(() => import('./pages/admin/AdminDirectoryStats')) // Statistiques annuaire (feat/annuaire-stats)
 
 
 // Route guard
@@ -263,6 +264,7 @@ export default function App() {
       <Route path="/admin/users/:userId" element={<RequireAuth allowedRoles={['admin']} requiredPermission="users"><UserProfile /></RequireAuth>} />
       <Route path="/admin/block-appeals" element={<RequireAuth allowedRoles={['admin']} requiredPermission="moderation"><AdminBlockAppeals /></RequireAuth>} />
       <Route path="/admin/annuaire-signalements" element={<RequireAuth allowedRoles={['admin']} requiredPermission="moderation"><AdminDirectoryReports /></RequireAuth>} />
+      <Route path="/admin/annuaire-statistiques" element={<RequireAuth allowedRoles={['admin']} requiredPermission="stats"><AdminDirectoryStats /></RequireAuth>} />
 
 
       <Route path="*" element={<Navigate to="/" replace />} />

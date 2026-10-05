@@ -1,4 +1,30 @@
 {
+  "adminDirectoryStats": {
+    "onglet": "Statistiques annuaire",
+    "periode7": "7 derniers jours",
+    "periode30": "30 derniers jours",
+    "periodeTout": "Tout",
+    "rechercheNom": "Rechercher une fiche…",
+    "toutesVilles": "Toutes les villes",
+    "toutesCategories": "Toutes les catégories",
+    "colonnes": {
+      "fiche": "Fiche",
+      "ville": "Ville",
+      "categorie": "Catégorie",
+      "vues": "Vues",
+      "itineraire": "Itinéraire",
+      "siteWeb": "Site web",
+      "appel": "Appel",
+      "unOeil": "Un Œil attend pour moi",
+      "missions": "Missions créées",
+      "taux": "Taux"
+    },
+    "tauxAide": "Missions créées ÷ vues",
+    "total": "Total",
+    "vide": "Aucune activité sur cette période.",
+    "erreur": "Erreur de chargement",
+    "aucuneLigne": "Aucune fiche ne correspond à la recherche."
+  },
   "adminDirectoryReports": {
     "retraitConfirme": "Retrait confirmé. La fiche disparaîtra du site d'ici quelques minutes.",
     "retraitSansRebuild": "Retrait confirmé. Republication automatique non configurée : la fiche disparaîtra au prochain build."
