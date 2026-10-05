@@ -284,6 +284,88 @@ function jsonLdShooflyService() {
     areaServed: ['Rabat', 'Salé', 'Témara'],
   };
 }
+// Chantier sous-catégorie annuaire (2026-10-02), correspondance validée par BOSS. Dette technique
+// ASSUMÉE (même patron que backend/src/constants/missionCategories.js) : copie manuelle du contenu
+// de CATEGORIES.file_attente (NewMissionModal.jsx, shoofly-react) — ce script Node ne peut pas
+// importer un fichier JSX. `sub(groupe, item)` valide IMMÉDIATEMENT (dès le chargement de ce
+// module, donc dès le début du build) que chaque couple existe réellement dans la liste ci-dessous
+// — si NewMissionModal.jsx change un libellé sans répercuter ici, le build échoue tout de suite
+// avec le nom exact de la sous-catégorie fautive, plutôt qu'un lien silencieusement cassé en prod.
+const FILE_ATTENTE_GROUPS = [
+  { label: 'Véhicules & Transport', items: ['Centre de visite technique', 'Autre'] },
+  { label: 'Centres de santé', items: ['Hôpital & clinique', 'Cabinet de spécialiste', 'Laboratoire', 'Autre'] },
+  { label: 'Administrations', items: ['CNSS', 'ANCFCC', "Services d'état civil", 'Tribunal', "Centre d'immatriculation", 'Préfectures / Annexes administratives', 'Douane', 'Bureau des passeports / Cartes nationales', 'Adoul / Notaires', "CRI / Centres régionaux d'investissement", 'Impôts (DGI)', 'Autre'] },
+  { label: 'Services publics', items: ['ONEE', 'REDAL', 'RADEEMA', 'Autre'] },
+  { label: 'Consulats et visas', items: ['Consulat étranger', 'Centre de visas', 'Autre'] },
+  { label: 'Banques', items: ['Attijariwafa', 'CIH Bank', 'Banque Populaire', 'BMCE', 'BMCI', 'Al Barid Bank', 'Autre'] },
+  { label: 'Éducation', items: ['Inscription universitaire', 'École privée', 'Bourse & dossier étudiant', 'Autre'] },
+  { label: 'Autre', items: ['À préciser'] },
+];
+const FILE_ATTENTE_SUBCATEGORIES = new Set(
+  FILE_ATTENTE_GROUPS.flatMap((g) => g.items.map((item) => `${g.label} — ${item}`))
+);
+function sub(group, item) {
+  const value = `${group} — ${item}`;
+  if (!FILE_ATTENTE_SUBCATEGORIES.has(value)) {
+    throw new Error(`lib.cjs: sous-catégorie inconnue "${value}" — vérifier FILE_ATTENTE_GROUPS ici vs CATEGORIES.file_attente dans NewMissionModal.jsx`);
+  }
+  return value;
+}
+
+// Correspondance catégorie annuaire -> sous-catégorie mission, validée par BOSS (2026-10-02).
+// Catégories volontairement ABSENTES de cette table (aucune pré-sélection, le client choisit
+// lui-même) : medecines_douces, autres_sante, barid (poste ≠ banque malgré "Al Barid Bank"),
+// autres_administrations (non publiée de toute façon), urgences (pas de bouton mission du tout,
+// géré séparément par isUrgence dans generate.cjs — jamais d'appel à missionHref pour ces fiches).
+const DIRECTORY_CATEGORY_TO_SUBCATEGORY = {
+  hopitaux: sub('Centres de santé', 'Hôpital & clinique'),
+  cliniques: sub('Centres de santé', 'Hôpital & clinique'),
+  laboratoires: sub('Centres de santé', 'Laboratoire'),
+  dentistes: sub('Centres de santé', 'Cabinet de spécialiste'),
+  kinesitherapie: sub('Centres de santé', 'Cabinet de spécialiste'),
+  radiologie: sub('Centres de santé', 'Cabinet de spécialiste'),
+  ophtalmologie: sub('Centres de santé', 'Cabinet de spécialiste'),
+  gynecologie: sub('Centres de santé', 'Cabinet de spécialiste'),
+  pediatrie: sub('Centres de santé', 'Cabinet de spécialiste'),
+  sante_mentale: sub('Centres de santé', 'Cabinet de spécialiste'),
+  specialites_medicales: sub('Centres de santé', 'Cabinet de spécialiste'),
+  medecine_generale: sub('Centres de santé', 'Autre'),
+  centres_sante_publics: sub('Centres de santé', 'Autre'),
+  cnss: sub('Administrations', 'CNSS'),
+  conservation_fonciere: sub('Administrations', 'ANCFCC'),
+  impots: sub('Administrations', 'Impôts (DGI)'),
+  prefecture: sub('Administrations', 'Préfectures / Annexes administratives'),
+  arrondissement_etat_civil: sub('Administrations', "Services d'état civil"),
+  tribunal: sub('Administrations', 'Tribunal'),
+  commissariat: sub('Administrations', 'Bureau des passeports / Cartes nationales'),
+  eau_electricite: sub('Services publics', 'Autre'),
+  visite_technique: sub('Véhicules & Transport', 'Centre de visite technique'),
+  // 'banque' n'est PAS ici : résolue dynamiquement par détection de mot-clé, voir detectBankSubcategory.
+};
+
+// 'banque' agrège toutes les enseignes — la sous-catégorie exacte se déduit du NOM de
+// l'établissement (seule donnée disponible), par mot-clé insensible à la casse et aux accents
+// (normalizeCore, déjà utilisé pour les slugs). Ordre de la liste = ordre de priorité de
+// correspondance ; première qui matche gagne. Aucune marque reconnue => "Banques — Autre".
+const BANK_NAME_KEYWORDS = [
+  { re: /attijariwafa/, item: 'Attijariwafa' },
+  { re: /\bcih\b/, item: 'CIH Bank' },
+  { re: /banque populaire|chaabi/, item: 'Banque Populaire' },
+  { re: /\bbmce\b|bank of africa/, item: 'BMCE' },
+  { re: /\bbmci\b/, item: 'BMCI' },
+  { re: /barid/, item: 'Al Barid Bank' }, // catégorie 'banque' uniquement : jamais la poste (catégorie séparée 'barid')
+];
+function detectBankSubcategory(name) {
+  const normalized = normalizeCore(name);
+  for (const { re, item } of BANK_NAME_KEYWORDS) if (re.test(normalized)) return sub('Banques', item);
+  return sub('Banques', 'Autre');
+}
+
+function resolvePrefillSubcategory(est) {
+  if (est.category_id === 'banque') return detectBankSubcategory(est.name);
+  return DIRECTORY_CATEGORY_TO_SUBCATEGORY[est.category_id] || null;
+}
+
 function missionHref(est) {
   // Chantier annuaire SEO, Phase 4 (2026-09-30), décision #4 — mécanisme réel maintenant en place :
   // NewMissionModal.jsx accepte `prefill`, ClientDashboard.jsx lit ces paramètres sur /client, et
@@ -300,6 +382,10 @@ function missionHref(est) {
     if (est.lng) params.set('prefill_lng', est.lng);
     if (est.city) params.set('prefill_city', est.city);
     if (est.neighborhood && est.neighborhood.name_fr) params.set('prefill_quartier', est.neighborhood.name_fr);
+    // Chantier sous-catégorie (2026-10-02) : jamais appelé pour une fiche urgence (isUrgence court-
+    // circuite blocShoofly dans generate.cjs), donc pas de garde explicite ici pour ce cas.
+    const prefillSubcategory = resolvePrefillSubcategory(est);
+    if (prefillSubcategory) params.set('prefill_subcategory', prefillSubcategory);
   }
   return `/client?${params.toString()}`;
 }
@@ -308,5 +394,6 @@ module.exports = {
   esc, normalizeCore, slugify, categorySlug, haversineMeters, writeFile, loadData, htmlShell,
   blocShoofly, oeilPeut, nonAffiliationBlock, signalementLinks, faqBlock, jsonLdFaq, jsonLdBreadcrumb,
   jsonLdShooflyService, missionHref, CITY_SLUGS, CITY_BY_SLUG, MIN_FOR_PAGE, SITE_URL, CONTENT, PUBLIC_DIR,
-  DATA_DIR, writeDataFile,
+  DATA_DIR, writeDataFile, FILE_ATTENTE_SUBCATEGORIES, DIRECTORY_CATEGORY_TO_SUBCATEGORY,
+  detectBankSubcategory, resolvePrefillSubcategory,
 };

@@ -2,6 +2,7 @@
 // internes non cassés (crawl complet local), robots.txt/sitemaps bien formés. Lecture seule.
 const fs = require('fs');
 const path = require('path');
+const L = require('./lib.cjs');
 const PUBLIC_DIR = path.join(__dirname, '..', '..', 'public');
 
 function walk(dir, out = []) {
@@ -30,8 +31,24 @@ function main() {
   for (const f of fs.readdirSync(PUBLIC_DIR)) if (fs.statSync(path.join(PUBLIC_DIR, f)).isFile()) existingPaths.add('/' + f);
 
   let brokenLinks = 0;
+  // Sous-catégorie pré-remplie (chantier 2026-10-02) — vérifie la valeur RÉELLEMENT présente dans le
+  // HTML généré (donc aussi sensible à un bug d'échappement), pas seulement la cohérence interne de
+  // lib.cjs (déjà garantie à la construction de DIRECTORY_CATEGORY_TO_SUBCATEGORY par sub()) :
+  // caractère pour caractère contre la même liste que CATEGORIES.file_attente (NewMissionModal.jsx).
+  let subcategoryChecked = 0, subcategoryInvalid = 0;
   for (const f of files) {
     const html = fs.readFileSync(f, 'utf8');
+
+    for (const m of html.matchAll(/href="(\/client\?[^"]+)"/g)) {
+      const qs = m[1].replace(/&amp;/g, '&').split('?')[1] || '';
+      const value = new URLSearchParams(qs).get('prefill_subcategory');
+      if (value == null) continue;
+      subcategoryChecked++;
+      if (!L.FILE_ATTENTE_SUBCATEGORIES.has(value)) {
+        subcategoryInvalid++;
+        if (subcategoryInvalid <= 10) console.log('Sous-catégorie pré-remplie invalide:', JSON.stringify(value), 'dans', f);
+      }
+    }
 
     // JSON-LD
     const ldMatches = [...html.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)];
@@ -66,6 +83,8 @@ function main() {
   console.log('Pages vérifiées :', hreflangChecked, '| non réciproques :', hreflangMismatch);
   console.log('=== Liens internes ===');
   console.log('Liens internes distincts :', allInternalHrefs.size, '| cassés :', brokenLinks);
+  console.log('=== prefill_subcategory ===');
+  console.log('Liens "Créer une mission" avec sous-catégorie pré-remplie :', subcategoryChecked, '| invalides :', subcategoryInvalid);
 
   // robots.txt / sitemap
   const robots = fs.readFileSync(path.join(PUBLIC_DIR, 'robots.txt'), 'utf8');
@@ -86,7 +105,7 @@ function main() {
   console.log('=== sitemaps ===');
   console.log('Sitemaps référencés dans l\'index :', sitemapCount, '| URLs totales (FR+AR) dans tous les sitemaps :', totalSitemapUrls);
 
-  const ok = jsonLdErrors === 0 && hreflangMismatch === 0 && brokenLinks === 0 && missingBots.length === 0;
+  const ok = jsonLdErrors === 0 && hreflangMismatch === 0 && brokenLinks === 0 && missingBots.length === 0 && subcategoryInvalid === 0;
   console.log('\n=== RÉSULTAT ===', ok ? 'PASS' : 'FAIL');
   process.exit(ok ? 0 : 1);
 }
