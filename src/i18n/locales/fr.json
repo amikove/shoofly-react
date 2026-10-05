@@ -1,4 +1,10 @@
 {
+  "annuaire": {
+    "homeTitle": "Où voulez-vous qu'on attende pour vous ?",
+    "homeCities": "Annuaire par ville",
+    "homePhares": "Catégories phares à {{city}}",
+    "footerLink": "Annuaire des établissements"
+  },
   "directoryMissionRestriction": {
     "toast": "La création de mission est réservée aux clients."
   },
@@ -270,7 +276,8 @@
       "cgv": "CGV",
         "mentionsLegales": "Mentions légales",
       "confidentiality": "Confidentialité",
-      "verification": "Vérification"
+      "verification": "Vérification",
+      "annuaire": "Annuaire des établissements"
     }
   },
   "login": {
@@ -483,6 +490,7 @@
     "title": "Accueil",
     "newMissionButton": "+ Nouvelle mission",
     "newMissionButtonShort": "+",
+    "findEstablishment": "Trouver un établissement",
     "errorLoading": "Erreur de chargement",
     "whatsappOptIn": {
       "toastText": "Mission créée ✓ — Appuyez ici pour suivre la mission par WhatsApp",

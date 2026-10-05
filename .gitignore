@@ -35,6 +35,8 @@ _audit
 directory-data/
 public/etablissements/
 public/ar/etablissements/
+public/etablissements.html
+public/ar/etablissements.html
 public/sitemap-*.xml
 public/sitemap-index.xml
 public/robots.txt

@@ -47,6 +47,24 @@ function haversineMeters(lat1, lng1, lat2, lng2) {
   const a = Math.sin(dLat / 2) ** 2 + Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLng / 2) ** 2;
   return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 }
+// Site web saisi sans protocole dans la source (ex. "www.poste.ma") : on ajoute https:// au build,
+// pour le lien visible ET le JSON-LD. Valeur invalide => null (le lien n'est alors pas affiché).
+// Garde-fous : pas d'espace, schéma http(s) seulement après normalisation, hôte à au moins un point
+// et un TLD alphabétique (écarte "javascript:…", "localhost", "1.2.3.4" et les chaînes parasites).
+function normalizeWebsite(raw) {
+  if (raw == null) return null;
+  let s = String(raw).trim();
+  if (!s || /\s/.test(s)) return null;
+  if (!/^https?:\/\//i.test(s)) s = `https://${s}`;
+  let u;
+  try { u = new URL(s); } catch { return null; }
+  if (u.protocol !== 'https:' && u.protocol !== 'http:') return null;
+  if (u.username || u.password) return null; // "mailto:a@b.ma" => https://mailto:a@b.ma/ : identifiants, rejeté
+  if (!/^([a-z0-9-]+\.)+[a-z]{2,}$/i.test(u.hostname)) return null;
+  // Racine seule : pas de barre finale ajoutée par URL ("https://www.poste.ma", pas "…ma/").
+  const out = u.toString();
+  return u.pathname === '/' && !u.search && !u.hash ? out.replace(/\/$/, '') : out;
+}
 function writeFile(relPath, content) {
   const full = path.join(PUBLIC_DIR, relPath);
   fs.mkdirSync(path.dirname(full), { recursive: true });
@@ -115,17 +133,20 @@ async function loadData() {
   if (!res.ok) {
     throw new Error(`Export backend indisponible (HTTP ${res.status}) à ${API_URL}/api/directory/export après ${EXPORT_MAX_ATTEMPTS} tentatives — build arrêté volontairement.`);
   }
-  const { categories, establishments, neighborhoods } = await res.json();
+  const { categories, establishments, neighborhoods, removed } = await res.json();
   if (!Array.isArray(establishments) || establishments.length === 0) {
     throw new Error("Export backend a renvoyé 0 établissement — build arrêté volontairement (pas de pages vides).");
   }
+  // `removed` : ajouté au backend sur feat/annuaire-liens. Absent tant que le backend n'est pas déployé
+  // => aucune page de redirection générée (et un avertissement), le reste du build continue.
+  if (!Array.isArray(removed)) console.warn('(avertissement) export sans liste `removed` — aucune page de redirection générée (backend non déployé ?).');
   const catById = Object.fromEntries(categories.map((c) => [c.id, c]));
   const nbById = Object.fromEntries(neighborhoods.map((n) => [n.id, n]));
   for (const e of establishments) {
     e.category = catById[e.category_id];
     e.neighborhood = e.neighborhood_id ? nbById[e.neighborhood_id] : null;
   }
-  return { categories, establishments, neighborhoods, catById, nbById };
+  return { categories, establishments, neighborhoods, removed: Array.isArray(removed) ? removed : [], catById, nbById };
 }
 
 // ── Gabarit HTML commun ──────────────────────────────────────────────────
@@ -391,7 +412,7 @@ function missionHref(est) {
 }
 
 module.exports = {
-  esc, normalizeCore, slugify, categorySlug, haversineMeters, writeFile, loadData, htmlShell,
+  esc, normalizeCore, slugify, categorySlug, haversineMeters, normalizeWebsite, writeFile, loadData, htmlShell,
   blocShoofly, oeilPeut, nonAffiliationBlock, signalementLinks, faqBlock, jsonLdFaq, jsonLdBreadcrumb,
   jsonLdShooflyService, missionHref, CITY_SLUGS, CITY_BY_SLUG, MIN_FOR_PAGE, SITE_URL, CONTENT, PUBLIC_DIR,
   DATA_DIR, writeDataFile, FILE_ATTENTE_SUBCATEGORIES, DIRECTORY_CATEGORY_TO_SUBCATEGORY,

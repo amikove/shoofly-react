@@ -6,6 +6,7 @@ import { missionsAPI, usersAPI } from '../../api'
 import { StatusBadge, Spinner, EmptyState, Avatar, Stars, toast } from '../../components/ui'
 import { useAuth } from '../../context/AuthContext'
 import NewMissionModal from '../../components/missions/NewMissionModal'
+import { AnnuaireLienEspaceClient } from '../../components/AnnuaireLinks'
 import InterestsModal from '../../components/missions/InterestsModal'
 import OeilProfileModal from '../../components/missions/OeilProfileModal'
 import RateModal from '../../components/missions/RateModal'
@@ -156,10 +157,13 @@ export default function ClientDashboard() {
       <Topbar
         title={t('clientDashboard.title')}
         actions={
-          <button onClick={() => setShowNew(true)} className="btn btn-primary btn-sm">
-            <span className="hidden sm:inline">{t('clientDashboard.newMissionButton')}</span>
-            <span className="sm:hidden">{t('clientDashboard.newMissionButtonShort')}</span>
-          </button>
+          <div className="flex items-center gap-2">
+            <AnnuaireLienEspaceClient className="btn btn-ghost btn-sm" />
+            <button onClick={() => setShowNew(true)} className="btn btn-primary btn-sm">
+              <span className="hidden sm:inline">{t('clientDashboard.newMissionButton')}</span>
+              <span className="sm:hidden">{t('clientDashboard.newMissionButtonShort')}</span>
+            </button>
+          </div>
         }
       />
 
