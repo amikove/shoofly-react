@@ -222,6 +222,8 @@ export const ticketsAPI = {
 export const directoryAPI = {
   adminReports:   (status = 'pending') => api.get('/api/directory/admin/reports', { params: { status } }),
   adminSetReport: (id, action)         => api.put(`/api/directory/admin/reports/${id}`, { action }),
+  // Statistiques annuaire (feat/annuaire-stats) — permission `stats`. period : '7' | '30' | 'all'.
+  adminStats:     (params)             => api.get('/api/directory/admin/stats', { params }),
 }
 
 // PUSH (Web Push / VAPID) — chantier notifications push, Phase 2

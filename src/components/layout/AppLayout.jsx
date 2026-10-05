@@ -61,6 +61,7 @@ const MENUS = {
     { to: '/admin/tickets',      icon: '🎫',  label: 'Tickets',      permission: 'moderation' },
     { to: '/admin/block-appeals', icon: '🔓', label: 'Contestations blocage', permission: 'moderation' },
     { to: '/admin/annuaire-signalements', icon: '📍', label: 'Annuaire — signalements', permission: 'moderation' },
+    { to: '/admin/annuaire-statistiques', icon: '📈', label: 'Statistiques annuaire', permission: 'stats' },
     { to: '/admin/finance',      icon: '💰',  label: 'Finance',      permission: 'finance' },
     { to: '/admin/wallet-reconciliation', icon: '⚖️', label: 'Réconciliation', permission: 'finance' },
     { to: '/admin/clients-suspendus', icon: '🚫', label: 'Clients suspendus', permission: 'users' },

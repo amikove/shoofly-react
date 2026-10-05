@@ -39,7 +39,7 @@ export default function ClientDashboard() {
   // l'URL via history.replaceState AVANT le premier rendu : aucune fenêtre où StrictMode peut
   // remonter le composant entre lecture et nettoyage. `showNew` dérive de la même lecture, dans son
   // propre initialiseur paresseux — pas un effet séparé (évite tout aller-retour de rendu).
-  const [missionPrefill] = useState(() => {
+  const [missionPrefill, setMissionPrefill] = useState(() => {
     const params = new URLSearchParams(window.location.search)
     if (params.get('newMission') !== '1') return null
     const prefill = {
@@ -53,6 +53,9 @@ export default function ClientDashboard() {
       // correspondance évidente (ex. "Autres établissements de santé") — le client choisit alors
       // lui-même, le champ reste vide comme avant ce chantier.
       subcategory: params.get('prefill_subcategory') || '',
+      // Identifiant de la fiche annuaire (statistiques annuaire) : relié à la mission créée, puis effacé
+      // dès que le client ouvre le formulaire autrement (bouton « Nouvelle mission »).
+      directory_establishment_id: params.get('prefill_establishment_id') || null,
     }
     const url = new URL(window.location.href)
     url.search = ''
@@ -159,7 +162,7 @@ export default function ClientDashboard() {
         actions={
           <div className="flex items-center gap-2">
             <AnnuaireLienEspaceClient className="btn btn-ghost btn-sm" />
-            <button onClick={() => setShowNew(true)} className="btn btn-primary btn-sm">
+            <button onClick={() => { setMissionPrefill(null); setShowNew(true) }} className="btn btn-primary btn-sm">
               <span className="hidden sm:inline">{t('clientDashboard.newMissionButton')}</span>
               <span className="sm:hidden">{t('clientDashboard.newMissionButtonShort')}</span>
             </button>

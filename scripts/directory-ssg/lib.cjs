@@ -152,7 +152,7 @@ async function loadData() {
 }
 
 // ── Gabarit HTML commun ──────────────────────────────────────────────────
-function htmlShell({ lang, title, meta, canonicalPath, alternatePath, jsonLd, bodyHtml, breadcrumbHtml }) {
+function htmlShell({ lang, title, meta, canonicalPath, alternatePath, jsonLd, bodyHtml, breadcrumbHtml, mainClass, ficheId }) {
   const dir = lang === 'ar' ? 'rtl' : 'ltr';
   const canonical = `${SITE_URL}${canonicalPath}`;
   const altFr = lang === 'ar' ? `${SITE_URL}${alternatePath}` : canonical;
@@ -226,6 +226,39 @@ form.report-form{display:flex;margin-top:10px;gap:8px;flex-direction:column;max-
 form.report-form textarea,form.report-form input{background:var(--bg);border:1px solid var(--border);color:var(--text);border-radius:8px;padding:8px}
 form.report-form button{background:var(--accent);color:#fff;border:0;border-radius:8px;padding:8px;font-weight:600;cursor:pointer}
 .report-ok{color:#5FD068;font-size:13px}
+/* Fiche établissement (refonte 2026-10-05) : hiérarchie nom > CTA > infos > détails repliés. Règles
+   scopées à main.fiche : les pages liste ne sont pas touchées. Logique (inline-start/end) pour le RTL. */
+main.fiche{padding-bottom:28px}
+.fiche h1{font-size:32px;margin:0 0 6px}
+.fiche-kicker{color:#D8D8D8;font-size:15px;margin:0 0 10px}
+.fiche-attente{display:inline-block;font-size:13px;font-weight:600;color:var(--text);border:1px solid var(--accent);border-radius:999px;padding:4px 12px;margin:0 0 22px}
+.fiche-cta{margin:0 0 24px}
+.btn-cta{display:flex;align-items:center;justify-content:center;min-height:52px;background:var(--accent);color:#fff;font-weight:700;font-size:18px;text-decoration:none;border-radius:12px;padding:12px 20px}
+.fiche-card{background:#1C1C1C;border:1px solid #2E2E2E;border-radius:14px;padding:0 16px 8px;margin:0 0 24px}
+.fiche-row{display:flex;gap:12px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--border)}
+.fiche-row:last-child{border-bottom:none}
+.fiche-row svg{flex:0 0 20px;width:20px;height:20px;margin-top:10px;fill:none;stroke:var(--muted);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.fiche-row .lbl{display:block;font-size:12px;color:var(--muted)}
+.fiche-row a{display:inline-flex;align-items:center;min-height:44px;margin-inline-end:14px;word-break:break-word}
+.fiche-how{padding:14px 0 8px}
+.fiche-how h2{font-size:18px;margin:0 0 8px}
+.fiche-how h3{font-size:16px;margin:0 0 6px}
+.fiche-how p{margin:6px 0;color:#D8D8D8}
+.faq-item{border-top:1px solid var(--border);margin-top:0}
+.faq-item>summary{display:flex;align-items:center;min-height:44px;padding:8px 0;font-weight:600;cursor:pointer;list-style:none}
+.faq-item>summary::-webkit-details-marker{display:none}
+.faq-item>summary::after{content:'+';margin-inline-start:auto;font-size:20px;color:var(--muted);padding-inline-start:12px}
+.faq-item[open]>summary::after{content:'−'}
+.faq-item p{margin:0 0 12px;color:#D8D8D8}
+.fiche-foot{margin-top:28px;border-top:1px solid var(--border);padding-top:14px}
+.fiche-foot .non-affil{margin-top:0}
+@media (max-width:639px){
+  /* Mobile : le bouton principal reste visible en bas de l'écran (fixed, un seul élément). Le
+     padding du <main> réserve la place pour que le pied de page reste accessible. */
+  .fiche-cta{position:fixed;inset-inline:0;bottom:0;z-index:50;margin:0;padding:10px 16px calc(10px + env(safe-area-inset-bottom));background:var(--bg);border-top:1px solid var(--border)}
+  .fiche-cta .btn-cta{width:100%}
+  main.fiche{padding-bottom:120px}
+}
 </style>
 ${jsonLd.map((block) => `<script type="application/ld+json">${JSON.stringify(block)}</script>`).join('\n')}
 </head>
@@ -233,7 +266,7 @@ ${jsonLd.map((block) => `<script type="application/ld+json">${JSON.stringify(blo
 <header class="site"><div class="wrap">
 <a class="logo" href="${lang === 'ar' ? '/ar' : '/'}">SHOOF<b>LY</b></a>
 </div></header>
-<main class="wrap">
+<main class="${mainClass || 'wrap'}"${ficheId ? ` data-fiche-id="${esc(ficheId)}"` : ''}>
 ${breadcrumbHtml || ''}
 ${bodyHtml}
 </main>
@@ -258,6 +291,7 @@ document.addEventListener('submit', function(e){
     .catch(function(){ f.innerHTML = '<p>' + (f.dataset.lang==='ar' ? 'خطأ، حاول لاحقاً.' : 'Erreur, réessayez plus tard.') + '</p>'; });
 });
 </script>
+${ficheId ? FICHE_TRACKING_SCRIPT : ''}
 </body>
 </html>`;
 }
@@ -308,6 +342,52 @@ function reportForm(lang, establishmentId, type, id) {
 }
 function faqBlock(lang, items) {
   return `<dl class="faq">${items.map((it) => `<dt>${esc(it.q)}</dt><dd>${it.r}</dd>`).join('')}</dl>`;
+}
+// Fiche établissement (refonte 2026-10-05) : questions visibles, réponses repliées. Mêmes textes que
+// faqBlock (le JSON-LD FAQPage est construit à partir des mêmes items, inchangé).
+function faqDetails(items) {
+  return `<div class="faq-list">${items.map((it) => `<details class="faq-item"><summary>${esc(it.q)}</summary><p>${it.r}</p></details>`).join('')}</div>`;
+}
+// Bouton principal unique de la fiche (sticky en bas sur mobile, voir CSS main.fiche).
+function ficheCta(lang, missionHref) {
+  return `<div class="fiche-cta"><a class="btn-cta" href="${esc(missionHref)}" data-track="un_oeil">${esc(T.FICHE[lang].cta)}</a></div>`;
+}
+// Bloc « Comment ça marche ? » — toujours visible, dans la même carte que les infos (décision BOSS,
+// suite de la refonte) : texte Shoofly sans bouton (le CTA unique est en haut de page).
+function ficheHow(lang, domain) {
+  const b = T.BLOC_SHOOFLY[lang];
+  const t = domain === 'sante' ? T.OEIL_PEUT_SANTE : T.OEIL_PEUT_ADMIN;
+  return `<div class="fiche-how"><h2>${esc(T.FICHE[lang].how)}</h2><h3>${esc(b.titre)}</h3><p>${esc(b.corps)}</p><p class="tagline">${esc(b.tagline)}</p><p>${esc(t[lang])}</p></div>`;
+}
+// Statistiques annuaire (feat/annuaire-stats) : une vue au chargement, un événement au clic sur un
+// lien marqué data-track. sendBeacon (text/plain, sans preflight) ; échec silencieux ; la page ne
+// dépend pas du script. Aucune donnée personnelle : seul l'identifiant de la fiche et le type partent.
+const FICHE_TRACKING_SCRIPT = `<script>
+(function(){
+  var main = document.querySelector('main[data-fiche-id]');
+  if (!main || !navigator.sendBeacon) return;
+  var id = main.getAttribute('data-fiche-id');
+  var url = '${API_URL}/api/directory/events';
+  function send(type){
+    try { navigator.sendBeacon(url, new Blob([JSON.stringify({ establishment_id: id, type: type })], { type: 'text/plain' })); } catch (e) {}
+  }
+  send('view');
+  document.addEventListener('click', function(e){
+    var a = e.target.closest('[data-track]');
+    if (a) send(a.getAttribute('data-track'));
+  }, true);
+})();
+</script>`;
+// Icônes SVG inline (aucune bibliothèque), décoratives : aria-hidden.
+const ICONS = {
+  pin: '<path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/>',
+  nav: '<path d="M3 11l19-9-9 19-2-8-8-2z"/>',
+  phone: '<path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/>',
+  globe: '<circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20 15 15 0 0 1 0-20z"/>',
+  map: '<path d="M1 6l7-3 8 3 7-3v15l-7 3-8-3-7 3z"/><path d="M8 3v15M16 6v15"/>',
+};
+function ficheRow(icon, label, valueHtml) {
+  return `<div class="fiche-row"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">${ICONS[icon]}</svg><div>${label ? `<span class="lbl">${esc(label)}</span>` : ''}${valueHtml}</div></div>`;
 }
 function jsonLdFaq(items) {
   return { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: items.map((it) => ({ '@type': 'Question', name: it.q, acceptedAnswer: { '@type': 'Answer', text: it.rPlain } })) };
@@ -414,6 +494,8 @@ function missionHref(est) {
   // pas de code spécifique ajouté pour ce cas (voir RAPPORT_PHASE4.md).
   const params = new URLSearchParams({ newMission: '1' });
   if (est) {
+    // Identifiant de la fiche : relié à la mission créée (statistiques annuaire, feat/annuaire-stats).
+    if (est.id) params.set('prefill_establishment_id', est.id);
     if (est.name) params.set('prefill_title', est.name);
     if (est.address) params.set('prefill_address', est.address);
     if (est.lat) params.set('prefill_lat', est.lat);
@@ -430,7 +512,7 @@ function missionHref(est) {
 
 module.exports = {
   esc, normalizeCore, slugify, categorySlug, haversineMeters, normalizeWebsite, writeFile, loadData, htmlShell,
-  blocShoofly, oeilPeut, nonAffiliationBlock, signalementLinks, faqBlock, jsonLdFaq, jsonLdBreadcrumb,
+  blocShoofly, oeilPeut, nonAffiliationBlock, signalementLinks, faqBlock, faqDetails, ficheCta, ficheHow, ficheRow, jsonLdFaq, jsonLdBreadcrumb,
   jsonLdShooflyService, missionHref, CITY_SLUGS, CITY_BY_SLUG, MIN_FOR_PAGE, SITE_URL, CONTENT, PUBLIC_DIR,
   DATA_DIR, writeDataFile, FILE_ATTENTE_SUBCATEGORIES, DIRECTORY_CATEGORY_TO_SUBCATEGORY,
   detectBankSubcategory, resolvePrefillSubcategory,

@@ -1,4 +1,30 @@
 {
+  "adminDirectoryStats": {
+    "onglet": "إحصائيات الدليل",
+    "periode7": "آخر 7 أيام",
+    "periode30": "آخر 30 يوماً",
+    "periodeTout": "الكل",
+    "rechercheNom": "ابحث عن بطاقة…",
+    "toutesVilles": "كل المدن",
+    "toutesCategories": "كل الفئات",
+    "colonnes": {
+      "fiche": "البطاقة",
+      "ville": "المدينة",
+      "categorie": "الفئة",
+      "vues": "المشاهدات",
+      "itineraire": "الاتجاهات",
+      "siteWeb": "الموقع الإلكتروني",
+      "appel": "الاتصال",
+      "unOeil": "عين شووفلي تنتظر بدلاً مني",
+      "missions": "المهام المُنشأة",
+      "taux": "النسبة"
+    },
+    "tauxAide": "المهام المنشأة ÷ المشاهدات",
+    "total": "المجموع",
+    "vide": "لا يوجد نشاط في هذه الفترة.",
+    "erreur": "خطأ في التحميل",
+    "aucuneLigne": "لا توجد بطاقة تطابق البحث."
+  },
   "adminDirectoryReports": {
     "retraitConfirme": "تم تأكيد الحذف. ستختفي الصفحة من الموقع خلال بضع دقائق.",
     "retraitSansRebuild": "تم تأكيد الإزالة. إعادة النشر التلقائية غير مفعّلة: ستختفي البطاقة من الموقع مع البناء المقبل."

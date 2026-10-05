@@ -125,11 +125,6 @@ function nearest(e, all, n = 5) {
     .slice(0, n).map((x) => x.o);
 }
 
-function fieldLine(lang, label, value, extra) {
-  if (!value) return '';
-  return `<div><strong>${L.esc(label)}</strong> ${L.esc(value)}${extra || ''}</div>`;
-}
-
 function generateFiche(e, lang, byCity) {
   const cat = e.category;
   const content = L.CONTENT[e.category_id];
@@ -144,24 +139,31 @@ function generateFiche(e, lang, byCity) {
 
   const sousTitre = lang === 'ar' ? `${catSingulierCap} · ${quartierOuVille}` : `${catSingulierCap} · ${e.neighborhood ? e.neighborhood.name_fr + ', ' : ''}${e.city}`;
 
-  const infoLabels = lang === 'ar'
-    ? { adresse: 'العنوان', tel: 'الهاتف', site: 'الموقع الإلكتروني', carte: 'عرض على الخريطة' }
-    : { adresse: 'Adresse', tel: 'Téléphone', site: 'Site web', carte: 'Voir sur la carte' };
-  let infoHtml = '<div class="fiche-info">';
-  infoHtml += fieldLine(lang, infoLabels.adresse, e.address);
-  infoHtml += fieldLine(lang, infoLabels.tel, e.phone);
+  // Carte d'infos compacte (refonte 2026-10-05) : une ligne par donnée présente, aucune ligne vide.
+  // Coordonnées lues en nombres : elles entrent dans des URL, pas de chaîne brute.
+  const lat = Number(e.lat), lng = Number(e.lng);
+  const hasGeo = Boolean(e.lat && e.lng) && Number.isFinite(lat) && Number.isFinite(lng);
+  const rows = [];
+  if (e.address) {
+    const itineraire = hasGeo ? ` <a href="https://www.google.com/maps/dir/?api=1&amp;destination=${lat},${lng}" rel="nofollow noopener" target="_blank" data-track="itineraire">${L.esc(T.FICHE[lang].itineraire)}</a>` : '';
+    rows.push(L.ficheRow('pin', T.FICHE[lang].adresse, `<span>${L.esc(e.address)}</span>${itineraire}`));
+  }
+  if (e.phone) rows.push(L.ficheRow('phone', T.FICHE[lang].tel, `<a href="tel:${L.esc(e.phone.replace(/[^+\d]/g, ''))}" data-track="appel">${L.esc(e.phone)}</a>`));
   // Site normalisé une fois (protocole ajouté si absent) : même URL dans le lien visible et le JSON-LD.
   const website = L.normalizeWebsite(e.website);
-  if (website) infoHtml += `<div><strong>${L.esc(infoLabels.site)}</strong> <a href="${L.esc(website)}" rel="nofollow noopener" target="_blank">${L.esc(website)}</a></div>`;
-  if (e.lat && e.lng) infoHtml += `<div><a href="https://www.openstreetmap.org/?mlat=${e.lat}&mlon=${e.lng}#map=17/${e.lat}/${e.lng}" rel="nofollow noopener" target="_blank">${L.esc(infoLabels.carte)}</a></div>`;
-  infoHtml += '</div>';
-
+  if (website) rows.push(L.ficheRow('globe', T.FICHE[lang].site, `<a href="${L.esc(website)}" rel="nofollow noopener" target="_blank" data-track="site_web">${L.esc(website)}</a>`));
+  // Décision BOSS : pas de lien OpenStreetMap (« Voir sur la carte » supprimé) — seul l'itinéraire reste.
   const isUrgence = e.category_id === 'urgences';
+  // Une seule carte : infos + « Comment ça marche ? » (toujours visible, fond légèrement plus clair).
+  const howHtml = isUrgence ? '' : L.ficheHow(lang, cat.domain);
+  const infoHtml = rows.length || howHtml ? `<div class="fiche-card">${rows.join('')}${howHtml}</div>` : '';
+
   const near = nearest(e, byCity[e.city] || []);
   const nearTitle = lang === 'ar' ? 'بالقرب منك' : 'À proximité';
   const nearHtml = near.length ? `<h2>${L.esc(nearTitle)}</h2><ul class="list">${near.map((o) => {
     const oq = o.neighborhood ? (lang === 'ar' ? o.neighborhood.name_ar || o.neighborhood.name_fr : o.neighborhood.name_fr) : cityLabel(o.city, lang);
-    return `<li><a class="card-name" href="${lang === 'ar' ? '/ar' : ''}/etablissements/${L.CITY_SLUGS[o.city]}/${o.slug}">${L.esc(o.name)}</a><div class="card-meta">${L.esc(oq)}</div></li>`;
+    const oc = o.category ? (lang === 'ar' ? o.category.label_ar : o.category.label_fr) : '';
+    return `<li><a class="card-name" href="${lang === 'ar' ? '/ar' : ''}/etablissements/${L.CITY_SLUGS[o.city]}/${o.slug}">${L.esc(o.name)}</a><div class="card-meta">${L.esc([oc, oq].filter(Boolean).join(' · '))}</div></li>`;
   }).join('')}</ul>` : '';
 
   const faqItems = [
@@ -181,19 +183,22 @@ function generateFiche(e, lang, byCity) {
   });
   const faqItemsHtml = faqItems.map((it) => ({ q: it.q, r: L.esc(it.r) }));
 
-  let body = `<h1>${L.esc(e.name)}</h1><p class="crumbs">${sousTitre}</p>`;
+  // Hiérarchie (refonte 2026-10-05, demande BOSS) : nom › étiquette › temps d'attente › CTA unique ›
+  // infos › « Comment ça marche ? » replié › à proximité › FAQ (réponses repliées) › pied discret.
+  // Aucun texte supprimé : seuls l'ordre, l'affichage et le bouton en doublon changent.
+  const attenteTxt = content && content.has_attente ? (lang === 'ar' ? content.attente_ar : content.attente_fr) : '';
+  const badgeHtml = attenteTxt ? `<p class="fiche-attente">${L.esc(`${lang === 'ar' ? T.FICHE.ar.attente : T.FICHE.fr.attente} ${attenteTxt}`)}</p>` : '';
+
+  let body = '';
   if (isUrgence) {
     body += `<div class="urgence"><strong>${L.esc(T.URGENCES_BANDEAU[lang].fort)}</strong> ${L.esc(T.URGENCES_BANDEAU[lang].suite)}</div>`;
   }
+  body += `<h1>${L.esc(e.name)}</h1><p class="fiche-kicker">${sousTitre}</p>${badgeHtml}`;
+  if (!isUrgence) body += L.ficheCta(lang, L.missionHref(e));
   body += infoHtml;
-  if (!isUrgence) {
-    body += L.blocShoofly(lang, L.missionHref(e));
-    body += L.oeilPeut(lang, cat.domain);
-  }
   body += nearHtml;
-  body += `<h2>${lang === 'ar' ? 'أسئلة شائعة' : 'Questions fréquentes'}</h2>` + L.faqBlock(lang, faqItemsHtml);
-  body += L.nonAffiliationBlock(lang, e.name);
-  body += L.signalementLinks(lang, e.id);
+  body += `<h2>${lang === 'ar' ? 'أسئلة شائعة' : 'Questions fréquentes'}</h2>` + L.faqDetails(faqItemsHtml);
+  body += `<div class="fiche-foot">${L.nonAffiliationBlock(lang, e.name)}${L.signalementLinks(lang, e.id)}</div>`;
 
   const breadcrumbItems = lang === 'ar'
     ? [{ name: 'الرئيسية', path: '/ar' }, { name: cityLabel(e.city, lang), path: `/ar/etablissements/${L.CITY_SLUGS[e.city]}` }, { name: e.name, path: `/ar/etablissements/${L.CITY_SLUGS[e.city]}/${e.slug}` }]
@@ -211,7 +216,7 @@ function generateFiche(e, lang, byCity) {
   if (!isUrgence) jsonLd.push(L.jsonLdShooflyService());
 
   const urlPath = `/etablissements/${L.CITY_SLUGS[e.city]}/${e.slug}`;
-  const html = L.htmlShell({ lang, title, meta, canonicalPath: lang === 'ar' ? `/ar${urlPath}` : urlPath, alternatePath: urlPath, jsonLd, bodyHtml: body, breadcrumbHtml });
+  const html = L.htmlShell({ lang, title, meta, canonicalPath: lang === 'ar' ? `/ar${urlPath}` : urlPath, alternatePath: urlPath, jsonLd, bodyHtml: body, breadcrumbHtml, mainClass: 'wrap fiche', ficheId: e.id });
   L.writeFile(`${lang === 'ar' ? '/ar' : ''}${urlPath}.html`, html);
 }
 

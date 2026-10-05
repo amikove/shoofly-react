@@ -117,8 +117,16 @@ const REDIRECTION_RETIREE = {
   ar: { titre: 'تحويل — شووفلي', lien: 'لم تعد هذه البطاقة متاحة. اطلع على المؤسسات المشابهة.' },
 };
 
+// Fiche établissement — libellés d'interface de la refonte de mise en page (demande BOSS, 2026-10-05).
+// CTA et libellés AR repris tels que donnés par BOSS ; les autres libellés ne sont PAS dans le .md
+// (à valider par BOSS). Aucun texte de contenu (FAQ, mentions, signalement) n'est touché ici.
+const FICHE = {
+  fr: { cta: 'Un Œil attend pour moi', how: 'Comment ça marche ?', attente: 'Attente souvent', itineraire: 'Itinéraire', adresse: 'Adresse', tel: 'Téléphone', site: 'Site web', carte: 'Voir sur la carte', proches: 'À proximité' },
+  ar: { cta: 'عين شووفلي تنتظر بدلاً مني', how: 'كيف يعمل؟', attente: 'الانتظار غالباً', itineraire: 'الاتجاهات', adresse: 'العنوان', tel: 'الهاتف', site: 'الموقع الإلكتروني', carte: 'عرض على الخريطة', proches: 'بالقرب منك' },
+};
+
 module.exports = {
   BLOC_SHOOFLY, OEIL_PEUT_SANTE, OEIL_PEUT_ADMIN, nonAffiliation, NON_AFFILIATION_LISTE,
   LIENS_SIGNALEMENT, FOOTER_ATTRIBUTION, URGENCES_BANDEAU, FAQ_GENERALE, ENTREE_ANNUAIRE, ACCUEIL_NOSCRIPT,
-  REDIRECTION_RETIREE,
+  REDIRECTION_RETIREE, FICHE,
 };
