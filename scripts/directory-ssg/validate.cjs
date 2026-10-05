@@ -85,8 +85,8 @@ function main() {
     const hreflangAr = html.match(/hreflang="ar" href="([^"]+)"/);
     if (hreflangFr && hreflangAr) {
       hreflangChecked++;
-      const frPath = hreflangFr[1].replace('https://shoofly.ma', '');
-      const arPath = hreflangAr[1].replace('https://shoofly.ma', '');
+      const frPath = hreflangFr[1].replace(L.SITE_URL, '');
+      const arPath = hreflangAr[1].replace(L.SITE_URL, '');
       const frExists = existingPaths.has(frPath);
       const arExists = existingPaths.has(arPath);
       if (!frExists || !arExists) { hreflangMismatch++; console.log('hreflang cassé:', f, '-> fr exists:', frExists, 'ar exists:', arExists); }
@@ -187,7 +187,20 @@ function main() {
 
   // Sitemap : pages d'entrée référencées dans les hubs
   const hubsXml = fs.existsSync(path.join(PUBLIC_DIR, 'sitemap-hubs.xml')) ? fs.readFileSync(path.join(PUBLIC_DIR, 'sitemap-hubs.xml'), 'utf8') : '';
-  const entryInSitemap = hubsXml.includes('https://shoofly.ma/etablissements</loc>') && hubsXml.includes('https://shoofly.ma/ar/etablissements</loc>');
+  const entryInSitemap = hubsXml.includes(`${L.SITE_URL}/etablissements</loc>`) && hubsXml.includes(`${L.SITE_URL}/ar/etablissements</loc>`);
+
+  // Domaine principal : AUCUNE URL absolue vers l'apex (non principal) dans les fichiers générés.
+  // Scan de public/ (HTML annuaire, sitemaps, robots.txt, clé IndexNow) et des données exportées.
+  let apexUrls = 0;
+  const apexRe = /https:\/\/shoofly\.ma(?!\.)/g;
+  const generatedFiles = [...files, ...fs.readdirSync(PUBLIC_DIR).filter((f) => /^(sitemap-.*\.xml|robots\.txt|.*\.txt)$/.test(f)).map((f) => path.join(PUBLIC_DIR, f))];
+  for (const f of generatedFiles) {
+    if (!fs.existsSync(f)) continue;
+    const matches = (fs.readFileSync(f, 'utf8').match(apexRe) || []).length;
+    if (matches) { apexUrls += matches; if (apexUrls <= 5) console.log('URL vers le domaine non principal (apex) :', f); }
+  }
+  console.log('=== Domaine principal ===');
+  console.log(`URLs vers l'apex shoofly.ma (non principal) : ${apexUrls} | domaine principal : ${L.SITE_URL}`);
 
   console.log('\n=== JSON-LD ===');
   console.log('Blocs vérifiés :', jsonLdBlocks, '| invalides :', jsonLdErrors);

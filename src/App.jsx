@@ -1,6 +1,6 @@
 import { useEffect, lazy, Suspense } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Routes, Route, Navigate, useLocation } from 'react-router-dom'
+import { Routes, Route, Navigate, useLocation, useSearchParams } from 'react-router-dom'
 import { useAuth } from './context/AuthContext'
 import { trackPageView } from './utils/googleAnalytics'
 import { Spinner } from './components/ui'
@@ -146,6 +146,18 @@ function RouteTracker() {
   return null
 }
 
+// Connecté qui ouvre /login ou /register : on respecte ?redirect= (ex. « Créer une mission » depuis une
+// fiche annuaire). Cause du bug corrigé ici : Login.jsx appelait navigate(redirect) APRÈS login(), mais
+// login() pose déjà `user` ; la route /login rendait alors <Navigate to="/client"> SANS paramètres, et ce
+// Navigate gagnait la course (visible en build de production, pas en dev). Même règle que Login.jsx :
+// chemin relatif du même site uniquement.
+function AuthRouteRedirect({ user }) {
+  const [searchParams] = useSearchParams()
+  const raw = searchParams.get('redirect')
+  const safe = raw && raw.startsWith('/') && !raw.startsWith('//') ? raw : null
+  return <Navigate to={safe || `/${user.role}`} replace />
+}
+
 export default function App() {
   const { user, loading, netRetrying } = useAuth()
   const { t, i18n } = useTranslation()
@@ -188,8 +200,8 @@ export default function App() {
       <Route path="/verification" element={<Verification />} />
     
       <Route path="/" element={user ? <Navigate to={`/${user.role}`} replace /> : <Landing />} />
-      <Route path="/login"    element={user ? <Navigate to={`/${user.role}`} /> : <Login />} />
-      <Route path="/register" element={user ? <Navigate to={`/${user.role}`} /> : <Register />} />
+      <Route path="/login"    element={user ? <AuthRouteRedirect user={user} /> : <Login />} />
+      <Route path="/register" element={user ? <AuthRouteRedirect user={user} /> : <Register />} />
       <Route path="/forgot-password" element={<ForgotPassword />} />
       <Route path="/reset-password"  element={<ResetPassword />} />
 
