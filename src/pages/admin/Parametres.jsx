@@ -63,6 +63,8 @@ const ADVANCED_DEFAULTS = {
   candidature_relance_interval_minutes: 120,
   candidature_relance_imminent_threshold_minutes: 120,
   unread_whatsapp_email_fallback_minutes: 5,
+  quiet_hours_start: 22,
+  quiet_hours_end: 7,
   // Chantier 2 lot 1 bis — WhatsApp en relance seulement (backend jobs/whatsappRelances.js).
   presence_whatsapp_relance_j1_minutes: 60,
   presence_whatsapp_relance_h2_minutes: 20,
@@ -198,6 +200,7 @@ const ADVANCED_GROUPS = [
   { key: 'presenceWhatsappRelance', category: 'communication', fields: ['presence_whatsapp_relance_j1_minutes', 'presence_whatsapp_relance_h2_minutes', 'presence_whatsapp_relance_h45_minutes'] },
   { key: 'candidatureRelance',  category: 'communication', fields: ['candidature_relance_first_after_minutes', 'candidature_relance_interval_minutes', 'candidature_relance_imminent_threshold_minutes'] },
   { key: 'emailFallback',       category: 'communication', fields: ['unread_whatsapp_email_fallback_minutes'] },
+  { key: 'quietHours',          category: 'communication', fields: ['quiet_hours_start', 'quiet_hours_end'] },
   { key: 'whatsappRetry',       category: 'communication', fields: ['whatsapp_retry_max_attempts'] },
   // 🚨 Anti-fraude — mêmes clés que le backend (routes/antiFraud.js).
   { key: 'fraudOeil',       category: 'antifraude', fields: ['fraud_oeil_cancel_lookback_days', 'fraud_oeil_nomedia_lookback_days', 'fraud_oeil_too_fast_lookback_days', 'fraud_oeil_too_fast_seconds'] },
