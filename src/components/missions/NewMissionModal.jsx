@@ -11,6 +11,7 @@ import MissionCreatedModal from './MissionCreatedModal'
 import LocationPicker from './LocationPicker'
 import { defaultIsPrivateResidence } from '../../utils/missionLocation'
 import { casablancaWallTimeToISO, casablancaDisplayDateTime } from '../../utils/casablancaTime'
+import { administrationSlotProblem } from '../../utils/administrationSlot'
 
 // Planchers tarifaires par sous-catégorie — SOURCE UNIQUE EN BASE depuis le chantier
 // « planchers éditables » (2026-09-10). Plus de table en dur ici : on lit
@@ -202,6 +203,10 @@ export default function NewMissionModal({ open, onClose, onCreated, prefill }) {
     return () => { cancelled = true }
   }, [open])
   const minPrice = resolveMinPrice(floorData, type, subcategory)
+  // Règle administrations : heure limite lue du serveur (défaut 17 h), créneaux interdits signalés.
+  const closingHour = Number(floorData?.administration_closing_hour ?? 17)
+  const isAdminCategory = type === 'file_attente' && (subcategory || '').startsWith('Administrations — ')
+  const slotProblem = isAdminCategory ? administrationSlotProblem(form.scheduled_date, form.scheduled_time, closingHour) : null
   // Brouillon local d'une session antérieure, lu UNE fois au montage (à chaque chargement de
   // page / navigation client vers un écran qui monte cette modale). Jamais appliqué d'office :
   // proposé via le bandeau de restauration. Les brouillons écrits pendant la session courante
@@ -350,6 +355,10 @@ if (minPrice != null && parseFloat(form.price) < minPrice) {
       toast(t('newMissionModal.errors.scheduledAtPast'), 'error')
       return
     }
+    if (isAdminCategory && slotProblem) {
+      toast(t('newMissionModal.administration.message', { hour: closingHour }), 'error')
+      return
+    }
     if ((type === 'file_attente' || type === 'audit') && !subcategory) {
       toast(t('newMissionModal.errors.subcategoryRequired'), 'error')
       return
@@ -402,7 +411,11 @@ if (minPrice != null && parseFloat(form.price) < minPrice) {
       setPromoResult(null)
       discardDraft()   // mission créée : le brouillon local n'a plus lieu d'être
     } catch (err) {
-      toast(err.response?.data?.error || t('newMissionModal.errors.creationError'), 'error')
+      // Refus serveur de la règle administrations : message traduit (FR/AR) selon le code.
+      const serverCode = err.response?.data?.code
+      toast(serverCode === 'ADMINISTRATION_HOURS'
+        ? t('newMissionModal.administration.message', { hour: closingHour })
+        : (err.response?.data?.error || t('newMissionModal.errors.creationError')), 'error')
     } finally {
       setLoading(false)
     }
@@ -576,6 +589,7 @@ if (minPrice != null && parseFloat(form.price) < minPrice) {
                 className="input"
                 style={{ colorScheme: 'dark', accentColor: '#FF4D00' }}
                 value={form.scheduled_time}
+                max={isAdminCategory && closingHour > 0 ? `${String(closingHour - 1).padStart(2, '0')}:59` : undefined}
                 onChange={(e) => setForm(f => ({ ...f, scheduled_time: e.target.value }))}
                 required
               />
@@ -583,6 +597,14 @@ if (minPrice != null && parseFloat(form.price) < minPrice) {
           </div>
 
 
+
+          {isAdminCategory && (
+            <p className="text-xs" style={{ color: slotProblem ? '#f87171' : '#9ca3af' }} role={slotProblem ? 'alert' : undefined}>
+              {slotProblem
+                ? t('newMissionModal.administration.message', { hour: closingHour })
+                : t('newMissionModal.administration.hint', { hour: closingHour })}
+            </p>
+          )}
 
           {/* Budget */}
           <div>

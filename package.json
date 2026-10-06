@@ -8,6 +8,7 @@
     "build": "node scripts/directory-ssg/generate.cjs && vite build",
     "build:app-only": "vite build",
     "lint": "eslint .",
+    "test": "node --test tests/administrationSlot.test.js",
     "preview": "vite preview"
   },
   "dependencies": {

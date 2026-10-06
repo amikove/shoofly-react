@@ -852,6 +852,10 @@
     }
   },
   "newMissionModal": {
+    "administration": {
+      "hint": "Administration : créneaux possibles du lundi au vendredi, jusqu'à {{hour}} h.",
+      "message": "Les administrations sont fermées après {{hour}} h et le week-end. Choisissez un créneau plus tôt."
+    },
     "immobilierNotice": "L'avis de l'Œil reflète l'état du bien au moment de sa visite. Pour une décision éclairée, basez-vous en priorité sur les photos et vidéos du rapport plutôt que sur la seule note attribuée.",
     "title": "Nouvelle mission",
     "subtitleVisible": "Visible par tous les Œils disponibles",
@@ -3056,6 +3060,10 @@
         "title": "Cooldown après transfert ou abandon",
         "note": "Empêche l'Œil d'accepter une nouvelle mission immédiatement après avoir transféré/refusé une mission (délai court), abandonné une mission déjà en cours (délai aggravé, sans remplaçant trouvé), ou transféré une mission avant son démarrage (délai ancré sur l'heure du créneau, pas sur l'heure du clic). Ex : {{cdRefusH}}h après un refus, {{cdAbandonH}}h après un abandon en cours de mission, ou de 1h avant à {{cdBeforeAfterH}}h après le créneau pour un transfert avant démarrage (délai de {{cdBeforeH}}h)."
       },
+      "administrations": {
+        "title": "Administrations : heure limite",
+        "note": "Une mission dont la catégorie est une administration ne peut pas commencer à partir de cette heure (heure de Casablanca), ni un samedi ou un dimanche. Le blocage s'applique à la création et à la modification, côté serveur."
+      },
       "staleMission": {
         "title": "Mission sans prestataire trouvé",
         "note": "L'admin est alerté si la mission attend depuis le premier délai ET que son créneau est encore éloigné d'au moins le second délai. Ex : mission créée il y a {{staleH}}h, toujours sans Œil, et dont le créneau est encore à plus de {{staleLeadH}}h."
@@ -3173,6 +3181,7 @@
       "schedule_conflict_window_hours": "Fenêtre de conflit (h)",
       "transfer_cooldown_hours": "Cooldown transfert/refus (h)",
       "abandon_during_mission_cooldown_hours": "Cooldown abandon en cours de mission (h)",
+      "administration_closing_hour": "Heure limite des administrations (h)",
       "stale_mission_hours": "Ancienneté avant alerte (h)",
       "stale_mission_min_lead_hours": "Marge minimum avant le créneau (h)",
       "pending_mission_expiration_hours": "Délai avant annulation automatique (h après le créneau)",
