@@ -81,6 +81,8 @@ const ADMIN_GROUPS = [
   { label: 'Compte',           routes: ['/admin/oeils', '/admin/fiabilite', '/admin/clients', '/admin/clients-suspendus', '/admin/admins'] },
   { label: 'Gestion conflits', routes: ['/admin/reclamations', '/admin/messages-suspects', '/admin/fraude', '/admin/problemes', '/admin/tickets', '/admin/block-appeals'] },
   { label: 'Finance',          routes: ['/admin/finance', '/admin/wallet-reconciliation', '/admin/promos'] },
+  // Annuaire : sans ce groupe, les entrées ne sont jamais rendues (le menu admin n'affiche que les routes listées ici).
+  { label: 'Annuaire',         routes: ['/admin/annuaire-signalements', '/admin/annuaire-statistiques'] },
 ]
 
 const LABELS = {

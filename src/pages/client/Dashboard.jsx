@@ -13,6 +13,9 @@ import RateModal from '../../components/missions/RateModal'
 import { translateLocation } from '../../constants/villesTranslations'
 import { friendlyMissionError, isStaleMissionError } from '../../utils/missionErrors'
 
+// Pré-remplissage « Un Œil attend pour moi » conservé pendant la session d'onglet (voir Dashboard).
+const MISSION_PREFILL_KEY = 'shoofly_mission_prefill'
+
 function formatTimeLeft(t, deadline, now) {
   const diffMs = new Date(deadline).getTime() - now
   if (diffMs <= 0) return t('clientDashboard.actionsRequired.expired')
@@ -39,9 +42,18 @@ export default function ClientDashboard() {
   // l'URL via history.replaceState AVANT le premier rendu : aucune fenêtre où StrictMode peut
   // remonter le composant entre lecture et nettoyage. `showNew` dérive de la même lecture, dans son
   // propre initialiseur paresseux — pas un effet séparé (évite tout aller-retour de rendu).
+  // Correctif 2026-10-06 : le paramètre est AUSSI conservé en sessionStorage jusqu'à fermeture, création
+  // ou « Nouvelle mission ». Sans cela, un remontage réel du composant après le nettoyage de l'URL (le cas
+  // StrictMode ci-dessus, mais aussi un remontage après la redirection de connexion) relisait une URL
+  // vide : le pré-remplissage était perdu et la fiche « Un Œil attend pour moi » n'ouvrait qu'un formulaire vide.
   const [missionPrefill, setMissionPrefill] = useState(() => {
     const params = new URLSearchParams(window.location.search)
-    if (params.get('newMission') !== '1') return null
+    if (params.get('newMission') !== '1') {
+      try {
+        const saved = sessionStorage.getItem(MISSION_PREFILL_KEY)
+        return saved ? JSON.parse(saved) : null
+      } catch { return null }
+    }
     const prefill = {
       title: params.get('prefill_title') || '',
       address: params.get('prefill_address') || '',
@@ -57,11 +69,17 @@ export default function ClientDashboard() {
       // dès que le client ouvre le formulaire autrement (bouton « Nouvelle mission »).
       directory_establishment_id: params.get('prefill_establishment_id') || null,
     }
+    try { sessionStorage.setItem(MISSION_PREFILL_KEY, JSON.stringify(prefill)) } catch { /* navigation privée */ }
     const url = new URL(window.location.href)
     url.search = ''
     window.history.replaceState(window.history.state, '', url)
     return prefill
   })
+  // Efface le pré-remplissage mémorisé : fermeture de la modale, mission créée, ou « Nouvelle mission ».
+  const clearMissionPrefill = () => {
+    setMissionPrefill(null)
+    try { sessionStorage.removeItem(MISSION_PREFILL_KEY) } catch { /* ignore */ }
+  }
   const [showNew, setShowNew]   = useState(() => !!missionPrefill)
   const [interestsMission, setInterestsMission] = useState(null)
   const [profileOeil, setProfileOeil] = useState(null)
@@ -162,7 +180,7 @@ export default function ClientDashboard() {
         actions={
           <div className="flex items-center gap-2">
             <AnnuaireLienEspaceClient className="btn btn-ghost btn-sm" />
-            <button onClick={() => { setMissionPrefill(null); setShowNew(true) }} className="btn btn-primary btn-sm">
+            <button onClick={() => { clearMissionPrefill(); setShowNew(true) }} className="btn btn-primary btn-sm">
               <span className="hidden sm:inline">{t('clientDashboard.newMissionButton')}</span>
               <span className="sm:hidden">{t('clientDashboard.newMissionButtonShort')}</span>
             </button>
@@ -309,7 +327,8 @@ export default function ClientDashboard() {
         </div>
         </div>
 
-      <NewMissionModal open={showNew} onClose={() => setShowNew(false)} prefill={missionPrefill} onCreated={(m) => {
+      <NewMissionModal open={showNew} onClose={() => { setShowNew(false); clearMissionPrefill() }} prefill={missionPrefill} onCreated={(m) => {
+          clearMissionPrefill()
           setMissions((ms) => [m, ...ms])
           setStats((s) => ({ ...s, total: s.total + 1 }))
         }} />
