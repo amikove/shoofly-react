@@ -15,3 +15,10 @@ export function administrationSlotProblem(date, time, closingHour) {
 
 // Préfixe des sous-catégories « administration » (constants/missionCategories.js côté serveur).
 export const ADMIN_SUBCATEGORY_PREFIX = 'Administrations — '
+
+// Exclues de la règle (décision BOSS) : professions libérales, pas des administrations.
+const EXCLUDED_SUBCATEGORIES = ['Administrations — Adoul / Notaires']
+
+export function isAdministrationSubcategory(subcategory) {
+  return typeof subcategory === 'string' && subcategory.startsWith(ADMIN_SUBCATEGORY_PREFIX) && !EXCLUDED_SUBCATEGORIES.includes(subcategory)
+}

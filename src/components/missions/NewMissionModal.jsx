@@ -11,7 +11,7 @@ import MissionCreatedModal from './MissionCreatedModal'
 import LocationPicker from './LocationPicker'
 import { defaultIsPrivateResidence } from '../../utils/missionLocation'
 import { casablancaWallTimeToISO, casablancaDisplayDateTime } from '../../utils/casablancaTime'
-import { administrationSlotProblem } from '../../utils/administrationSlot'
+import { administrationSlotProblem, isAdministrationSubcategory } from '../../utils/administrationSlot'
 
 // Planchers tarifaires par sous-catégorie — SOURCE UNIQUE EN BASE depuis le chantier
 // « planchers éditables » (2026-09-10). Plus de table en dur ici : on lit
@@ -205,7 +205,7 @@ export default function NewMissionModal({ open, onClose, onCreated, prefill }) {
   const minPrice = resolveMinPrice(floorData, type, subcategory)
   // Règle administrations : heure limite lue du serveur (défaut 17 h), créneaux interdits signalés.
   const closingHour = Number(floorData?.administration_closing_hour ?? 17)
-  const isAdminCategory = type === 'file_attente' && (subcategory || '').startsWith('Administrations — ')
+  const isAdminCategory = type === 'file_attente' && isAdministrationSubcategory(subcategory)
   const slotProblem = isAdminCategory ? administrationSlotProblem(form.scheduled_date, form.scheduled_time, closingHour) : null
   // Brouillon local d'une session antérieure, lu UNE fois au montage (à chaque chargement de
   // page / navigation client vers un écran qui monte cette modale). Jamais appliqué d'office :

@@ -32,3 +32,12 @@ test('date ou heure absente : rien à signaler', () => {
   assert.equal(administrationSlotProblem('', '10:00', 17), null)
   assert.equal(administrationSlotProblem(MON, '', 17), null)
 })
+
+import { isAdministrationSubcategory } from '../src/utils/administrationSlot.js'
+
+test('sous-catégories administratives reconnues, Adoul / Notaires exclue', () => {
+  assert.equal(isAdministrationSubcategory('Administrations — CNSS'), true)
+  assert.equal(isAdministrationSubcategory('Administrations — Autre'), true)
+  assert.equal(isAdministrationSubcategory('Administrations — Adoul / Notaires'), false)
+  assert.equal(isAdministrationSubcategory('Centres de santé — Laboratoire'), false)
+})
