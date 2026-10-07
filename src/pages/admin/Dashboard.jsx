@@ -1492,7 +1492,7 @@ export default function AdminDashboard() {
                     disabled={resolving === c.id}
                     className="btn btn-ghost btn-sm flex-1 justify-center text-orange-400 disabled:opacity-60"
                   >
-                    🔄 Rembourser le client
+                    {c.payment_method === 'cash' ? '🔄 Clôturer en faveur du client' : '🔄 Rembourser le client'}
                   </button>
                 </div>
               </div>

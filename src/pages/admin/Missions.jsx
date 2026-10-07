@@ -541,9 +541,15 @@ const doAssign = async (overrideWarning = false, overrideReason = '') => {
             <p className="text-sm text-white/80 mb-4">
               Cette annulation est-elle due à une faute du client (injoignable, comportement abusif, etc.) ?
             </p>
-            <p className="text-xs text-[#555] mb-4">
-              Si oui, le remboursement suivra les règles habituelles (100%/50%/0% selon le délai). Si non, le client sera remboursé intégralement, quel que soit le délai.
-            </p>
+            {cancelModal.payment_method === 'cash' ? (
+              <p className="text-xs text-[#555] mb-4">
+                Cette mission est payée en espèces : Shoofly n'a rien encaissé. Aucun remboursement n'est concerné, quelle que soit votre réponse.
+              </p>
+            ) : (
+              <p className="text-xs text-[#555] mb-4">
+                Si oui, le remboursement suivra les règles habituelles (100%/50%/0% selon le délai). Si non, le client sera remboursé intégralement, quel que soit le délai.
+              </p>
+            )}
 
             <div className="flex gap-2">
               <button
@@ -558,7 +564,7 @@ const doAssign = async (overrideWarning = false, overrideReason = '') => {
                 disabled={cancelling}
                 className="btn btn-primary flex-1 justify-center disabled:opacity-50"
               >
-                {cancelling ? '...' : 'Non, rembourser 100%'}
+                {cancelling ? '...' : (cancelModal.payment_method === 'cash' ? 'Non, annuler sans remboursement' : 'Non, rembourser 100%')}
               </button>
             </div>
             <button onClick={() => setCancelModal(null)} className="btn btn-ghost w-full justify-center mt-2 text-xs">

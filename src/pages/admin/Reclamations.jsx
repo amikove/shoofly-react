@@ -156,7 +156,7 @@ export default function AdminReclamations() {
                 onChange={(e) => setClientAbsent(prev => ({ ...prev, [c.id]: e.target.checked }))}
               />
               Motif : client absent / injoignable
-              {c.mission_price !== undefined && ' (mission cash : la commission ne sera pas débitée automatiquement, décision séparée ci-dessous une fois résolu)'}
+              {c.payment_method === 'cash' && ' (mission cash : la commission ne sera pas débitée automatiquement, décision séparée ci-dessous une fois résolu)'}
             </label>
 
             <div className="flex gap-2">
@@ -172,7 +172,7 @@ export default function AdminReclamations() {
                 disabled={resolving === c.id}
                 className="btn btn-ghost btn-sm flex-1 justify-center text-orange-400 disabled:opacity-60"
               >
-                🔄 Rembourser le client
+                {c.payment_method === 'cash' ? '🔄 Clôturer en faveur du client' : '🔄 Rembourser le client'}
               </button>
             </div>
           </div>
