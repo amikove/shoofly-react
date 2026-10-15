@@ -26,7 +26,7 @@ import { offlineQueue } from '../../utils/offlineQueueInstance'
 import { useOfflineQueueProcessed } from '../../hooks/useOfflineQueue'
 import CashPlusRechargeModal from '../../components/payments/CashPlusRechargeModal'
 import { OeilWalletBanners, ApplyBlockInfo } from '../../components/missions/OeilApplyGate'
-import { isApplyBlocked, blockedApplyLabel } from '../../utils/oeilApplyGate'
+import { isApplyBlocked, blockedApplyLabel, onUnverifiedApplyClick } from '../../utils/oeilApplyGate'
 
 const TABS = ['priority', 'available', 'active', 'done']
 const TYPE_ICONS = { immobilier:'🏠', file_attente:'⏳', audit:'🔎', personnalisee:'🎯' }
@@ -661,7 +661,7 @@ try {
             </button>
           ) : (
             <button
-              onClick={() => user?.is_verified ? interestPriority(m.id) : navigate('/oeil/verification-identite')}
+              onClick={() => user?.is_verified ? interestPriority(m.id) : onUnverifiedApplyClick(user, { navigate, toast, t })}
               disabled={submittingInterestIds.has(m.id) || isApplyBlocked(m)}
               className="btn btn-sm w-full justify-center bg-red-500 text-white hover:bg-red-600 disabled:opacity-50"
             >

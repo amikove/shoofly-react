@@ -18,6 +18,13 @@
 // est activé (ONLINE_PAYMENT_ENABLED, constants/paymentMethods.js — même source que le choix du
 // mode de paiement dans NewMissionModal.jsx). Tant que seul le cash est actif, Shoofly n'encaisse
 // rien et ne rembourse rien : ces sujets ne concernent que d'anciennes missions payées en ligne.
+// requiresIdentityUpload : si true, la sous-catégorie n'est proposée que si l'envoi de CIN est
+// actif (flag serveur IDENTITY_UPLOAD_ENABLED, exposé par /auth/me — user.identity_upload_enabled,
+// passé en option par l'appelant, PAS une constante statique comme ONLINE_PAYMENT_ENABLED : ce
+// réglage est un interrupteur serveur, pas un choix figé côté frontend). Suspension de l'envoi de
+// CIN (2026-10-15) : plus de document à valider, donc plus de sujet de ticket dédié tant que
+// suspendu — la validation se fait désormais sur photo de profil (voir « Mon compte est bloqué »,
+// catégorie 'compte', pour un blocage général).
 //
 // Sous-catégories retirées du formulaire (2026-09-27) : leurs traductions restent dans
 // fr.json/ar.json pour afficher les anciens tickets (colonne subcategory = libellé stocké).
@@ -119,8 +126,8 @@ export const TICKET_CATEGORIES = [
     icon: '🪪',
     roles: ['oeil'],
     subcategories: [
-      { label: 'Validation CIN', missionRelevant: false, redirectRoute: '/oeil/verification-identite' },
-      { label: 'Validation selfie', missionRelevant: false, redirectRoute: '/oeil/verification-identite' },
+      { label: 'Validation CIN', missionRelevant: false, redirectRoute: '/oeil/verification-identite', requiresIdentityUpload: true },
+      { label: 'Validation selfie', missionRelevant: false, redirectRoute: '/oeil/verification-identite', requiresIdentityUpload: true },
       // 'Validation IBAN' retiré (2026-09-27) : la vérification d'identité ne comporte pas d'IBAN.
     ],
   },
@@ -200,19 +207,24 @@ function rawSubcategoriesForRole(category, role) {
   return category.subcategories || []
 }
 
-// Une catégorie dont TOUTES les sous-catégories sont masquées (requiresOnlinePayment) disparaît.
-// Une catégorie déclarée sans sous-catégorie ('autre' : message libre) reste affichée.
-export function getCategoriesForRole(role) {
+// Une catégorie dont TOUTES les sous-catégories sont masquées (requiresOnlinePayment /
+// requiresIdentityUpload) disparaît. Une catégorie déclarée sans sous-catégorie ('autre' :
+// message libre) reste affichée.
+export function getCategoriesForRole(role, opts) {
   return TICKET_CATEGORIES.filter((c) => {
     if (!c.roles.includes(role)) return false
     const raw = rawSubcategoriesForRole(c, role)
-    return raw.length === 0 || getSubcategoriesForRole(c, role).length > 0
+    return raw.length === 0 || getSubcategoriesForRole(c, role, opts).length > 0
   })
 }
 
-export function getSubcategoriesForRole(category, role) {
+// opts.identityUploadEnabled : omis => true (n'affecte que l'appelant qui le passe explicitement,
+// voir NewTicketModal.jsx — user.identity_upload_enabled).
+export function getSubcategoriesForRole(category, role, { identityUploadEnabled = true } = {}) {
   if (!category) return []
-  return rawSubcategoriesForRole(category, role).filter((s) => !s.requiresOnlinePayment || ONLINE_PAYMENT_ENABLED)
+  return rawSubcategoriesForRole(category, role)
+    .filter((s) => !s.requiresOnlinePayment || ONLINE_PAYMENT_ENABLED)
+    .filter((s) => !s.requiresIdentityUpload || identityUploadEnabled)
 }
 
 // Correspondance documentée entre l'ancien champ libre "type" de

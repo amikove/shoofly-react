@@ -1,18 +1,37 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import AppLayout from '../../components/layout/AppLayout'
 import Topbar from '../../components/layout/Topbar'
-import { toast } from '../../components/ui'
+import { toast, Spinner } from '../../components/ui'
 import { useNavigate } from 'react-router-dom'
 import api from '../../api/client'
+import { useAuth } from '../../context/AuthContext'
 
 export default function VerificationIdentite() {
   const { t } = useTranslation()
   const navigate = useNavigate()
+  const { user } = useAuth()
   const [files, setFiles] = useState({ cin_recto: null, cin_verso: null, selfie: null })
   const [previews, setPreviews] = useState({ cin_recto: null, cin_verso: null, selfie: null })
   const [uploading, setUploading] = useState(false)
   const [step, setStep] = useState('upload')
+
+  // Suspension de l'envoi de CIN (2026-10-15, config/identityUpload.js côté serveur) : page
+  // CONSERVÉE (pas de suppression de route) mais inaccessible tant que le flag est désactivé — un
+  // appel direct à l'URL (lien ancien, favori, etc.) renvoie au dashboard plutôt que de montrer un
+  // formulaire dont l'envoi serait de toute façon refusé par le serveur (403 IDENTITY_UPLOAD_SUSPENDED).
+  useEffect(() => {
+    if (user && !user.identity_upload_enabled) navigate('/oeil', { replace: true })
+  }, [user, navigate])
+
+  if (!user?.identity_upload_enabled) {
+    return (
+      <AppLayout>
+        <Topbar title={t('verificationIdentite.title')} />
+        <div className="flex justify-center py-20"><Spinner size="lg" /></div>
+      </AppLayout>
+    )
+  }
 
   const handleFile = (key) => (e) => {
     const file = e.target.files[0]
