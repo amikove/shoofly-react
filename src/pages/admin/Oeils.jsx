@@ -16,6 +16,11 @@ export default function AdminOeils() {
   const [rejecting, setRejecting] = useState(null)
   const [rejectReason, setRejectReason] = useState('')
   const [acting, setActing]     = useState({})
+  // Réactivation future de l'upload CIN (config/identityUpload.js) — documents stockés en Cloudinary
+  // `type: 'authenticated'` : plus aucune URL directe, uniquement des URLs signées à courte durée
+  // (GET .../identity-requests/:id/signed-urls), récupérées à l'affichage de l'onglet et jamais mises
+  // en cache au-delà de la session d'écran. { [requestId]: { cin_recto, cin_verso, selfie } }.
+  const [signedUrls, setSignedUrls] = useState({})
 
   const load = () => {
     setLoading(true)
@@ -32,6 +37,39 @@ export default function AdminOeils() {
   }
 
   useEffect(() => { load() }, [])
+
+  const pendingRequests      = requests.filter((r) => r.request_status === 'pending')
+  const notSubmittedRequests = requests.filter((r) => r.request_status === 'not_submitted')
+  // Filtre « À valider » (BOSS, 2026-10-15) : Œils non vérifiés ayant une photo de profil — seuls
+  // éligibles à la validation manuelle tant que la CIN n'est pas collectée.
+  const toValidateRequests  = notSubmittedRequests.filter((r) => !!r.avatar_url)
+  const missingPhotoRequests = notSubmittedRequests.filter((r) => !r.avatar_url)
+
+  // Documents CIN (dormant tant que IDENTITY_UPLOAD_ENABLED est désactivé, voir ci-dessus) : une
+  // URL signée par document, à chaque fois que la liste des demandes en attente change.
+  useEffect(() => {
+    pendingRequests.forEach((r) => {
+      if (signedUrls[r.id]) return
+      adminAPI.identitySignedUrls(r.id)
+        .then(({ data }) => setSignedUrls((s) => ({ ...s, [r.id]: data.urls })))
+        .catch(() => {})
+    })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pendingRequests.map((r) => r.id).join(',')])
+
+  const verifyProfile = async (userId, name) => {
+    if (!window.confirm(`Valider le profil de ${name} ? Il pourra alors accepter des missions.`)) return
+    setActing((a) => ({ ...a, [userId]: true }))
+    try {
+      await adminAPI.verifyOeil(userId)
+      toast('Profil validé ✓', 'success')
+      load()
+    } catch (err) {
+      toast(err.response?.data?.code === 'PHOTO_REQUIRED' ? 'Photo de profil requise' : 'Erreur', 'error')
+    } finally {
+      setActing((a) => ({ ...a, [userId]: false }))
+    }
+  }
 
   const toggle = async (id, isSuspended) => {
     let reason
@@ -69,9 +107,6 @@ export default function AdminOeils() {
     } catch { toast('Erreur', 'error') }
     finally { setActing((a) => ({ ...a, [id]: false })) }
   }
-
-  const pendingRequests      = requests.filter((r) => r.request_status === 'pending')
-  const notSubmittedRequests = requests.filter((r) => r.request_status === 'not_submitted')
 
   return (
     <AppLayout>
@@ -168,21 +203,28 @@ export default function AdminOeils() {
                         </div>
                       </div>
 
-                      {/* Documents */}
+                      {/* Documents — URLs signées à courte durée (Cloudinary type 'authenticated'),
+                          jamais r.cin_recto/cin_verso/selfie directement (public_id, pas une URL). */}
                       <div className="grid grid-cols-3 gap-3 mb-4">
                         {[
-                          { url: r.cin_recto, label: 'CIN Recto' },
-                          { url: r.cin_verso, label: 'CIN Verso' },
-                          { url: r.selfie,    label: 'Selfie' },
+                          { url: signedUrls[r.id]?.cin_recto, label: 'CIN Recto' },
+                          { url: signedUrls[r.id]?.cin_verso, label: 'CIN Verso' },
+                          { url: signedUrls[r.id]?.selfie,    label: 'Selfie' },
                         ].map(({ url, label }) => (
                           <div key={label} className="space-y-1">
                             <p className="text-xs text-[#AAA] text-center">{label}</p>
-                            <img
-                              src={url}
-                              alt={label}
-                              onClick={() => setLightbox(url)}
-                              className="w-full h-28 object-cover rounded-xl cursor-pointer hover:opacity-80 transition-opacity border border-white/10"
-                            />
+                            {url ? (
+                              <img
+                                src={url}
+                                alt={label}
+                                onClick={() => setLightbox(url)}
+                                className="w-full h-28 object-cover rounded-xl cursor-pointer hover:opacity-80 transition-opacity border border-white/10"
+                              />
+                            ) : (
+                              <div className="w-full h-28 rounded-xl border border-white/10 flex items-center justify-center text-xs text-[#555]">
+                                Chargement…
+                              </div>
+                            )}
                           </div>
                         ))}
                       </div>
@@ -231,12 +273,40 @@ export default function AdminOeils() {
                 </div>
               )}
 
-              {notSubmittedRequests.length > 0 && (
+              {toValidateRequests.length > 0 && (
                 <div className="space-y-4">
                   <p className="text-xs text-[#AAA] uppercase tracking-wider font-semibold">
-                    Inscrits, documents pas encore soumis ({notSubmittedRequests.length})
+                    À valider — photo de profil ajoutée ({toValidateRequests.length})
                   </p>
-                  {notSubmittedRequests.map((r) => (
+                  {toValidateRequests.map((r) => (
+                    <div key={r.user_id} className="card flex items-center gap-3">
+                      <div className="flex items-center gap-3 flex-1 min-w-0 cursor-pointer hover:text-[#FF4D00]" onClick={() => navigate(`/admin/users/${r.user_id}`)}>
+                        <Avatar name={`${r.first_name} ${r.last_name}`} size={56} src={r.avatar_url} />
+                        <div className="min-w-0">
+                          <p className="font-semibold">{r.first_name} {r.last_name}</p>
+                          <p className="text-xs text-[#AAA]">📍 {r.city || '—'} · {r.email}</p>
+                          {r.phone && <p className="text-xs text-[#AAA]">📞 {r.phone}</p>}
+                          <p className="text-xs text-[#555] mt-0.5">Inscrit le {new Date(r.created_at).toLocaleDateString('fr-FR', { timeZone: CASABLANCA_TZ, day: 'numeric', month: 'long', year: 'numeric' })}</p>
+                        </div>
+                      </div>
+                      <button
+                        onClick={() => verifyProfile(r.user_id, `${r.first_name} ${r.last_name}`)}
+                        disabled={acting[r.user_id]}
+                        className="btn btn-primary btn-sm flex-shrink-0 disabled:opacity-50"
+                      >
+                        {acting[r.user_id] ? '...' : '✅ Valider le profil'}
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {missingPhotoRequests.length > 0 && (
+                <div className="space-y-4">
+                  <p className="text-xs text-[#AAA] uppercase tracking-wider font-semibold">
+                    Inscrits, photo de profil manquante ({missingPhotoRequests.length})
+                  </p>
+                  {missingPhotoRequests.map((r) => (
                     <div key={r.user_id} className="card">
                       <div className="flex items-center gap-3 cursor-pointer hover:text-[#FF4D00]" onClick={() => navigate(`/admin/users/${r.user_id}`)}>
                         <Avatar name={`${r.first_name} ${r.last_name}`} size={44} src={r.avatar_url} />

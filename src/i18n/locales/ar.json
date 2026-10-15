@@ -1134,7 +1134,12 @@
       "notVerifiedTitle": "الهوية غير موثقة",
       "pendingDesc": "فريقنا يراجع مستنداتك. سيتم إعلامك فور الموافقة.",
       "notVerifiedDesc": "تحقق من هويتك لتتمكن من التقدم للمهام.",
-      "verifyButton": "التحقق ←"
+      "verifyButton": "التحقق ←",
+      "suspendedWelcomeTitle": "مرحبًا!",
+      "suspendedWelcomeDesc": "أضف صورة شخصية (إلزامية) حتى يتمكن فريق شووفلي من تفعيل حسابك.",
+      "suspendedAddPhotoButton": "إضافة ←",
+      "suspendedThanksTitle": "شكرًا!",
+      "suspendedThanksDesc": "ملفك الشخصي قيد المراجعة من طرف فريق شووفلي. سيتم إشعارك فور تفعيله."
     },
     "avatarBanner": {
       "title": "أضف صورتك الشخصية",
@@ -1164,6 +1169,8 @@
       "requestSent": "✅ تم إرسال الطلب",
       "interested": "👁️ أنا مهتم",
       "verificationRequired": "🛡️ التحقق مطلوب",
+      "pendingValidation": "⏳ قيد التفعيل",
+      "pendingValidationToast": "حسابك قيد التفعيل من طرف فريق شووفلي. سيتم إعلامك بمجرد تمكنك من التقدم للمهام.",
       "ignore": "✕ تجاهل"
     },
     "active": {

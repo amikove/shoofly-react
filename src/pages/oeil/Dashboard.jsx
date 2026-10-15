@@ -13,7 +13,7 @@ import { CASABLANCA_TZ } from '../../utils/casablancaTime'
 import MissionLocationPanel from '../../components/map/MissionLocationPanel'
 import CashPlusRechargeModal from '../../components/payments/CashPlusRechargeModal'
 import { OeilWalletBanners, ApplyBlockInfo } from '../../components/missions/OeilApplyGate'
-import { isApplyBlocked, blockedApplyLabel } from '../../utils/oeilApplyGate'
+import { isApplyBlocked, blockedApplyLabel, onUnverifiedApplyClick } from '../../utils/oeilApplyGate'
 
 export default function OeilDashboard() {
   const { t, i18n } = useTranslation()
@@ -178,52 +178,80 @@ const refuse = async (id) => {
 
         {/* Bannière vérification identité */}
         {!user?.is_verified && (
-          <div className={`rounded-xl p-4 flex items-center gap-3 ${
-            user?.id_verified_at === null && !user?.is_verified
-              ? 'bg-orange-500/10 border border-orange-500/30'
-              : 'bg-yellow-500/10 border border-yellow-500/30'
-          }`}>
-            <span className="text-2xl flex-shrink-0">
-              {user?.id_verified_at ? '⏳' : '🛡️'}
-            </span>
-            <div className="flex-1">
-              <p className="text-sm font-semibold text-white">
-                {user?.id_verified_at ? t('oeilDashboard.verifBanner.pendingTitle') : t('oeilDashboard.verifBanner.notVerifiedTitle')}
-              </p>
-              <p className="text-xs text-[#AAA] mt-0.5">
-                {user?.id_verified_at
-                  ? t('oeilDashboard.verifBanner.pendingDesc')
-                  : t('oeilDashboard.verifBanner.notVerifiedDesc')}
-              </p>
+          user?.identity_upload_enabled ? (
+            <div className={`rounded-xl p-4 flex items-center gap-3 ${
+              user?.id_verified_at === null && !user?.is_verified
+                ? 'bg-orange-500/10 border border-orange-500/30'
+                : 'bg-yellow-500/10 border border-yellow-500/30'
+            }`}>
+              <span className="text-2xl flex-shrink-0">
+                {user?.id_verified_at ? '⏳' : '🛡️'}
+              </span>
+              <div className="flex-1">
+                <p className="text-sm font-semibold text-white">
+                  {user?.id_verified_at ? t('oeilDashboard.verifBanner.pendingTitle') : t('oeilDashboard.verifBanner.notVerifiedTitle')}
+                </p>
+                <p className="text-xs text-[#AAA] mt-0.5">
+                  {user?.id_verified_at
+                    ? t('oeilDashboard.verifBanner.pendingDesc')
+                    : t('oeilDashboard.verifBanner.notVerifiedDesc')}
+                </p>
+              </div>
+              {!user?.id_verified_at && (
+                  <button
+                    onClick={() => navigate('/oeil/verification-identite')}
+                    className="btn btn-primary btn-sm flex-shrink-0"
+                  >
+                    {t('oeilDashboard.verifBanner.verifyButton')}
+                  </button>
+                )}
             </div>
-            {!user?.id_verified_at && (
+          ) : (
+            // Suspension de l'envoi de CIN (2026-10-15) : validation manuelle admin sur photo de
+            // profil — deux textes selon que la photo est déjà là ou non (voir rapport-audit-
+            // suspension-cin-2026-10-14.md).
+            <div className={`rounded-xl p-4 flex items-center gap-3 ${
+              user?.avatar_url ? 'bg-yellow-500/10 border border-yellow-500/30' : 'bg-orange-500/10 border border-orange-500/30'
+            }`}>
+              <span className="text-2xl flex-shrink-0">{user?.avatar_url ? '⏳' : '🛡️'}</span>
+              <div className="flex-1">
+                <p className="text-sm font-semibold text-white">
+                  {user?.avatar_url ? t('oeilDashboard.verifBanner.suspendedThanksTitle') : t('oeilDashboard.verifBanner.suspendedWelcomeTitle')}
+                </p>
+                <p className="text-xs text-[#AAA] mt-0.5">
+                  {user?.avatar_url ? t('oeilDashboard.verifBanner.suspendedThanksDesc') : t('oeilDashboard.verifBanner.suspendedWelcomeDesc')}
+                </p>
+              </div>
+              {!user?.avatar_url && (
                 <button
-                  onClick={() => navigate('/oeil/verification-identite')}
+                  onClick={() => navigate('/oeil/compte')}
                   className="btn btn-primary btn-sm flex-shrink-0"
                 >
-                  {t('oeilDashboard.verifBanner.verifyButton')}
+                  {t('oeilDashboard.verifBanner.suspendedAddPhotoButton')}
                 </button>
               )}
             </div>
-          )}
-          {/* Bannière photo de profil manquante */}
-          {!user?.avatar_url && (
-            <div className="rounded-xl p-4 flex items-center gap-3 bg-[#FF4D00]/10 border border-[#FF4D00]/30">
-              <span className="text-2xl flex-shrink-0">📸</span>
-              <div className="flex-1">
-                <p className="text-sm font-semibold text-white">{t('oeilDashboard.avatarBanner.title')}</p>
-                <p className="text-xs text-[#AAA] mt-0.5">
-                  {t('oeilDashboard.avatarBanner.desc')}
-                </p>
-              </div>
-              <button
-                onClick={() => navigate('/oeil/compte')}
-                className="btn btn-primary btn-sm flex-shrink-0"
-              >
-                {t('oeilDashboard.avatarBanner.addButton')}
-              </button>
+          )
+        )}
+        {/* Bannière photo de profil manquante — masquée si déjà couverte par la bannière
+            ci-dessus (Œil non vérifié + flag désactivé demande déjà la photo). */}
+        {!user?.avatar_url && (user?.is_verified || user?.identity_upload_enabled) && (
+          <div className="rounded-xl p-4 flex items-center gap-3 bg-[#FF4D00]/10 border border-[#FF4D00]/30">
+            <span className="text-2xl flex-shrink-0">📸</span>
+            <div className="flex-1">
+              <p className="text-sm font-semibold text-white">{t('oeilDashboard.avatarBanner.title')}</p>
+              <p className="text-xs text-[#AAA] mt-0.5">
+                {t('oeilDashboard.avatarBanner.desc')}
+              </p>
             </div>
-          )}
+            <button
+              onClick={() => navigate('/oeil/compte')}
+              className="btn btn-primary btn-sm flex-shrink-0"
+            >
+              {t('oeilDashboard.avatarBanner.addButton')}
+            </button>
+          </div>
+        )}
           {/* Stats */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
           <div className="stat-card">
@@ -319,7 +347,7 @@ const refuse = async (id) => {
                   </button>
                 ) : (
                   <button
-                    onClick={() => user?.is_verified ? interest(m.id) : navigate('/oeil/verification-identite')}
+                    onClick={() => user?.is_verified ? interest(m.id) : onUnverifiedApplyClick(user, { navigate, toast, t })}
                     disabled={isApplyBlocked(m)}
                     className="btn btn-sm w-full justify-center disabled:opacity-50 bg-red-500 text-white hover:bg-red-600"
                   >
@@ -385,11 +413,17 @@ const refuse = async (id) => {
                   ) : (
                     <>
                       <button
-                        onClick={() => user?.is_verified ? interest(m.id) : navigate('/oeil/verification-identite')}
+                        onClick={() => user?.is_verified ? interest(m.id) : onUnverifiedApplyClick(user, { navigate, toast, t })}
                         disabled={isApplyBlocked(m)}
                         className="btn btn-sm flex-1 justify-center disabled:opacity-50 bg-green-500 text-white hover:bg-green-600"
                       >
-                        {isApplyBlocked(m) ? blockedApplyLabel(m, t) : user?.is_verified ? t('oeilDashboard.available.interested') : t('oeilDashboard.available.verificationRequired')}
+                        {isApplyBlocked(m)
+                          ? blockedApplyLabel(m, t)
+                          : user?.is_verified
+                            ? t('oeilDashboard.available.interested')
+                            : user?.identity_upload_enabled
+                              ? t('oeilDashboard.available.verificationRequired')
+                              : t('oeilDashboard.available.pendingValidation')}
                       </button>
                       <button
                         onClick={() => refuse(m.id, true)}

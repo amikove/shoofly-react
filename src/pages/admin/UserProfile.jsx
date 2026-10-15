@@ -124,12 +124,32 @@ export default function UserProfile() {
     }
   }
 
+  // Suspension de l'envoi de CIN (2026-10-15) : validation manuelle sur photo de profil — même
+  // route verify-oeil que le bouton équivalent de Oeils.jsx (liste « À valider »). Le bouton est
+  // désactivé sans photo (le serveur refuse aussi, 400 PHOTO_REQUIRED) : la photo, déjà affichée
+  // bien visible dans l'en-tête ci-dessous, est le seul signal requis pour valider ici.
+  const [verifying, setVerifying] = useState(false)
+  const verifyProfile = async () => {
+    if (!window.confirm(`Valider le profil de ${user.first_name} ${user.last_name} ? Il pourra alors accepter des missions.`)) return
+    setVerifying(true)
+    try {
+      await adminAPI.verifyOeil(user.id)
+      toast('Profil validé ✓', 'success')
+      load()
+    } catch (err) {
+      toast(err.response?.data?.code === 'PHOTO_REQUIRED' ? 'Photo de profil requise' : 'Erreur', 'error')
+    } finally {
+      setVerifying(false)
+    }
+  }
+
   return (
     <AppLayout>
       <Topbar title={`${user.first_name} ${user.last_name}`} />
       <div className="p-6">
 
-        {/* En-tête */}
+        {/* En-tête — photo de profil bien visible : seul signal requis pour « Valider le profil »
+            pendant la suspension de l'envoi de CIN (2026-10-15). */}
         <div className="card flex items-center gap-4 mb-5">
           <Avatar name={`${user.first_name} ${user.last_name}`} size={64} src={user.avatar_url} />
           <div className="flex-1 min-w-0">
@@ -137,12 +157,32 @@ export default function UserProfile() {
               <h2 className="text-lg font-bold">{user.first_name} {user.last_name}</h2>
               <Badge variant={isOeil ? 'orange' : 'blue'}>{isOeil ? 'Œil' : 'Client'}</Badge>
               <Badge variant={status.variant}>{status.label}</Badge>
+              {isOeil && (
+                <Badge variant={reliability?.is_verified ? 'green' : 'yellow'}>
+                  {reliability?.is_verified ? '✓ Vérifié' : 'Non vérifié'}
+                </Badge>
+              )}
             </div>
             <p className="text-xs text-[#AAA] mt-1">
               📍 {val(user.city)}{user.quartier ? ` · ${user.quartier}` : ''} · {user.email}
             </p>
             <p className="text-xs text-[#555] mt-0.5">Inscrit le {fmtDate(user.created_at)}</p>
+            {isOeil && reliability?.is_verified && reliability?.verified_by_name && (
+              <p className="text-xs text-[#555] mt-0.5">
+                Validé par {reliability.verified_by_name}{reliability.id_verified_at ? ` le ${fmtDate(reliability.id_verified_at)}` : ''}
+              </p>
+            )}
           </div>
+          {isOeil && !reliability?.is_verified && (
+            <button
+              onClick={verifyProfile}
+              disabled={verifying || !user.avatar_url}
+              title={!user.avatar_url ? 'Photo de profil requise' : undefined}
+              className="btn btn-primary btn-sm flex-shrink-0 disabled:opacity-50"
+            >
+              {verifying ? '...' : '✅ Valider le profil'}
+            </button>
+          )}
           <button onClick={toggleSuspension} className={`btn btn-ghost btn-sm ${isSuspendedState ? 'text-green-400' : 'text-red-400'}`}>
             {isSuspendedState ? 'Activer' : (isOeil ? 'Suspendre' : 'Désactiver')}
           </button>

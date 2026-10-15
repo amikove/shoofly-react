@@ -1133,7 +1133,12 @@
       "notVerifiedTitle": "Identité non vérifiée",
       "pendingDesc": "Notre équipe examine vos documents. Vous serez notifié dès validation.",
       "notVerifiedDesc": "Vérifiez votre identité pour pouvoir postuler aux missions.",
-      "verifyButton": "Vérifier →"
+      "verifyButton": "Vérifier →",
+      "suspendedWelcomeTitle": "Bienvenue !",
+      "suspendedWelcomeDesc": "Ajoutez une photo de profil (obligatoire) pour que l'équipe Shoofly puisse valider votre compte.",
+      "suspendedAddPhotoButton": "Ajouter →",
+      "suspendedThanksTitle": "Merci !",
+      "suspendedThanksDesc": "Votre profil est en cours de vérification par l'équipe Shoofly. Vous serez notifié dès sa validation."
     },
     "avatarBanner": {
       "title": "Ajoutez votre photo de profil",
@@ -1163,6 +1168,8 @@
       "requestSent": "✅ Demande envoyée",
       "interested": "👁️ Je suis intéressé",
       "verificationRequired": "🛡️ Vérification requise",
+      "pendingValidation": "⏳ En attente de validation",
+      "pendingValidationToast": "Votre compte est en cours de validation par l'équipe Shoofly. Vous serez notifié dès que vous pourrez postuler.",
       "ignore": "✕ Ignorer"
     },
     "active": {

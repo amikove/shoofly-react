@@ -172,6 +172,7 @@ identityRequests:(status)       => api.get('/api/users/admin/identity-requests',
   deletePromo:     (id)           => api.delete(`/api/promo/admin/${id}`),
 approveIdentity: (id)           => api.post(`/api/users/admin/identity-requests/${id}/approve`),
 rejectIdentity:  (id, data)     => api.post(`/api/users/admin/identity-requests/${id}/reject`, data),
+identitySignedUrls: (id)        => api.get(`/api/users/admin/identity-requests/${id}/signed-urls`),
 }
 
 export const reliabilityAPI = {

@@ -23,7 +23,10 @@ export default function NewTicketModal({ open, onClose, onCreated, presetMission
   const { user } = useAuth()
   const role = user?.role
 
-  const categories = useMemo(() => getCategoriesForRole(role), [role])
+  // Suspension de l'envoi de CIN (2026-10-15) : masque la catégorie « Vérification » (Validation
+  // CIN/selfie) tant que le flag serveur est désactivé — voir ticketCategories.js.
+  const ticketOpts = useMemo(() => ({ identityUploadEnabled: !!user?.identity_upload_enabled }), [user])
+  const categories = useMemo(() => getCategoriesForRole(role, ticketOpts), [role, ticketOpts])
 
   const [categoryValue, setCategoryValue] = useState('')
   const [subcategoryLabel, setSubcategoryLabel] = useState('')
@@ -34,7 +37,7 @@ export default function NewTicketModal({ open, onClose, onCreated, presetMission
   const [submitting, setSubmitting] = useState(false)
 
   const selectedCategory = categories.find((c) => c.value === categoryValue) || null
-  const subcategories = getSubcategoriesForRole(selectedCategory, role)
+  const subcategories = getSubcategoriesForRole(selectedCategory, role, ticketOpts)
   const selectedSubcategory = subcategories.find((s) => s.label === subcategoryLabel) || null
   const showMissionField = selectedSubcategory?.missionRelevant || false
   const selectedMission = missions.find((m) => String(m.id) === String(missionId)) || null
