@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next'
 import { useAuth } from '../../context/AuthContext'
-import { requestPushPermission, pushSupported, isIOS, isAndroid, isStandalone } from '../../hooks/useNotifications'
+import { requestPushPermission, pushSupported, isIOS, isStandalone } from '../../hooks/useNotifications'
+import { pushDeniedVariant } from '../../utils/oeilApplyGate'
 
 // Chantier « lancer sans WhatsApp » (BOSS, 2026-10-23) — push désormais requis pour qu'un Œil
 // vérifié puisse postuler (POST /missions/:id/interest, code PUSH_REQUIRED ; PUT .../verify-oeil,
@@ -23,11 +24,10 @@ export default function PushRequiredBanner() {
     if (ok) updateUser({ has_active_push: true })
   }
 
-  const deniedKey = isAndroid() ? 'deniedDescAndroid' : isIOS() ? 'deniedDescIos' : 'deniedDescOther'
   const desc = needsIosInstall
     ? t('pushRequiredBanner.iosDesc')
     : deniedState
-      ? t(`pushRequiredBanner.${deniedKey}`)
+      ? t(`pushRequiredBanner.deniedDesc${pushDeniedVariant()}`)
       : t('pushRequiredBanner.desc')
 
   return (
