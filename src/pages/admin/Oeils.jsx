@@ -65,7 +65,13 @@ export default function AdminOeils() {
       toast('Profil validé ✓', 'success')
       load()
     } catch (err) {
-      toast(err.response?.data?.code === 'PHOTO_REQUIRED' ? 'Photo de profil requise' : 'Erreur', 'error')
+      const code = err.response?.data?.code
+      toast(
+        code === 'PHOTO_REQUIRED' ? 'Photo de profil requise'
+          : code === 'PUSH_REQUIRED' ? 'Push non activé — l\'Œil doit activer les notifications avant de pouvoir être validé'
+          : 'Erreur',
+        'error'
+      )
     } finally {
       setActing((a) => ({ ...a, [userId]: false }))
     }
@@ -141,7 +147,7 @@ export default function AdminOeils() {
             <div className="card p-0">
               <div className="table-wrap">
                 <table>
-                  <thead><tr><th>Œil</th><th>Ville</th><th>Statut</th><th>Missions</th><th>Note</th><th>Actions</th></tr></thead>
+                  <thead><tr><th>Œil</th><th>Ville</th><th>Statut</th><th>Push</th><th>Missions</th><th>Note</th><th>Actions</th></tr></thead>
                   <tbody>
                     {oeils.map((o) => (
                       <tr key={o.id}>
@@ -155,6 +161,11 @@ export default function AdminOeils() {
                         <td>
                           <span className={`badge ${o.is_verified ? 'badge-green' : 'badge-yellow'}`}>
                             {o.is_verified ? '✓ Vérifié' : 'Non vérifié'}
+                          </span>
+                        </td>
+                        <td>
+                          <span className={`badge ${o.has_active_push ? 'badge-green' : 'badge-yellow'}`} title={o.push_device ? `Appareil : ${o.push_device}` : undefined}>
+                            {o.has_active_push ? `🔔 Actif${o.push_device ? ` (${o.push_device})` : ''}` : '🔕 Non activé'}
                           </span>
                         </td>
                         <td className="text-center">{o.total_missions || 0}</td>
@@ -287,11 +298,17 @@ export default function AdminOeils() {
                           <p className="text-xs text-[#AAA]">📍 {r.city || '—'} · {r.email}</p>
                           {r.phone && <p className="text-xs text-[#AAA]">📞 {r.phone}</p>}
                           <p className="text-xs text-[#555] mt-0.5">Inscrit le {new Date(r.created_at).toLocaleDateString('fr-FR', { timeZone: CASABLANCA_TZ, day: 'numeric', month: 'long', year: 'numeric' })}</p>
+                          {/* État push (chantier « lancer sans WhatsApp », BOSS 2026-10-23) — condition
+                              de validation désormais (PUT .../verify-oeil, code PUSH_REQUIRED). */}
+                          <span className={`badge mt-1 ${r.has_active_push ? 'badge-green' : 'badge-yellow'}`}>
+                            {r.has_active_push ? `🔔 Push actif${r.push_device ? ` (${r.push_device})` : ''}` : '🔕 Push non activé'}
+                          </span>
                         </div>
                       </div>
                       <button
                         onClick={() => verifyProfile(r.user_id, `${r.first_name} ${r.last_name}`)}
-                        disabled={acting[r.user_id]}
+                        disabled={acting[r.user_id] || !r.has_active_push}
+                        title={!r.has_active_push ? 'Push non activé — l\'Œil doit activer les notifications avant de pouvoir être validé' : undefined}
                         className="btn btn-primary btn-sm flex-shrink-0 disabled:opacity-50"
                       >
                         {acting[r.user_id] ? '...' : '✅ Valider le profil'}

@@ -137,7 +137,13 @@ export default function UserProfile() {
       toast('Profil validé ✓', 'success')
       load()
     } catch (err) {
-      toast(err.response?.data?.code === 'PHOTO_REQUIRED' ? 'Photo de profil requise' : 'Erreur', 'error')
+      const code = err.response?.data?.code
+      toast(
+        code === 'PHOTO_REQUIRED' ? 'Photo de profil requise'
+          : code === 'PUSH_REQUIRED' ? 'Push non activé — l\'Œil doit activer les notifications avant de pouvoir être validé'
+          : 'Erreur',
+        'error'
+      )
     } finally {
       setVerifying(false)
     }
@@ -162,6 +168,14 @@ export default function UserProfile() {
                   {reliability?.is_verified ? '✓ Vérifié' : 'Non vérifié'}
                 </Badge>
               )}
+              {/* État push (chantier « lancer sans WhatsApp », BOSS 2026-10-23) — condition de
+                  validation/candidature désormais ; voir PUT .../verify-oeil et POST .../interest,
+                  code PUSH_REQUIRED. */}
+              {isOeil && (
+                <Badge variant={reliability?.has_active_push ? 'green' : 'yellow'}>
+                  {reliability?.has_active_push ? `🔔 Push actif${reliability.push_device ? ` (${reliability.push_device})` : ''}` : '🔕 Push non activé'}
+                </Badge>
+              )}
             </div>
             <p className="text-xs text-[#AAA] mt-1">
               📍 {val(user.city)}{user.quartier ? ` · ${user.quartier}` : ''} · {user.email}
@@ -176,8 +190,8 @@ export default function UserProfile() {
           {isOeil && !reliability?.is_verified && (
             <button
               onClick={verifyProfile}
-              disabled={verifying || !user.avatar_url}
-              title={!user.avatar_url ? 'Photo de profil requise' : undefined}
+              disabled={verifying || !user.avatar_url || !reliability?.has_active_push}
+              title={!user.avatar_url ? 'Photo de profil requise' : !reliability?.has_active_push ? 'Push non activé — l\'Œil doit activer les notifications avant de pouvoir être validé' : undefined}
               className="btn btn-primary btn-sm flex-shrink-0 disabled:opacity-50"
             >
               {verifying ? '...' : '✅ Valider le profil'}

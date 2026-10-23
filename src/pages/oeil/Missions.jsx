@@ -26,7 +26,7 @@ import { offlineQueue } from '../../utils/offlineQueueInstance'
 import { useOfflineQueueProcessed } from '../../hooks/useOfflineQueue'
 import CashPlusRechargeModal from '../../components/payments/CashPlusRechargeModal'
 import { OeilWalletBanners, ApplyBlockInfo } from '../../components/missions/OeilApplyGate'
-import { isApplyBlocked, blockedApplyLabel, onUnverifiedApplyClick } from '../../utils/oeilApplyGate'
+import { isApplyBlocked, blockedApplyLabel, onUnverifiedApplyClick, onPushRequiredApplyClick } from '../../utils/oeilApplyGate'
 
 const TABS = ['priority', 'available', 'active', 'done']
 const TYPE_ICONS = { immobilier:'🏠', file_attente:'⏳', audit:'🔎', personnalisee:'🎯' }
@@ -360,6 +360,11 @@ const load = useCallback((tab) => {
       // changés ailleurs) — message du serveur + rechargement pour griser le bouton.
       toast(err.response.data.error, 'error')
       load(tab)
+    } else if (err.response?.data?.code === 'PUSH_REQUIRED') {
+      // Chantier « lancer sans WhatsApp » (BOSS 2026-10-23) — même filet que le NOT_VERIFIED
+      // au-dessus : le bouton "Disponibles" n'a pas de garde proactive côté client (voir
+      // onClick plus bas), donc ce cas passe systématiquement par ici pour cet onglet.
+      onPushRequiredApplyClick(user, { toast, t })
     } else {
       toast(err.response?.data?.error || t('oeilMissions.toasts.genericError'), 'error')
     }
@@ -661,7 +666,7 @@ try {
             </button>
           ) : (
             <button
-              onClick={() => user?.is_verified ? interestPriority(m.id) : onUnverifiedApplyClick(user, { navigate, toast, t })}
+              onClick={() => !user?.is_verified ? onUnverifiedApplyClick(user, { navigate, toast, t }) : !user?.has_active_push ? onPushRequiredApplyClick(user, { toast, t }) : interestPriority(m.id)}
               disabled={submittingInterestIds.has(m.id) || isApplyBlocked(m)}
               className="btn btn-sm w-full justify-center bg-red-500 text-white hover:bg-red-600 disabled:opacity-50"
             >
