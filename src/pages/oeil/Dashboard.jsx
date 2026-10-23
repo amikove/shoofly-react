@@ -13,7 +13,8 @@ import { CASABLANCA_TZ } from '../../utils/casablancaTime'
 import MissionLocationPanel from '../../components/map/MissionLocationPanel'
 import CashPlusRechargeModal from '../../components/payments/CashPlusRechargeModal'
 import { OeilWalletBanners, ApplyBlockInfo } from '../../components/missions/OeilApplyGate'
-import { isApplyBlocked, blockedApplyLabel, onUnverifiedApplyClick } from '../../utils/oeilApplyGate'
+import PushRequiredBanner from '../../components/missions/PushRequiredBanner'
+import { isApplyBlocked, blockedApplyLabel, onUnverifiedApplyClick, onPushRequiredApplyClick } from '../../utils/oeilApplyGate'
 
 export default function OeilDashboard() {
   const { t, i18n } = useTranslation()
@@ -107,8 +108,12 @@ export default function OeilDashboard() {
     toast(t('oeilDashboard.interestExpressedToast'), 'success')
     if (data?.free_offer) load() // les autres missions passent en « Mission offerte déjà utilisée »
   } catch (err) {
-    toast(err.response?.data?.error || t('oeilDashboard.genericError'), 'error')
-    if (['INSUFFICIENT_BALANCE_TO_APPLY', 'FREE_MISSION_ALREADY_USED'].includes(err.response?.data?.code)) load()
+    if (err.response?.data?.code === 'PUSH_REQUIRED') {
+      onPushRequiredApplyClick(user, { toast, t })
+    } else {
+      toast(err.response?.data?.error || t('oeilDashboard.genericError'), 'error')
+      if (['INSUFFICIENT_BALANCE_TO_APPLY', 'FREE_MISSION_ALREADY_USED'].includes(err.response?.data?.code)) load()
+    }
   }
 }
 
@@ -233,6 +238,9 @@ const refuse = async (id) => {
             </div>
           )
         )}
+        {/* Bandeau push requis (chantier « lancer sans WhatsApp », 2026-10-23) — ne s'affiche que
+            pour un Œil déjà vérifié (la bannière ci-dessus a priorité), voir PushRequiredBanner.jsx. */}
+        <PushRequiredBanner />
         {/* Bannière photo de profil manquante — masquée si déjà couverte par la bannière
             ci-dessus (Œil non vérifié + flag désactivé demande déjà la photo). */}
         {!user?.avatar_url && (user?.is_verified || user?.identity_upload_enabled) && (
@@ -347,7 +355,7 @@ const refuse = async (id) => {
                   </button>
                 ) : (
                   <button
-                    onClick={() => user?.is_verified ? interest(m.id) : onUnverifiedApplyClick(user, { navigate, toast, t })}
+                    onClick={() => !user?.is_verified ? onUnverifiedApplyClick(user, { navigate, toast, t }) : !user?.has_active_push ? onPushRequiredApplyClick(user, { toast, t }) : interest(m.id)}
                     disabled={isApplyBlocked(m)}
                     className="btn btn-sm w-full justify-center disabled:opacity-50 bg-red-500 text-white hover:bg-red-600"
                   >
@@ -413,7 +421,7 @@ const refuse = async (id) => {
                   ) : (
                     <>
                       <button
-                        onClick={() => user?.is_verified ? interest(m.id) : onUnverifiedApplyClick(user, { navigate, toast, t })}
+                        onClick={() => !user?.is_verified ? onUnverifiedApplyClick(user, { navigate, toast, t }) : !user?.has_active_push ? onPushRequiredApplyClick(user, { toast, t }) : interest(m.id)}
                         disabled={isApplyBlocked(m)}
                         className="btn btn-sm flex-1 justify-center disabled:opacity-50 bg-green-500 text-white hover:bg-green-600"
                       >
