@@ -65,6 +65,9 @@ export default function UserProfile() {
   // /admin/wallet-reconciliation) ; vide sinon — accès direct = historique complet, inchangé.
   const [dateFrom, setDateFrom] = useState(() => focusDate ? addDays(focusDate, -3) : '')
   const [dateTo, setDateTo] = useState(() => focusDate ? addDays(focusDate, 3) : '')
+  // Déclaré avant les returns anticipés (chargement / introuvable) : un hook après un return
+  // conditionnel change le nombre de hooks entre deux rendus (React #310).
+  const [verifying, setVerifying] = useState(false)
 
   const load = (p = page, df = dateFrom, dt = dateTo) => {
     setLoading(true)
@@ -128,7 +131,6 @@ export default function UserProfile() {
   // route verify-oeil que le bouton équivalent de Oeils.jsx (liste « À valider »). Le bouton est
   // désactivé sans photo (le serveur refuse aussi, 400 PHOTO_REQUIRED) : la photo, déjà affichée
   // bien visible dans l'en-tête ci-dessous, est le seul signal requis pour valider ici.
-  const [verifying, setVerifying] = useState(false)
   const verifyProfile = async () => {
     if (!window.confirm(`Valider le profil de ${user.first_name} ${user.last_name} ? Il pourra alors accepter des missions.`)) return
     setVerifying(true)
